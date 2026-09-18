@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#356ae6" />
+  <meta name="description" content="A bilingual workday and internship journey dashboard with attendance, leave tracking, milestones, achievements, heatmap, replay, snapshots and PWA support." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Workday Journey" />
+  <title>Workday Progress Dashboard</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true">%</div>
+        <div>
+          <p class="eyebrow" data-i18n="appEyebrow">ตัวติดตามเวลาทำงานส่วนตัว</p>
+          <h1 data-i18n="appTitle">Workday Progress</h1>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="onlineStatus" class="online-status" aria-live="polite"><i></i><span data-i18n="online">ออนไลน์</span></span>
+        <button id="installAppBtn" class="install-app-btn" type="button" hidden>＋ <span data-i18n="installApp">ติดตั้งแอป</span></button>
+        <div class="language-switch" aria-label="Language">
+          <button class="lang-btn active" data-lang="th" type="button">TH</button>
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+        </div>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle theme" title="Theme">☾</button>
+        <button id="settingsOpen" class="icon-btn" type="button" aria-label="Open settings" title="Settings">⚙</button>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="hero-card card">
+        <div class="hero-copy">
+          <div class="hero-greeting-row">
+            <p id="greeting" class="eyebrow">สวัสดีตอนเช้า</p>
+            <span id="todaySpecialBadge" class="mini-chip" hidden></span>
+          </div>
+          <h2 id="todayLongDate">วันพฤหัสบดีที่ 17 กันยายน 2569</h2>
+          <p id="heroMessage" class="muted">วันนี้กำลังเดินหน้าไปเรื่อย ๆ</p>
+        </div>
+        <div class="clock-block">
+          <span id="clockTime" class="clock-time">09:45:00</span>
+          <span id="clockDate" class="clock-date">17/09/2569</span>
+        </div>
+      </section>
+
+      <section id="completionBanner" class="completion-banner card" hidden>
+        <div class="completion-banner-icon" aria-hidden="true">🎓</div>
+        <div class="completion-banner-copy">
+          <p class="eyebrow" data-i18n="journeyComplete">JOURNEY COMPLETE</p>
+          <h2 data-i18n="internshipCompleted">ฝึกงานสำเร็จแล้ว!</h2>
+          <p class="muted" data-i18n="completionBannerText">เส้นทางตั้งแต่วันแรกจนถึงวันสุดท้ายครบ 100% แล้ว</p>
+        </div>
+        <button id="completionOpen" class="primary-btn" type="button" data-i18n="viewFinalSummary">ดูสรุปการฝึกงาน</button>
+      </section>
+
+      <section class="main-grid">
+        <article class="card progress-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-i18n="todayProgress">ความคืบหน้าวันนี้</p>
+              <h3 data-i18n="workdayTitle">ความคืบหน้าวันทำงาน</h3>
+            </div>
+            <span id="statusBadge" class="status-badge working">● <span data-i18n="working">กำลังทำงาน</span></span>
+          </div>
+
+          <div class="progress-layout">
+            <div id="dailyProgressRing" class="progress-ring" style="--progress: 0deg;">
+              <div class="progress-ring-inner">
+                <strong id="dailyPercent">0.0%</strong>
+                <span data-i18n="completed">ผ่านไปแล้ว</span>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-box"><span class="stat-icon">✓</span><div><span class="stat-label" data-i18n="worked">ทำงานแล้ว</span><strong id="workedTime">0h 0m</strong></div></div>
+              <div class="stat-box"><span class="stat-icon">⌛</span><div><span class="stat-label" data-i18n="remaining">เหลือเวลา</span><strong id="remainingTime">8h 0m</strong></div></div>
+              <div class="stat-box"><span class="stat-icon">🏁</span><div><span class="stat-label" data-i18n="finishTime">เลิกงาน</span><strong>16:10</strong></div></div>
+              <div class="stat-box"><span class="stat-icon">☕</span><div><span class="stat-label" data-i18n="nextBreak">พักครั้งถัดไป</span><strong id="nextBreakValue">09:00</strong></div></div>
+            </div>
+          </div>
+
+          <div class="milestone-wrap">
+            <div class="milestone-copy">
+              <span class="eyebrow" data-i18n="dailyMilestone">เป้าหมายวันนี้</span>
+              <strong id="milestoneText">เริ่มต้นวันทำงาน</strong>
+            </div>
+            <div id="milestoneDots" class="milestone-dots" aria-label="Daily milestones"></div>
+          </div>
+        </article>
+
+        <article class="card live-countdown-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-i18n="liveCountdown">LIVE COUNTDOWN</p>
+              <h3 id="liveCountdownTitle">ถึงช่วงพักถัดไป</h3>
+            </div>
+            <span id="liveCountdownIcon" class="countdown-icon" aria-hidden="true">☕</span>
+          </div>
+          <div id="liveCountdownTime" class="digital-countdown">01:15:00</div>
+          <p id="liveCountdownHint" class="muted">พักครั้งถัดไปเวลา 11:00</p>
+          <div class="mini-progress-track"><div id="liveCountdownBar" class="mini-progress-fill"></div></div>
+        </article>
+      </section>
+
+      <section class="card timeline-card">
+        <div class="section-heading timeline-heading">
+          <div><p class="eyebrow" data-i18n="todayTimeline">ตารางเวลาวันนี้</p><h3 data-i18n="scheduleTitle">ตารางเวลาทำงานและพัก</h3></div>
+          <div class="timeline-legend"><span><i class="legend-dot work-dot"></i><span data-i18n="work">ทำงาน</span></span><span><i class="legend-dot break-dot"></i><span data-i18n="break">พัก</span></span></div>
+        </div>
+        <div id="timelineTrack" class="timeline-track"></div>
+        <div id="timelineLabels" class="timeline-labels"></div>
+        <div id="scheduleList" class="schedule-list"></div>
+      </section>
+
+      <section class="three-grid">
+        <article class="card internship-card">
+          <div class="section-heading">
+            <div><p class="eyebrow" data-i18n="internshipProgress">ความคืบหน้าการฝึกงาน</p><h3 data-i18n="journeyTitle">เส้นทางการฝึกงาน</h3></div>
+            <span id="internshipPercentBadge" class="percentage-chip">0%</span>
+          </div>
+          <div class="internship-progress-track" aria-label="Internship progress"><div id="internshipProgressBar" class="internship-progress-fill"></div></div>
+          <div class="internship-kpis">
+            <div><span data-i18n="workdayNumber">วันทำงาน</span><strong id="workdayCounter">วันที่ 1 / 129</strong></div>
+            <div><span data-i18n="workdaysLeft">วันทำงานที่เหลือ</span><strong id="daysLeft">128</strong></div>
+            <div><span data-i18n="workHoursLeft">ชั่วโมงทำงานที่เหลือ</span><strong id="hoursLeft">1,024 h</strong></div>
+          </div>
+          <div class="date-range-box">
+            <div><span data-i18n="startDate">เริ่มต้น</span><strong id="internshipStartLabel">05 MAY 2026</strong></div>
+            <span class="date-range-arrow">→</span>
+            <div class="align-right"><span data-i18n="endDate">สิ้นสุด</span><strong id="internshipEndLabel">30 OCT 2026</strong></div>
+          </div>
+        </article>
+
+        <article class="card weekly-card">
+          <div class="section-heading">
+            <div><p class="eyebrow" data-i18n="thisWeek">สัปดาห์นี้</p><h3 data-i18n="weeklyProgress">ความคืบหน้าสัปดาห์นี้</h3></div>
+            <span id="weekPercentBadge" class="percentage-chip subtle">0%</span>
+          </div>
+          <div id="weeklyProgressList" class="weekly-progress-list"></div>
+          <div class="weekly-total"><span data-i18n="weekTotal">รวมสัปดาห์นี้</span><strong id="weeklyHoursTotal">0h / 40h</strong></div>
+          <p id="weeklySummary" class="muted weekly-summary"></p>
+        </article>
+
+        <article class="card countdown-card">
+          <div class="section-heading"><div><p class="eyebrow" data-i18n="countdown">นับถอยหลัง</p><h3 data-i18n="untilEnd">ถึงวันสิ้นสุดการฝึกงาน</h3></div></div>
+          <div class="countdown-number-wrap"><strong id="calendarDaysLeft" class="countdown-number">0</strong><span data-i18n="calendarDays">วันตามปฏิทิน</span></div>
+          <div class="countdown-secondary">
+            <div><span data-i18n="workingDays">วันทำงาน</span><strong id="countdownWorkdays">0</strong></div>
+            <div><span data-i18n="workingHours">ชั่วโมงทำงาน</span><strong id="countdownHours">0h</strong></div>
+          </div>
+          <p id="countdownSentence" class="muted">เหลืออีก 0 วันทำงาน ถึง 30 ตุลาคม 2569</p>
+        </article>
+      </section>
+
+      <section class="card journey-overview-card">
+        <div class="section-heading journey-heading">
+          <div>
+            <p class="eyebrow" data-i18n="journeySoFar">MY INTERNSHIP JOURNEY</p>
+            <h3 data-i18n="achievementSummaryTitle">ความสำเร็จที่ผ่านมา</h3>
+            <p class="muted section-subtitle" data-i18n="achievementSummarySubtitle">ดูว่าคุณลงทุนเวลาและเดินทางมาไกลแค่ไหนแล้ว</p>
+          </div>
+          <div class="journey-actions">
+            <button id="snapshotBtn" class="outline-btn" type="button">📸 <span data-i18n="createSnapshot">สร้าง Snapshot</span></button>
+            <button id="statsOpen" class="outline-btn" type="button"><span data-i18n="viewAllStatistics">ดูสถิติทั้งหมด</span> →</button>
+          </div>
+        </div>
+
+        <div class="journey-kpi-grid">
+          <div class="journey-kpi primary-kpi">
+            <span class="journey-kpi-icon">⏱</span>
+            <span class="journey-kpi-label" data-i18n="totalWorkTime">เวลาทำงานสะสม</span>
+            <strong id="totalWorkTime">0h 00m</strong>
+            <small id="totalWorkMinutes">0 นาทีทำงาน</small>
+          </div>
+          <div class="journey-kpi">
+            <span class="journey-kpi-icon">📅</span>
+            <span class="journey-kpi-label" data-i18n="workdaysReached">วันทำงานที่ผ่านมาถึง</span>
+            <strong id="workdaysReached">0</strong>
+            <small id="fullDaysCompleted">0 วันเต็มสำเร็จแล้ว</small>
+          </div>
+          <div class="journey-kpi">
+            <span class="journey-kpi-icon">🏆</span>
+            <span class="journey-kpi-label" data-i18n="achievementsUnlocked">Achievement ที่ปลดล็อก</span>
+            <strong id="achievementCount">0 / 10</strong>
+            <small id="achievementLatest">—</small>
+          </div>
+          <div class="journey-kpi">
+            <span class="journey-kpi-icon">🔥</span>
+            <span class="journey-kpi-label" data-i18n="currentStreak">Work Streak ปัจจุบัน</span>
+            <strong id="currentStreak">0 days</strong>
+            <small id="longestStreak">Longest: 0 days</small>
+          </div>
+        </div>
+
+        <div class="next-milestone-card">
+          <div class="milestone-trophy" aria-hidden="true">🏆</div>
+          <div class="next-milestone-copy">
+            <span class="eyebrow" data-i18n="nextMilestone">NEXT MILESTONE</span>
+            <h4 id="nextMilestoneTitle">800 HOURS</h4>
+            <p id="nextMilestoneRemaining" class="muted">เหลืออีก 19h 03m</p>
+            <p id="nextMilestoneExpected" class="milestone-expected">คาดว่าจะถึงเป้าหมาย —</p>
+          </div>
+          <div class="next-milestone-progress">
+            <div class="next-milestone-bar"><div id="nextMilestoneFill"></div></div>
+            <strong id="nextMilestonePercent">0%</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card attendance-card">
+        <div class="section-heading attendance-heading">
+          <div>
+            <p class="eyebrow" data-i18n="attendanceOverview">ATTENDANCE & TIME BALANCE</p>
+            <h3 data-i18n="attendanceTitle">เวลาเข้าเป้าและเวลาที่หายไป</h3>
+            <p class="muted section-subtitle" data-i18n="attendanceHelp">แยกเวลาที่ทำงานจริง เวลาที่หายจากการลา วันหยุดบริษัท และวันทำงานชดเชยออกจากกัน</p>
+          </div>
+          <span id="attendancePercentBadge" class="percentage-chip subtle">100.0%</span>
+        </div>
+        <div class="attendance-kpi-grid">
+          <div class="attendance-kpi leave-kpi"><span class="attendance-kpi-icon">🏖</span><span data-i18n="leaveTimeLost">เวลาที่หายไปจากการลา</span><strong id="leaveTimeLost">0h 00m</strong><small id="leaveDaysDetail">ยังไม่มีเวลาที่หายจากการลา</small></div>
+          <div class="attendance-kpi holiday-kpi"><span class="attendance-kpi-icon">🏢</span><span data-i18n="companyHolidays">วันหยุดบริษัท</span><strong id="companyHolidayCount">0 วัน</strong><small id="companyHolidayDetail">ไม่นับเป็นเวลาที่หายไป</small></div>
+          <div class="attendance-kpi comp-kpi"><span class="attendance-kpi-icon">🔄</span><span data-i18n="compensatoryWork">งานชดเชย</span><strong id="compWorkTime">0h 00m</strong><small id="compWorkDetail">0 วัน · ทำงานแล้ว 0h</small></div>
+          <div class="attendance-kpi attendance-kpi-main"><span class="attendance-kpi-icon">🧭</span><span data-i18n="attendanceRate">Attendance</span><strong id="attendancePercent">100.0%</strong><small id="attendanceDetail">จริง 0h / ควรได้ 0h</small></div>
+        </div>
+        <div class="time-balance-panel">
+          <div class="time-balance-head"><div><span class="eyebrow" data-i18n="timeBalance">TIME BALANCE</span><strong id="timeBalanceMessage">ตรงตามแผน</strong></div><div id="timeBalanceValue" class="time-balance-number">0h 00m</div></div>
+          <div class="time-balance-metrics">
+            <div><span data-i18n="expectedByToday">ชั่วโมงที่ควรสะสมถึงวันนี้</span><strong id="expectedByToday">0h 00m</strong></div>
+            <div><span data-i18n="actualByToday">ชั่วโมงทำงานจริง</span><strong id="actualByToday">0h 00m</strong></div>
+            <div><span data-i18n="leaveImpact">เวลาลา</span><strong id="timeBalanceLeave">−0h 00m</strong></div>
+          </div>
+          <div class="time-balance-track"><div id="timeBalanceFill"></div></div>
+        </div>
+      </section>
+
+      <section class="card journey-timeline-card">
+        <div class="section-heading">
+          <div><p class="eyebrow" data-i18n="journeyTimeline">JOURNEY TIMELINE</p><h3 data-i18n="fromFirstToLast">จากวันแรกถึงวันสุดท้าย</h3></div>
+          <span id="journeyWeekBadge" class="percentage-chip subtle">Week 1 / 26</span>
+        </div>
+        <div class="journey-line-wrap">
+          <div class="journey-line"><div id="journeyLineFill" class="journey-line-fill"></div><div id="journeyNowMarker" class="journey-now-marker"><span data-i18n="youAreHere">คุณอยู่ตรงนี้</span></div></div>
+          <div id="journeyMarkers" class="journey-markers"></div>
+        </div>
+        <div class="journey-record-strip">
+          <div><span data-i18n="plannedHours">ชั่วโมงทั้งหมดตามแผน</span><strong id="plannedHoursInline">1,032 h</strong></div>
+          <div><span data-i18n="weeksSinceStart">สัปดาห์ที่เดินทางมา</span><strong id="weeksSinceStart">20 / 26</strong></div>
+          <div><span data-i18n="daysSinceStart">วันตามปฏิทินตั้งแต่เริ่ม</span><strong id="daysSinceStart">136</strong></div>
+        </div>
+      </section>
+
+      <section class="smart-journey-grid">
+        <article class="card forecast-card">
+          <div class="section-heading">
+            <div><p class="eyebrow" data-i18n="futureMilestones">FUTURE MILESTONES</p><h3 data-i18n="milestonePredictor">ตัวคาดการณ์ Milestone</h3></div>
+            <span class="smart-badge">🔮</span>
+          </div>
+          <p class="muted smart-section-help" data-i18n="milestonePredictorHelp">คำนวณวันที่และเวลาที่คาดว่าจะไปถึงเป้าหมาย โดยข้าม Break, Weekend, Holiday และ Leave</p>
+          <div id="milestoneForecastList" class="forecast-list"></div>
+        </article>
+
+        <article class="card time-machine-card">
+          <div class="section-heading">
+            <div><p class="eyebrow" data-i18n="timeMachine">TIME MACHINE</p><h3 data-i18n="dayReplay">จำลองเวลาในวันทำงาน</h3></div>
+            <button id="timeMachineNow" class="small-text-btn" type="button" data-i18n="jumpToNow">ตอนนี้</button>
+          </div>
+          <p class="muted smart-section-help" data-i18n="timeMachineHelp">เลือกวันและลากเวลาเพื่อดูว่า ณ ช่วงเวลานั้น Progress จะเป็นเท่าไร</p>
+          <label class="replay-date-field"><span data-i18n="replayDate">วันที่จำลอง</span><input id="timeMachineDate" type="date" min="2026-05-05" max="2026-10-30" /></label>
+          <div class="replay-display">
+            <div><span data-i18n="simulatedTime">เวลาจำลอง</span><strong id="timeMachineClock">07:00</strong></div>
+            <div><span data-i18n="simulatedProgress">Progress</span><strong id="timeMachinePercent">0.0%</strong></div>
+            <div><span data-i18n="simulatedStatus">สถานะ</span><strong id="timeMachineStatus">—</strong></div>
+          </div>
+          <input id="timeMachineRange" class="time-machine-range" type="range" min="420" max="970" step="1" value="420" />
+          <div class="time-machine-labels"><span>07:00</span><span>09:00</span><span>11:00</span><span>14:00</span><span>16:10</span></div>
+          <div class="replay-progress"><div id="timeMachineFill"></div></div>
+          <p id="timeMachineSummary" class="muted replay-summary"></p>
+        </article>
+      </section>
+
+      <section class="card heatmap-card">
+        <div class="section-heading heatmap-heading">
+          <div><p class="eyebrow" data-i18n="internshipHeatmap">INTERNSHIP HEATMAP</p><h3 data-i18n="journeyAtGlance">เส้นทางทั้งหมดในภาพเดียว</h3></div>
+          <div class="heatmap-legend"><span><i class="heat-0"></i>0h</span><span><i class="heat-1"></i>1–4h</span><span><i class="heat-2"></i>4–8h</span><span><i class="heat-3"></i>8h</span></div>
+        </div>
+        <p class="muted smart-section-help" data-i18n="heatmapHelp">สีเข้มขึ้นตามชั่วโมงทำงานของแต่ละวัน และแสดง Leave / Holiday แยกต่างหาก</p>
+        <div id="heatmapMonths" class="heatmap-months"></div>
+      </section>
+
+      <section class="card journey-story-card">
+        <div class="section-heading story-heading">
+          <div><p class="eyebrow" data-i18n="journeyStory">JOURNEY STORY</p><h3 data-i18n="storyTitle">เรื่องราวของการฝึกงาน</h3></div>
+          <span id="storyProgressBadge" class="percentage-chip subtle">0%</span>
+        </div>
+        <p class="muted smart-section-help" data-i18n="storyHelp">เหตุการณ์สำคัญที่ผ่านแล้วและเป้าหมายที่จะเกิดขึ้นต่อจากนี้</p>
+        <div id="journeyStoryList" class="journey-story-list"></div>
+      </section>
+
+      <section class="card calendar-card">
+        <div class="section-heading calendar-heading">
+          <div>
+            <p class="eyebrow" data-i18n="calendar">ปฏิทิน</p>
+            <h3 id="calendarMonthTitle">กันยายน 2569</h3>
+            <p class="calendar-instruction muted" data-i18n="calendarInstruction">คลิกวันที่เพื่อกำหนดวันหยุดบริษัท วันลา หรือวันทำงานชดเชย</p>
+          </div>
+          <div class="calendar-nav">
+            <button id="calendarPrev" class="small-icon-btn" type="button" aria-label="Previous month">‹</button>
+            <button id="calendarToday" class="small-text-btn" type="button" data-i18n="today">วันนี้</button>
+            <button id="calendarNext" class="small-icon-btn" type="button" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <div id="calendarWeekdays" class="calendar-weekdays"></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        <div class="calendar-footnote">
+          <span><i class="calendar-key completed-key"></i><span data-i18n="pastWorkday">วันทำงานที่ผ่านมา</span></span>
+          <span><i class="calendar-key today-key"></i><span data-i18n="today">วันนี้</span></span>
+          <span><i class="calendar-key holiday-key"></i><span data-i18n="companyHoliday">วันหยุดบริษัท</span></span>
+          <span><i class="calendar-key leave-key"></i><span data-i18n="personalLeave">วันลา</span></span>
+          <span><i class="calendar-key custom-work-key"></i><span data-i18n="compensatoryWorkday">วันทำงานชดเชย</span></span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><span data-i18n="footerText">Workday Progress Dashboard V4.1 · ใช้งานแบบออฟไลน์ได้</span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
+  </div>
+
+  <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
+  <aside id="settingsPanel" class="settings-panel" aria-hidden="true">
+    <div class="settings-header"><div><p class="eyebrow" data-i18n="personalize">ปรับแต่ง</p><h2 data-i18n="settings">ตั้งค่า</h2></div><button id="settingsClose" class="icon-btn" type="button" aria-label="Close settings">×</button></div>
+    <div class="settings-content">
+      <section class="setting-group"><label for="fontFamilySelect" data-i18n="fontFamily">รูปแบบตัวอักษร</label><select id="fontFamilySelect"><option value="sarabun">Sarabun · Local Project Font</option><option value="system">System UI</option><option value="noto">Noto Sans Thai</option><option value="ibm">IBM Plex Sans Thai</option><option value="leelawadee">Leelawadee UI</option><option value="tahoma">Tahoma</option></select><p class="setting-help" data-i18n="fontHelp">Sarabun จะโหลดจากไฟล์ภายในโปรเจกต์ หลังติดตั้งครั้งแรกด้วย setup-sarabun-font.bat และใช้งาน Offline ได้</p></section>
+      <section class="setting-group two-column-setting"><div><label for="fontSizeSelect" data-i18n="fontSize">ขนาดตัวอักษร</label><select id="fontSizeSelect"><option value="small" data-i18n="small">เล็ก</option><option value="medium" data-i18n="medium">กลาง</option><option value="large" data-i18n="large">ใหญ่</option></select></div><div><label for="themeSelect" data-i18n="theme">ธีม</label><select id="themeSelect"><option value="system" data-i18n="systemTheme">ตามระบบ</option><option value="light" data-i18n="lightTheme">สว่าง</option><option value="dark" data-i18n="darkTheme">มืด</option></select></div></section>
+      <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option></select></div></section>
+      <section class="setting-group toggle-setting-group"><label class="toggle-row"><span><strong data-i18n="showSeconds">แสดงวินาที</strong><small data-i18n="showSecondsHelp">แสดงวินาทีในนาฬิกาหลัก</small></span><input id="showSecondsToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="animations">Animation</strong><small data-i18n="animationsHelp">เปิดการเคลื่อนไหวของ Progress และ Card</small></span><input id="animationToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="dynamicMood">Dynamic Dashboard Mood</strong><small data-i18n="dynamicMoodHelp">เปลี่ยนบรรยากาศพื้นหลังตามช่วงเวลาและสถานะการทำงาน</small></span><input id="dynamicMoodToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="smartNotifications">Smart Notifications</strong><small data-i18n="smartNotificationsHelp">แจ้งเตือนก่อนพัก กลับเข้าทำงาน เหลือ 1 ชั่วโมง และจบวันทำงาน</small></span><input id="notificationToggle" type="checkbox" /><i class="toggle-ui"></i></label></section>
+      <section class="setting-group pwa-setting-card"><div><strong data-i18n="pwaTitle">ติดตั้งเป็นแอป</strong><p class="setting-help" data-i18n="pwaHelp">เมื่อเปิดผ่าน HTTPS เช่น Vercel สามารถติดตั้ง Dashboard เป็น PWA และใช้งานแบบ Offline หลังโหลดทรัพยากรแล้ว</p></div><button id="settingsInstallBtn" class="outline-btn" type="button"><span data-i18n="installApp">ติดตั้งแอป</span></button></section>
+      <section class="setting-info-card"><div><span data-i18n="schedule">เวลาทำงาน</span><strong>07:00 – 16:10</strong></div><div><span data-i18n="workTime">เวลาทำงานจริง</span><strong>8h 00m</strong></div><div><span data-i18n="totalBreak">เวลาพักรวม</span><strong>1h 10m</strong></div><div><span data-i18n="internshipRange">ช่วงฝึกงาน</span><strong>05/05/2026 – 30/10/2026</strong></div></section>
+      <button id="resetSettings" class="reset-btn" type="button" data-i18n="resetSettings">คืนค่าเริ่มต้น</button>
+    </div>
+  </aside>
+
+  <div id="dayModalBackdrop" class="modal-backdrop" hidden></div>
+  <section id="dayModal" class="day-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="dayModalTitle">
+    <div class="modal-header"><div><p class="eyebrow" data-i18n="calendarDaySetting">CALENDAR DAY</p><h2 id="dayModalTitle">17 กันยายน 2569</h2></div><button id="dayModalClose" class="icon-btn" type="button" aria-label="Close">×</button></div>
+    <p id="dayModalDescription" class="muted"></p>
+    <div class="day-type-grid">
+      <button class="day-type-btn" data-day-type="default" type="button"><span>↺</span><strong data-i18n="normalSchedule">ตารางปกติ</strong><small data-i18n="normalScheduleHelp">ใช้จันทร์–ศุกร์ตามปกติ</small></button>
+      <button class="day-type-btn holiday-option" data-day-type="holiday" type="button"><span>🏢</span><strong data-i18n="companyHoliday">วันหยุดบริษัท</strong><small data-i18n="companyHolidayDayHelp">ไม่นับเป็นเวลาที่หายไป</small></button>
+      <button class="day-type-btn leave-option" data-day-type="leave" type="button"><span>🏖</span><strong data-i18n="personalLeave">วันลา</strong><small data-i18n="personalLeaveHelp">นับเวลาที่ลาเป็นเวลาที่หายไป</small></button>
+      <button class="day-type-btn work-option" data-day-type="work" type="button"><span>🔄</span><strong data-i18n="compensatoryWorkday">วันทำงานชดเชย</strong><small data-i18n="compensatoryWorkdayHelp">นับเหมือนวันทำงานปกติ</small></button>
+    </div>
+    <div id="leaveDetailsPanel" class="leave-details-panel" hidden>
+      <div class="leave-details-heading"><div><span class="eyebrow" data-i18n="leaveDuration">ระยะเวลาลา</span><strong id="leaveDurationPreview">เวลาที่หายจากวันลา: 8h 00m</strong></div><span class="leave-pill">− TIME</span></div>
+      <div class="leave-mode-grid">
+        <button class="leave-mode-btn selected" data-leave-mode="full" type="button"><strong data-i18n="fullDayLeave">เต็มวัน</strong><small data-i18n="fullDayLeaveHelp">ลา 8 ชั่วโมง</small></button>
+        <button class="leave-mode-btn" data-leave-mode="half" type="button"><strong data-i18n="halfDayLeave">ครึ่งวัน</strong><small data-i18n="halfDayLeaveHelp">ลา 4 ชั่วโมง</small></button>
+        <button class="leave-mode-btn" data-leave-mode="custom" type="button"><strong data-i18n="customLeave">กำหนดเอง</strong><small data-i18n="customLeaveHelp">กำหนดชั่วโมงและนาทีที่ลา</small></button>
+      </div>
+      <div class="leave-custom-fields">
+        <label><span data-i18n="hoursField">ชั่วโมง</span><input id="leaveHoursInput" type="number" min="0" max="8" step="1" value="8" /></label>
+        <span class="leave-time-colon">:</span>
+        <label><span data-i18n="minutesField">นาที</span><input id="leaveMinutesInput" type="number" min="0" max="59" step="5" value="0" /></label>
+      </div>
+    </div>
+    <label class="note-field"><span data-i18n="noteOptional">หมายเหตุ (ไม่บังคับ)</span><input id="dayNoteInput" type="text" maxlength="80" placeholder="เช่น วันหยุดบริษัท" /></label>
+    <div class="modal-actions"><button id="dayModalCancel" class="secondary-btn" type="button" data-i18n="cancel">ยกเลิก</button><button id="dayModalSave" class="primary-btn" type="button" data-i18n="save">บันทึก</button></div>
+  </section>
+
+  <div id="statsModalBackdrop" class="modal-backdrop" hidden></div>
+  <section id="statsModal" class="stats-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="statsModalTitle">
+    <div class="modal-header sticky-modal-header"><div><p class="eyebrow" data-i18n="detailedStats">DETAILED STATISTICS</p><h2 id="statsModalTitle" data-i18n="yourJourneySoFar">เส้นทางของคุณจนถึงตอนนี้</h2></div><button id="statsModalClose" class="icon-btn" type="button" aria-label="Close">×</button></div>
+    <div class="stats-modal-content">
+      <section class="stats-hero">
+        <span class="stats-hero-icon">⏱</span>
+        <div><span data-i18n="totalWorkTime">เวลาทำงานสะสม</span><strong id="statsTotalWorkTime">0h 00m</strong><small id="statsTotalMinutes">0 working minutes</small></div>
+      </section>
+      <section class="stats-attendance-section"><div class="modal-section-title"><div><p class="eyebrow" data-i18n="attendanceStatistics">ATTENDANCE STATISTICS</p><h3 data-i18n="attendanceAndBalance">Attendance & Time Balance</h3></div></div><div id="statsAttendanceGrid" class="stats-attendance-grid"></div><p id="statsBalanceMessage" class="stats-balance-message muted"></p></section>
+      <section><div class="modal-section-title"><div><p class="eyebrow" data-i18n="internshipRecords">INTERNSHIP RECORDS</p><h3 data-i18n="recordsAndHighlights">สถิติและไฮไลต์</h3></div></div><div id="recordsGrid" class="records-grid"></div></section>
+      <section><div class="modal-section-title"><div><p class="eyebrow" data-i18n="monthlyStatistics">MONTHLY STATISTICS</p><h3 data-i18n="workHoursByMonth">ชั่วโมงทำงานรายเดือน</h3></div><span id="mostActiveMonth" class="mini-chip"></span></div><div id="monthlyStatsList" class="monthly-stats-list"></div></section>
+      <section><div class="modal-section-title"><div><p class="eyebrow" data-i18n="trophyRoom">TROPHY ROOM</p><h3 data-i18n="achievementShowcase">Achievement Showcase</h3></div><span id="statsAchievementCount" class="percentage-chip subtle">0 / 10</span></div><div id="achievementsGrid" class="achievements-grid"></div></section>
+      <section><div class="modal-section-title"><div><p class="eyebrow" data-i18n="shareJourney">SHARE YOUR JOURNEY</p><h3 data-i18n="snapshotCard">Journey Snapshot</h3></div></div><div class="snapshot-callout"><div><span class="snapshot-callout-icon">📸</span><p data-i18n="snapshotHelp">สร้างภาพสรุป 1600×900 จากสถิติปัจจุบัน เหมาะสำหรับเก็บเป็น Portfolio หรือแชร์ให้เพื่อน</p></div><button id="statsSnapshotBtn" class="primary-btn" type="button" data-i18n="createSnapshot">สร้าง Snapshot</button></div></section>
+    </div>
+  </section>
+
+  <div id="achievementModalBackdrop" class="modal-backdrop achievement-backdrop" hidden></div>
+  <section id="achievementModal" class="achievement-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="achievementModalTitle">
+    <div id="achievementModalIcon" class="achievement-modal-icon">🏆</div>
+    <p class="eyebrow" data-i18n="achievementUnlocked">ACHIEVEMENT UNLOCKED!</p>
+    <h2 id="achievementModalTitle">750 HOURS</h2>
+    <p id="achievementModalDescription" class="muted"></p>
+    <p id="achievementModalMeta" class="achievement-modal-meta"></p>
+    <button id="achievementModalClose" class="primary-btn wide-btn" type="button" data-i18n="awesome">เยี่ยมมาก!</button>
+  </section>
+
+  <div id="completionModalBackdrop" class="modal-backdrop completion-backdrop" hidden></div>
+  <section id="completionModal" class="completion-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="completionModalTitle">
+    <button id="completionModalClose" class="icon-btn completion-close" type="button" aria-label="Close">×</button>
+    <div class="completion-cap">🎓</div>
+    <p class="eyebrow" data-i18n="journeyComplete">JOURNEY COMPLETE</p>
+    <h2 id="completionModalTitle" data-i18n="internshipCompleted">ฝึกงานสำเร็จแล้ว!</h2>
+    <p class="muted" data-i18n="completionMessage">คุณเดินทางตั้งแต่ 5 พฤษภาคม ถึง 30 ตุลาคม 2569 ครบเรียบร้อยแล้ว</p>
+    <div class="completion-stats">
+      <div><strong id="completionTotalHours">0</strong><span data-i18n="hoursLabel">HOURS</span></div>
+      <div><strong id="completionWorkdays">0</strong><span data-i18n="workdaysLabel">WORKDAYS</span></div>
+      <div><strong id="completionWeeks">0</strong><span data-i18n="weeksLabel">WEEKS</span></div>
+      <div><strong>100%</strong><span data-i18n="journeyLabel">JOURNEY</span></div>
+    </div>
+    <div class="completion-attendance-grid">
+      <div><strong id="completionLeaveTime">0h 00m</strong><span data-i18n="finalLeaveTime">เวลาลา</span></div>
+      <div><strong id="completionHolidayCount">0</strong><span data-i18n="finalCompanyHolidays">วันหยุดบริษัท</span></div>
+      <div><strong id="completionCompTime">0h 00m</strong><span data-i18n="finalCompWork">งานชดเชย</span></div>
+      <div><strong id="completionAttendance">100%</strong><span data-i18n="finalAttendance">Attendance</span></div>
+    </div>
+    <div class="completion-achievement-line">🏆 <span id="completionAchievementText">All achievements unlocked</span></div>
+    <button id="completionSnapshotBtn" class="primary-btn completion-snapshot-btn" type="button">📸 <span data-i18n="createFinalSnapshot">สร้าง Final Snapshot</span></button>
+  </section>
+
+  <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+  <script src="app.js"></script>
+</body>
+</html>
