@@ -34,6 +34,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`Workday Journey V5.1.1: http://localhost:${port}`);
+  console.log(`Workday Journey V5.2.0: http://localhost:${port}`);
   console.log("Press Ctrl+C to stop.");
 });

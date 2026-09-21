@@ -1,4 +1,4 @@
-# Workday Journey V5.1
+# Workday Journey V5.2
 
 A bilingual **work / internship journey dashboard** built with plain HTML, CSS and JavaScript. It works without a backend or database and is designed for GitHub + Vercel deployment.
 
@@ -68,7 +68,7 @@ The site can load Sarabun from Google Fonts when online. For local offline use, 
 
 ---
 
-**Version:** 5.0.0  
+**Version:** 5.2.0  
 **Stack:** HTML / CSS / JavaScript / PWA  
 **Storage:** Browser localStorage
 
@@ -85,3 +85,14 @@ V5.1.1 LIGHT DEFAULT
 - Browsers still using the previous System default are migrated once to Light.
 - Explicit Light or Dark choices are preserved.
 - Reset Settings now returns to Light theme.
+
+
+## V5.2 - First-time Calendar & Attendance Setup
+
+- Adds a fourth First-Time Setup step for Calendar & Attendance.
+- Users can mark Company Holiday, Personal Leave, Compensatory Workday, or clear a date before entering the dashboard.
+- Personal Leave in setup supports full day, half day, and custom duration.
+- Default company holidays are preloaded: 27/07/2026, 28/07/2026, 12/08/2026, and 13/10/2026.
+- Default holiday dates can be removed, restored, or supplemented by the user.
+- V5.2 performs a one-time reset of older Workday Journey browser data so returning visitors see the complete First-Time Setup again.
+- Service Worker cache is bumped to V5.2.0 for Vercel/PWA refresh reliability.

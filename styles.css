@@ -854,3 +854,66 @@ body.setup-open { overflow: hidden; }
   .data-tools-grid { grid-template-columns: 1fr; }
   .setting-section-heading { align-items: stretch; flex-direction: column; }
 }
+
+
+/* V5.2 - First-time Calendar & Attendance setup */
+.setup-calendar-preset {
+  margin: 2px 0 14px; padding: 13px 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+  border: 1px solid var(--border); border-radius: 15px; background: var(--surface-soft);
+}
+.setup-calendar-preset strong { font-size: .78rem; }
+.setup-calendar-preset p { margin: 3px 0 8px; color: var(--muted); font-size: .67rem; line-height: 1.45; }
+.compact-action { min-height: 36px; padding: 7px 11px; font-size: .68rem; white-space: nowrap; }
+.setup-holiday-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.setup-holiday-chip {
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 5px 9px; font: inherit; font-size: .64rem; font-weight: 750; cursor: pointer;
+}
+.setup-holiday-chip.active { border-color: color-mix(in srgb,var(--holiday) 42%,var(--border)); background: var(--holiday-soft); color: var(--holiday); }
+.setup-holiday-chip.out-of-range { opacity: .48; }
+.setup-calendar-tools { display: grid; gap: 10px; margin-bottom: 8px; }
+.setup-day-type-toolbar { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+.setup-day-type-btn {
+  min-height: 54px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--border); border-radius: 13px;
+  background: var(--surface); color: var(--muted); font: inherit; cursor: pointer; transition: .16s ease;
+}
+.setup-day-type-btn span { font-size: 1rem; }
+.setup-day-type-btn strong { font-size: .68rem; }
+.setup-day-type-btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb,var(--accent) 35%,var(--border)); }
+.setup-day-type-btn.selected { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 2px color-mix(in srgb,var(--accent) 12%,transparent); }
+.setup-day-type-btn.holiday.selected { color: var(--holiday); border-color: color-mix(in srgb,var(--holiday) 55%,var(--border)); background: var(--holiday-soft); }
+.setup-day-type-btn.leave.selected { color: var(--leave); border-color: color-mix(in srgb,var(--leave) 55%,var(--border)); background: var(--leave-soft); }
+.setup-day-type-btn.work.selected { color: var(--special-work); border-color: color-mix(in srgb,var(--special-work) 55%,var(--border)); background: var(--special-work-soft); }
+.setup-calendar-leave-panel { padding: 10px 12px; border: 1px dashed var(--border); border-radius: 13px; background: var(--surface-soft); display: flex; gap: 10px; align-items: end; }
+.setup-calendar-leave-panel[hidden] { display: none; }
+.setup-calendar-leave-panel label { display: grid; gap: 5px; flex: 1; }
+.setup-calendar-leave-panel label span { color: var(--muted); font-size: .65rem; font-weight: 800; }
+.setup-calendar-leave-panel select, .setup-calendar-leave-panel input { width: 100%; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); padding: 8px 10px; font: inherit; }
+.setup-calendar-custom-leave { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
+.setup-calendar-custom-leave[hidden] { display: none; }
+.setup-calendar-hint, .setup-calendar-footer-note { margin: 8px 0; color: var(--muted); font-size: .66rem; line-height: 1.5; }
+.setup-mini-calendar { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); overflow: hidden; }
+.setup-mini-calendar-head { display: grid; grid-template-columns: 38px 1fr 38px; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--border); }
+.setup-mini-calendar-head strong { text-align: center; font-size: .85rem; }
+.setup-mini-weekdays, .setup-mini-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+.setup-mini-weekdays { padding: 7px 8px 3px; color: var(--muted); font-size: .6rem; font-weight: 800; text-align: center; }
+.setup-mini-grid { gap: 4px; padding: 5px 8px 10px; }
+.setup-calendar-day { position: relative; min-height: 42px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+.setup-calendar-day > span { font-weight: 750; font-size: .72rem; }
+.setup-calendar-day > i { position: absolute; right: 3px; bottom: 2px; font-style: normal; font-size: .62rem; }
+.setup-calendar-day:hover:not(:disabled) { background: var(--surface-soft); border-color: var(--border); }
+.setup-calendar-day.holiday { background: var(--holiday-soft); color: var(--holiday); border-color: color-mix(in srgb,var(--holiday) 25%,transparent); }
+.setup-calendar-day.leave { background: var(--leave-soft); color: var(--leave); border-color: color-mix(in srgb,var(--leave) 25%,transparent); }
+.setup-calendar-day.work { background: var(--special-work-soft); color: var(--special-work); border-color: color-mix(in srgb,var(--special-work) 25%,transparent); }
+.setup-calendar-day.recommended:not(.holiday)::after { content: ''; position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--holiday); top: 4px; right: 4px; }
+.setup-calendar-day.outside, .setup-calendar-day:disabled { opacity: .3; cursor: default; }
+.setup-calendar-day.blank { pointer-events: none; }
+.setup-calendar-summary { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-size: .68rem; }
+.setup-calendar-summary strong { white-space: nowrap; }
+.setup-progress-item { min-width: 0; }
+@media (max-width: 760px) {
+  .setup-calendar-preset { flex-direction: column; }
+  .setup-day-type-toolbar { grid-template-columns: 1fr 1fr; }
+  .setup-calendar-leave-panel { align-items: stretch; flex-direction: column; }
+  .setup-calendar-summary { align-items: flex-start; flex-direction: column; }
+  .setup-calendar-day { min-height: 38px; }
+}

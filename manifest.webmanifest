@@ -1,5 +1,5 @@
 {
-  "name": "Workday Journey V5",
+  "name": "Workday Journey V5.2",
   "short_name": "Workday Journey",
   "description": "A private-by-default work and internship journey tracker with attendance, achievements, backup/restore, setup wizard, sharing and PWA support.",
   "start_url": "./index.html",

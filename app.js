@@ -1,13 +1,13 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "5.1.1";
-  const DATA_RESET_VERSION = "5.1-profile-calendar-reset";
+  const APP_VERSION = "5.2.0";
+  const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
-  // V5.1 migration: force every browser that used an older Workday Journey build
-  // through First-Time Setup once. Only Workday Journey (wp-*) keys are removed.
-  (function runV51OneTimeReset() {
+  // V5.2 migration: force older browsers through First-Time Setup once,
+  // including the new Calendar & Attendance step. Only Workday Journey (wp-*) keys are removed.
+  (function runV52OneTimeReset() {
     try {
       if (localStorage.getItem(DATA_RESET_MARKER) === DATA_RESET_VERSION) return;
       const keys = [];
@@ -51,6 +51,10 @@
     timezone: "Asia/Bangkok",
     locale: "th-TH"
   };
+  const DEFAULT_COMPANY_HOLIDAYS = ["2026-07-27", "2026-07-28", "2026-08-12", "2026-10-13"];
+  function createDefaultCompanyHolidayOverrides() {
+    return Object.fromEntries(DEFAULT_COMPANY_HOLIDAYS.map(key => [key, { type: "holiday", note: "" }]));
+  }
 
   function readStoredJson(key, fallback) {
     try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
@@ -363,12 +367,16 @@
   // V5 — Multi-user setup, privacy, backup and public deployment
   Object.assign(translations.th, {
     welcomeTitle: "ยินดีต้อนรับสู่ Workday Journey", welcomeSubtitle: "สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้",
-    setupProfile: "โปรไฟล์", setupJourney: "ช่วงเวลา", setupSchedule: "ตารางทำงาน", yourName: "ชื่อ / ชื่อเล่น", optional: "ไม่บังคับ",
+    setupProfile: "โปรไฟล์", setupJourney: "ช่วงเวลา", setupSchedule: "ตารางทำงาน", setupCalendar: "\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19", yourName: "ชื่อ / ชื่อเล่น", optional: "ไม่บังคับ",
     timezone: "เขตเวลา", locale: "รูปแบบวันที่และตัวเลข", next: "ถัดไป", back: "ย้อนกลับ", startJourney: "เริ่ม Journey", saveChanges: "บันทึกการเปลี่ยนแปลง",
     useRecommended: "ใช้ค่าแนะนำ", startDateSetup: "วันเริ่มต้น", endDateSetup: "วันสิ้นสุด", workingDaysSetup: "วันทำงานประจำ",
     workStartSetup: "เวลาเริ่มงาน", workEndSetup: "เวลาเลิกงาน", breaksSetup: "ช่วงพัก", enableBreak: "ใช้งาน", setupValidationDates: "วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น",
     setupValidationTime: "เวลาเลิกงานต้องมากกว่าเวลาเริ่มงาน และต้องมีเวลาทำงานจริง", setupValidationDays: "กรุณาเลือกวันทำงานอย่างน้อย 1 วัน",
     dateInputHelp: "พิมพ์วันที่เอง หรือกดปฏิทินเพื่อเลือก", dateInputFormat: "รูปแบบ",
+    setupCalendarHelp: "\u0e01\u0e33\u0e2b\u0e19\u0e14\u0e27\u0e31\u0e19\u0e2b\u0e22\u0e38\u0e14\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e27\u0e31\u0e19\u0e25\u0e32 \u0e41\u0e25\u0e30\u0e27\u0e31\u0e19\u0e17\u0e33\u0e07\u0e32\u0e19\u0e0a\u0e14\u0e40\u0e0a\u0e22\u0e01\u0e48\u0e2d\u0e19\u0e40\u0e23\u0e34\u0e48\u0e21 Journey",
+    defaultCompanyHolidays: "\u0e27\u0e31\u0e19\u0e2b\u0e22\u0e38\u0e14\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17\u0e04\u0e48\u0e32\u0e40\u0e23\u0e34\u0e48\u0e21\u0e15\u0e49\u0e19", defaultCompanyHolidaysHelp: "\u0e43\u0e2a\u0e48\u0e43\u0e2b\u0e49\u0e41\u0e25\u0e49\u0e27\u0e15\u0e32\u0e21\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e04\u0e38\u0e13\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e25\u0e1a\u0e2b\u0e23\u0e37\u0e2d\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e27\u0e31\u0e19\u0e2d\u0e37\u0e48\u0e19\u0e44\u0e14\u0e49\u0e01\u0e48\u0e2d\u0e19\u0e40\u0e23\u0e34\u0e48\u0e21\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19",
+    restoreDefaultHolidays: "\u0e43\u0e0a\u0e49\u0e27\u0e31\u0e19\u0e2b\u0e22\u0e38\u0e14\u0e04\u0e48\u0e32\u0e40\u0e23\u0e34\u0e48\u0e21\u0e15\u0e49\u0e19", setupCalendarClickHelp: "\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e1b\u0e23\u0e30\u0e40\u0e20\u0e17\u0e27\u0e31\u0e19\u0e14\u0e49\u0e32\u0e19\u0e1a\u0e19 \u0e41\u0e25\u0e49\u0e27\u0e04\u0e25\u0e34\u0e01\u0e27\u0e31\u0e19\u0e17\u0e35\u0e48\u0e43\u0e19\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19 \u0e16\u0e49\u0e32\u0e15\u0e49\u0e2d\u0e07\u0e01\u0e32\u0e23\u0e25\u0e49\u0e32\u0e07\u0e2a\u0e16\u0e32\u0e19\u0e30\u0e43\u0e2b\u0e49\u0e40\u0e25\u0e37\u0e2d\u0e01 \u0e15\u0e32\u0e23\u0e32\u0e07\u0e1b\u0e01\u0e15\u0e34",
+    calendarSetupSummaryTitle: "\u0e2a\u0e23\u0e38\u0e1b\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19", calendarSetupSummary: "\u0e2b\u0e22\u0e38\u0e14\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 {holiday} \u0e27\u0e31\u0e19 \u00b7 \u0e25\u0e32 {leave} \u0e27\u0e31\u0e19 \u00b7 \u0e0a\u0e14\u0e40\u0e0a\u0e22 {work} \u0e27\u0e31\u0e19", setupCalendarEditLater: "\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e41\u0e01\u0e49\u0e44\u0e02\u0e27\u0e31\u0e19\u0e40\u0e2b\u0e25\u0e48\u0e32\u0e19\u0e35\u0e49\u0e44\u0e14\u0e49\u0e20\u0e32\u0e22\u0e2b\u0e25\u0e31\u0e07\u0e08\u0e32\u0e01\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19\u0e2b\u0e25\u0e31\u0e01\u0e43\u0e19 Dashboard",
     profileAndJourney: "โปรไฟล์และ Journey", editJourney: "แก้ไข Journey", privacyMode: "โหมดการแสดงผล", personalMode: "Personal", demoMode: "Public Demo",
     privacyModeHelp: "Demo Mode จะซ่อนชื่อและหมายเหตุส่วนตัว เหมาะสำหรับแชร์หน้าจอหรือ Portfolio", dataAndBackup: "ข้อมูลและ Backup",
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "เริ่ม Journey ใหม่", resetAllData: "ล้างข้อมูลทั้งหมด", resetAllConfirm: "ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่?",
@@ -380,19 +388,23 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5.1 · Multi-user ready · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5.2 · Multi-user ready · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
   });
   Object.assign(translations.en, {
     welcomeTitle: "Welcome to Workday Journey", welcomeSubtitle: "Create your own journey. Your data stays in this browser.",
-    setupProfile: "Profile", setupJourney: "Journey", setupSchedule: "Schedule", yourName: "Name / Nickname", optional: "Optional",
+    setupProfile: "Profile", setupJourney: "Journey", setupSchedule: "Schedule", setupCalendar: "Calendar", yourName: "Name / Nickname", optional: "Optional",
     timezone: "Timezone", locale: "Date & number format", next: "Next", back: "Back", startJourney: "Start My Journey", saveChanges: "Save Changes",
     useRecommended: "Use Recommended Defaults", startDateSetup: "Start Date", endDateSetup: "End Date", workingDaysSetup: "Regular Working Days",
     workStartSetup: "Work Start", workEndSetup: "Work End", breaksSetup: "Breaks", enableBreak: "Enabled", setupValidationDates: "End date must not be before the start date",
     setupValidationTime: "Finish time must be after start time and leave some actual working time", setupValidationDays: "Select at least one regular working day",
     dateInputHelp: "Type the date or choose it from the calendar", dateInputFormat: "Format",
+    setupCalendarHelp: "Set company holidays, personal leave and compensatory workdays before starting your journey.",
+    defaultCompanyHolidays: "Default Company Holidays", defaultCompanyHolidaysHelp: "These company dates are preloaded. You can remove them or add other dates before starting.",
+    restoreDefaultHolidays: "Restore Default Holidays", setupCalendarClickHelp: "Choose a day type above, then click dates in the calendar. Choose Normal Schedule to clear a special date.",
+    calendarSetupSummaryTitle: "Calendar Summary", calendarSetupSummary: "Company holidays {holiday} days \u00b7 Leave {leave} days \u00b7 Compensatory {work} days", setupCalendarEditLater: "You can edit these dates later from the main Dashboard calendar.",
     profileAndJourney: "Profile & Journey", editJourney: "Edit Journey", privacyMode: "Display Mode", personalMode: "Personal", demoMode: "Public Demo",
     privacyModeHelp: "Demo Mode hides your name and private notes for screen sharing or a portfolio", dataAndBackup: "Data & Backup",
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "Start New Journey", resetAllData: "Reset All Data", resetAllConfirm: "Reset all Workday Journey data stored in this browser?",
@@ -404,7 +416,7 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5.1 · Multi-user ready · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5.2 · Multi-user ready · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
@@ -453,6 +465,10 @@
     setupStep: 1,
     setupMode: "first",
     setupOriginalLanguage: "th",
+    setupDayOverrides: {},
+    setupCalendarDate: startOfMonth(parseConfigDate(DEFAULT_JOURNEY_CONFIG.startDate, new Date())),
+    setupCalendarType: "holiday",
+    setupCalendarLeaveMode: "full",
     pendingServiceWorker: null,
     refreshForUpdate: false
   };
@@ -483,7 +499,7 @@
     onlineStatus: $("onlineStatus"), installAppBtn: $("installAppBtn"), settingsInstallBtn: $("settingsInstallBtn"), snapshotBtn: $("snapshotBtn"), statsSnapshotBtn: $("statsSnapshotBtn"), completionSnapshotBtn: $("completionSnapshotBtn"),
     nextMilestoneExpected: $("nextMilestoneExpected"), milestoneForecastList: $("milestoneForecastList"), timeMachineNow: $("timeMachineNow"), timeMachineDateInput: $("timeMachineDate"), timeMachineRange: $("timeMachineRange"), timeMachineClock: $("timeMachineClock"), timeMachinePercent: $("timeMachinePercent"), timeMachineStatus: $("timeMachineStatus"), timeMachineFill: $("timeMachineFill"), timeMachineSummary: $("timeMachineSummary"),
     heatmapMonths: $("heatmapMonths"), storyProgressBadge: $("storyProgressBadge"), journeyStoryList: $("journeyStoryList"), dynamicMoodToggle: $("dynamicMoodToggle"), notificationToggle: $("notificationToggle"), toastStack: $("toastStack"),
-    setupBackdrop: $("setupBackdrop"), setupModal: $("setupModal"), setupNameInput: $("setupNameInput"), setupLanguageSelect: $("setupLanguageSelect"), setupTimezoneSelect: $("setupTimezoneSelect"), setupLocaleSelect: $("setupLocaleSelect"), setupStartDate: $("setupStartDate"), setupEndDate: $("setupEndDate"), setupStartDatePicker: $("setupStartDatePicker"), setupEndDatePicker: $("setupEndDatePicker"), setupStartDatePickerBtn: $("setupStartDatePickerBtn"), setupEndDatePickerBtn: $("setupEndDatePickerBtn"), setupStartDateFormat: $("setupStartDateFormat"), setupEndDateFormat: $("setupEndDateFormat"), setupWorkStart: $("setupWorkStart"), setupWorkEnd: $("setupWorkEnd"), setupSchedulePreview: $("setupSchedulePreview"), setupError: $("setupError"), setupCancelBtn: $("setupCancelBtn"), setupBackBtn: $("setupBackBtn"), setupNextBtn: $("setupNextBtn"), setupSaveBtn: $("setupSaveBtn"), setupDefaultsBtn: $("setupDefaultsBtn"),
+    setupBackdrop: $("setupBackdrop"), setupModal: $("setupModal"), setupNameInput: $("setupNameInput"), setupLanguageSelect: $("setupLanguageSelect"), setupTimezoneSelect: $("setupTimezoneSelect"), setupLocaleSelect: $("setupLocaleSelect"), setupStartDate: $("setupStartDate"), setupEndDate: $("setupEndDate"), setupStartDatePicker: $("setupStartDatePicker"), setupEndDatePicker: $("setupEndDatePicker"), setupStartDatePickerBtn: $("setupStartDatePickerBtn"), setupEndDatePickerBtn: $("setupEndDatePickerBtn"), setupStartDateFormat: $("setupStartDateFormat"), setupEndDateFormat: $("setupEndDateFormat"), setupWorkStart: $("setupWorkStart"), setupWorkEnd: $("setupWorkEnd"), setupSchedulePreview: $("setupSchedulePreview"), setupError: $("setupError"), setupCancelBtn: $("setupCancelBtn"), setupBackBtn: $("setupBackBtn"), setupNextBtn: $("setupNextBtn"), setupSaveBtn: $("setupSaveBtn"), setupDefaultsBtn: $("setupDefaultsBtn"), setupHolidayChips: $("setupHolidayChips"), setupRestoreHolidaysBtn: $("setupRestoreHolidaysBtn"), setupCalendarLeavePanel: $("setupCalendarLeavePanel"), setupCalendarLeaveMode: $("setupCalendarLeaveMode"), setupCalendarCustomLeave: $("setupCalendarCustomLeave"), setupCalendarLeaveHours: $("setupCalendarLeaveHours"), setupCalendarLeaveMinutes: $("setupCalendarLeaveMinutes"), setupCalendarPrev: $("setupCalendarPrev"), setupCalendarNext: $("setupCalendarNext"), setupCalendarMonthTitle: $("setupCalendarMonthTitle"), setupCalendarWeekdays: $("setupCalendarWeekdays"), setupCalendarGrid: $("setupCalendarGrid"), setupCalendarSummary: $("setupCalendarSummary"),
     profileQuickBtn: $("profileQuickBtn"), profileQuickName: $("profileQuickName"), editJourneyBtn: $("editJourneyBtn"), journeyProfileSummary: $("journeyProfileSummary"), timezoneSelect: $("timezoneSelect"), localeSelect: $("localeSelect"), privacyModeSelect: $("privacyModeSelect"), exportBackupBtn: $("exportBackupBtn"), importBackupBtn: $("importBackupBtn"), backupFileInput: $("backupFileInput"), startNewJourneyBtn: $("startNewJourneyBtn"), resetAllDataBtn: $("resetAllDataBtn"), shareSummaryBtn: $("shareSummaryBtn"), updateBanner: $("updateBanner"), refreshUpdateBtn: $("refreshUpdateBtn"), footerVersion: $("footerVersion"), finishTimeValue: $("finishTimeValue"), settingsScheduleValue: $("settingsScheduleValue"), settingsWorkTimeValue: $("settingsWorkTimeValue"), settingsBreakTimeValue: $("settingsBreakTimeValue"), settingsRangeValue: $("settingsRangeValue")
   };
 
@@ -762,6 +778,7 @@
     els.dayNoteInput.placeholder = t("notePlaceholder");
     document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === state.language));
     if (els.setupSaveBtn && !els.setupBackdrop?.hidden) els.setupSaveBtn.textContent = t(state.setupMode === "edit" ? "saveChanges" : "startJourney");
+    if (!els.setupBackdrop?.hidden && state.setupStep === 4) renderSetupCalendar();
     renderJourneyConfigUI();
   }
 
@@ -1453,24 +1470,153 @@
   }
   function bindSetupDateControl(textInput, pickerInput, button) {
     if (!textInput || !pickerInput) return;
-    textInput.addEventListener("input", () => { textInput.value = maskSetupDateTyping(textInput.value); pickerInput.value = parseSetupDateText(textInput.value) || ""; updateSetupSchedulePreview(); });
+    textInput.addEventListener("input", () => { textInput.value = maskSetupDateTyping(textInput.value); pickerInput.value = parseSetupDateText(textInput.value) || ""; updateSetupSchedulePreview(); if (state.setupStep === 4) renderSetupCalendar(); });
     textInput.addEventListener("blur", () => { syncSetupDateFromText(textInput, pickerInput, true); updateSetupSchedulePreview(); });
-    pickerInput.addEventListener("change", () => { if (pickerInput.value) textInput.value = formatSetupDateText(pickerInput.value); updateSetupSchedulePreview(); });
+    pickerInput.addEventListener("change", () => { if (pickerInput.value) textInput.value = formatSetupDateText(pickerInput.value); updateSetupSchedulePreview(); if (state.setupStep === 4) renderSetupCalendar(); });
     button?.addEventListener("click", () => openSetupDatePicker(textInput, pickerInput));
   }
 
+  function cloneOverrides(source = {}) {
+    try { return JSON.parse(JSON.stringify(source || {})); } catch (_) { return {}; }
+  }
+  function getSetupRuntime() {
+    return hydrateRuntimeConfig(collectSetupConfig());
+  }
+  function getSetupRange() {
+    const runtime = getSetupRuntime();
+    return { start: runtime.internshipStart, end: runtime.internshipEnd };
+  }
+  function isSetupDateInRange(date) {
+    const { start, end } = getSetupRange();
+    const day = localDateOnly(date);
+    return day >= start && day <= end;
+  }
+  function clampSetupCalendarMonth() {
+    const { start, end } = getSetupRange();
+    const min = startOfMonth(start), max = startOfMonth(end);
+    if (!state.setupCalendarDate || state.setupCalendarDate < min) state.setupCalendarDate = new Date(min);
+    if (state.setupCalendarDate > max) state.setupCalendarDate = new Date(max);
+  }
+  function setupLeaveMinutesFromControls() {
+    const runtime = getSetupRuntime();
+    const mode = els.setupCalendarLeaveMode?.value || state.setupCalendarLeaveMode || "full";
+    state.setupCalendarLeaveMode = mode;
+    if (mode === "half") return Math.max(1, Math.round(runtime.totalWorkMinutes / 2));
+    if (mode === "custom") {
+      const h = clamp(Number(els.setupCalendarLeaveHours?.value || 0), 0, 24);
+      const m = clamp(Number(els.setupCalendarLeaveMinutes?.value || 0), 0, 59);
+      return clamp(Math.round(h * 60 + m), 1, runtime.totalWorkMinutes);
+    }
+    return runtime.totalWorkMinutes;
+  }
+  function sanitizeSetupOverrides(overrides, rawConfig) {
+    const runtime = hydrateRuntimeConfig(rawConfig);
+    const out = {};
+    for (const [key, value] of Object.entries(overrides || {})) {
+      const date = parseConfigDate(key, new Date(1900,0,1));
+      if (date < runtime.internshipStart || date > runtime.internshipEnd || !value || !["holiday","leave","work"].includes(value.type)) continue;
+      if (value.type === "leave") {
+        const leaveMinutes = clamp(Number(value.leaveMinutes || runtime.totalWorkMinutes), 1, runtime.totalWorkMinutes);
+        const leaveMode = value.leaveMode === "half" || value.leaveMode === "custom" ? value.leaveMode : "full";
+        out[key] = { type: "leave", leaveMode, leaveMinutes: Math.round(leaveMinutes), scheduledMinutes: runtime.totalWorkMinutes, note: String(value.note || "") };
+      } else out[key] = { type: value.type, note: String(value.note || "") };
+    }
+    return out;
+  }
+  function setupOverrideLabel(type) {
+    if (type === "holiday") return t("companyHoliday");
+    if (type === "leave") return t("personalLeave");
+    if (type === "work") return t("compensatoryWorkday");
+    return t("normalSchedule");
+  }
+  function refreshSetupCalendarTypeButtons() {
+    document.querySelectorAll(".setup-day-type-btn").forEach(btn => btn.classList.toggle("selected", btn.dataset.setupDayType === state.setupCalendarType));
+    if (els.setupCalendarLeavePanel) els.setupCalendarLeavePanel.hidden = state.setupCalendarType !== "leave";
+    if (els.setupCalendarCustomLeave) els.setupCalendarCustomLeave.hidden = (els.setupCalendarLeaveMode?.value || state.setupCalendarLeaveMode) !== "custom";
+  }
+  function renderSetupHolidayChips() {
+    if (!els.setupHolidayChips) return;
+    const locale = els.setupLocaleSelect?.value || CONFIG.locale;
+    const { start, end } = getSetupRange();
+    els.setupHolidayChips.innerHTML = DEFAULT_COMPANY_HOLIDAYS.map(key => {
+      const date = parseConfigDate(key, new Date());
+      const inRange = date >= start && date <= end;
+      const active = state.setupDayOverrides[key]?.type === "holiday";
+      return `<button type="button" class="setup-holiday-chip ${active ? "active" : ""} ${inRange ? "" : "out-of-range"}" data-setup-holiday-date="${key}" title="${escapeHtml(setupOverrideLabel(active ? "holiday" : "default"))}">${escapeHtml(formatSetupDateText(key, locale))}${active ? " <span>\u2713</span>" : ""}</button>`;
+    }).join("");
+  }
+  function renderSetupCalendar() {
+    if (!els.setupCalendarGrid) return;
+    clampSetupCalendarMonth();
+    refreshSetupCalendarTypeButtons();
+    renderSetupHolidayChips();
+    const { start, end } = getSetupRange();
+    const month = state.setupCalendarDate;
+    const y = month.getFullYear(), m = month.getMonth();
+    const locale = els.setupLocaleSelect?.value || CONFIG.locale;
+    els.setupCalendarMonthTitle.textContent = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(month);
+    const weekdayKeys = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+    els.setupCalendarWeekdays.innerHTML = weekdayKeys.map(key => `<span>${escapeHtml(t(key))}</span>`).join("");
+    const firstDay = new Date(y, m, 1), lastDate = new Date(y, m + 1, 0).getDate();
+    const lead = (firstDay.getDay() + 6) % 7;
+    const cells = [];
+    for (let i = 0; i < lead; i++) cells.push('<span class="setup-calendar-day blank"></span>');
+    for (let d = 1; d <= lastDate; d++) {
+      const date = new Date(y, m, d), key = dateKey(date), override = state.setupDayOverrides[key];
+      const inRange = date >= start && date <= end;
+      const type = override?.type || "default";
+      const classes = ["setup-calendar-day", type];
+      if (!inRange) classes.push("outside");
+      if (DEFAULT_COMPANY_HOLIDAYS.includes(key)) classes.push("recommended");
+      const title = inRange ? setupOverrideLabel(type) : t("outsideInternship");
+      const icon = type === "holiday" ? "\ud83c\udfe2" : type === "leave" ? "\ud83c\udfd6\ufe0f" : type === "work" ? "\ud83d\udd04" : "";
+      cells.push(`<button type="button" class="${classes.join(" ")}" data-setup-calendar-date="${key}" ${inRange ? "" : "disabled"} title="${escapeHtml(title)}"><span>${d}</span>${icon ? `<i>${icon}</i>` : ""}</button>`);
+    }
+    els.setupCalendarGrid.innerHTML = cells.join("");
+    const counts = { holiday: 0, leave: 0, work: 0 };
+    for (const [key, value] of Object.entries(state.setupDayOverrides)) {
+      const date = parseConfigDate(key, new Date(1900,0,1));
+      if (date < start || date > end || !Object.prototype.hasOwnProperty.call(counts, value?.type)) continue;
+      counts[value.type]++;
+    }
+    els.setupCalendarSummary.textContent = t("calendarSetupSummary").replace("{holiday}", counts.holiday).replace("{leave}", counts.leave).replace("{work}", counts.work);
+    const minMonth = startOfMonth(start), maxMonth = startOfMonth(end);
+    if (els.setupCalendarPrev) els.setupCalendarPrev.disabled = month <= minMonth;
+    if (els.setupCalendarNext) els.setupCalendarNext.disabled = month >= maxMonth;
+  }
+  function setSetupCalendarType(type) {
+    if (!["default","holiday","leave","work"].includes(type)) return;
+    state.setupCalendarType = type;
+    refreshSetupCalendarTypeButtons();
+  }
+  function applySetupCalendarDate(key) {
+    const date = parseConfigDate(key, new Date(1900,0,1));
+    if (!isSetupDateInRange(date)) return;
+    if (state.setupCalendarType === "default") delete state.setupDayOverrides[key];
+    else if (state.setupCalendarType === "leave") {
+      const runtime = getSetupRuntime();
+      const leaveMinutes = setupLeaveMinutesFromControls();
+      state.setupDayOverrides[key] = { type: "leave", leaveMode: state.setupCalendarLeaveMode, leaveMinutes, scheduledMinutes: runtime.totalWorkMinutes, note: "" };
+    } else state.setupDayOverrides[key] = { type: state.setupCalendarType, note: "" };
+    renderSetupCalendar();
+  }
+  function restoreSetupDefaultHolidays() {
+    for (const [key, value] of Object.entries(createDefaultCompanyHolidayOverrides())) state.setupDayOverrides[key] = value;
+    renderSetupCalendar();
+  }
   function setSetupStep(step) {
-    state.setupStep = clamp(Number(step) || 1, 1, 3);
+    state.setupStep = clamp(Number(step) || 1, 1, 4);
     document.querySelectorAll(".setup-step").forEach(node => node.classList.toggle("active", Number(node.dataset.setupStep) === state.setupStep));
     document.querySelectorAll(".setup-progress-item").forEach(node => {
       const n = Number(node.dataset.setupJump); node.classList.toggle("active", n === state.setupStep); node.classList.toggle("done", n < state.setupStep);
     });
     if (els.setupCancelBtn) els.setupCancelBtn.hidden = state.setupMode !== "edit";
     if (els.setupBackBtn) els.setupBackBtn.hidden = state.setupStep === 1;
-    if (els.setupNextBtn) els.setupNextBtn.hidden = state.setupStep === 3;
-    if (els.setupSaveBtn) { els.setupSaveBtn.hidden = state.setupStep !== 3; els.setupSaveBtn.textContent = t(state.setupMode === "edit" ? "saveChanges" : "startJourney"); }
+    if (els.setupNextBtn) els.setupNextBtn.hidden = state.setupStep === 4;
+    if (els.setupSaveBtn) { els.setupSaveBtn.hidden = state.setupStep !== 4; els.setupSaveBtn.textContent = t(state.setupMode === "edit" ? "saveChanges" : "startJourney"); }
     if (els.setupError) els.setupError.hidden = true;
     updateSetupSchedulePreview();
+    if (state.setupStep === 4) renderSetupCalendar();
   }
   function populateSetupForm(config = journeyConfig) {
     const normalized = normalizeJourneyConfig(config);
@@ -1541,6 +1687,10 @@
   function openSetupWizard(mode = "first") {
     state.setupMode = mode; state.setupStep = 1; state.setupOriginalLanguage = state.language;
     populateSetupForm(mode === "first" && !state.setupCompleted ? DEFAULT_JOURNEY_CONFIG : journeyConfig);
+    state.setupDayOverrides = mode === "edit" ? cloneOverrides(state.dayOverrides) : createDefaultCompanyHolidayOverrides();
+    state.setupCalendarDate = startOfMonth(parseConfigDate((mode === "edit" ? journeyConfig : DEFAULT_JOURNEY_CONFIG).startDate, new Date()));
+    state.setupCalendarType = "holiday"; state.setupCalendarLeaveMode = "full";
+    if (els.setupCalendarLeaveMode) els.setupCalendarLeaveMode.value = "full";
     els.setupBackdrop.hidden = false; requestAnimationFrame(() => els.setupBackdrop.classList.add("open"));
     document.body.classList.add("setup-open"); setSetupStep(1);
   }
@@ -1554,7 +1704,9 @@
     const raw = collectSetupConfig(), error = setupValidationMessage(raw);
     if (error) { els.setupError.textContent = error; els.setupError.hidden = false; return; }
     const priorRange = `${journeyConfig.startDate}|${journeyConfig.endDate}|${journeyConfig.workdayStart}|${journeyConfig.workdayEnd}|${journeyConfig.workdays.join(",")}`;
+    const setupOverrides = sanitizeSetupOverrides(state.setupDayOverrides, raw);
     applyJourneyConfig(raw, true);
+    state.dayOverrides = setupOverrides;
     state.language = els.setupLanguageSelect.value;
     state.timezone = CONFIG.timezone; state.locale = CONFIG.locale; state.setupCompleted = true; state.selectedLeaveMinutes = CONFIG.totalWorkMinutes;
     localStorage.setItem("wp-setup-completed", "true"); localStorage.setItem("wp-timezone", state.timezone); localStorage.setItem("wp-locale", state.locale);
@@ -1626,11 +1778,19 @@
       setSetupStep(state.setupStep + 1);
     });
     els.setupSaveBtn?.addEventListener("click", saveSetupJourney);
-    els.setupDefaultsBtn?.addEventListener("click", () => { populateSetupForm(DEFAULT_JOURNEY_CONFIG); state.language="th"; els.setupLanguageSelect.value="th"; renderTranslations(); });
+    els.setupDefaultsBtn?.addEventListener("click", () => { populateSetupForm(DEFAULT_JOURNEY_CONFIG); state.setupDayOverrides = createDefaultCompanyHolidayOverrides(); state.setupCalendarDate = startOfMonth(parseConfigDate(DEFAULT_JOURNEY_CONFIG.startDate, new Date())); state.setupCalendarType = "holiday"; state.setupCalendarLeaveMode = "full"; if (els.setupCalendarLeaveMode) els.setupCalendarLeaveMode.value = "full"; state.language="th"; els.setupLanguageSelect.value="th"; renderTranslations(); if (state.setupStep === 4) renderSetupCalendar(); });
     els.setupLanguageSelect?.addEventListener("change", e => { state.language=e.target.value; renderTranslations(); setSetupStep(state.setupStep); });
     bindSetupDateControl(els.setupStartDate, els.setupStartDatePicker, els.setupStartDatePickerBtn);
     bindSetupDateControl(els.setupEndDate, els.setupEndDatePicker, els.setupEndDatePickerBtn);
-    els.setupLocaleSelect?.addEventListener("change", () => { refreshSetupDateControls(); updateSetupSchedulePreview(); });
+    els.setupLocaleSelect?.addEventListener("change", () => { refreshSetupDateControls(); updateSetupSchedulePreview(); if (state.setupStep === 4) renderSetupCalendar(); });
+    document.querySelectorAll(".setup-day-type-btn").forEach(btn => btn.addEventListener("click", () => setSetupCalendarType(btn.dataset.setupDayType)));
+    els.setupCalendarLeaveMode?.addEventListener("change", e => { state.setupCalendarLeaveMode = e.target.value; refreshSetupCalendarTypeButtons(); });
+    [els.setupCalendarLeaveHours, els.setupCalendarLeaveMinutes].filter(Boolean).forEach(input => input.addEventListener("input", () => { state.setupCalendarLeaveMode = "custom"; if (els.setupCalendarLeaveMode) els.setupCalendarLeaveMode.value = "custom"; refreshSetupCalendarTypeButtons(); }));
+    els.setupCalendarPrev?.addEventListener("click", () => { state.setupCalendarDate = new Date(state.setupCalendarDate.getFullYear(), state.setupCalendarDate.getMonth() - 1, 1); renderSetupCalendar(); });
+    els.setupCalendarNext?.addEventListener("click", () => { state.setupCalendarDate = new Date(state.setupCalendarDate.getFullYear(), state.setupCalendarDate.getMonth() + 1, 1); renderSetupCalendar(); });
+    els.setupCalendarGrid?.addEventListener("click", e => { const btn = e.target.closest("[data-setup-calendar-date]"); if (btn && !btn.disabled) applySetupCalendarDate(btn.dataset.setupCalendarDate); });
+    els.setupHolidayChips?.addEventListener("click", e => { const btn = e.target.closest("[data-setup-holiday-date]"); if (!btn) return; const date = parseConfigDate(btn.dataset.setupHolidayDate, new Date()); state.setupCalendarDate = startOfMonth(date); renderSetupCalendar(); });
+    els.setupRestoreHolidaysBtn?.addEventListener("click", restoreSetupDefaultHolidays);
     [els.setupWorkStart,els.setupWorkEnd,...document.querySelectorAll(".setup-workday"),...document.querySelectorAll(".setup-break-row input")].filter(Boolean).forEach(node => node.addEventListener("change", updateSetupSchedulePreview));
     els.timezoneSelect?.addEventListener("change", e => { setJourneyMeta({timezone:e.target.value}); showToast("🌐",t("timezoneChanged")); });
     els.localeSelect?.addEventListener("change", e => { setJourneyMeta({locale:e.target.value}); showToast("✓",t("localeChanged")); });

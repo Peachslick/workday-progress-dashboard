@@ -17,18 +17,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=5.1.1" />
+  <link rel="stylesheet" href="styles.css?v=5.2.0" />
 </head>
 <body>
   <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
 
   <div id="setupBackdrop" class="setup-backdrop" hidden>
     <section id="setupModal" class="setup-wizard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V5.1</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
+      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V5.2</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
       <div class="setup-progress" aria-label="Setup progress">
         <button type="button" class="setup-progress-item active" data-setup-jump="1"><span>1</span><strong data-i18n="setupProfile">โปรไฟล์</strong></button>
         <i></i><button type="button" class="setup-progress-item" data-setup-jump="2"><span>2</span><strong data-i18n="setupJourney">ช่วงเวลา</strong></button>
         <i></i><button type="button" class="setup-progress-item" data-setup-jump="3"><span>3</span><strong data-i18n="setupSchedule">ตารางทำงาน</strong></button>
+        <i></i><button type="button" class="setup-progress-item" data-setup-jump="4"><span>4</span><strong data-i18n="setupCalendar">Calendar</strong></button>
       </div>
       <div class="setup-body">
         <section class="setup-step active" data-setup-step="1">
@@ -81,6 +82,33 @@
             <div class="setup-break-row"><label class="break-enabled"><input id="setupBreakEnabled3" type="checkbox" checked><span data-i18n="enableBreak">ใช้งาน</span></label><input id="setupBreakStart3" type="time"><span>→</span><input id="setupBreakEnd3" type="time"></div>
           </div>
           <div id="setupSchedulePreview" class="setup-schedule-preview"></div>
+        </section>
+        <section class="setup-step" data-setup-step="4">
+          <div class="setup-step-heading"><span>📅</span><div><h3 data-i18n="setupCalendar">Calendar & Attendance</h3><p class="muted" data-i18n="setupCalendarHelp">Set company holidays, personal leave, and compensatory workdays before starting your journey.</p></div></div>
+          <div class="setup-calendar-preset">
+            <div><strong data-i18n="defaultCompanyHolidays">Default company holidays</strong><p data-i18n="defaultCompanyHolidaysHelp">These dates are preloaded. You can remove or add dates before starting.</p><div id="setupHolidayChips" class="setup-holiday-chips"></div></div>
+            <button id="setupRestoreHolidaysBtn" class="secondary-btn compact-action" type="button" data-i18n="restoreDefaultHolidays">Restore defaults</button>
+          </div>
+          <div class="setup-calendar-tools">
+            <div class="setup-day-type-toolbar" role="group" aria-label="Calendar day type">
+              <button class="setup-day-type-btn" data-setup-day-type="default" type="button"><span>↺</span><strong data-i18n="normalSchedule">Normal</strong></button>
+              <button class="setup-day-type-btn holiday selected" data-setup-day-type="holiday" type="button"><span>🏢</span><strong data-i18n="companyHoliday">Company Holiday</strong></button>
+              <button class="setup-day-type-btn leave" data-setup-day-type="leave" type="button"><span>🏖️</span><strong data-i18n="personalLeave">Personal Leave</strong></button>
+              <button class="setup-day-type-btn work" data-setup-day-type="work" type="button"><span>🔄</span><strong data-i18n="compensatoryWorkday">Compensatory</strong></button>
+            </div>
+            <div id="setupCalendarLeavePanel" class="setup-calendar-leave-panel" hidden>
+              <label><span data-i18n="leaveDuration">Leave Duration</span><select id="setupCalendarLeaveMode"><option value="full" data-i18n="fullDayLeave">Full Day</option><option value="half" data-i18n="halfDayLeave">Half Day</option><option value="custom" data-i18n="customLeave">Custom</option></select></label>
+              <div id="setupCalendarCustomLeave" class="setup-calendar-custom-leave" hidden><label><span data-i18n="hoursField">Hours</span><input id="setupCalendarLeaveHours" type="number" min="0" max="24" value="8"></label><label><span data-i18n="minutesField">Minutes</span><input id="setupCalendarLeaveMinutes" type="number" min="0" max="59" value="0"></label></div>
+            </div>
+          </div>
+          <p class="setup-calendar-hint" data-i18n="setupCalendarClickHelp">Choose a day type above, then click dates in the calendar. Click Normal to clear a special date.</p>
+          <div class="setup-mini-calendar">
+            <div class="setup-mini-calendar-head"><button id="setupCalendarPrev" class="icon-btn" type="button" aria-label="Previous month">‹</button><strong id="setupCalendarMonthTitle"></strong><button id="setupCalendarNext" class="icon-btn" type="button" aria-label="Next month">›</button></div>
+            <div id="setupCalendarWeekdays" class="setup-mini-weekdays"></div>
+            <div id="setupCalendarGrid" class="setup-mini-grid"></div>
+          </div>
+          <div class="setup-calendar-summary"><strong data-i18n="calendarSetupSummaryTitle">Calendar summary</strong><span id="setupCalendarSummary"></span></div>
+          <p class="setup-calendar-footer-note" data-i18n="setupCalendarEditLater">You can edit these dates later from the main Dashboard calendar.</p>
         </section>
         <p id="setupError" class="setup-error" hidden></p>
       </div>
@@ -507,6 +535,6 @@
   </section>
 
   <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
-  <script src="app.js?v=5.1.1"></script>
+  <script src="app.js?v=5.2.0"></script>
 </body>
 </html>
