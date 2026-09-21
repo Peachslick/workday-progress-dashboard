@@ -1,7 +1,26 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "5.0.0";
+  const APP_VERSION = "5.1.0";
+  const DATA_RESET_VERSION = "5.1-profile-calendar-reset";
+  const DATA_RESET_MARKER = "wp-data-reset-version";
+
+  // V5.1 migration: force every browser that used an older Workday Journey build
+  // through First-Time Setup once. Only Workday Journey (wp-*) keys are removed.
+  (function runV51OneTimeReset() {
+    try {
+      if (localStorage.getItem(DATA_RESET_MARKER) === DATA_RESET_VERSION) return;
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith("wp-")) keys.push(key);
+      }
+      keys.forEach(key => localStorage.removeItem(key));
+      localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION);
+    } catch (_) {
+      // The app can still run with browser defaults if storage is unavailable.
+    }
+  })();
   const DEFAULT_JOURNEY_CONFIG = {
     profileName: "",
     startDate: "2026-05-05",
@@ -334,6 +353,7 @@
     useRecommended: "ใช้ค่าแนะนำ", startDateSetup: "วันเริ่มต้น", endDateSetup: "วันสิ้นสุด", workingDaysSetup: "วันทำงานประจำ",
     workStartSetup: "เวลาเริ่มงาน", workEndSetup: "เวลาเลิกงาน", breaksSetup: "ช่วงพัก", enableBreak: "ใช้งาน", setupValidationDates: "วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น",
     setupValidationTime: "เวลาเลิกงานต้องมากกว่าเวลาเริ่มงาน และต้องมีเวลาทำงานจริง", setupValidationDays: "กรุณาเลือกวันทำงานอย่างน้อย 1 วัน",
+    dateInputHelp: "พิมพ์วันที่เอง หรือกดปฏิทินเพื่อเลือก", dateInputFormat: "รูปแบบ",
     profileAndJourney: "โปรไฟล์และ Journey", editJourney: "แก้ไข Journey", privacyMode: "โหมดการแสดงผล", personalMode: "Personal", demoMode: "Public Demo",
     privacyModeHelp: "Demo Mode จะซ่อนชื่อและหมายเหตุส่วนตัว เหมาะสำหรับแชร์หน้าจอหรือ Portfolio", dataAndBackup: "ข้อมูลและ Backup",
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "เริ่ม Journey ใหม่", resetAllData: "ล้างข้อมูลทั้งหมด", resetAllConfirm: "ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่?",
@@ -345,7 +365,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5 · Multi-user ready · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5.1 · Multi-user ready · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -357,6 +377,7 @@
     useRecommended: "Use Recommended Defaults", startDateSetup: "Start Date", endDateSetup: "End Date", workingDaysSetup: "Regular Working Days",
     workStartSetup: "Work Start", workEndSetup: "Work End", breaksSetup: "Breaks", enableBreak: "Enabled", setupValidationDates: "End date must not be before the start date",
     setupValidationTime: "Finish time must be after start time and leave some actual working time", setupValidationDays: "Select at least one regular working day",
+    dateInputHelp: "Type the date or choose it from the calendar", dateInputFormat: "Format",
     profileAndJourney: "Profile & Journey", editJourney: "Edit Journey", privacyMode: "Display Mode", personalMode: "Personal", demoMode: "Public Demo",
     privacyModeHelp: "Demo Mode hides your name and private notes for screen sharing or a portfolio", dataAndBackup: "Data & Backup",
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "Start New Journey", resetAllData: "Reset All Data", resetAllConfirm: "Reset all Workday Journey data stored in this browser?",
@@ -368,7 +389,7 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5 · Multi-user ready · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5.1 · Multi-user ready · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
@@ -447,7 +468,7 @@
     onlineStatus: $("onlineStatus"), installAppBtn: $("installAppBtn"), settingsInstallBtn: $("settingsInstallBtn"), snapshotBtn: $("snapshotBtn"), statsSnapshotBtn: $("statsSnapshotBtn"), completionSnapshotBtn: $("completionSnapshotBtn"),
     nextMilestoneExpected: $("nextMilestoneExpected"), milestoneForecastList: $("milestoneForecastList"), timeMachineNow: $("timeMachineNow"), timeMachineDateInput: $("timeMachineDate"), timeMachineRange: $("timeMachineRange"), timeMachineClock: $("timeMachineClock"), timeMachinePercent: $("timeMachinePercent"), timeMachineStatus: $("timeMachineStatus"), timeMachineFill: $("timeMachineFill"), timeMachineSummary: $("timeMachineSummary"),
     heatmapMonths: $("heatmapMonths"), storyProgressBadge: $("storyProgressBadge"), journeyStoryList: $("journeyStoryList"), dynamicMoodToggle: $("dynamicMoodToggle"), notificationToggle: $("notificationToggle"), toastStack: $("toastStack"),
-    setupBackdrop: $("setupBackdrop"), setupModal: $("setupModal"), setupNameInput: $("setupNameInput"), setupLanguageSelect: $("setupLanguageSelect"), setupTimezoneSelect: $("setupTimezoneSelect"), setupLocaleSelect: $("setupLocaleSelect"), setupStartDate: $("setupStartDate"), setupEndDate: $("setupEndDate"), setupWorkStart: $("setupWorkStart"), setupWorkEnd: $("setupWorkEnd"), setupSchedulePreview: $("setupSchedulePreview"), setupError: $("setupError"), setupCancelBtn: $("setupCancelBtn"), setupBackBtn: $("setupBackBtn"), setupNextBtn: $("setupNextBtn"), setupSaveBtn: $("setupSaveBtn"), setupDefaultsBtn: $("setupDefaultsBtn"),
+    setupBackdrop: $("setupBackdrop"), setupModal: $("setupModal"), setupNameInput: $("setupNameInput"), setupLanguageSelect: $("setupLanguageSelect"), setupTimezoneSelect: $("setupTimezoneSelect"), setupLocaleSelect: $("setupLocaleSelect"), setupStartDate: $("setupStartDate"), setupEndDate: $("setupEndDate"), setupStartDatePicker: $("setupStartDatePicker"), setupEndDatePicker: $("setupEndDatePicker"), setupStartDatePickerBtn: $("setupStartDatePickerBtn"), setupEndDatePickerBtn: $("setupEndDatePickerBtn"), setupStartDateFormat: $("setupStartDateFormat"), setupEndDateFormat: $("setupEndDateFormat"), setupWorkStart: $("setupWorkStart"), setupWorkEnd: $("setupWorkEnd"), setupSchedulePreview: $("setupSchedulePreview"), setupError: $("setupError"), setupCancelBtn: $("setupCancelBtn"), setupBackBtn: $("setupBackBtn"), setupNextBtn: $("setupNextBtn"), setupSaveBtn: $("setupSaveBtn"), setupDefaultsBtn: $("setupDefaultsBtn"),
     profileQuickBtn: $("profileQuickBtn"), profileQuickName: $("profileQuickName"), editJourneyBtn: $("editJourneyBtn"), journeyProfileSummary: $("journeyProfileSummary"), timezoneSelect: $("timezoneSelect"), localeSelect: $("localeSelect"), privacyModeSelect: $("privacyModeSelect"), exportBackupBtn: $("exportBackupBtn"), importBackupBtn: $("importBackupBtn"), backupFileInput: $("backupFileInput"), startNewJourneyBtn: $("startNewJourneyBtn"), resetAllDataBtn: $("resetAllDataBtn"), shareSummaryBtn: $("shareSummaryBtn"), updateBanner: $("updateBanner"), refreshUpdateBtn: $("refreshUpdateBtn"), footerVersion: $("footerVersion"), finishTimeValue: $("finishTimeValue"), settingsScheduleValue: $("settingsScheduleValue"), settingsWorkTimeValue: $("settingsWorkTimeValue"), settingsBreakTimeValue: $("settingsBreakTimeValue"), settingsRangeValue: $("settingsRangeValue")
   };
 
@@ -1252,7 +1273,7 @@
     cards.forEach((c,i)=>{const x=650+(i%2)*390,y=315+Math.floor(i/2)*180;roundedRect(ctx,x,y,350,145,22);ctx.fillStyle=dark?"#182334":"#f7f9fc";ctx.fill();ctx.fillStyle=text;ctx.font='800 46px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[0],x+24,y+62);ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[1],x+24,y+101);});
     const barX=145,barY=570,barW=445,barH=22;roundedRect(ctx,barX,barY,barW,barH,11);ctx.fillStyle=dark?"#263449":"#e5eaf1";ctx.fill();roundedRect(ctx,barX,barY,barW*(stats.percent/100),barH,11);ctx.fillStyle=work;ctx.fill();ctx.fillStyle=text;ctx.font='700 24px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${stats.percent.toFixed(1)}% COMPLETE`,barX,635);
     ctx.fillStyle=gold;ctx.font='700 22px "Sarabun", "Leelawadee UI", sans-serif';const nextText=milestone.complete?t("milestoneComplete"):`NEXT: ${localeNumber(milestone.targetHours,{maximumFractionDigits:1})} HOURS · ${formatPredictionDate(cumulativeTargetDate(milestone.targetHours*60))}`;ctx.fillText(nextText,barX,680);
-    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Journey V5`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("MULTI-USER · PRIVATE BY DEFAULT",1510,815);ctx.textAlign="left";
+    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Journey V5.1`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("MULTI-USER · PRIVATE BY DEFAULT",1510,815);ctx.textAlign="left";
     canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`workday-journey-${dateKey(now)}${finalMode?"-final":""}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast("📸",t("snapshotCreated"));},"image/png");
   }
   function renderV4(now,status,dailyPercent,stats,streak,achievements,nextBreak,workedMinutes){
@@ -1275,7 +1296,7 @@
     if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")) {
       let reloading = false;
       navigator.serviceWorker.addEventListener("controllerchange", () => { if (!state.refreshForUpdate || reloading) return; reloading = true; location.reload(); });
-      navigator.serviceWorker.register("./service-worker.js").then(reg => {
+      navigator.serviceWorker.register(`./service-worker.js?v=${APP_VERSION}`).then(reg => {
         if (reg.waiting) showUpdateBanner(reg.waiting);
         reg.addEventListener("updatefound", () => {
           const worker = reg.installing; if (!worker) return;
@@ -1353,6 +1374,76 @@
     }
     applyPrivacyMode();
   }
+  function setupDatePattern(locale = els.setupLocaleSelect?.value || CONFIG.locale) {
+    return locale === "en-US" ? "MM/DD/YYYY" : "DD/MM/YYYY";
+  }
+  function setupDatePartsToIso(year, month, day) {
+    const y = Number(year), m = Number(month), d = Number(day);
+    if (!Number.isInteger(y) || !Number.isInteger(m) || !Number.isInteger(d) || y < 1900 || y > 2200 || m < 1 || m > 12 || d < 1 || d > 31) return "";
+    const date = new Date(y, m - 1, d);
+    if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) return "";
+    return `${String(y).padStart(4,"0")}-${pad(m)}-${pad(d)}`;
+  }
+  function parseSetupDateText(value, locale = els.setupLocaleSelect?.value || CONFIG.locale) {
+    const text = String(value || "").trim();
+    const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+    if (iso) return setupDatePartsToIso(iso[1], iso[2], iso[3]);
+    const match = /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(text);
+    if (!match) return "";
+    const first = Number(match[1]), second = Number(match[2]), year = Number(match[3]);
+    const month = locale === "en-US" ? first : second;
+    const day = locale === "en-US" ? second : first;
+    return setupDatePartsToIso(year, month, day);
+  }
+  function formatSetupDateText(isoValue, locale = els.setupLocaleSelect?.value || CONFIG.locale) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(isoValue || ""));
+    if (!match) return "";
+    const year = match[1], month = match[2], day = match[3];
+    return locale === "en-US" ? `${month}/${day}/${year}` : `${day}/${month}/${year}`;
+  }
+  function maskSetupDateTyping(value) {
+    const digits = String(value || "").replace(/\D/g, "").slice(0, 8);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 4) return `${digits.slice(0,2)}/${digits.slice(2)}`;
+    return `${digits.slice(0,2)}/${digits.slice(2,4)}/${digits.slice(4)}`;
+  }
+  function syncSetupDateFromText(textInput, pickerInput, normalize = false) {
+    if (!textInput || !pickerInput) return "";
+    const iso = parseSetupDateText(textInput.value);
+    pickerInput.value = iso;
+    if (normalize && iso) textInput.value = formatSetupDateText(iso);
+    return iso;
+  }
+  function refreshSetupDateControls() {
+    const locale = els.setupLocaleSelect?.value || CONFIG.locale;
+    const pattern = setupDatePattern(locale);
+    [
+      [els.setupStartDate, els.setupStartDatePicker, els.setupStartDateFormat],
+      [els.setupEndDate, els.setupEndDatePicker, els.setupEndDateFormat]
+    ].forEach(([textInput, pickerInput, formatNode]) => {
+      if (!textInput || !pickerInput) return;
+      const iso = pickerInput.value || parseSetupDateText(textInput.value, locale);
+      textInput.placeholder = pattern;
+      if (formatNode) formatNode.textContent = pattern;
+      if (iso) { pickerInput.value = iso; textInput.value = formatSetupDateText(iso, locale); }
+    });
+  }
+  function openSetupDatePicker(textInput, pickerInput) {
+    if (!pickerInput) return;
+    syncSetupDateFromText(textInput, pickerInput, false);
+    try {
+      if (typeof pickerInput.showPicker === "function") pickerInput.showPicker();
+      else pickerInput.click();
+    } catch (_) { pickerInput.click(); }
+  }
+  function bindSetupDateControl(textInput, pickerInput, button) {
+    if (!textInput || !pickerInput) return;
+    textInput.addEventListener("input", () => { textInput.value = maskSetupDateTyping(textInput.value); pickerInput.value = parseSetupDateText(textInput.value) || ""; updateSetupSchedulePreview(); });
+    textInput.addEventListener("blur", () => { syncSetupDateFromText(textInput, pickerInput, true); updateSetupSchedulePreview(); });
+    pickerInput.addEventListener("change", () => { if (pickerInput.value) textInput.value = formatSetupDateText(pickerInput.value); updateSetupSchedulePreview(); });
+    button?.addEventListener("click", () => openSetupDatePicker(textInput, pickerInput));
+  }
+
   function setSetupStep(step) {
     state.setupStep = clamp(Number(step) || 1, 1, 3);
     document.querySelectorAll(".setup-step").forEach(node => node.classList.toggle("active", Number(node.dataset.setupStep) === state.setupStep));
@@ -1372,8 +1463,11 @@
     els.setupLanguageSelect.value = state.language;
     els.setupTimezoneSelect.value = normalized.timezone;
     els.setupLocaleSelect.value = normalized.locale;
-    els.setupStartDate.value = normalized.startDate;
-    els.setupEndDate.value = normalized.endDate;
+    if (els.setupStartDatePicker) els.setupStartDatePicker.value = normalized.startDate;
+    if (els.setupEndDatePicker) els.setupEndDatePicker.value = normalized.endDate;
+    els.setupStartDate.value = formatSetupDateText(normalized.startDate, normalized.locale);
+    els.setupEndDate.value = formatSetupDateText(normalized.endDate, normalized.locale);
+    refreshSetupDateControls();
     els.setupWorkStart.value = normalized.workdayStart;
     els.setupWorkEnd.value = normalized.workdayEnd;
     document.querySelectorAll(".setup-workday").forEach(input => { input.checked = normalized.workdays.includes(Number(input.value)); });
@@ -1394,8 +1488,8 @@
     }
     return {
       profileName: els.setupNameInput.value.trim(),
-      startDate: els.setupStartDate.value,
-      endDate: els.setupEndDate.value,
+      startDate: parseSetupDateText(els.setupStartDate.value, els.setupLocaleSelect.value),
+      endDate: parseSetupDateText(els.setupEndDate.value, els.setupLocaleSelect.value),
       workdayStart: els.setupWorkStart.value,
       workdayEnd: els.setupWorkEnd.value,
       workdays,
@@ -1478,6 +1572,7 @@
       if (!confirm(t("importConfirm"))) return;
       [...Array(localStorage.length)].map((_,i) => localStorage.key(i)).filter(Boolean).filter(k => k.startsWith("wp-")).forEach(k => localStorage.removeItem(k));
       for (const [key, value] of Object.entries(payload.data)) if (key.startsWith("wp-") && typeof value === "string") localStorage.setItem(key, value);
+      localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION);
       localStorage.setItem("wp-app-version", APP_VERSION); alert(t("backupImported")); location.reload();
     } catch { showToast("!", t("invalidBackup")); }
   }
@@ -1492,7 +1587,7 @@
   }
   function resetAllData() {
     if (!confirm(t("resetAllConfirm"))) return;
-    const keys=[]; for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);} keys.forEach(k=>localStorage.removeItem(k)); location.reload();
+    const keys=[]; for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);} keys.forEach(k=>localStorage.removeItem(k)); localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION); location.reload();
   }
   async function shareJourneySummary() {
     const now = getConfiguredNow(), stats = getInternshipStats(now);
@@ -1518,7 +1613,10 @@
     els.setupSaveBtn?.addEventListener("click", saveSetupJourney);
     els.setupDefaultsBtn?.addEventListener("click", () => { populateSetupForm(DEFAULT_JOURNEY_CONFIG); state.language="th"; els.setupLanguageSelect.value="th"; renderTranslations(); });
     els.setupLanguageSelect?.addEventListener("change", e => { state.language=e.target.value; renderTranslations(); setSetupStep(state.setupStep); });
-    [els.setupStartDate,els.setupEndDate,els.setupWorkStart,els.setupWorkEnd,...document.querySelectorAll(".setup-workday"),...document.querySelectorAll(".setup-break-row input")].filter(Boolean).forEach(node => node.addEventListener("change", updateSetupSchedulePreview));
+    bindSetupDateControl(els.setupStartDate, els.setupStartDatePicker, els.setupStartDatePickerBtn);
+    bindSetupDateControl(els.setupEndDate, els.setupEndDatePicker, els.setupEndDatePickerBtn);
+    els.setupLocaleSelect?.addEventListener("change", () => { refreshSetupDateControls(); updateSetupSchedulePreview(); });
+    [els.setupWorkStart,els.setupWorkEnd,...document.querySelectorAll(".setup-workday"),...document.querySelectorAll(".setup-break-row input")].filter(Boolean).forEach(node => node.addEventListener("change", updateSetupSchedulePreview));
     els.timezoneSelect?.addEventListener("change", e => { setJourneyMeta({timezone:e.target.value}); showToast("🌐",t("timezoneChanged")); });
     els.localeSelect?.addEventListener("change", e => { setJourneyMeta({locale:e.target.value}); showToast("✓",t("localeChanged")); });
     els.privacyModeSelect?.addEventListener("change", e => { state.privacyMode=e.target.value; localStorage.setItem("wp-privacy-mode",state.privacyMode); applyPrivacyMode(); renderDashboard(); });

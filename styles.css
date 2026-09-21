@@ -779,6 +779,21 @@ body.mood-finished .hero-card { background: linear-gradient(120deg,color-mix(in 
   background: var(--surface-soft); color: var(--text); font: inherit; outline: none;
 }
 .setup-form-grid input:focus, .setup-form-grid select:focus, .setup-break-row input[type="time"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.setup-date-field { display: grid; gap: 7px; min-width: 0; }
+.setup-field-label { font-size: .72rem; color: var(--muted); font-weight: 800; }
+.setup-date-control { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 46px; align-items: stretch; gap: 8px; }
+.setup-date-control .setup-date-text { min-width: 0; letter-spacing: .02em; }
+.calendar-picker-btn {
+  min-height: 45px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-soft);
+  color: var(--accent); font: inherit; font-size: 1.05rem; cursor: pointer; transition: .16s ease;
+}
+.calendar-picker-btn:hover { border-color: color-mix(in srgb,var(--accent) 48%,var(--border)); background: var(--accent-soft); transform: translateY(-1px); }
+.calendar-picker-btn:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.native-date-picker-proxy { position: absolute !important; right: 0; bottom: 0; width: 1px !important; height: 1px !important; min-height: 0 !important; padding: 0 !important; border: 0 !important; opacity: 0; pointer-events: none; }
+.setup-date-help { color: var(--subtle); font-size: .61rem; line-height: 1.4; font-weight: 650; }
+.setup-date-help strong { color: var(--accent); }
+
 .setup-workdays, .setup-breaks { margin-top: 20px; display: grid; gap: 10px; }
 .weekday-toggle-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 8px; }
 .weekday-toggle-grid label { cursor: pointer; }

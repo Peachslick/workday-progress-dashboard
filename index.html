@@ -17,14 +17,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5.1.0" />
 </head>
 <body>
   <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
 
   <div id="setupBackdrop" class="setup-backdrop" hidden>
     <section id="setupModal" class="setup-wizard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V5</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
+      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V5.1</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
       <div class="setup-progress" aria-label="Setup progress">
         <button type="button" class="setup-progress-item active" data-setup-jump="1"><span>1</span><strong data-i18n="setupProfile">โปรไฟล์</strong></button>
         <i></i><button type="button" class="setup-progress-item" data-setup-jump="2"><span>2</span><strong data-i18n="setupJourney">ช่วงเวลา</strong></button>
@@ -37,14 +37,30 @@
             <label class="span-2"><span><b data-i18n="yourName">ชื่อ / ชื่อเล่น</b> <small data-i18n="optional">ไม่บังคับ</small></span><input id="setupNameInput" type="text" maxlength="40" placeholder="Pongsiri" autocomplete="off" /></label>
             <label><span>Language</span><select id="setupLanguageSelect"><option value="th">ไทย</option><option value="en">English</option></select></label>
             <label><span data-i18n="timezone">เขตเวลา</span><select id="setupTimezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok (UTC+7)</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></label>
-            <label class="span-2"><span data-i18n="locale">รูปแบบวันที่และตัวเลข</span><select id="setupLocaleSelect"><option value="th-TH">ไทย · TH</option><option value="en-GB">English · DD/MM/YYYY</option><option value="en-US">English · MM/DD/YYYY</option></select></label>
+            <label class="span-2"><span data-i18n="locale">รูปแบบวันที่และตัวเลข</span><select id="setupLocaleSelect"><option value="th-TH">ไทย · DD/MM/YYYY</option><option value="en-GB">English · DD/MM/YYYY</option><option value="en-US">English · MM/DD/YYYY</option></select></label>
           </div>
         </section>
         <section class="setup-step" data-setup-step="2">
           <div class="setup-step-heading"><span>🗓</span><div><h3 data-i18n="setupJourney">ช่วงเวลา</h3><p class="muted">Start → Finish · Working days</p></div></div>
           <div class="setup-form-grid">
-            <label><span data-i18n="startDateSetup">วันเริ่มต้น</span><input id="setupStartDate" type="date" /></label>
-            <label><span data-i18n="endDateSetup">วันสิ้นสุด</span><input id="setupEndDate" type="date" /></label>
+            <div class="setup-date-field">
+              <span class="setup-field-label" data-i18n="startDateSetup">วันเริ่มต้น</span>
+              <div class="setup-date-control">
+                <input id="setupStartDate" class="setup-date-text" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY" />
+                <button id="setupStartDatePickerBtn" class="calendar-picker-btn" type="button" aria-label="Open start date calendar" title="Calendar">🗓</button>
+                <input id="setupStartDatePicker" class="native-date-picker-proxy" type="date" tabindex="-1" aria-hidden="true" />
+              </div>
+              <small class="setup-date-help"><span data-i18n="dateInputHelp">พิมพ์วันที่เอง หรือกดปฏิทินเพื่อเลือก</span> · <span data-i18n="dateInputFormat">รูปแบบ</span> <strong id="setupStartDateFormat">DD/MM/YYYY</strong></small>
+            </div>
+            <div class="setup-date-field">
+              <span class="setup-field-label" data-i18n="endDateSetup">วันสิ้นสุด</span>
+              <div class="setup-date-control">
+                <input id="setupEndDate" class="setup-date-text" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY" />
+                <button id="setupEndDatePickerBtn" class="calendar-picker-btn" type="button" aria-label="Open end date calendar" title="Calendar">🗓</button>
+                <input id="setupEndDatePicker" class="native-date-picker-proxy" type="date" tabindex="-1" aria-hidden="true" />
+              </div>
+              <small class="setup-date-help"><span data-i18n="dateInputHelp">พิมพ์วันที่เอง หรือกดปฏิทินเพื่อเลือก</span> · <span data-i18n="dateInputFormat">รูปแบบ</span> <strong id="setupEndDateFormat">DD/MM/YYYY</strong></small>
+            </div>
           </div>
           <div class="setup-workdays"><strong data-i18n="workingDaysSetup">วันทำงานประจำ</strong><div class="weekday-toggle-grid">
             <label><input class="setup-workday" type="checkbox" value="1"><span data-i18n="monday">จ</span></label>
@@ -392,7 +408,7 @@
       </section>
     </main>
 
-    <footer class="footer"><span><span data-i18n="footerText">Workday Journey V5 · Multi-user ready · ข้อมูลเก็บใน Browser</span> · <b id="footerVersion">v5.0.0</b></span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
+    <footer class="footer"><span><span data-i18n="footerText">Workday Journey V5.1 · Multi-user ready · ข้อมูลเก็บใน Browser</span> · <b id="footerVersion">v5.1.0</b></span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
   </div>
 
   <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
@@ -404,7 +420,7 @@
       <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option></select></div></section>
       <section class="setting-group toggle-setting-group"><label class="toggle-row"><span><strong data-i18n="showSeconds">แสดงวินาที</strong><small data-i18n="showSecondsHelp">แสดงวินาทีในนาฬิกาหลัก</small></span><input id="showSecondsToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="animations">Animation</strong><small data-i18n="animationsHelp">เปิดการเคลื่อนไหวของ Progress และ Card</small></span><input id="animationToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="dynamicMood">Dynamic Dashboard Mood</strong><small data-i18n="dynamicMoodHelp">เปลี่ยนบรรยากาศพื้นหลังตามช่วงเวลาและสถานะการทำงาน</small></span><input id="dynamicMoodToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="smartNotifications">Smart Notifications</strong><small data-i18n="smartNotificationsHelp">แจ้งเตือนก่อนพัก กลับเข้าทำงาน เหลือ 1 ชั่วโมง และจบวันทำงาน</small></span><input id="notificationToggle" type="checkbox" /><i class="toggle-ui"></i></label></section>
       <section class="setting-group journey-profile-setting"><div class="setting-section-heading"><div><strong data-i18n="profileAndJourney">โปรไฟล์และ Journey</strong><p id="journeyProfileSummary" class="setting-help">—</p></div><button id="editJourneyBtn" class="outline-btn" type="button" data-i18n="editJourney">แก้ไข Journey</button></div></section>
-      <section class="setting-group two-column-setting"><div><label for="timezoneSelect" data-i18n="timezone">เขตเวลา</label><select id="timezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></div><div><label for="localeSelect" data-i18n="locale">รูปแบบวันที่และตัวเลข</label><select id="localeSelect"><option value="th-TH">ไทย · TH</option><option value="en-GB">English · DD/MM</option><option value="en-US">English · MM/DD</option></select></div></section>
+      <section class="setting-group two-column-setting"><div><label for="timezoneSelect" data-i18n="timezone">เขตเวลา</label><select id="timezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></div><div><label for="localeSelect" data-i18n="locale">รูปแบบวันที่และตัวเลข</label><select id="localeSelect"><option value="th-TH">ไทย · DD/MM/YYYY</option><option value="en-GB">English · DD/MM/YYYY</option><option value="en-US">English · MM/DD/YYYY</option></select></div></section>
       <section class="setting-group"><label for="privacyModeSelect" data-i18n="privacyMode">โหมดการแสดงผล</label><select id="privacyModeSelect"><option value="personal" data-i18n="personalMode">Personal</option><option value="demo" data-i18n="demoMode">Public Demo</option></select><p class="setting-help" data-i18n="privacyModeHelp">Demo Mode จะซ่อนชื่อและหมายเหตุส่วนตัว เหมาะสำหรับแชร์หน้าจอหรือ Portfolio</p></section>
       <section class="setting-group data-tools-setting"><strong data-i18n="dataAndBackup">ข้อมูลและ Backup</strong><div class="data-tools-grid"><button id="exportBackupBtn" class="outline-btn" type="button">↓ <span data-i18n="exportBackup">Export Backup</span></button><button id="importBackupBtn" class="outline-btn" type="button">↑ <span data-i18n="importBackup">Import Backup</span></button><button id="startNewJourneyBtn" class="secondary-btn" type="button" data-i18n="startNewJourney">เริ่ม Journey ใหม่</button><button id="resetAllDataBtn" class="danger-btn" type="button" data-i18n="resetAllData">ล้างข้อมูลทั้งหมด</button><input id="backupFileInput" type="file" accept="application/json,.json" hidden /></div></section>
       <section class="setting-group privacy-notice-card"><span>🔐</span><div><strong data-i18n="privacyNoticeTitle">ความเป็นส่วนตัว</strong><p class="setting-help" data-i18n="privacyNotice">ข้อมูล Journey, วันลา และ Settings ถูกเก็บใน localStorage ของ Browser นี้ และไม่ได้อัปโหลดไปยัง Server ของเว็บ</p></div></section>
@@ -491,6 +507,6 @@
   </section>
 
   <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=5.1.0"></script>
 </body>
 </html>

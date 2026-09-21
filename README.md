@@ -1,4 +1,4 @@
-# Workday Journey V5
+# Workday Journey V5.1
 
 A bilingual **work / internship journey dashboard** built with plain HTML, CSS and JavaScript. It works without a backend or database and is designed for GitHub + Vercel deployment.
 
@@ -71,3 +71,10 @@ The site can load Sarabun from Google Fonts when online. For local offline use, 
 **Version:** 5.0.0  
 **Stack:** HTML / CSS / JavaScript / PWA  
 **Storage:** Browser localStorage
+
+V5.1 PROFILE / DATE UPDATE
+- Start/End Date supports manual DD/MM/YYYY (or MM/DD/YYYY for en-US) input.
+- Calendar buttons open the native browser date picker and sync back to the text field.
+- Thai date format label is now ไทย · DD/MM/YYYY.
+- This release performs a one-time reset of prior Workday Journey local data so every existing browser sees First-Time Setup again. Only keys belonging to this app (wp-*) are cleared.
+- V5.1 adds cache-busting and a new Service Worker cache name to reduce stale Vercel/PWA files.
