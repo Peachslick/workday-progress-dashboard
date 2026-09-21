@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "5.1.0";
+  const APP_VERSION = "5.1.1";
   const DATA_RESET_VERSION = "5.1-profile-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
@@ -19,6 +19,21 @@
       localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION);
     } catch (_) {
       // The app can still run with browser defaults if storage is unavailable.
+    }
+  })();
+
+  // V5.1.1: Light is the default theme. Existing explicit Light/Dark choices are preserved.
+  // Browsers that were still using the old default "system" theme are migrated once to Light.
+  (function migrateDefaultThemeToLight() {
+    try {
+      const marker = "wp-theme-default-version";
+      const version = "5.1.1-light-default";
+      if (localStorage.getItem(marker) === version) return;
+      const current = localStorage.getItem("wp-theme");
+      if (!current || current === "system") localStorage.setItem("wp-theme", "light");
+      localStorage.setItem(marker, version);
+    } catch (_) {
+      // If storage is unavailable, state below still falls back to Light.
     }
   })();
   const DEFAULT_JOURNEY_CONFIG = {
@@ -411,7 +426,7 @@
     language: localStorage.getItem("wp-language") || (CONFIG.locale.startsWith("th") ? "th" : "en"),
     fontFamily: localStorage.getItem("wp-font-family") || "sarabun",
     fontSize: localStorage.getItem("wp-font-size") || "medium",
-    theme: localStorage.getItem("wp-theme") || "system",
+    theme: localStorage.getItem("wp-theme") || "light",
     clockFormat: localStorage.getItem("wp-clock-format") || "24",
     showSeconds: localStorage.getItem("wp-show-seconds") !== "false",
     animations: localStorage.getItem("wp-animations") !== "false",
@@ -1735,7 +1750,7 @@
     els.densitySelect.addEventListener("change", e => { state.density = e.target.value; persistPreferences(); applyPreferences(); });
     els.showSecondsToggle.addEventListener("change", e => { state.showSeconds = e.target.checked; persistPreferences(); renderDashboard(); });
     els.animationToggle.addEventListener("change", e => { state.animations = e.target.checked; persistPreferences(); applyPreferences(); });
-    els.resetSettings.addEventListener("click", () => { Object.assign(state, { language: "th", fontFamily: "sarabun", fontSize: "medium", theme: "system", clockFormat: "24", showSeconds: true, animations: true, density: "comfortable" }); persistPreferences(); applyPreferences(); renderTranslations(); renderDashboard(); });
+    els.resetSettings.addEventListener("click", () => { Object.assign(state, { language: "th", fontFamily: "sarabun", fontSize: "medium", theme: "light", clockFormat: "24", showSeconds: true, animations: true, density: "comfortable" }); persistPreferences(); applyPreferences(); renderTranslations(); renderDashboard(); });
     els.calendarPrev.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() - 1, 1); renderCalendar(getConfiguredNow()); });
     els.calendarNext.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1); renderCalendar(getConfiguredNow()); });
     els.calendarToday.addEventListener("click", () => { state.calendarDate = startOfMonth(getConfiguredNow()); renderCalendar(getConfiguredNow()); });

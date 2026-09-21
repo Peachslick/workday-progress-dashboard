@@ -78,3 +78,10 @@ V5.1 PROFILE / DATE UPDATE
 - Thai date format label is now ไทย · DD/MM/YYYY.
 - This release performs a one-time reset of prior Workday Journey local data so every existing browser sees First-Time Setup again. Only keys belonging to this app (wp-*) are cleared.
 - V5.1 adds cache-busting and a new Service Worker cache name to reduce stale Vercel/PWA files.
+
+
+V5.1.1 LIGHT DEFAULT
+- New users now start in Light theme.
+- Browsers still using the previous System default are migrated once to Light.
+- Explicit Light or Dark choices are preserved.
+- Reset Settings now returns to Light theme.
