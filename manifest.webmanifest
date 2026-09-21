@@ -1,7 +1,7 @@
 {
-  "name": "Workday Progress - Smart Journey",
+  "name": "Workday Journey V5",
   "short_name": "Workday Journey",
-  "description": "Bilingual workday and internship progress tracker with achievements, milestone forecasts, heatmap, replay and snapshots.",
+  "description": "A private-by-default work and internship journey tracker with attendance, achievements, backup/restore, setup wizard, sharing and PWA support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

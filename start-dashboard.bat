@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo       Workday Progress Dashboard V4
+echo       Workday Journey V5
 echo       Smart Journey ^& PWA
 echo ============================================
 echo.

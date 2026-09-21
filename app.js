@@ -1,22 +1,119 @@
 (() => {
   "use strict";
 
-  const CONFIG = {
-    internshipStart: new Date(2026, 4, 5),
-    internshipEnd: new Date(2026, 9, 30),
+  const APP_VERSION = "5.0.0";
+  const DEFAULT_JOURNEY_CONFIG = {
+    profileName: "",
+    startDate: "2026-05-05",
+    endDate: "2026-10-30",
     workdayStart: "07:00",
     workdayEnd: "16:10",
-    totalWorkMinutes: 480,
-    schedule: [
-      { type: "work", start: "07:00", end: "09:00", durationLabel: "2h" },
-      { type: "break", key: "break1", start: "09:00", end: "09:20", durationLabel: "20m" },
-      { type: "work", start: "09:20", end: "11:00", durationLabel: "1h 40m" },
-      { type: "break", key: "break2", start: "11:00", end: "11:40", durationLabel: "40m" },
-      { type: "work", start: "11:40", end: "14:00", durationLabel: "2h 20m" },
-      { type: "break", key: "break3", start: "14:00", end: "14:10", durationLabel: "10m" },
-      { type: "work", start: "14:10", end: "16:10", durationLabel: "2h" }
-    ]
+    workdays: [1, 2, 3, 4, 5],
+    breaks: [
+      { start: "09:00", end: "09:20" },
+      { start: "11:00", end: "11:40" },
+      { start: "14:00", end: "14:10" }
+    ],
+    timezone: "Asia/Bangkok",
+    locale: "th-TH"
   };
+
+  function readStoredJson(key, fallback) {
+    try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch { return fallback; }
+  }
+  function parseConfigDate(value, fallback) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+    if (!match) return new Date(fallback);
+    const d = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    return Number.isNaN(d.getTime()) ? new Date(fallback) : d;
+  }
+  function timeToMinutes(value) {
+    const match = /^(\d{1,2}):(\d{2})$/.exec(String(value || ""));
+    if (!match) return NaN;
+    const h = Number(match[1]), m = Number(match[2]);
+    return h >= 0 && h <= 23 && m >= 0 && m <= 59 ? h * 60 + m : NaN;
+  }
+  function minutesToTime(total) {
+    const safe = Math.max(0, Math.min(1439, Math.round(total)));
+    return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+  }
+  function durationLabelFromMinutes(total) {
+    const safe = Math.max(0, Math.round(total));
+    const h = Math.floor(safe / 60), m = safe % 60;
+    if (h && m) return `${h}h ${m}m`;
+    if (h) return `${h}h`;
+    return `${m}m`;
+  }
+  function normalizeJourneyConfig(raw = {}) {
+    const merged = { ...DEFAULT_JOURNEY_CONFIG, ...(raw || {}) };
+    const start = parseConfigDate(merged.startDate, parseConfigDate(DEFAULT_JOURNEY_CONFIG.startDate, new Date()));
+    let end = parseConfigDate(merged.endDate, parseConfigDate(DEFAULT_JOURNEY_CONFIG.endDate, new Date()));
+    if (end < start) end = new Date(start);
+    let startMin = timeToMinutes(merged.workdayStart), endMin = timeToMinutes(merged.workdayEnd);
+    if (!Number.isFinite(startMin) || !Number.isFinite(endMin) || endMin <= startMin) {
+      startMin = timeToMinutes(DEFAULT_JOURNEY_CONFIG.workdayStart);
+      endMin = timeToMinutes(DEFAULT_JOURNEY_CONFIG.workdayEnd);
+    }
+    let workdays = Array.isArray(merged.workdays) ? [...new Set(merged.workdays.map(Number).filter(n => n >= 0 && n <= 6))] : [...DEFAULT_JOURNEY_CONFIG.workdays];
+    if (!workdays.length) workdays = [...DEFAULT_JOURNEY_CONFIG.workdays];
+    const sourceBreaks = Array.isArray(merged.breaks) ? merged.breaks : DEFAULT_JOURNEY_CONFIG.breaks;
+    const breaks = sourceBreaks.map(item => ({ start: String(item?.start || ""), end: String(item?.end || "") }))
+      .filter(item => {
+        const a = timeToMinutes(item.start), b = timeToMinutes(item.end);
+        return Number.isFinite(a) && Number.isFinite(b) && a >= startMin && b <= endMin && b > a;
+      })
+      .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start))
+      .filter((item, index, arr) => index === 0 || timeToMinutes(item.start) >= timeToMinutes(arr[index - 1].end));
+    const timezone = typeof merged.timezone === "string" && merged.timezone ? merged.timezone : DEFAULT_JOURNEY_CONFIG.timezone;
+    const locale = ["th-TH", "en-US", "en-GB"].includes(merged.locale) ? merged.locale : DEFAULT_JOURNEY_CONFIG.locale;
+    return {
+      profileName: String(merged.profileName || "").trim().slice(0, 40),
+      startDate: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+      endDate: `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")}`,
+      workdayStart: minutesToTime(startMin), workdayEnd: minutesToTime(endMin), workdays, breaks, timezone, locale
+    };
+  }
+  function buildSchedule(config) {
+    const startMin = timeToMinutes(config.workdayStart), endMin = timeToMinutes(config.workdayEnd);
+    const schedule = [];
+    let cursor = startMin, breakIndex = 0;
+    for (const br of config.breaks) {
+      const a = timeToMinutes(br.start), b = timeToMinutes(br.end);
+      if (a > cursor) schedule.push({ type: "work", start: minutesToTime(cursor), end: minutesToTime(a), durationLabel: durationLabelFromMinutes(a - cursor) });
+      breakIndex++;
+      schedule.push({ type: "break", key: `break${breakIndex}`, start: minutesToTime(a), end: minutesToTime(b), durationLabel: durationLabelFromMinutes(b - a) });
+      cursor = Math.max(cursor, b);
+    }
+    if (cursor < endMin) schedule.push({ type: "work", start: minutesToTime(cursor), end: minutesToTime(endMin), durationLabel: durationLabelFromMinutes(endMin - cursor) });
+    return schedule;
+  }
+  function hydrateRuntimeConfig(raw) {
+    const config = normalizeJourneyConfig(raw);
+    const schedule = buildSchedule(config);
+    const totalWorkMinutes = schedule.filter(x => x.type === "work").reduce((sum, x) => sum + (timeToMinutes(x.end) - timeToMinutes(x.start)), 0);
+    const totalBreakMinutes = schedule.filter(x => x.type === "break").reduce((sum, x) => sum + (timeToMinutes(x.end) - timeToMinutes(x.start)), 0);
+    return {
+      ...config,
+      internshipStart: parseConfigDate(config.startDate, new Date()),
+      internshipEnd: parseConfigDate(config.endDate, new Date()),
+      schedule,
+      totalWorkMinutes,
+      totalBreakMinutes
+    };
+  }
+
+  const HAS_LEGACY_DATA = ["wp-day-overrides", "wp-achievements-initialized", "wp-dynamic-mood", "wp-font-family", "wp-language"].some(key => localStorage.getItem(key) !== null);
+  if (!localStorage.getItem("wp-journey-config") && HAS_LEGACY_DATA) localStorage.setItem("wp-journey-config", JSON.stringify(DEFAULT_JOURNEY_CONFIG));
+  if (localStorage.getItem("wp-setup-completed") !== "true" && HAS_LEGACY_DATA) localStorage.setItem("wp-setup-completed", "true");
+  let journeyConfig = normalizeJourneyConfig(readStoredJson("wp-journey-config", DEFAULT_JOURNEY_CONFIG));
+  const CONFIG = hydrateRuntimeConfig(journeyConfig);
+  function applyJourneyConfig(raw, persist = true) {
+    journeyConfig = normalizeJourneyConfig(raw);
+    Object.assign(CONFIG, hydrateRuntimeConfig(journeyConfig));
+    if (persist) localStorage.setItem("wp-journey-config", JSON.stringify(journeyConfig));
+  }
+
 
   const translations = {
     th: {
@@ -193,7 +290,7 @@
     companyHolidayShort: "หยุดบริษัท", compWorkShort: "ชดเชย", leaveShortWithTime: "ลา {time}",
     attendancePerfect: "ยอดเยี่ยม · เวลาเข้าเป้าครบตามที่ควรถึงวันนี้", attendanceWithLeave: "มีเวลาหายจากการลา {time}",
     noLeaveTime: "ยังไม่มีเวลาที่หายจากการลา", daysRecordedTotal: "บันทึกไว้ทั้งหมด {days} วัน",
-    leaveValidation: "กรุณากำหนดเวลาลาระหว่าง 1 นาที ถึง 8 ชั่วโมง",
+    leaveValidation: "กรุณากำหนดเวลาลาระหว่าง 1 นาที ถึงเวลาทำงานเต็มวัน",
     scheduleRemainingHours: "ชั่วโมงทำงานจริงที่เหลือตามปฏิทิน", workdaysActuallyWorked: "วันที่ได้ทำงานจริง",
     calendarInstruction: "คลิกวันที่เพื่อกำหนดวันหยุดบริษัท วันลา หรือวันทำงานชดเชย"
   });
@@ -223,9 +320,58 @@
     companyHolidayShort: "Company off", compWorkShort: "Comp work", leaveShortWithTime: "Leave {time}",
     attendancePerfect: "On track · actual time matches the expected time to date", attendanceWithLeave: "Leave has reduced work time by {time}",
     noLeaveTime: "No leave time lost yet", daysRecordedTotal: "{days} days recorded in total",
-    leaveValidation: "Set leave duration between 1 minute and 8 hours",
+    leaveValidation: "Set leave duration between 1 minute and the full scheduled work time",
     scheduleRemainingHours: "Actual working hours remaining in the calendar", workdaysActuallyWorked: "Days with actual work",
     calendarInstruction: "Click a date to mark a company holiday, personal leave, or compensatory workday"
+  });
+
+
+  // V5 — Multi-user setup, privacy, backup and public deployment
+  Object.assign(translations.th, {
+    welcomeTitle: "ยินดีต้อนรับสู่ Workday Journey", welcomeSubtitle: "สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้",
+    setupProfile: "โปรไฟล์", setupJourney: "ช่วงเวลา", setupSchedule: "ตารางทำงาน", yourName: "ชื่อ / ชื่อเล่น", optional: "ไม่บังคับ",
+    timezone: "เขตเวลา", locale: "รูปแบบวันที่และตัวเลข", next: "ถัดไป", back: "ย้อนกลับ", startJourney: "เริ่ม Journey", saveChanges: "บันทึกการเปลี่ยนแปลง",
+    useRecommended: "ใช้ค่าแนะนำ", startDateSetup: "วันเริ่มต้น", endDateSetup: "วันสิ้นสุด", workingDaysSetup: "วันทำงานประจำ",
+    workStartSetup: "เวลาเริ่มงาน", workEndSetup: "เวลาเลิกงาน", breaksSetup: "ช่วงพัก", enableBreak: "ใช้งาน", setupValidationDates: "วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น",
+    setupValidationTime: "เวลาเลิกงานต้องมากกว่าเวลาเริ่มงาน และต้องมีเวลาทำงานจริง", setupValidationDays: "กรุณาเลือกวันทำงานอย่างน้อย 1 วัน",
+    profileAndJourney: "โปรไฟล์และ Journey", editJourney: "แก้ไข Journey", privacyMode: "โหมดการแสดงผล", personalMode: "Personal", demoMode: "Public Demo",
+    privacyModeHelp: "Demo Mode จะซ่อนชื่อและหมายเหตุส่วนตัว เหมาะสำหรับแชร์หน้าจอหรือ Portfolio", dataAndBackup: "ข้อมูลและ Backup",
+    exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "เริ่ม Journey ใหม่", resetAllData: "ล้างข้อมูลทั้งหมด", resetAllConfirm: "ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่?",
+    newJourneyConfirm: "ต้องการเริ่ม Journey ใหม่หรือไม่? Calendar, Achievement และข้อมูล Journey ปัจจุบันจะถูกล้าง แต่ Theme/Font จะยังอยู่",
+    importConfirm: "นำเข้า Backup นี้และแทนที่ข้อมูล Workday Journey ปัจจุบันหรือไม่?", invalidBackup: "ไฟล์ Backup ไม่ถูกต้อง", backupCreated: "สร้าง Backup เรียบร้อยแล้ว", backupImported: "นำเข้า Backup สำเร็จแล้ว",
+    privacyNoticeTitle: "ความเป็นส่วนตัว", privacyNotice: "ข้อมูล Journey, วันลา และ Settings ถูกเก็บใน localStorage ของ Browser นี้ และไม่ได้อัปโหลดไปยัง Server ของเว็บ",
+    shareSummary: "แชร์สรุป", shareCopied: "คัดลอกสรุป Journey แล้ว", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
+    versionLabel: "เวอร์ชัน", updateAvailable: "มีเวอร์ชันใหม่พร้อมใช้งาน", updateHelp: "Refresh เพื่อโหลดไฟล์ล่าสุดจาก Deployment", refreshNow: "Refresh ตอนนี้",
+    profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
+    setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
+    fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5 · Multi-user ready · ข้อมูลเก็บใน Browser",
+    heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
+    notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
+    weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
+  });
+  Object.assign(translations.en, {
+    welcomeTitle: "Welcome to Workday Journey", welcomeSubtitle: "Create your own journey. Your data stays in this browser.",
+    setupProfile: "Profile", setupJourney: "Journey", setupSchedule: "Schedule", yourName: "Name / Nickname", optional: "Optional",
+    timezone: "Timezone", locale: "Date & number format", next: "Next", back: "Back", startJourney: "Start My Journey", saveChanges: "Save Changes",
+    useRecommended: "Use Recommended Defaults", startDateSetup: "Start Date", endDateSetup: "End Date", workingDaysSetup: "Regular Working Days",
+    workStartSetup: "Work Start", workEndSetup: "Work End", breaksSetup: "Breaks", enableBreak: "Enabled", setupValidationDates: "End date must not be before the start date",
+    setupValidationTime: "Finish time must be after start time and leave some actual working time", setupValidationDays: "Select at least one regular working day",
+    profileAndJourney: "Profile & Journey", editJourney: "Edit Journey", privacyMode: "Display Mode", personalMode: "Personal", demoMode: "Public Demo",
+    privacyModeHelp: "Demo Mode hides your name and private notes for screen sharing or a portfolio", dataAndBackup: "Data & Backup",
+    exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "Start New Journey", resetAllData: "Reset All Data", resetAllConfirm: "Reset all Workday Journey data stored in this browser?",
+    newJourneyConfirm: "Start a new journey? Calendar, achievements and current journey data will be cleared, while appearance settings stay.",
+    importConfirm: "Import this backup and replace the current Workday Journey data?", invalidBackup: "Invalid backup file", backupCreated: "Backup created", backupImported: "Backup imported",
+    privacyNoticeTitle: "Privacy", privacyNotice: "Journey data, leave records and settings are stored in this browser's localStorage and are not uploaded to the website server.",
+    shareSummary: "Share Summary", shareCopied: "Journey summary copied", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
+    versionLabel: "Version", updateAvailable: "A new version is available", updateHelp: "Refresh to load the latest deployed files", refreshNow: "Refresh Now",
+    profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
+    setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
+    fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5 · Multi-user ready · Data stays in your browser",
+    heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
+    notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
+    weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
   });
 
 
@@ -239,8 +385,9 @@
   };
   const FONT_SCALE_MAP = { small: .92, medium: 1, large: 1.09 };
 
+  const urlDemoMode = (() => { try { return new URLSearchParams(location.search).get("demo") === "1"; } catch { return false; } })();
   const state = {
-    language: localStorage.getItem("wp-language") || "th",
+    language: localStorage.getItem("wp-language") || (CONFIG.locale.startsWith("th") ? "th" : "en"),
     fontFamily: localStorage.getItem("wp-font-family") || "sarabun",
     fontSize: localStorage.getItem("wp-font-size") || "medium",
     theme: localStorage.getItem("wp-theme") || "system",
@@ -249,7 +396,7 @@
     animations: localStorage.getItem("wp-animations") !== "false",
     density: localStorage.getItem("wp-density") || "comfortable",
     dayOverrides: safeParse(localStorage.getItem("wp-day-overrides"), {}),
-    calendarDate: startOfMonth(new Date()),
+    calendarDate: startOfMonth(getConfiguredNow()),
     selectedDate: null,
     selectedDayType: "default",
     selectedLeaveMode: "full",
@@ -261,8 +408,17 @@
     notificationsEnabled: localStorage.getItem("wp-notifications-enabled") === "true",
     timeMachineAuto: true,
     timeMachineDate: null,
-    timeMachineMinute: parseTime("07:00"),
-    deferredInstallPrompt: null
+    timeMachineMinute: parseTime(CONFIG.workdayStart),
+    deferredInstallPrompt: null,
+    timezone: localStorage.getItem("wp-timezone") || CONFIG.timezone,
+    locale: localStorage.getItem("wp-locale") || CONFIG.locale,
+    privacyMode: urlDemoMode ? "demo" : (localStorage.getItem("wp-privacy-mode") || "personal"),
+    setupCompleted: localStorage.getItem("wp-setup-completed") === "true",
+    setupStep: 1,
+    setupMode: "first",
+    setupOriginalLanguage: "th",
+    pendingServiceWorker: null,
+    refreshForUpdate: false
   };
 
   const $ = id => document.getElementById(id);
@@ -290,10 +446,20 @@
     completionLeaveTime: $("completionLeaveTime"), completionHolidayCount: $("completionHolidayCount"), completionCompTime: $("completionCompTime"), completionAttendance: $("completionAttendance"),
     onlineStatus: $("onlineStatus"), installAppBtn: $("installAppBtn"), settingsInstallBtn: $("settingsInstallBtn"), snapshotBtn: $("snapshotBtn"), statsSnapshotBtn: $("statsSnapshotBtn"), completionSnapshotBtn: $("completionSnapshotBtn"),
     nextMilestoneExpected: $("nextMilestoneExpected"), milestoneForecastList: $("milestoneForecastList"), timeMachineNow: $("timeMachineNow"), timeMachineDateInput: $("timeMachineDate"), timeMachineRange: $("timeMachineRange"), timeMachineClock: $("timeMachineClock"), timeMachinePercent: $("timeMachinePercent"), timeMachineStatus: $("timeMachineStatus"), timeMachineFill: $("timeMachineFill"), timeMachineSummary: $("timeMachineSummary"),
-    heatmapMonths: $("heatmapMonths"), storyProgressBadge: $("storyProgressBadge"), journeyStoryList: $("journeyStoryList"), dynamicMoodToggle: $("dynamicMoodToggle"), notificationToggle: $("notificationToggle"), toastStack: $("toastStack")
+    heatmapMonths: $("heatmapMonths"), storyProgressBadge: $("storyProgressBadge"), journeyStoryList: $("journeyStoryList"), dynamicMoodToggle: $("dynamicMoodToggle"), notificationToggle: $("notificationToggle"), toastStack: $("toastStack"),
+    setupBackdrop: $("setupBackdrop"), setupModal: $("setupModal"), setupNameInput: $("setupNameInput"), setupLanguageSelect: $("setupLanguageSelect"), setupTimezoneSelect: $("setupTimezoneSelect"), setupLocaleSelect: $("setupLocaleSelect"), setupStartDate: $("setupStartDate"), setupEndDate: $("setupEndDate"), setupWorkStart: $("setupWorkStart"), setupWorkEnd: $("setupWorkEnd"), setupSchedulePreview: $("setupSchedulePreview"), setupError: $("setupError"), setupCancelBtn: $("setupCancelBtn"), setupBackBtn: $("setupBackBtn"), setupNextBtn: $("setupNextBtn"), setupSaveBtn: $("setupSaveBtn"), setupDefaultsBtn: $("setupDefaultsBtn"),
+    profileQuickBtn: $("profileQuickBtn"), profileQuickName: $("profileQuickName"), editJourneyBtn: $("editJourneyBtn"), journeyProfileSummary: $("journeyProfileSummary"), timezoneSelect: $("timezoneSelect"), localeSelect: $("localeSelect"), privacyModeSelect: $("privacyModeSelect"), exportBackupBtn: $("exportBackupBtn"), importBackupBtn: $("importBackupBtn"), backupFileInput: $("backupFileInput"), startNewJourneyBtn: $("startNewJourneyBtn"), resetAllDataBtn: $("resetAllDataBtn"), shareSummaryBtn: $("shareSummaryBtn"), updateBanner: $("updateBanner"), refreshUpdateBtn: $("refreshUpdateBtn"), footerVersion: $("footerVersion"), finishTimeValue: $("finishTimeValue"), settingsScheduleValue: $("settingsScheduleValue"), settingsWorkTimeValue: $("settingsWorkTimeValue"), settingsBreakTimeValue: $("settingsBreakTimeValue"), settingsRangeValue: $("settingsRangeValue")
   };
 
   function safeParse(value, fallback) { try { return value ? JSON.parse(value) : fallback; } catch { return fallback; } }
+  function getDisplayLocale() { return state?.locale || CONFIG.locale || (state?.language === "th" ? "th-TH" : "en-US"); }
+  function getConfiguredNow(source = new Date()) {
+    try {
+      const parts = new Intl.DateTimeFormat("en-CA", { timeZone: CONFIG.timezone || "Asia/Bangkok", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit", hourCycle:"h23" }).formatToParts(source);
+      const map = Object.fromEntries(parts.filter(p => p.type !== "literal").map(p => [p.type, p.value]));
+      return new Date(Number(map.year), Number(map.month) - 1, Number(map.day), Number(map.hour), Number(map.minute), Number(map.second), source.getMilliseconds());
+    } catch { return new Date(source); }
+  }
   function t(key) { return translations[state.language]?.[key] ?? translations.en[key] ?? key; }
   function pad(n) { return String(n).padStart(2, "0"); }
   function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
@@ -303,7 +469,7 @@
   function dateKey(date) { return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`; }
   function parseTime(value) { const [h, m] = value.split(":").map(Number); return h * 60 + m; }
   function minutesOfDay(date) { return date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60; }
-  function isWeekend(date) { const d = date.getDay(); return d === 0 || d === 6; }
+  function isWeekend(date) { return !CONFIG.workdays.includes(date.getDay()); }
   function isWithinInternship(date) { const d = localDateOnly(date); return d >= CONFIG.internshipStart && d <= CONFIG.internshipEnd; }
   function getOverride(date) { return state.dayOverrides[dateKey(date)] || null; }
   function getDayType(date) {
@@ -324,7 +490,7 @@
     const override = getOverride(date);
     if (override?.type === "holiday") return 0;
     if (override?.type === "work") return CONFIG.totalWorkMinutes;
-    if (override?.type === "leave") return clamp(Number(override.scheduledMinutes ?? CONFIG.totalWorkMinutes), 0, CONFIG.totalWorkMinutes);
+    if (override?.type === "leave") return CONFIG.totalWorkMinutes;
     return isWeekend(date) ? 0 : CONFIG.totalWorkMinutes;
   }
   function getActualDayCapacity(date) { return Math.max(0, getScheduledMinutes(date) - getLeaveMinutes(date)); }
@@ -337,18 +503,18 @@
   function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char])); }
 
   function formatLongDate(date) {
-    return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(date);
+    return new Intl.DateTimeFormat(getDisplayLocale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(date);
   }
-  function formatMonthYear(date) { return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { month: "long", year: "numeric" }).format(date); }
-  function formatMonthName(date) { return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { month: "long" }).format(date); }
-  function formatShortDate(date) { return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date); }
+  function formatMonthYear(date) { return new Intl.DateTimeFormat(getDisplayLocale(), { month: "long", year: "numeric" }).format(date); }
+  function formatMonthName(date) { return new Intl.DateTimeFormat(getDisplayLocale(), { month: "long" }).format(date); }
+  function formatShortDate(date) { return new Intl.DateTimeFormat(getDisplayLocale(), { day: "2-digit", month: "2-digit", year: "numeric" }).format(date); }
   function formatCompactDate(date) {
-    return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { day: "2-digit", month: "short", year: "numeric" }).format(date).toUpperCase();
+    return new Intl.DateTimeFormat(getDisplayLocale(), { day: "2-digit", month: "short", year: "numeric" }).format(date).toUpperCase();
   }
   function formatTime(date) {
     const options = { hour: "2-digit", minute: "2-digit", hour12: state.clockFormat === "12" };
     if (state.showSeconds) options.second = "2-digit";
-    return new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", options).format(date);
+    return new Intl.DateTimeFormat(getDisplayLocale(), options).format(date);
   }
   function formatDuration(totalMinutes, compact = false) {
     const safe = Math.max(0, Math.floor(totalMinutes));
@@ -359,16 +525,16 @@
   }
   function formatHours(totalMinutes, decimals = 0) {
     const hours = Math.max(0, totalMinutes) / 60;
-    return `${hours.toLocaleString(state.language === "th" ? "th-TH" : "en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })} ${t("hoursShort")}`;
+    return `${hours.toLocaleString(getDisplayLocale(), { minimumFractionDigits: decimals, maximumFractionDigits: decimals })} ${t("hoursShort")}`;
   }
   function formatCountdownSeconds(totalSeconds) {
     const safe = Math.max(0, Math.floor(totalSeconds));
     const h = Math.floor(safe / 3600), m = Math.floor((safe % 3600) / 60), s = safe % 60;
     return `${pad(h)}:${pad(m)}:${pad(s)}`;
   }
-  function localeNumber(value, options = {}) { return Number(value).toLocaleString(state.language === "th" ? "th-TH" : "en-US", options); }
+  function localeNumber(value, options = {}) { return Number(value).toLocaleString(getDisplayLocale(), options); }
 
-  function getNormalScheduleElapsedMinutes(date, now = new Date()) {
+  function getNormalScheduleElapsedMinutes(date, now = getConfiguredNow()) {
     const scheduled = getScheduledMinutes(date);
     if (!scheduled) return 0;
     const day = localDateOnly(date), today = localDateOnly(now);
@@ -384,7 +550,7 @@
     return clamp(total, 0, scheduled);
   }
 
-  function getWorkedMinutes(date, now = new Date()) {
+  function getWorkedMinutes(date, now = getConfiguredNow()) {
     const capacity = getActualDayCapacity(date);
     if (capacity <= 0) return 0;
     const day = localDateOnly(date), today = localDateOnly(now);
@@ -559,6 +725,8 @@
     document.querySelectorAll("[data-i18n]").forEach(node => { const key = node.dataset.i18n; if (translations[state.language][key]) node.textContent = t(key); });
     els.dayNoteInput.placeholder = t("notePlaceholder");
     document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === state.language));
+    if (els.setupSaveBtn && !els.setupBackdrop?.hidden) els.setupSaveBtn.textContent = t(state.setupMode === "edit" ? "saveChanges" : "startJourney");
+    renderJourneyConfigUI();
   }
 
   function renderStatus(status) {
@@ -586,7 +754,7 @@
         rangeStart = parseTime(status.segment.start) * 60; rangeEnd = targetSeconds;
       } else {
         targetSeconds = parseTime(CONFIG.workdayEnd) * 60; titleKey = "untilFinish"; hint = t("finishAt").replace("{time}", CONFIG.workdayEnd); icon = "🏁";
-        rangeStart = parseTime(status.segment?.start || "14:10") * 60; rangeEnd = targetSeconds;
+        rangeStart = parseTime(status.segment?.start || CONFIG.workdayStart) * 60; rangeEnd = targetSeconds;
       }
     } else if (status.type === "break") {
       targetSeconds = parseTime(status.segment.end) * 60; titleKey = "untilBreakEnds"; hint = t("breakEndsAt").replace("{time}", status.segment.end); icon = "☕";
@@ -606,7 +774,8 @@
       const cls = current >= end ? "past" : current >= start && current < end ? "now" : "";
       return `<div class="timeline-segment ${seg.type} ${cls}" style="width:${width}%" title="${seg.start}–${seg.end}"></div>`;
     }).join("");
-    els.timelineLabels.innerHTML = `<span>${CONFIG.workdayStart}</span><span>09:00</span><span>11:00</span><span>14:00</span><span>${CONFIG.workdayEnd}</span>`;
+    const markers = [CONFIG.workdayStart, ...CONFIG.schedule.filter(x => x.type === "break").map(x => x.start), CONFIG.workdayEnd];
+    els.timelineLabels.innerHTML = markers.map(x => `<span>${x}</span>`).join("");
   }
 
   function renderScheduleList(now) {
@@ -628,12 +797,12 @@
     const weekStart = getWeekStart(now); let workedTotal = 0, plannedTotal = 0; const rows = [];
     for (let i = 0; i < 7; i++) {
       const day = addDays(weekStart, i), type = getDayType(day), planned = getScheduledMinutes(day), scheduled = planned > 0;
-      const include = i < 5 || isCompensatoryWorkday(day) || type === "leave";
+      const include = CONFIG.workdays.includes(day.getDay()) || isCompensatoryWorkday(day) || type === "leave";
       if (!include) continue;
       const worked = getWorkedMinutes(day, now), leave = getLeaveMinutes(day);
       workedTotal += worked; plannedTotal += planned;
       const pct = planned ? clamp(worked / planned * 100, 0, 100) : 0;
-      const locale = state.language === "th" ? "th-TH" : "en-US";
+      const locale = getDisplayLocale();
       const name = new Intl.DateTimeFormat(locale, { weekday: "short" }).format(day);
       let value = scheduled ? formatHours(worked, worked > 0 && worked < 60 ? 1 : 0) : t("weekOff");
       if (type === "leave") value = `${formatHours(worked, 1)} · ${t("leaveShortWithTime").replace("{time}", formatDuration(leave, true))}`;
@@ -689,7 +858,8 @@
     if (!override) { els.todaySpecialBadge.hidden = true; return; }
     let label = override.type === "holiday" ? t("companyHoliday") : override.type === "work" ? t("compensatoryWorkday") : t("leaveStatus");
     if (override.type === "leave") label = isFullLeave(now) ? t("fullLeaveBadge") : t("partialLeaveBadge").replace("{time}", formatDuration(getLeaveMinutes(now), true));
-    els.todaySpecialBadge.textContent = override.note ? `${label} · ${override.note}` : label; els.todaySpecialBadge.hidden = false;
+    const note = state.privacyMode === "demo" ? "" : override.note;
+    els.todaySpecialBadge.textContent = note ? `${label} · ${note}` : label; els.todaySpecialBadge.hidden = false;
   }
 
   function renderJourneyOverview(stats, streak, achievements) {
@@ -767,7 +937,7 @@
       ["🏆", "recordLongestStreak", `${localeNumber(streak.longest)} ${t("daysShort")}`, ""],
       ["📆", "recordCalendarDays", localeNumber(stats.calendarDaysSinceStart), `${formatCompactDate(CONFIG.internshipStart)} → ${formatCompactDate(CONFIG.internshipEnd)}`],
       ["🗓", "recordWeek", `${stats.currentWeek} / ${stats.totalWeeks}`, ""],
-      ["⏱", "recordEquivalentDays", localeNumber(stats.elapsedMinutes / CONFIG.totalWorkMinutes, { minimumFractionDigits: 1, maximumFractionDigits: 1 }), `× 8 ${t("hoursShort")}`],
+      ["⏱", "recordEquivalentDays", localeNumber(stats.elapsedMinutes / CONFIG.totalWorkMinutes, { minimumFractionDigits: 1, maximumFractionDigits: 1 }), `× ${formatDuration(CONFIG.totalWorkMinutes,true)}`],
       ["📈", "recordProgress", `${stats.percent.toFixed(1)}%`, t("scheduleJourneyProgress")],
       ["🏖", "recordLeaveLost", formatDuration(stats.leaveMinutesLost, true), `${localeNumber(stats.leaveDateCount)} ${t("daysShort")}`],
       ["🧭", "recordAttendance", `${stats.attendancePercent.toFixed(1)}%`, t("attendanceExpectedActual").replace("{actual}", formatHours(stats.elapsedMinutes,1)).replace("{expected}", formatHours(stats.expectedMinutesToDate,1))],
@@ -779,7 +949,7 @@
     ];
     els.recordsGrid.innerHTML = records.map(([icon,key,value,small]) => `<div class="record-card"><span class="record-icon">${icon}</span><span>${escapeHtml(t(key))}</span><strong>${escapeHtml(value)}</strong>${small ? `<small>${escapeHtml(small)}</small>` : ""}</div>`).join("");
 
-    const months = getMonthlyStats(new Date());
+    const months = getMonthlyStats(getConfiguredNow());
     const mostActive = months.reduce((best, item) => item.worked > (best?.worked ?? -1) ? item : best, null);
     els.mostActiveMonth.textContent = mostActive ? t("mostActive").replace("{month}", formatMonthName(mostActive.date)) : "";
     els.monthlyStatsList.innerHTML = months.map(item => {
@@ -816,6 +986,8 @@
     if (els.completionHolidayCount) els.completionHolidayCount.textContent = localeNumber(stats.companyHolidayCount);
     if (els.completionCompTime) els.completionCompTime.textContent = formatDuration(stats.compWorkMinutes, true);
     if (els.completionAttendance) els.completionAttendance.textContent = `${stats.attendancePercent.toFixed(1)}%`;
+    const completionMessageNode = document.querySelector('[data-i18n="completionMessage"]');
+    if (completionMessageNode) completionMessageNode.textContent = t("completionMessageDynamic").replace("{start}", formatCompactDate(CONFIG.internshipStart)).replace("{end}", formatCompactDate(CONFIG.internshipEnd));
     if (localStorage.getItem("wp-completion-seen") !== "true" && !els.completionModal.classList.contains("open")) {
       setTimeout(() => openCompletionModal(), 700);
     }
@@ -855,8 +1027,8 @@
   function formatClockMinute(minute) { const whole = Math.floor(minute); return `${pad(Math.floor(whole/60))}:${pad(whole%60)}`; }
   function formatPredictionDate(date) {
     if (!date) return "—";
-    const day = new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { weekday:"short", day:"numeric", month:"short" }).format(date);
-    const time = new Intl.DateTimeFormat(state.language === "th" ? "th-TH" : "en-US", { hour:"2-digit", minute:"2-digit", hour12: state.clockFormat === "12" }).format(date);
+    const day = new Intl.DateTimeFormat(getDisplayLocale(), { weekday:"short", day:"numeric", month:"short" }).format(date);
+    const time = new Intl.DateTimeFormat(getDisplayLocale(), { hour:"2-digit", minute:"2-digit", hour12: state.clockFormat === "12" }).format(date);
     return `${day} · ${time}`;
   }
   function getWorkedMinutesAt(date, minute) {
@@ -1022,7 +1194,7 @@
   }
   function updateBrowserTitle(status,dailyPercent,stats,nextBreak) {
     let lead="";
-    if(status.type==="work") lead=`${dailyPercent.toFixed(1)}% · ${formatDuration(Math.max(0,getActualDayCapacity(new Date())-getWorkedMinutes(new Date())),true)}`;
+    if(status.type==="work") lead=`${dailyPercent.toFixed(1)}% · ${formatDuration(Math.max(0,getActualDayCapacity(getConfiguredNow())-getWorkedMinutes(getConfiguredNow())),true)}`;
     else if(status.type==="break") lead=t("browserTitleBreak").replace("{minutes}",nextBreak?.minutes??0);
     else if(status.type==="finished") lead=t("browserTitleDone");
     else if(status.type==="before") lead=t("browserTitleBefore"); else lead=t("browserTitleOff");
@@ -1067,7 +1239,7 @@
   function applyV4Preferences(){ if(els.dynamicMoodToggle) els.dynamicMoodToggle.checked=state.dynamicMood; if(els.notificationToggle) els.notificationToggle.checked=state.notificationsEnabled; updateConnectionStatus(); }
   function roundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
   async function createJourneySnapshot(finalMode=false) {
-    const now=new Date(),stats=getInternshipStats(now),streak=getStreakStats(now),achievements=getAchievements(stats),unlocked=achievements.filter(a=>a.unlocked),milestone=getNextMilestone(stats);
+    const now=getConfiguredNow(),stats=getInternshipStats(now),streak=getStreakStats(now),achievements=getAchievements(stats),unlocked=achievements.filter(a=>a.unlocked),milestone=getNextMilestone(stats);
     try{await document.fonts?.ready;}catch{}
     const canvas=document.createElement("canvas");canvas.width=1600;canvas.height=900;const ctx=canvas.getContext("2d");
     const dark=resolveTheme(state.theme)==="dark"; const bg=dark?"#0d1420":"#f4f7fb",surface=dark?"#141d2c":"#ffffff",text=dark?"#edf3fb":"#152033",muted=dark?"#9aa8ba":"#718096",accent=dark?"#7098ff":"#356ae6",work=dark?"#5ed39d":"#22a06b",gold=dark?"#f3bf44":"#d89b13";
@@ -1080,16 +1252,16 @@
     cards.forEach((c,i)=>{const x=650+(i%2)*390,y=315+Math.floor(i/2)*180;roundedRect(ctx,x,y,350,145,22);ctx.fillStyle=dark?"#182334":"#f7f9fc";ctx.fill();ctx.fillStyle=text;ctx.font='800 46px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[0],x+24,y+62);ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[1],x+24,y+101);});
     const barX=145,barY=570,barW=445,barH=22;roundedRect(ctx,barX,barY,barW,barH,11);ctx.fillStyle=dark?"#263449":"#e5eaf1";ctx.fill();roundedRect(ctx,barX,barY,barW*(stats.percent/100),barH,11);ctx.fillStyle=work;ctx.fill();ctx.fillStyle=text;ctx.font='700 24px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${stats.percent.toFixed(1)}% COMPLETE`,barX,635);
     ctx.fillStyle=gold;ctx.font='700 22px "Sarabun", "Leelawadee UI", sans-serif';const nextText=milestone.complete?t("milestoneComplete"):`NEXT: ${localeNumber(milestone.targetHours,{maximumFractionDigits:1})} HOURS · ${formatPredictionDate(cumulativeTargetDate(milestone.targetHours*60))}`;ctx.fillText(nextText,barX,680);
-    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Progress Dashboard V4.1`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("SMART JOURNEY · ATTENDANCE",1510,815);ctx.textAlign="left";
+    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Journey V5`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("MULTI-USER · PRIVATE BY DEFAULT",1510,815);ctx.textAlign="left";
     canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`workday-journey-${dateKey(now)}${finalMode?"-final":""}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast("📸",t("snapshotCreated"));},"image/png");
   }
   function renderV4(now,status,dailyPercent,stats,streak,achievements,nextBreak,workedMinutes){
     renderMilestoneForecast(stats);renderTimeMachine(now);renderHeatmap(now);renderJourneyStory(stats);renderAchievementShowcase(stats,achievements);applyDynamicMood(now,status);updateBrowserTitle(status,dailyPercent,stats,nextBreak);updateConnectionStatus();checkSmartNotifications(now,status,workedMinutes,nextBreak);
   }
   function bindV4Events(){
-    els.timeMachineRange?.addEventListener("input",e=>{state.timeMachineAuto=false;state.timeMachineMinute=Number(e.target.value);renderTimeMachine(new Date());});
-    els.timeMachineDateInput?.addEventListener("change",e=>{state.timeMachineAuto=false;state.timeMachineDate=clampReplayDate(parseInputDate(e.target.value));renderTimeMachine(new Date());});
-    els.timeMachineNow?.addEventListener("click",()=>{state.timeMachineAuto=true;renderTimeMachine(new Date());});
+    els.timeMachineRange?.addEventListener("input",e=>{state.timeMachineAuto=false;state.timeMachineMinute=Number(e.target.value);renderTimeMachine(getConfiguredNow());});
+    els.timeMachineDateInput?.addEventListener("change",e=>{state.timeMachineAuto=false;state.timeMachineDate=clampReplayDate(parseInputDate(e.target.value));renderTimeMachine(getConfiguredNow());});
+    els.timeMachineNow?.addEventListener("click",()=>{state.timeMachineAuto=true;renderTimeMachine(getConfiguredNow());});
     els.snapshotBtn?.addEventListener("click",()=>createJourneySnapshot(false));els.statsSnapshotBtn?.addEventListener("click",()=>createJourneySnapshot(false));els.completionSnapshotBtn?.addEventListener("click",()=>createJourneySnapshot(true));
     els.dynamicMoodToggle?.addEventListener("change",e=>{state.dynamicMood=e.target.checked;persistV4Preferences();renderDashboard();});
     els.notificationToggle?.addEventListener("change",e=>setNotificationsEnabled(e.target.checked));
@@ -1100,12 +1272,23 @@
     els.resetSettings?.addEventListener("click",()=>{state.dynamicMood=true;state.notificationsEnabled=false;persistV4Preferences();applyV4Preferences();});
   }
   function initPwa(){
-    if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+    if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")) {
+      let reloading = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => { if (!state.refreshForUpdate || reloading) return; reloading = true; location.reload(); });
+      navigator.serviceWorker.register("./service-worker.js").then(reg => {
+        if (reg.waiting) showUpdateBanner(reg.waiting);
+        reg.addEventListener("updatefound", () => {
+          const worker = reg.installing; if (!worker) return;
+          worker.addEventListener("statechange", () => { if (worker.state === "installed" && navigator.serviceWorker.controller) showUpdateBanner(worker); });
+        });
+        setInterval(() => reg.update().catch(()=>{}), 60 * 60 * 1000);
+      }).catch(()=>{});
+    }
     const standalone=window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone===true; if(standalone) els.installAppBtn.hidden=true;
   }
 
   function renderDashboard() {
-    const now = new Date(), workedMinutes = getWorkedMinutes(now), todayCapacity = getActualDayCapacity(now), dailyPercent = todayCapacity ? clamp(workedMinutes / todayCapacity * 100, 0, 100) : 0, status = getDayStatus(now), nextBreak = getNextBreak(now);
+    const now = getConfiguredNow(), workedMinutes = getWorkedMinutes(now), todayCapacity = getActualDayCapacity(now), dailyPercent = todayCapacity ? clamp(workedMinutes / todayCapacity * 100, 0, 100) : 0, status = getDayStatus(now), nextBreak = getNextBreak(now);
     const stats = getInternshipStats(now), streak = getStreakStats(now), achievements = getAchievements(stats);
     state.latestStats = stats; state.latestAchievements = achievements;
 
@@ -1115,7 +1298,7 @@
     renderStatus(status); renderTodaySpecialBadge(now); renderMilestones(dailyPercent); renderLiveCountdown(now, status);
 
     const heroKey = status.type === "work" ? "heroWorking" : status.type === "break" ? "heroBreak" : status.type === "finished" ? "heroFinished" : status.type === "weekend" ? "heroWeekend" : status.type === "holiday" ? "heroHoliday" : status.type === "leave" ? "heroLeave" : "heroBefore";
-    els.heroMessage.textContent = t(heroKey);
+    els.heroMessage.textContent = heroKey === "heroBefore" ? t(heroKey).replace("07:00", CONFIG.workdayStart).replace("{time}", CONFIG.workdayStart) : t(heroKey);
     els.nextBreakValue.textContent = nextBreak ? `${nextBreak.time} · ${nextBreak.minutes}m` : t("noMoreBreak");
 
     els.internshipPercentBadge.textContent = `${stats.percent.toFixed(1)}%`; els.internshipProgressBar.style.width = `${stats.percent}%`;
@@ -1130,7 +1313,224 @@
     renderTimeline(now); renderScheduleList(now); renderWeeklyProgress(now); renderJourneyOverview(stats, streak, achievements); renderAttendanceOverview(stats); renderJourneyTimeline(stats); renderCalendar(now); renderStatsModal(stats, streak, achievements); renderCompletionState(stats, achievements);
     renderV4(now, status, dailyPercent, stats, streak, achievements, nextBreak, workedMinutes);
     els.lastUpdated.textContent = `${t("updated")} ${formatTime(now)}`;
+    renderJourneyConfigUI();
     checkAchievementNotifications(achievements);
+  }
+
+
+  function workdayKeysFromConfig(config = CONFIG) {
+    const keyMap = {0:"sunday",1:"monday",2:"tuesday",3:"wednesday",4:"thursday",5:"friday",6:"saturday"};
+    return config.workdays.map(day => keyMap[day]).filter(Boolean);
+  }
+  function displayProfileName() {
+    if (state.privacyMode === "demo") return t("demoJourneyName");
+    return CONFIG.profileName || t("myJourney");
+  }
+  function applyPrivacyMode() {
+    document.body.classList.toggle("demo-mode", state.privacyMode === "demo");
+    if (els.privacyModeSelect) els.privacyModeSelect.value = state.privacyMode;
+    if (els.profileQuickName) els.profileQuickName.textContent = displayProfileName();
+  }
+  function renderJourneyConfigUI() {
+    if (els.footerVersion) els.footerVersion.textContent = `v${APP_VERSION}`;
+    if (els.finishTimeValue) els.finishTimeValue.textContent = CONFIG.workdayEnd;
+    if (els.leaveHoursInput) els.leaveHoursInput.max = Math.ceil(CONFIG.totalWorkMinutes / 60);
+    const heatLegend = document.querySelector(".heatmap-legend"); if (heatLegend) heatLegend.innerHTML = `<span><i class="heat-0"></i>0h</span><span><i class="heat-1"></i>&lt;50%</span><span><i class="heat-2"></i>50–99%</span><span><i class="heat-3"></i>100%</span>`;
+    if (els.settingsScheduleValue) els.settingsScheduleValue.textContent = `${CONFIG.workdayStart} – ${CONFIG.workdayEnd}`;
+    if (els.settingsWorkTimeValue) els.settingsWorkTimeValue.textContent = formatDuration(CONFIG.totalWorkMinutes, true);
+    if (els.settingsBreakTimeValue) els.settingsBreakTimeValue.textContent = formatDuration(CONFIG.totalBreakMinutes, true);
+    if (els.settingsRangeValue) els.settingsRangeValue.textContent = `${formatShortDate(CONFIG.internshipStart)} – ${formatShortDate(CONFIG.internshipEnd)}`;
+    if (els.timezoneSelect) els.timezoneSelect.value = CONFIG.timezone;
+    if (els.localeSelect) els.localeSelect.value = CONFIG.locale;
+    const dayNames = workdayKeysFromConfig().map(key => t(key)).join(" · ");
+    if (els.journeyProfileSummary) els.journeyProfileSummary.textContent = `${displayProfileName()} · ${formatCompactDate(CONFIG.internshipStart)} → ${formatCompactDate(CONFIG.internshipEnd)} · ${CONFIG.workdayStart}–${CONFIG.workdayEnd} · ${dayNames}`;
+    if (els.timeMachineDateInput) { els.timeMachineDateInput.min = formatInputDate(CONFIG.internshipStart); els.timeMachineDateInput.max = formatInputDate(CONFIG.internshipEnd); }
+    if (els.timeMachineRange) { els.timeMachineRange.min = parseTime(CONFIG.workdayStart); els.timeMachineRange.max = parseTime(CONFIG.workdayEnd); }
+    const replayLabels = document.querySelector(".time-machine-labels");
+    if (replayLabels) {
+      const markers = [CONFIG.workdayStart, ...CONFIG.schedule.filter(x => x.type === "break").map(x => x.start), CONFIG.workdayEnd];
+      replayLabels.innerHTML = markers.map(x => `<span>${x}</span>`).join("");
+    }
+    applyPrivacyMode();
+  }
+  function setSetupStep(step) {
+    state.setupStep = clamp(Number(step) || 1, 1, 3);
+    document.querySelectorAll(".setup-step").forEach(node => node.classList.toggle("active", Number(node.dataset.setupStep) === state.setupStep));
+    document.querySelectorAll(".setup-progress-item").forEach(node => {
+      const n = Number(node.dataset.setupJump); node.classList.toggle("active", n === state.setupStep); node.classList.toggle("done", n < state.setupStep);
+    });
+    if (els.setupCancelBtn) els.setupCancelBtn.hidden = state.setupMode !== "edit";
+    if (els.setupBackBtn) els.setupBackBtn.hidden = state.setupStep === 1;
+    if (els.setupNextBtn) els.setupNextBtn.hidden = state.setupStep === 3;
+    if (els.setupSaveBtn) { els.setupSaveBtn.hidden = state.setupStep !== 3; els.setupSaveBtn.textContent = t(state.setupMode === "edit" ? "saveChanges" : "startJourney"); }
+    if (els.setupError) els.setupError.hidden = true;
+    updateSetupSchedulePreview();
+  }
+  function populateSetupForm(config = journeyConfig) {
+    const normalized = normalizeJourneyConfig(config);
+    els.setupNameInput.value = normalized.profileName;
+    els.setupLanguageSelect.value = state.language;
+    els.setupTimezoneSelect.value = normalized.timezone;
+    els.setupLocaleSelect.value = normalized.locale;
+    els.setupStartDate.value = normalized.startDate;
+    els.setupEndDate.value = normalized.endDate;
+    els.setupWorkStart.value = normalized.workdayStart;
+    els.setupWorkEnd.value = normalized.workdayEnd;
+    document.querySelectorAll(".setup-workday").forEach(input => { input.checked = normalized.workdays.includes(Number(input.value)); });
+    for (let i = 1; i <= 3; i++) {
+      const br = normalized.breaks[i - 1];
+      const enabled = $(`setupBreakEnabled${i}`), start = $(`setupBreakStart${i}`), end = $(`setupBreakEnd${i}`);
+      if (enabled) enabled.checked = Boolean(br);
+      if (start) start.value = br?.start || DEFAULT_JOURNEY_CONFIG.breaks[i - 1]?.start || normalized.workdayStart;
+      if (end) end.value = br?.end || DEFAULT_JOURNEY_CONFIG.breaks[i - 1]?.end || normalized.workdayStart;
+    }
+    updateSetupSchedulePreview();
+  }
+  function collectSetupConfig() {
+    const workdays = [...document.querySelectorAll(".setup-workday:checked")].map(input => Number(input.value));
+    const breaks = [];
+    for (let i = 1; i <= 3; i++) {
+      if ($(`setupBreakEnabled${i}`)?.checked) breaks.push({ start: $(`setupBreakStart${i}`).value, end: $(`setupBreakEnd${i}`).value });
+    }
+    return {
+      profileName: els.setupNameInput.value.trim(),
+      startDate: els.setupStartDate.value,
+      endDate: els.setupEndDate.value,
+      workdayStart: els.setupWorkStart.value,
+      workdayEnd: els.setupWorkEnd.value,
+      workdays,
+      breaks,
+      timezone: els.setupTimezoneSelect.value,
+      locale: els.setupLocaleSelect.value
+    };
+  }
+  function setupValidationMessage(raw) {
+    const start = parseConfigDate(raw.startDate, new Date(2000,0,1)), end = parseConfigDate(raw.endDate, new Date(1999,0,1));
+    if (!raw.startDate || !raw.endDate || end < start) return t("setupValidationDates");
+    if (!raw.workdays?.length) return t("setupValidationDays");
+    const startMin = timeToMinutes(raw.workdayStart), endMin = timeToMinutes(raw.workdayEnd);
+    if (!Number.isFinite(startMin) || !Number.isFinite(endMin) || endMin <= startMin) return t("setupValidationTime");
+    const sorted = [...(raw.breaks || [])].sort((a,b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+    let lastEnd = startMin;
+    for (const br of sorted) {
+      const a = timeToMinutes(br.start), b = timeToMinutes(br.end);
+      if (!Number.isFinite(a) || !Number.isFinite(b) || a < startMin || b > endMin || b <= a || a < lastEnd) return t("setupValidationTime");
+      lastEnd = b;
+    }
+    const runtime = hydrateRuntimeConfig(raw);
+    if (runtime.totalWorkMinutes < 1) return t("setupValidationTime");
+    return "";
+  }
+  function updateSetupSchedulePreview() {
+    if (!els.setupSchedulePreview) return;
+    const raw = collectSetupConfig();
+    const err = setupValidationMessage(raw);
+    if (err && state.setupStep === 3) { els.setupSchedulePreview.innerHTML = `<span>⚠</span><strong>${escapeHtml(err)}</strong>`; return; }
+    const runtime = hydrateRuntimeConfig(raw);
+    els.setupSchedulePreview.innerHTML = `<div><span>${escapeHtml(t("workTime"))}</span><strong>${escapeHtml(formatDuration(runtime.totalWorkMinutes,true))}</strong></div><div><span>${escapeHtml(t("totalBreak"))}</span><strong>${escapeHtml(formatDuration(runtime.totalBreakMinutes,true))}</strong></div><div><span>${escapeHtml(t("schedule"))}</span><strong>${escapeHtml(runtime.workdayStart)} – ${escapeHtml(runtime.workdayEnd)}</strong></div>`;
+  }
+  function openSetupWizard(mode = "first") {
+    state.setupMode = mode; state.setupStep = 1; state.setupOriginalLanguage = state.language;
+    populateSetupForm(mode === "first" && !state.setupCompleted ? DEFAULT_JOURNEY_CONFIG : journeyConfig);
+    els.setupBackdrop.hidden = false; requestAnimationFrame(() => els.setupBackdrop.classList.add("open"));
+    document.body.classList.add("setup-open"); setSetupStep(1);
+  }
+  function closeSetupWizard() {
+    if (state.setupMode === "first" && !state.setupCompleted) return;
+    if (state.setupMode === "edit") { state.language = state.setupOriginalLanguage; renderTranslations(); }
+    els.setupBackdrop.classList.remove("open"); document.body.classList.remove("setup-open");
+    setTimeout(() => { if (!els.setupBackdrop.classList.contains("open")) els.setupBackdrop.hidden = true; }, 180);
+  }
+  function saveSetupJourney() {
+    const raw = collectSetupConfig(), error = setupValidationMessage(raw);
+    if (error) { els.setupError.textContent = error; els.setupError.hidden = false; return; }
+    const priorRange = `${journeyConfig.startDate}|${journeyConfig.endDate}|${journeyConfig.workdayStart}|${journeyConfig.workdayEnd}|${journeyConfig.workdays.join(",")}`;
+    applyJourneyConfig(raw, true);
+    state.language = els.setupLanguageSelect.value;
+    state.timezone = CONFIG.timezone; state.locale = CONFIG.locale; state.setupCompleted = true; state.selectedLeaveMinutes = CONFIG.totalWorkMinutes;
+    localStorage.setItem("wp-setup-completed", "true"); localStorage.setItem("wp-timezone", state.timezone); localStorage.setItem("wp-locale", state.locale);
+    const nextRange = `${journeyConfig.startDate}|${journeyConfig.endDate}|${journeyConfig.workdayStart}|${journeyConfig.workdayEnd}|${journeyConfig.workdays.join(",")}`;
+    if (priorRange !== nextRange) { state.timeMachineAuto = true; state.timeMachineDate = null; state.calendarDate = startOfMonth(getConfiguredNow()); }
+    persistPreferences(); applyPreferences(); renderTranslations(); renderJourneyConfigUI(); renderDashboard();
+    els.setupBackdrop.classList.remove("open"); els.setupBackdrop.hidden = true; document.body.classList.remove("setup-open");
+    showToast("✓", state.setupMode === "edit" ? t("saveChanges") : t("startJourney"));
+  }
+  function setJourneyMeta(patch) {
+    applyJourneyConfig({ ...journeyConfig, ...patch }, true);
+    state.timezone = CONFIG.timezone; state.locale = CONFIG.locale;
+    localStorage.setItem("wp-timezone", state.timezone); localStorage.setItem("wp-locale", state.locale);
+    renderTranslations(); renderJourneyConfigUI(); renderDashboard();
+  }
+  function exportBackup() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i); if (key?.startsWith("wp-") && !key.startsWith("wp-notify-")) data[key] = localStorage.getItem(key);
+    }
+    const payload = { app: "Workday Journey", version: APP_VERSION, exportedAt: new Date().toISOString(), data };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob), a = document.createElement("a"); a.href = url; a.download = `workday-journey-backup-${dateKey(getConfiguredNow())}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("💾", t("backupCreated"));
+  }
+  async function importBackupFile(file) {
+    try {
+      const payload = JSON.parse(await file.text());
+      if (!payload || typeof payload.data !== "object" || Array.isArray(payload.data)) throw new Error("invalid");
+      if (!confirm(t("importConfirm"))) return;
+      [...Array(localStorage.length)].map((_,i) => localStorage.key(i)).filter(Boolean).filter(k => k.startsWith("wp-")).forEach(k => localStorage.removeItem(k));
+      for (const [key, value] of Object.entries(payload.data)) if (key.startsWith("wp-") && typeof value === "string") localStorage.setItem(key, value);
+      localStorage.setItem("wp-app-version", APP_VERSION); alert(t("backupImported")); location.reload();
+    } catch { showToast("!", t("invalidBackup")); }
+  }
+  function clearJourneyStorage() {
+    const fixed = ["wp-day-overrides","wp-seen-achievements","wp-achievements-initialized","wp-completion-seen","wp-journey-config","wp-setup-completed"];
+    fixed.forEach(k => localStorage.removeItem(k));
+    const transient = []; for (let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(key?.startsWith("wp-notify-")) transient.push(key); } transient.forEach(k=>localStorage.removeItem(k));
+  }
+  function startNewJourney() {
+    if (!confirm(t("newJourneyConfirm"))) return;
+    clearJourneyStorage(); state.dayOverrides = {}; state.setupCompleted = false; applyJourneyConfig(DEFAULT_JOURNEY_CONFIG, false); journeyConfig = normalizeJourneyConfig(DEFAULT_JOURNEY_CONFIG); openSetupWizard("first");
+  }
+  function resetAllData() {
+    if (!confirm(t("resetAllConfirm"))) return;
+    const keys=[]; for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);} keys.forEach(k=>localStorage.removeItem(k)); location.reload();
+  }
+  async function shareJourneySummary() {
+    const now = getConfiguredNow(), stats = getInternshipStats(now);
+    const person = state.privacyMode === "demo" ? t("demoJourneyName") : (CONFIG.profileName || t("myJourney"));
+    const text = `${person}\n${stats.percent.toFixed(1)}% · ${formatDuration(stats.elapsedMinutes,true)} · ${stats.startedDays} ${t("daysShort")} · Attendance ${stats.attendancePercent.toFixed(1)}%\n${formatCompactDate(CONFIG.internshipStart)} → ${formatCompactDate(CONFIG.internshipEnd)}`;
+    const shareData = { title: t("shareTitle"), text, url: location.origin === "null" ? "" : `${location.origin}${location.pathname}` };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText([text, shareData.url].filter(Boolean).join("\n")); showToast("✓", t("shareCopied")); }
+    } catch (error) { if (error?.name !== "AbortError") showToast("!", t("shareTitle"), String(error?.message || error)); }
+  }
+  function showUpdateBanner(worker = null) { state.pendingServiceWorker = worker || state.pendingServiceWorker; if (els.updateBanner) els.updateBanner.hidden = false; }
+  function bindV5Events() {
+    els.profileQuickBtn?.addEventListener("click", () => openSetupWizard("edit")); els.editJourneyBtn?.addEventListener("click", () => openSetupWizard("edit"));
+    document.querySelectorAll("[data-setup-jump]").forEach(btn => btn.addEventListener("click", () => { const target=Number(btn.dataset.setupJump); if (target <= state.setupStep) setSetupStep(target); }));
+    els.setupCancelBtn?.addEventListener("click", closeSetupWizard);
+    els.setupBackBtn?.addEventListener("click", () => setSetupStep(state.setupStep - 1));
+    els.setupNextBtn?.addEventListener("click", () => {
+      const error = setupValidationMessage(collectSetupConfig());
+      if (state.setupStep >= 2 && error) { els.setupError.textContent = error; els.setupError.hidden = false; return; }
+      setSetupStep(state.setupStep + 1);
+    });
+    els.setupSaveBtn?.addEventListener("click", saveSetupJourney);
+    els.setupDefaultsBtn?.addEventListener("click", () => { populateSetupForm(DEFAULT_JOURNEY_CONFIG); state.language="th"; els.setupLanguageSelect.value="th"; renderTranslations(); });
+    els.setupLanguageSelect?.addEventListener("change", e => { state.language=e.target.value; renderTranslations(); setSetupStep(state.setupStep); });
+    [els.setupStartDate,els.setupEndDate,els.setupWorkStart,els.setupWorkEnd,...document.querySelectorAll(".setup-workday"),...document.querySelectorAll(".setup-break-row input")].filter(Boolean).forEach(node => node.addEventListener("change", updateSetupSchedulePreview));
+    els.timezoneSelect?.addEventListener("change", e => { setJourneyMeta({timezone:e.target.value}); showToast("🌐",t("timezoneChanged")); });
+    els.localeSelect?.addEventListener("change", e => { setJourneyMeta({locale:e.target.value}); showToast("✓",t("localeChanged")); });
+    els.privacyModeSelect?.addEventListener("change", e => { state.privacyMode=e.target.value; localStorage.setItem("wp-privacy-mode",state.privacyMode); applyPrivacyMode(); renderDashboard(); });
+    els.exportBackupBtn?.addEventListener("click", exportBackup); els.importBackupBtn?.addEventListener("click", () => els.backupFileInput?.click()); els.backupFileInput?.addEventListener("change", e => { const file=e.target.files?.[0]; if(file) importBackupFile(file); e.target.value=""; });
+    els.startNewJourneyBtn?.addEventListener("click", startNewJourney); els.resetAllDataBtn?.addEventListener("click", resetAllData); els.shareSummaryBtn?.addEventListener("click", shareJourneySummary);
+    els.refreshUpdateBtn?.addEventListener("click", () => { state.refreshForUpdate = true; if(state.pendingServiceWorker) state.pendingServiceWorker.postMessage({type:"SKIP_WAITING"}); else location.reload(); });
+  }
+  function initV5() {
+    applyJourneyConfig({ ...journeyConfig, timezone: state.timezone, locale: state.locale }, false);
+    renderJourneyConfigUI();
+    localStorage.setItem("wp-app-version", APP_VERSION);
+    if (!state.setupCompleted) setTimeout(() => openSetupWizard("first"), 80);
   }
 
   function resolveTheme(value) { return value === "system" ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light") : value; }
@@ -1141,21 +1541,23 @@
     document.body.classList.toggle("no-animations", !state.animations); document.body.classList.toggle("compact", state.density === "compact");
     els.fontFamilySelect.value = state.fontFamily; els.fontSizeSelect.value = state.fontSize; els.themeSelect.value = state.theme; els.clockFormatSelect.value = state.clockFormat; els.densitySelect.value = state.density; els.showSecondsToggle.checked = state.showSeconds; els.animationToggle.checked = state.animations;
     applyV4Preferences();
+    if (els.timezoneSelect) els.timezoneSelect.value = CONFIG.timezone; if (els.localeSelect) els.localeSelect.value = CONFIG.locale; applyPrivacyMode();
   }
   function persistPreferences() {
     localStorage.setItem("wp-language", state.language); localStorage.setItem("wp-font-family", state.fontFamily); localStorage.setItem("wp-font-size", state.fontSize); localStorage.setItem("wp-theme", state.theme);
     localStorage.setItem("wp-clock-format", state.clockFormat); localStorage.setItem("wp-show-seconds", String(state.showSeconds)); localStorage.setItem("wp-animations", String(state.animations)); localStorage.setItem("wp-density", state.density); localStorage.setItem("wp-day-overrides", JSON.stringify(state.dayOverrides));
+    localStorage.setItem("wp-timezone", state.timezone); localStorage.setItem("wp-locale", state.locale); localStorage.setItem("wp-privacy-mode", state.privacyMode); localStorage.setItem("wp-journey-config", JSON.stringify(journeyConfig));
     persistV4Preferences();
   }
 
-  function openSettings() { els.settingsBackdrop.hidden = false; requestAnimationFrame(() => els.settingsPanel.classList.add("open")); els.settingsPanel.setAttribute("aria-hidden", "false"); }
+  function openSettings() { renderJourneyConfigUI(); els.settingsBackdrop.hidden = false; requestAnimationFrame(() => els.settingsPanel.classList.add("open")); els.settingsPanel.setAttribute("aria-hidden", "false"); }
   function closeSettings() { els.settingsPanel.classList.remove("open"); els.settingsPanel.setAttribute("aria-hidden", "true"); setTimeout(() => { if (!els.settingsPanel.classList.contains("open")) els.settingsBackdrop.hidden = true; }, 280); }
   function openDayModal(date) {
     state.selectedDate = localDateOnly(date); const override = getOverride(date); state.selectedDayType = override?.type || "default";
     const savedMinutes = override?.type === "leave" ? getLeaveMinutes(date) : CONFIG.totalWorkMinutes;
-    state.selectedLeaveMode = override?.leaveMode || (savedMinutes >= CONFIG.totalWorkMinutes ? "full" : Math.abs(savedMinutes - 240) < 1 ? "half" : "custom");
+    state.selectedLeaveMode = override?.leaveMode || (savedMinutes >= CONFIG.totalWorkMinutes ? "full" : Math.abs(savedMinutes - CONFIG.totalWorkMinutes / 2) < 1 ? "half" : "custom");
     state.selectedLeaveMinutes = savedMinutes;
-    els.dayModalTitle.textContent = formatLongDate(date); els.dayModalDescription.textContent = isWithinInternship(date) ? t("normalDayDescription") : t("outsideInternship"); els.dayNoteInput.value = override?.note || "";
+    els.dayModalTitle.textContent = formatLongDate(date); els.dayModalDescription.textContent = isWithinInternship(date) ? t("normalDayDescription") : t("outsideInternship"); els.dayNoteInput.value = state.privacyMode === "demo" ? "" : (override?.note || "");
     syncLeaveInputsFromState(); updateDayTypeButtons(); els.dayModalBackdrop.hidden = false; requestAnimationFrame(() => els.dayModal.classList.add("open")); els.dayModal.setAttribute("aria-hidden", "false");
   }
   function closeDayModal() { els.dayModal.classList.remove("open"); els.dayModal.setAttribute("aria-hidden", "true"); setTimeout(() => { if (!els.dayModal.classList.contains("open")) els.dayModalBackdrop.hidden = true; }, 180); }
@@ -1184,13 +1586,13 @@
   }
   function updateCustomLeaveDuration() {
     state.selectedLeaveMode = "custom";
-    const hours = clamp(Number(els.leaveHoursInput?.value || 0), 0, 8), mins = clamp(Number(els.leaveMinutesInput?.value || 0), 0, 59);
+    const hours = clamp(Number(els.leaveHoursInput?.value || 0), 0, Math.ceil(CONFIG.totalWorkMinutes / 60)), mins = clamp(Number(els.leaveMinutesInput?.value || 0), 0, 59);
     state.selectedLeaveMinutes = clamp(Math.round(hours * 60 + mins), 0, CONFIG.totalWorkMinutes);
     document.querySelectorAll(".leave-mode-btn").forEach(btn => btn.classList.toggle("selected", btn.dataset.leaveMode === "custom"));
     updateLeavePreview();
   }
   function saveDayOverride() {
-    if (!state.selectedDate) return; const key = dateKey(state.selectedDate), note = els.dayNoteInput.value.trim();
+    if (!state.selectedDate) return; const key = dateKey(state.selectedDate), existing = state.dayOverrides[key], note = state.privacyMode === "demo" ? (existing?.note || "") : els.dayNoteInput.value.trim();
     if (state.selectedDayType === "default") delete state.dayOverrides[key];
     else if (state.selectedDayType === "leave") {
       const rawLeaveMinutes = Number(state.selectedLeaveMinutes);
@@ -1236,9 +1638,9 @@
     els.showSecondsToggle.addEventListener("change", e => { state.showSeconds = e.target.checked; persistPreferences(); renderDashboard(); });
     els.animationToggle.addEventListener("change", e => { state.animations = e.target.checked; persistPreferences(); applyPreferences(); });
     els.resetSettings.addEventListener("click", () => { Object.assign(state, { language: "th", fontFamily: "sarabun", fontSize: "medium", theme: "system", clockFormat: "24", showSeconds: true, animations: true, density: "comfortable" }); persistPreferences(); applyPreferences(); renderTranslations(); renderDashboard(); });
-    els.calendarPrev.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() - 1, 1); renderCalendar(new Date()); });
-    els.calendarNext.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1); renderCalendar(new Date()); });
-    els.calendarToday.addEventListener("click", () => { state.calendarDate = startOfMonth(new Date()); renderCalendar(new Date()); });
+    els.calendarPrev.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() - 1, 1); renderCalendar(getConfiguredNow()); });
+    els.calendarNext.addEventListener("click", () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1); renderCalendar(getConfiguredNow()); });
+    els.calendarToday.addEventListener("click", () => { state.calendarDate = startOfMonth(getConfiguredNow()); renderCalendar(getConfiguredNow()); });
     els.dayModalClose.addEventListener("click", closeDayModal); els.dayModalCancel.addEventListener("click", closeDayModal); els.dayModalBackdrop.addEventListener("click", closeDayModal); els.dayModalSave.addEventListener("click", saveDayOverride);
     document.querySelectorAll(".day-type-btn").forEach(btn => btn.addEventListener("click", () => { state.selectedDayType = btn.dataset.dayType; updateDayTypeButtons(); }));
     document.querySelectorAll(".leave-mode-btn").forEach(btn => btn.addEventListener("click", () => setLeaveMode(btn.dataset.leaveMode)));
@@ -1246,10 +1648,10 @@
     els.statsOpen.addEventListener("click", openStatsModal); els.statsModalClose.addEventListener("click", closeStatsModal); els.statsModalBackdrop.addEventListener("click", closeStatsModal);
     els.achievementModalClose.addEventListener("click", closeAchievementModal); els.achievementModalBackdrop.addEventListener("click", closeAchievementModal);
     els.completionOpen.addEventListener("click", openCompletionModal); els.completionModalClose.addEventListener("click", closeCompletionModal); els.completionModalBackdrop.addEventListener("click", closeCompletionModal);
-    document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeDayModal(); closeStatsModal(); closeAchievementModal(); closeCompletionModal(); } });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeDayModal(); closeStatsModal(); closeAchievementModal(); closeCompletionModal(); if (state.setupMode === "edit") closeSetupWizard(); } });
     window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", () => { if (state.theme === "system") applyPreferences(); });
   }
 
-  function init() { applyPreferences(); renderTranslations(); bindEvents(); bindV4Events(); initPwa(); renderDashboard(); setInterval(renderDashboard, 1000); }
+  function init() { applyPreferences(); renderTranslations(); bindEvents(); bindV4Events(); bindV5Events(); initPwa(); initV5(); renderDashboard(); setInterval(renderDashboard, 1000); }
   init();
 })();

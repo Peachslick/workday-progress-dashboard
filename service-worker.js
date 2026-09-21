@@ -1,4 +1,4 @@
-const CACHE_NAME = "workday-progress-v4.1.0";
+const CACHE_NAME = "workday-journey-v5.0.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -10,7 +10,7 @@ const CORE_ASSETS = [
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)));
 });
 
 self.addEventListener("activate", event => {
@@ -18,6 +18,10 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener("message", event => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", event => {
@@ -63,9 +67,7 @@ self.addEventListener("notificationclick", event => {
   event.notification.close();
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(clients => {
-      for (const client of clients) {
-        if ("focus" in client) return client.focus();
-      }
+      for (const client of clients) if ("focus" in client) return client.focus();
       if (self.clients.openWindow) return self.clients.openWindow("./index.html");
     })
   );

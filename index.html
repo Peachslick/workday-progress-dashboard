@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <meta name="theme-color" content="#356ae6" />
-  <meta name="description" content="A bilingual workday and internship journey dashboard with attendance, leave tracking, milestones, achievements, heatmap, replay, snapshots and PWA support." />
+  <meta name="description" content="A multi-user-ready bilingual work and internship journey dashboard with local privacy, attendance, achievements, backups, heatmap, replay, snapshots and PWA support." />
+  <meta name="application-name" content="Workday Journey" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Workday Journey" />
@@ -21,7 +22,59 @@
 <body>
   <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
 
+  <div id="setupBackdrop" class="setup-backdrop" hidden>
+    <section id="setupModal" class="setup-wizard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V5</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
+      <div class="setup-progress" aria-label="Setup progress">
+        <button type="button" class="setup-progress-item active" data-setup-jump="1"><span>1</span><strong data-i18n="setupProfile">โปรไฟล์</strong></button>
+        <i></i><button type="button" class="setup-progress-item" data-setup-jump="2"><span>2</span><strong data-i18n="setupJourney">ช่วงเวลา</strong></button>
+        <i></i><button type="button" class="setup-progress-item" data-setup-jump="3"><span>3</span><strong data-i18n="setupSchedule">ตารางทำงาน</strong></button>
+      </div>
+      <div class="setup-body">
+        <section class="setup-step active" data-setup-step="1">
+          <div class="setup-step-heading"><span>👋</span><div><h3 data-i18n="setupProfile">โปรไฟล์</h3><p class="muted" data-i18n="setupPrivacy">ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง</p></div></div>
+          <div class="setup-form-grid">
+            <label class="span-2"><span><b data-i18n="yourName">ชื่อ / ชื่อเล่น</b> <small data-i18n="optional">ไม่บังคับ</small></span><input id="setupNameInput" type="text" maxlength="40" placeholder="Pongsiri" autocomplete="off" /></label>
+            <label><span>Language</span><select id="setupLanguageSelect"><option value="th">ไทย</option><option value="en">English</option></select></label>
+            <label><span data-i18n="timezone">เขตเวลา</span><select id="setupTimezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok (UTC+7)</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></label>
+            <label class="span-2"><span data-i18n="locale">รูปแบบวันที่และตัวเลข</span><select id="setupLocaleSelect"><option value="th-TH">ไทย · TH</option><option value="en-GB">English · DD/MM/YYYY</option><option value="en-US">English · MM/DD/YYYY</option></select></label>
+          </div>
+        </section>
+        <section class="setup-step" data-setup-step="2">
+          <div class="setup-step-heading"><span>🗓</span><div><h3 data-i18n="setupJourney">ช่วงเวลา</h3><p class="muted">Start → Finish · Working days</p></div></div>
+          <div class="setup-form-grid">
+            <label><span data-i18n="startDateSetup">วันเริ่มต้น</span><input id="setupStartDate" type="date" /></label>
+            <label><span data-i18n="endDateSetup">วันสิ้นสุด</span><input id="setupEndDate" type="date" /></label>
+          </div>
+          <div class="setup-workdays"><strong data-i18n="workingDaysSetup">วันทำงานประจำ</strong><div class="weekday-toggle-grid">
+            <label><input class="setup-workday" type="checkbox" value="1"><span data-i18n="monday">จ</span></label>
+            <label><input class="setup-workday" type="checkbox" value="2"><span data-i18n="tuesday">อ</span></label>
+            <label><input class="setup-workday" type="checkbox" value="3"><span data-i18n="wednesday">พ</span></label>
+            <label><input class="setup-workday" type="checkbox" value="4"><span data-i18n="thursday">พฤ</span></label>
+            <label><input class="setup-workday" type="checkbox" value="5"><span data-i18n="friday">ศ</span></label>
+            <label><input class="setup-workday" type="checkbox" value="6"><span data-i18n="saturday">ส</span></label>
+            <label><input class="setup-workday" type="checkbox" value="0"><span data-i18n="sunday">อา</span></label>
+          </div></div>
+        </section>
+        <section class="setup-step" data-setup-step="3">
+          <div class="setup-step-heading"><span>⏱</span><div><h3 data-i18n="setupSchedule">ตารางทำงาน</h3><p class="muted">Work hours & breaks</p></div></div>
+          <div class="setup-form-grid"><label><span data-i18n="workStartSetup">เวลาเริ่มงาน</span><input id="setupWorkStart" type="time" /></label><label><span data-i18n="workEndSetup">เวลาเลิกงาน</span><input id="setupWorkEnd" type="time" /></label></div>
+          <div class="setup-breaks"><strong data-i18n="breaksSetup">ช่วงพัก</strong>
+            <div class="setup-break-row"><label class="break-enabled"><input id="setupBreakEnabled1" type="checkbox" checked><span data-i18n="enableBreak">ใช้งาน</span></label><input id="setupBreakStart1" type="time"><span>→</span><input id="setupBreakEnd1" type="time"></div>
+            <div class="setup-break-row"><label class="break-enabled"><input id="setupBreakEnabled2" type="checkbox" checked><span data-i18n="enableBreak">ใช้งาน</span></label><input id="setupBreakStart2" type="time"><span>→</span><input id="setupBreakEnd2" type="time"></div>
+            <div class="setup-break-row"><label class="break-enabled"><input id="setupBreakEnabled3" type="checkbox" checked><span data-i18n="enableBreak">ใช้งาน</span></label><input id="setupBreakStart3" type="time"><span>→</span><input id="setupBreakEnd3" type="time"></div>
+          </div>
+          <div id="setupSchedulePreview" class="setup-schedule-preview"></div>
+        </section>
+        <p id="setupError" class="setup-error" hidden></p>
+      </div>
+      <div class="setup-actions"><button id="setupDefaultsBtn" class="text-btn" type="button" data-i18n="useRecommended">ใช้ค่าแนะนำ</button><span></span><button id="setupCancelBtn" class="secondary-btn" type="button" data-i18n="cancel" hidden>ยกเลิก</button><button id="setupBackBtn" class="secondary-btn" type="button" data-i18n="back">ย้อนกลับ</button><button id="setupNextBtn" class="primary-btn" type="button" data-i18n="next">ถัดไป</button><button id="setupSaveBtn" class="primary-btn" type="button" data-i18n="startJourney" hidden>เริ่ม Journey</button></div>
+    </section>
+  </div>
+
   <div class="app-shell">
+    <div id="updateBanner" class="update-banner" hidden><div><span>✨</span><div><strong data-i18n="updateAvailable">มีเวอร์ชันใหม่พร้อมใช้งาน</strong><small data-i18n="updateHelp">Refresh เพื่อโหลดไฟล์ล่าสุดจาก Deployment</small></div></div><button id="refreshUpdateBtn" class="primary-btn" type="button" data-i18n="refreshNow">Refresh ตอนนี้</button></div>
+
     <header class="topbar">
       <div class="brand-group">
         <div class="brand-mark" aria-hidden="true">%</div>
@@ -32,6 +85,7 @@
       </div>
 
       <div class="topbar-actions">
+        <button id="profileQuickBtn" class="profile-quick-btn" type="button" title="Profile"><span>👤</span><strong id="profileQuickName">My Journey</strong></button>
         <span id="onlineStatus" class="online-status" aria-live="polite"><i></i><span data-i18n="online">ออนไลน์</span></span>
         <button id="installAppBtn" class="install-app-btn" type="button" hidden>＋ <span data-i18n="installApp">ติดตั้งแอป</span></button>
         <div class="language-switch" aria-label="Language">
@@ -90,7 +144,7 @@
             <div class="stats-grid">
               <div class="stat-box"><span class="stat-icon">✓</span><div><span class="stat-label" data-i18n="worked">ทำงานแล้ว</span><strong id="workedTime">0h 0m</strong></div></div>
               <div class="stat-box"><span class="stat-icon">⌛</span><div><span class="stat-label" data-i18n="remaining">เหลือเวลา</span><strong id="remainingTime">8h 0m</strong></div></div>
-              <div class="stat-box"><span class="stat-icon">🏁</span><div><span class="stat-label" data-i18n="finishTime">เลิกงาน</span><strong>16:10</strong></div></div>
+              <div class="stat-box"><span class="stat-icon">🏁</span><div><span class="stat-label" data-i18n="finishTime">เลิกงาน</span><strong id="finishTimeValue">16:10</strong></div></div>
               <div class="stat-box"><span class="stat-icon">☕</span><div><span class="stat-label" data-i18n="nextBreak">พักครั้งถัดไป</span><strong id="nextBreakValue">09:00</strong></div></div>
             </div>
           </div>
@@ -176,6 +230,7 @@
             <p class="muted section-subtitle" data-i18n="achievementSummarySubtitle">ดูว่าคุณลงทุนเวลาและเดินทางมาไกลแค่ไหนแล้ว</p>
           </div>
           <div class="journey-actions">
+            <button id="shareSummaryBtn" class="outline-btn" type="button">↗ <span data-i18n="shareSummary">แชร์สรุป</span></button>
             <button id="snapshotBtn" class="outline-btn" type="button">📸 <span data-i18n="createSnapshot">สร้าง Snapshot</span></button>
             <button id="statsOpen" class="outline-btn" type="button"><span data-i18n="viewAllStatistics">ดูสถิติทั้งหมด</span> →</button>
           </div>
@@ -337,7 +392,7 @@
       </section>
     </main>
 
-    <footer class="footer"><span data-i18n="footerText">Workday Progress Dashboard V4.1 · ใช้งานแบบออฟไลน์ได้</span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
+    <footer class="footer"><span><span data-i18n="footerText">Workday Journey V5 · Multi-user ready · ข้อมูลเก็บใน Browser</span> · <b id="footerVersion">v5.0.0</b></span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
   </div>
 
   <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
@@ -348,8 +403,13 @@
       <section class="setting-group two-column-setting"><div><label for="fontSizeSelect" data-i18n="fontSize">ขนาดตัวอักษร</label><select id="fontSizeSelect"><option value="small" data-i18n="small">เล็ก</option><option value="medium" data-i18n="medium">กลาง</option><option value="large" data-i18n="large">ใหญ่</option></select></div><div><label for="themeSelect" data-i18n="theme">ธีม</label><select id="themeSelect"><option value="system" data-i18n="systemTheme">ตามระบบ</option><option value="light" data-i18n="lightTheme">สว่าง</option><option value="dark" data-i18n="darkTheme">มืด</option></select></div></section>
       <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option></select></div></section>
       <section class="setting-group toggle-setting-group"><label class="toggle-row"><span><strong data-i18n="showSeconds">แสดงวินาที</strong><small data-i18n="showSecondsHelp">แสดงวินาทีในนาฬิกาหลัก</small></span><input id="showSecondsToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="animations">Animation</strong><small data-i18n="animationsHelp">เปิดการเคลื่อนไหวของ Progress และ Card</small></span><input id="animationToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="dynamicMood">Dynamic Dashboard Mood</strong><small data-i18n="dynamicMoodHelp">เปลี่ยนบรรยากาศพื้นหลังตามช่วงเวลาและสถานะการทำงาน</small></span><input id="dynamicMoodToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="smartNotifications">Smart Notifications</strong><small data-i18n="smartNotificationsHelp">แจ้งเตือนก่อนพัก กลับเข้าทำงาน เหลือ 1 ชั่วโมง และจบวันทำงาน</small></span><input id="notificationToggle" type="checkbox" /><i class="toggle-ui"></i></label></section>
+      <section class="setting-group journey-profile-setting"><div class="setting-section-heading"><div><strong data-i18n="profileAndJourney">โปรไฟล์และ Journey</strong><p id="journeyProfileSummary" class="setting-help">—</p></div><button id="editJourneyBtn" class="outline-btn" type="button" data-i18n="editJourney">แก้ไข Journey</button></div></section>
+      <section class="setting-group two-column-setting"><div><label for="timezoneSelect" data-i18n="timezone">เขตเวลา</label><select id="timezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></div><div><label for="localeSelect" data-i18n="locale">รูปแบบวันที่และตัวเลข</label><select id="localeSelect"><option value="th-TH">ไทย · TH</option><option value="en-GB">English · DD/MM</option><option value="en-US">English · MM/DD</option></select></div></section>
+      <section class="setting-group"><label for="privacyModeSelect" data-i18n="privacyMode">โหมดการแสดงผล</label><select id="privacyModeSelect"><option value="personal" data-i18n="personalMode">Personal</option><option value="demo" data-i18n="demoMode">Public Demo</option></select><p class="setting-help" data-i18n="privacyModeHelp">Demo Mode จะซ่อนชื่อและหมายเหตุส่วนตัว เหมาะสำหรับแชร์หน้าจอหรือ Portfolio</p></section>
+      <section class="setting-group data-tools-setting"><strong data-i18n="dataAndBackup">ข้อมูลและ Backup</strong><div class="data-tools-grid"><button id="exportBackupBtn" class="outline-btn" type="button">↓ <span data-i18n="exportBackup">Export Backup</span></button><button id="importBackupBtn" class="outline-btn" type="button">↑ <span data-i18n="importBackup">Import Backup</span></button><button id="startNewJourneyBtn" class="secondary-btn" type="button" data-i18n="startNewJourney">เริ่ม Journey ใหม่</button><button id="resetAllDataBtn" class="danger-btn" type="button" data-i18n="resetAllData">ล้างข้อมูลทั้งหมด</button><input id="backupFileInput" type="file" accept="application/json,.json" hidden /></div></section>
+      <section class="setting-group privacy-notice-card"><span>🔐</span><div><strong data-i18n="privacyNoticeTitle">ความเป็นส่วนตัว</strong><p class="setting-help" data-i18n="privacyNotice">ข้อมูล Journey, วันลา และ Settings ถูกเก็บใน localStorage ของ Browser นี้ และไม่ได้อัปโหลดไปยัง Server ของเว็บ</p></div></section>
       <section class="setting-group pwa-setting-card"><div><strong data-i18n="pwaTitle">ติดตั้งเป็นแอป</strong><p class="setting-help" data-i18n="pwaHelp">เมื่อเปิดผ่าน HTTPS เช่น Vercel สามารถติดตั้ง Dashboard เป็น PWA และใช้งานแบบ Offline หลังโหลดทรัพยากรแล้ว</p></div><button id="settingsInstallBtn" class="outline-btn" type="button"><span data-i18n="installApp">ติดตั้งแอป</span></button></section>
-      <section class="setting-info-card"><div><span data-i18n="schedule">เวลาทำงาน</span><strong>07:00 – 16:10</strong></div><div><span data-i18n="workTime">เวลาทำงานจริง</span><strong>8h 00m</strong></div><div><span data-i18n="totalBreak">เวลาพักรวม</span><strong>1h 10m</strong></div><div><span data-i18n="internshipRange">ช่วงฝึกงาน</span><strong>05/05/2026 – 30/10/2026</strong></div></section>
+      <section class="setting-info-card"><div><span data-i18n="schedule">เวลาทำงาน</span><strong id="settingsScheduleValue">07:00 – 16:10</strong></div><div><span data-i18n="workTime">เวลาทำงานจริง</span><strong id="settingsWorkTimeValue">8h 00m</strong></div><div><span data-i18n="totalBreak">เวลาพักรวม</span><strong id="settingsBreakTimeValue">1h 10m</strong></div><div><span data-i18n="internshipRange">ช่วงฝึกงาน</span><strong id="settingsRangeValue">05/05/2026 – 30/10/2026</strong></div></section>
       <button id="resetSettings" class="reset-btn" type="button" data-i18n="resetSettings">คืนค่าเริ่มต้น</button>
     </div>
   </aside>

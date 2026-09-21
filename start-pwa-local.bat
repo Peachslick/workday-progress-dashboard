@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo   Workday Progress Dashboard V4 - PWA Mode
+echo   Workday Journey V5 - PWA Mode
 echo ============================================
 echo.
 where node >nul 2>nul
@@ -14,7 +14,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-start "Workday Progress V4 Server" cmd /k "node local-server.js"
+start "Workday Journey V5 Server" cmd /k "node local-server.js"
 timeout /t 2 /nobreak >nul
 start "" "http://localhost:4173"
 endlocal
