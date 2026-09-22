@@ -1,4 +1,4 @@
-# Workday Journey V7.2
+# Workday Journey V7.3
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -33,3 +33,9 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Desktop sidebar can be collapsed and reopened from the top bar.
 - Font size now scales rem-based typography across the whole app with clearly different Small / Medium / Large levels.
 - Thai mode now fully translates the V7 Settings page and sidebar labels.
+
+
+## V7.3 updates
+- Project Tracker editor now uses the full content width.
+- Project cards are displayed below the editor in a responsive grid.
+- Top application header now has a distinct background, border and shadow for clearer hierarchy.

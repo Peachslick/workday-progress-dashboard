@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "7.2.0";
+  const V6_VERSION = "7.3.0";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -449,7 +449,7 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.2 · Toast & Journal Date Update · ข้อมูลเก็บใน Browser":"Workday Journey V7.2 · Toast & Journal Date Update · Local browser data";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.3 · Project Layout & Header Update · ข้อมูลเก็บใน Browser":"Workday Journey V7.3 · Project Layout & Header Update · Local browser data";
     const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7";
   }
 
