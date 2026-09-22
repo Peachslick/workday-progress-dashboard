@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "5.2.0";
+  const APP_VERSION = "7.1.0";
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
@@ -388,7 +388,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V5.2 · Multi-user ready · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.1 · Sidebar & Typography Update · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -416,7 +416,7 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V5.2 · Multi-user ready · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.1 · Sidebar & Typography Update · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
@@ -431,7 +431,7 @@
     leelawadee: '"Leelawadee UI", Tahoma, sans-serif',
     tahoma: 'Tahoma, "Segoe UI", sans-serif'
   };
-  const FONT_SCALE_MAP = { small: .92, medium: 1, large: 1.09 };
+  const FONT_SCALE_MAP = { small: .90, medium: 1, large: 1.18 };
 
   const urlDemoMode = (() => { try { return new URLSearchParams(location.search).get("demo") === "1"; } catch { return false; } })();
   const state = {
@@ -1305,7 +1305,7 @@
     cards.forEach((c,i)=>{const x=650+(i%2)*390,y=315+Math.floor(i/2)*180;roundedRect(ctx,x,y,350,145,22);ctx.fillStyle=dark?"#182334":"#f7f9fc";ctx.fill();ctx.fillStyle=text;ctx.font='800 46px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[0],x+24,y+62);ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(c[1],x+24,y+101);});
     const barX=145,barY=570,barW=445,barH=22;roundedRect(ctx,barX,barY,barW,barH,11);ctx.fillStyle=dark?"#263449":"#e5eaf1";ctx.fill();roundedRect(ctx,barX,barY,barW*(stats.percent/100),barH,11);ctx.fillStyle=work;ctx.fill();ctx.fillStyle=text;ctx.font='700 24px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${stats.percent.toFixed(1)}% COMPLETE`,barX,635);
     ctx.fillStyle=gold;ctx.font='700 22px "Sarabun", "Leelawadee UI", sans-serif';const nextText=milestone.complete?t("milestoneComplete"):`NEXT: ${localeNumber(milestone.targetHours,{maximumFractionDigits:1})} HOURS · ${formatPredictionDate(cumulativeTargetDate(milestone.targetHours*60))}`;ctx.fillText(nextText,barX,680);
-    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Journey V5.1`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("MULTI-USER · PRIVATE BY DEFAULT",1510,815);ctx.textAlign="left";
+    ctx.fillStyle=muted;ctx.font='600 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.fillText(`${formatLongDate(now)} · Workday Journey V7`,90,815);ctx.fillStyle=text;ctx.font='700 20px "Sarabun", "Leelawadee UI", sans-serif';ctx.textAlign="right";ctx.fillText("MULTI-USER · PRIVATE BY DEFAULT",1510,815);ctx.textAlign="left";
     canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`workday-journey-${dateKey(now)}${finalMode?"-final":""}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast("📸",t("snapshotCreated"));},"image/png");
   }
   function renderV4(now,status,dailyPercent,stats,streak,achievements,nextBreak,workedMinutes){
@@ -1744,9 +1744,11 @@
     } catch { showToast("!", t("invalidBackup")); }
   }
   function clearJourneyStorage() {
-    const fixed = ["wp-day-overrides","wp-seen-achievements","wp-achievements-initialized","wp-completion-seen","wp-journey-config","wp-setup-completed"];
+    const fixed = ["wp-day-overrides","wp-seen-achievements","wp-achievements-initialized","wp-completion-seen","wp-journey-config","wp-setup-completed",
+      "wp-v6-journal","wp-v6-projects","wp-v6-recap-dismissed"];
     fixed.forEach(k => localStorage.removeItem(k));
     const transient = []; for (let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(key?.startsWith("wp-notify-")) transient.push(key); } transient.forEach(k=>localStorage.removeItem(k));
+    window.dispatchEvent(new CustomEvent("workday:journey-cleared"));
   }
   function startNewJourney() {
     if (!confirm(t("newJourneyConfirm"))) return;
@@ -1809,7 +1811,7 @@
   function resolveTheme(value) { return value === "system" ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light") : value; }
   function applyPreferences() {
     document.documentElement.style.setProperty("--app-font", FONT_MAP[state.fontFamily] || FONT_MAP.system);
-    document.documentElement.style.setProperty("--font-scale", FONT_SCALE_MAP[state.fontSize] || 1);
+    const fontScale = FONT_SCALE_MAP[state.fontSize] || 1; document.documentElement.style.setProperty("--font-scale", fontScale); document.documentElement.style.fontSize = `${16 * fontScale}px`;
     const resolved = resolveTheme(state.theme); document.documentElement.dataset.theme = resolved; els.themeToggle.textContent = resolved === "dark" ? "☀" : "☾";
     document.body.classList.toggle("no-animations", !state.animations); document.body.classList.toggle("compact", state.density === "compact");
     els.fontFamilySelect.value = state.fontFamily; els.fontSizeSelect.value = state.fontSize; els.themeSelect.value = state.theme; els.clockFormatSelect.value = state.clockFormat; els.densitySelect.value = state.density; els.showSecondsToggle.checked = state.showSeconds; els.animationToggle.checked = state.animations;
@@ -1924,6 +1926,34 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeDayModal(); closeStatsModal(); closeAchievementModal(); closeCompletionModal(); if (state.setupMode === "edit") closeSetupWizard(); } });
     window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", () => { if (state.theme === "system") applyPreferences(); });
   }
+
+  // Public bridge for feature modules. This keeps the core dashboard logic in one place
+  // while allowing Journal / Projects / Reports to use the same calendar and attendance rules.
+  window.WorkdayJourneyAPI = {
+    version: APP_VERSION,
+    getConfig: () => ({ ...journeyConfig, totalWorkMinutes: CONFIG.totalWorkMinutes, totalBreakMinutes: CONFIG.totalBreakMinutes, schedule: CONFIG.schedule.map(item => ({ ...item })) }),
+    getState: () => ({ language: state.language, timezone: state.timezone, locale: state.locale, privacyMode: state.privacyMode, setupCompleted: state.setupCompleted }),
+    getNow: () => new Date(getConfiguredNow()),
+    getStats: (date = getConfiguredNow()) => getInternshipStats(new Date(date)),
+    getMonthlyStats: (date = getConfiguredNow()) => getMonthlyStats(new Date(date)).map(item => ({ ...item, date: new Date(item.date) })),
+    getAchievements: (stats = getInternshipStats(getConfiguredNow())) => getAchievements(stats).map(item => ({ ...item })),
+    getDayOverrides: () => JSON.parse(JSON.stringify(state.dayOverrides || {})),
+    setDayOverrides: overrides => { state.dayOverrides = overrides && typeof overrides === "object" ? JSON.parse(JSON.stringify(overrides)) : {}; persistPreferences(); renderDashboard(); },
+    getScheduledMinutes: value => getScheduledMinutes(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    getActualDayCapacity: value => getActualDayCapacity(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    getWorkedMinutes: (value, now = getConfiguredNow()) => getWorkedMinutes(value instanceof Date ? value : parseConfigDate(String(value), new Date()), now instanceof Date ? now : new Date(now)),
+    getNormalScheduleElapsedMinutes: (value, now = getConfiguredNow()) => getNormalScheduleElapsedMinutes(value instanceof Date ? value : parseConfigDate(String(value), new Date()), now instanceof Date ? now : new Date(now)),
+    getDayType: value => getDayType(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    getLeaveMinutes: value => getLeaveMinutes(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    isScheduledWorkday: value => isScheduledWorkday(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    render: () => renderDashboard(),
+    exportBackup: () => exportBackup(),
+    formatDuration: (minutes, compact = false) => formatDuration(minutes, compact),
+    formatCompactDate: value => formatCompactDate(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    dateKey: value => dateKey(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
+    translate: key => t(key),
+    defaultCompanyHolidays: [...DEFAULT_COMPANY_HOLIDAYS]
+  };
 
   function init() { applyPreferences(); renderTranslations(); bindEvents(); bindV4Events(); bindV5Events(); initPwa(); initV5(); renderDashboard(); setInterval(renderDashboard, 1000); }
   init();

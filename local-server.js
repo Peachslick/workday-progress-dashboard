@@ -33,7 +33,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(port, "127.0.0.1", () => {
-  console.log(`Workday Journey V5.2.0: http://localhost:${port}`);
+server.listen(port, "127.1.0.1", () => {
+  console.log(`Workday Journey V7.1.0: http://localhost:${port}`);
   console.log("Press Ctrl+C to stop.");
 });

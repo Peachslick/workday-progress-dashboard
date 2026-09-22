@@ -1,98 +1,35 @@
-# Workday Journey V5.2
+# Workday Journey V7.1
 
-A bilingual **work / internship journey dashboard** built with plain HTML, CSS and JavaScript. It works without a backend or database and is designed for GitHub + Vercel deployment.
+A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
-## What's new in V5
+## V7 — App Layout Redesign
 
-- First-time setup wizard for each visitor
-- Personal profile / journey settings
-- Custom start date, end date, workdays, work hours and up to 3 breaks
-- Timezone and date/number locale settings
-- Personal Mode / Public Demo Mode
-- JSON Backup / Restore
-- Start New Journey / Reset All Data
-- Share Journey Summary + existing PNG Snapshot
-- Privacy notice explaining that data stays in browser `localStorage`
-- PWA update notice for new deployments
-- Existing V4.1 attendance, leave, company holiday and compensatory workday logic remains available
+V7 reorganizes the feature-rich V6 dashboard into a clearer app-style layout with seven dedicated areas:
 
-## Privacy / multi-user behavior
+- Dashboard — today's progress, live countdown, timeline, internship overview and quick actions
+- Daily Journal — full daily journal editor and journal history
+- Projects — project tracker with status, progress and journal links
+- Achievements — achievement center, milestones, journey timeline and story
+- Reports & Analytics — attendance, monthly breakdown, heatmap, milestone predictor and final report
+- Calendar & Attendance — leave, company holidays, compensatory workdays and calendar presets
+- Settings — profile, appearance, timezone/date format, backup and dashboard tools
 
-There is no shared database. Every browser gets its own local data. If two people open the same Vercel URL, their journeys, calendar overrides, leave records, theme and achievements are separate because they are stored in that browser's `localStorage`.
+The app uses hash routing (`#/dashboard`, `#/journal`, etc.), so it works on Vercel without server-side routing configuration.
 
-Use **Settings → Data & Backup → Export Backup** before clearing browser data or moving to another device.
+## Data & privacy
+
+Journey data is stored in the user's browser with `localStorage`. Users opening the same Vercel URL do not share each other's local data. Existing V5/V6 local data remains compatible with V7.
 
 ## Run locally
 
-For the simplest mode, open `index.html` or run `start-dashboard.bat`.
+Open `index.html` directly, use `start-dashboard.bat`, or use `start-pwa-local.bat` to test PWA features on localhost.
 
-For PWA testing, run `start-pwa-local.bat` (requires Node.js, but no npm install).
+## Deploy
 
-## Deploy to Vercel
-
-If this folder is the Vercel Root Directory:
-
-- Framework Preset: `Other`
-- Build Command: leave empty
-- Output Directory: leave empty
-- Install Command: leave empty
-
-Push changes to the connected GitHub repository and Vercel will deploy automatically.
-
-## Update workflow
-
-```bash
-git add .
-git commit -m "Update Workday Journey"
-git push
-```
-
-When the PWA detects a newer deployed service worker, the dashboard shows an update banner with **Refresh Now**.
-
-## Default journey
-
-Recommended default values are still:
-
-- 05 May 2026 → 30 October 2026
-- Monday–Friday
-- 07:00 → 16:10
-- Breaks: 09:00–09:20, 11:00–11:40, 14:00–14:10
-- Actual work: 8 hours/day
-- Default timezone: Asia/Bangkok
-
-New visitors can change all of these during first-time setup.
-
-## Sarabun
-
-The site can load Sarabun from Google Fonts when online. For local offline use, `setup-sarabun-font.bat` can fetch the font from the official Google Fonts repository into `assets/fonts/` on the user's machine.
-
----
-
-**Version:** 5.2.0  
-**Stack:** HTML / CSS / JavaScript / PWA  
-**Storage:** Browser localStorage
-
-V5.1 PROFILE / DATE UPDATE
-- Start/End Date supports manual DD/MM/YYYY (or MM/DD/YYYY for en-US) input.
-- Calendar buttons open the native browser date picker and sync back to the text field.
-- Thai date format label is now ไทย · DD/MM/YYYY.
-- This release performs a one-time reset of prior Workday Journey local data so every existing browser sees First-Time Setup again. Only keys belonging to this app (wp-*) are cleared.
-- V5.1 adds cache-busting and a new Service Worker cache name to reduce stale Vercel/PWA files.
+Upload the contents of `workday_progress-dashboard/` to the existing GitHub repository. If Vercel is connected to the repository, the new commit deploys automatically.
 
 
-V5.1.1 LIGHT DEFAULT
-- New users now start in Light theme.
-- Browsers still using the previous System default are migrated once to Light.
-- Explicit Light or Dark choices are preserved.
-- Reset Settings now returns to Light theme.
-
-
-## V5.2 - First-time Calendar & Attendance Setup
-
-- Adds a fourth First-Time Setup step for Calendar & Attendance.
-- Users can mark Company Holiday, Personal Leave, Compensatory Workday, or clear a date before entering the dashboard.
-- Personal Leave in setup supports full day, half day, and custom duration.
-- Default company holidays are preloaded: 27/07/2026, 28/07/2026, 12/08/2026, and 13/10/2026.
-- Default holiday dates can be removed, restored, or supplemented by the user.
-- V5.2 performs a one-time reset of older Workday Journey browser data so returning visitors see the complete First-Time Setup again.
-- Service Worker cache is bumped to V5.2.0 for Vercel/PWA refresh reliability.
+## V7.1 updates
+- Desktop sidebar can be collapsed and reopened from the top bar.
+- Font size now scales rem-based typography across the whole app with clearly different Small / Medium / Large levels.
+- Thai mode now fully translates the V7 Settings page and sidebar labels.

@@ -1,7 +1,7 @@
 {
-  "name": "Workday Journey V5.2",
+  "name": "Workday Journey V7.1",
   "short_name": "Workday Journey",
-  "description": "A private-by-default work and internship journey tracker with attendance, achievements, backup/restore, setup wizard, sharing and PWA support.",
+  "description": "A private-by-default work and internship journey tracker with app-style navigation, journal, projects, achievements, reports, calendar, settings and PWA support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
