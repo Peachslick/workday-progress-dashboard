@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "7.1.0";
+  const V6_VERSION = "7.2.0";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -21,7 +21,7 @@
       dailyJournal: "Daily Work Journal", journalSaved: "บันทึกวันนี้แล้ว", journalEmpty: "วันนี้ยังไม่มีบันทึก", openJournal: "เขียนบันทึก", journalTitle: "บันทึกงานประจำวัน", journalDate: "วันที่",
       whatDid: "วันนี้ทำอะไร", whatDidPh: "เช่น แก้ WIP Monitor, ตรวจข้อมูล Power BI...", learned: "สิ่งที่ได้เรียนรู้", learnedPh: "สิ่งที่ได้เรียนรู้ ปัญหาที่แก้ หรือสิ่งที่อยากจำไว้...",
       mood: "ความรู้สึกวันนี้", relatedProjects: "Project ที่เกี่ยวข้อง", noProjectsYet: "ยังไม่มี Project — สร้าง Project ก่อนหรือบันทึกโดยไม่เลือกก็ได้", recentEntries: "บันทึกล่าสุด",
-      saveJournal: "บันทึก Journal", deleteEntry: "ลบบันทึกวันนี้", journalDeleted: "ลบบันทึกแล้ว", journalSavedToast: "บันทึก Daily Journal แล้ว", privateJournal: "Journal เป็นข้อมูลส่วนตัวและจะถูกซ่อนใน Demo Mode",
+      saveJournal: "บันทึก Journal", deleteEntry: "ลบบันทึกวันนี้", journalDeleted: "ลบบันทึกแล้ว", journalSavedToast: "บันทึก Daily Journal แล้ว", journalDateInvalid: "กรุณาใส่วันที่ให้ถูกต้องในรูปแบบ DD/MM/YYYY", privateJournal: "Journal เป็นข้อมูลส่วนตัวและจะถูกซ่อนใน Demo Mode",
       projectTracker: "Project Tracker", projects: "Projects", activeProjects: "กำลังทำ", completedProjects: "เสร็จแล้ว", manageProjects: "จัดการ Project", projectTitle: "Project Tracker",
       projectName: "ชื่อ Project", projectCategory: "หมวดหมู่", projectProgress: "Progress (%)", projectStatus: "สถานะ", active: "กำลังทำ", paused: "พักไว้", completedProject: "เสร็จแล้ว", projectDescription: "รายละเอียด",
       addProject: "เพิ่ม Project", saveProject: "บันทึก Project", updateProject: "อัปเดต Project", edit: "แก้ไข", delete: "ลบ", projectSaved: "บันทึก Project แล้ว", projectDeleted: "ลบ Project แล้ว", projectNameRequired: "กรุณาใส่ชื่อ Project",
@@ -48,7 +48,7 @@
       dailyJournal: "Daily Work Journal", journalSaved: "Today's entry is saved", journalEmpty: "No entry for today yet", openJournal: "Write Journal", journalTitle: "Daily Work Journal", journalDate: "Date",
       whatDid: "What did you work on?", whatDidPh: "e.g. Updated WIP Monitor, checked Power BI data...", learned: "What did you learn?", learnedPh: "A lesson, solved problem, or something worth remembering...",
       mood: "Today's mood", relatedProjects: "Related Projects", noProjectsYet: "No projects yet — create one first or save without selecting a project", recentEntries: "Recent Entries",
-      saveJournal: "Save Journal", deleteEntry: "Delete Today's Entry", journalDeleted: "Journal entry deleted", journalSavedToast: "Daily Journal saved", privateJournal: "Journal content is private and hidden in Demo Mode",
+      saveJournal: "Save Journal", deleteEntry: "Delete Today's Entry", journalDeleted: "Journal entry deleted", journalSavedToast: "Daily Journal saved", journalDateInvalid: "Enter a valid date in DD/MM/YYYY format", privateJournal: "Journal content is private and hidden in Demo Mode",
       projectTracker: "Project Tracker", projects: "Projects", activeProjects: "Active", completedProjects: "Completed", manageProjects: "Manage Projects", projectTitle: "Project Tracker",
       projectName: "Project Name", projectCategory: "Category", projectProgress: "Progress (%)", projectStatus: "Status", active: "Active", paused: "Paused", completedProject: "Completed", projectDescription: "Description",
       addProject: "Add Project", saveProject: "Save Project", updateProject: "Update Project", edit: "Edit", delete: "Delete", projectSaved: "Project saved", projectDeleted: "Project deleted", projectNameRequired: "Enter a project name",
@@ -203,10 +203,22 @@
     $("v6Modal")?.setAttribute("aria-hidden","true");
     setTimeout(()=>{ if ($("v6Modal") && !$("v6Modal").classList.contains("open")) $("v6ModalBackdrop").hidden=true; },180);
   }
-  function toast(icon, message) {
-    const stack = $("toastStack"); if (!stack) return;
-    const node=document.createElement("div"); node.className="toast v6-toast"; node.innerHTML=`<span>${icon}</span><div><strong>${esc(message)}</strong></div>`; stack.appendChild(node); requestAnimationFrame(()=>node.classList.add("show")); setTimeout(()=>{node.classList.remove("show");setTimeout(()=>node.remove(),250);},3200);
+  function toastType(icon,message="") {
+    const text=String(message||"").toLowerCase();
+    if(["✓","✅","↓"].includes(icon)) return "success";
+    if(icon==="!" || icon==="✕" || /required|invalid|กรุณา|ไม่ถูกต้อง|ผิดพลาด/.test(text)) return "error";
+    if(["⚠","⚠️","🔕","💾"].includes(icon)) return "warning";
+    return "info";
   }
+  function toast(icon, message, type="") {
+    const stack = $("toastStack"); if (!stack) return;
+    const tone=type||toastType(icon,message);
+    const node=document.createElement("div"); node.className=`app-toast v6-toast toast-${tone}`; node.setAttribute("role",tone==="error"?"alert":"status"); node.innerHTML=`<span>${icon}</span><div><strong>${esc(message)}</strong></div>`; stack.appendChild(node); setTimeout(()=>{node.classList.add("out");setTimeout(()=>node.remove(),250);},3200);
+  }
+  function formatJournalDateKey(key){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(key||""));return m?`${m[3]}/${m[2]}/${m[1]}`:"";}
+  function parseJournalDateText(value){const m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(String(value||"").trim());if(!m)return"";const d=+m[1],mo=+m[2],y=+m[3],dt=new Date(y,mo-1,d);if(y<1900||y>2200||mo<1||mo>12||d<1||d>31||dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d)return"";return`${String(y).padStart(4,"0")}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}`;}
+  function maskJournalDate(value){const d=String(value||"").replace(/\D/g,"").slice(0,8);if(d.length<=2)return d;if(d.length<=4)return`${d.slice(0,2)}/${d.slice(2)}`;return`${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4)}`;}
+  function openJournalPicker(textInput,picker){const parsed=parseJournalDateText(textInput?.value);if(parsed)picker.value=parsed;try{if(typeof picker.showPicker==="function")picker.showPicker();else picker.click();}catch{picker.click();}}
 
   function saveJournals() { write(KEYS.journal, journals); renderHub(); }
   function saveProjects() { write(KEYS.projects, projects); renderHub(); }
@@ -219,7 +231,7 @@
     const entry = journalForDate(dateKey) || { work:"", learned:"", mood:"productive", projectIds:[] };
     const projectOptions = projects.length ? projects.map(p=>`<label class="v6-project-check"><input type="checkbox" value="${esc(p.id)}" ${entry.projectIds?.includes(p.id)?"checked":""}><span><strong>${esc(p.name)}</strong><small>${esc(p.category||p.status||"")}</small></span></label>`).join("") : `<p class="v6-empty">${esc(tr("noProjectsYet"))}</p>`;
     const recent = Object.entries(journals).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,5).map(([key,item])=>`<button class="v6-recent-entry" data-journal-date="${key}" type="button"><strong>${esc(formatDate(dateFromKey(key)))}</strong><span>${esc((item.work||item.learned||tr("noData")).slice(0,80))}</span></button>`).join("") || `<p class="v6-empty">${esc(tr("noData"))}</p>`;
-    return `<div class="v6-journal-layout"><div class="v6-form-stack"><label><span>${esc(tr("journalDate"))}</span><input id="v6JournalDate" type="date" min="${esc(config().startDate)}" max="${esc(config().endDate)}" value="${esc(dateKey)}"></label><label><span>${esc(tr("whatDid"))}</span><textarea id="v6JournalWork" rows="4" placeholder="${esc(tr("whatDidPh"))}">${esc(entry.work||"")}</textarea></label><label><span>${esc(tr("learned"))}</span><textarea id="v6JournalLearned" rows="4" placeholder="${esc(tr("learnedPh"))}">${esc(entry.learned||"")}</textarea></label><label><span>${esc(tr("mood"))}</span><select id="v6JournalMood">${["productive","good","neutral","tired","challenging"].map(v=>`<option value="${v}" ${entry.mood===v?"selected":""}>${esc(tr(`mood${v[0].toUpperCase()+v.slice(1)}`))}</option>`).join("")}</select></label><div><span class="v6-field-title">${esc(tr("relatedProjects"))}</span><div id="v6JournalProjects" class="v6-project-check-grid">${projectOptions}</div><small class="muted">${esc(tr("journalProjectLink"))}</small></div><div class="v6-modal-actions"><button id="v6JournalDelete" class="danger-btn" type="button" ${journalForDate(dateKey)?"":"disabled"}>${esc(tr("deleteEntry"))}</button><button id="v6JournalSave" class="primary-btn" type="button">${esc(tr("saveJournal"))}</button></div><p class="v6-private-note">🔐 ${esc(tr("privateJournal"))}</p></div><aside class="v6-recent-panel"><h3>${esc(tr("recentEntries"))}</h3>${recent}</aside></div>`;
+    return `<div class="v6-journal-layout"><div class="v6-form-stack"><label><span>${esc(tr("journalDate"))}</span><div class="journal-date-control"><input id="v6JournalDate" class="journal-date-text" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(formatJournalDateKey(dateKey))}"><button id="v6JournalDateBtn" class="journal-date-picker-btn" type="button" aria-label="Calendar" title="Calendar">🗓</button><input id="v6JournalDatePicker" class="journal-date-native" type="date" tabindex="-1" aria-hidden="true" min="${esc(config().startDate)}" max="${esc(config().endDate)}" value="${esc(dateKey)}"></div></label><label><span>${esc(tr("whatDid"))}</span><textarea id="v6JournalWork" rows="4" placeholder="${esc(tr("whatDidPh"))}">${esc(entry.work||"")}</textarea></label><label><span>${esc(tr("learned"))}</span><textarea id="v6JournalLearned" rows="4" placeholder="${esc(tr("learnedPh"))}">${esc(entry.learned||"")}</textarea></label><label><span>${esc(tr("mood"))}</span><select id="v6JournalMood">${["productive","good","neutral","tired","challenging"].map(v=>`<option value="${v}" ${entry.mood===v?"selected":""}>${esc(tr(`mood${v[0].toUpperCase()+v.slice(1)}`))}</option>`).join("")}</select></label><div><span class="v6-field-title">${esc(tr("relatedProjects"))}</span><div id="v6JournalProjects" class="v6-project-check-grid">${projectOptions}</div><small class="muted">${esc(tr("journalProjectLink"))}</small></div><div class="v6-modal-actions"><button id="v6JournalDelete" class="danger-btn" type="button" ${journalForDate(dateKey)?"":"disabled"}>${esc(tr("deleteEntry"))}</button><button id="v6JournalSave" class="primary-btn" type="button">${esc(tr("saveJournal"))}</button></div><p class="v6-private-note">🔐 ${esc(tr("privateJournal"))}</p></div><aside class="v6-recent-panel"><h3>${esc(tr("recentEntries"))}</h3>${recent}</aside></div>`;
   }
 
   function openJournal(dateKey = keyFromDate(now())) {
@@ -229,14 +241,21 @@
     bindJournalModal(safeKey);
   }
   function bindJournalModal(dateKey) {
-    $("v6JournalDate")?.addEventListener("change", e=>openJournal(e.target.value));
+    const textDate=$("v6JournalDate"), picker=$("v6JournalDatePicker"), pickerBtn=$("v6JournalDateBtn");
+    textDate?.addEventListener("input",()=>{textDate.value=maskJournalDate(textDate.value);});
+    const loadDate=()=>{const parsed=parseJournalDateText(textDate?.value);if(!parsed||parsed<config().startDate||parsed>config().endDate){toast("!",tr("journalDateInvalid"),"error");textDate?.focus();return;}openJournal(parsed);};
+    textDate?.addEventListener("change",loadDate);
+    textDate?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();loadDate();}});
+    picker?.addEventListener("change",()=>{if(picker.value)openJournal(picker.value);});
+    pickerBtn?.addEventListener("click",()=>openJournalPicker(textDate,picker));
     document.querySelectorAll("[data-journal-date]").forEach(btn=>btn.addEventListener("click",()=>openJournal(btn.dataset.journalDate)));
     $("v6JournalSave")?.addEventListener("click",()=>{
-      const key=$("v6JournalDate").value;
+      const key=parseJournalDateText($("v6JournalDate").value);
+      if(!key||key<config().startDate||key>config().endDate){toast("!",tr("journalDateInvalid"),"error");return;}
       const work=$("v6JournalWork").value.trim(), learned=$("v6JournalLearned").value.trim(), mood=$("v6JournalMood").value;
       const projectIds=[...document.querySelectorAll("#v6JournalProjects input:checked")].map(x=>x.value);
       journals[key]={ work, learned, mood, projectIds, updatedAt:new Date().toISOString(), createdAt:journals[key]?.createdAt||new Date().toISOString() };
-      saveJournals(); toast("✓",tr("journalSavedToast")); openJournal(key);
+      saveJournals(); toast("✓",tr("journalSavedToast"),"success"); openJournal(key);
     });
     $("v6JournalDelete")?.addEventListener("click",()=>{
       if (!journals[dateKey] || !confirm(tr("confirmDelete"))) return;
@@ -254,7 +273,7 @@
   }
   function openProjects(editId="") {
     openModal("projects",tr("projectTitle"),projectFormHtml(editId));
-    $("v6ProjectForm")?.addEventListener("submit",e=>{ e.preventDefault(); const name=$("v6ProjectName").value.trim(); if(!name){toast("!",tr("projectNameRequired"));return;} const id=$("v6ProjectId").value||`p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`; const existing=projects.find(p=>p.id===id); const item={id,name,category:$("v6ProjectCategory").value.trim(),progress:Math.max(0,Math.min(100,Number($("v6ProjectProgress").value)||0)),status:$("v6ProjectStatus").value,description:$("v6ProjectDescription").value.trim(),createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()}; projects=projects.filter(p=>p.id!==id); projects.push(item); projects.sort((a,b)=>(a.status==="completed")-(b.status==="completed")||a.name.localeCompare(b.name)); saveProjects(); toast("✓",tr("projectSaved")); openProjects(); });
+    $("v6ProjectForm")?.addEventListener("submit",e=>{ e.preventDefault(); const name=$("v6ProjectName").value.trim(); if(!name){toast("!",tr("projectNameRequired"),"error");return;} const id=$("v6ProjectId").value||`p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`; const existing=projects.find(p=>p.id===id); const item={id,name,category:$("v6ProjectCategory").value.trim(),progress:Math.max(0,Math.min(100,Number($("v6ProjectProgress").value)||0)),status:$("v6ProjectStatus").value,description:$("v6ProjectDescription").value.trim(),createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()}; projects=projects.filter(p=>p.id!==id); projects.push(item); projects.sort((a,b)=>(a.status==="completed")-(b.status==="completed")||a.name.localeCompare(b.name)); saveProjects(); toast("✓",tr("projectSaved"),"success"); openProjects(); });
     $("v6ProjectClear")?.addEventListener("click",()=>openProjects());
     document.querySelectorAll("[data-project-edit]").forEach(btn=>btn.addEventListener("click",()=>openProjects(btn.dataset.projectEdit)));
     document.querySelectorAll("[data-project-delete]").forEach(btn=>btn.addEventListener("click",()=>{ if(!confirm(tr("confirmDelete")))return; const id=btn.dataset.projectDelete; projects=projects.filter(p=>p.id!==id); for(const entry of Object.values(journals)) if(Array.isArray(entry.projectIds)) entry.projectIds=entry.projectIds.filter(x=>x!==id); saveProjects(); saveJournals(); toast("🗑",tr("projectDeleted")); openProjects(); }));
@@ -405,7 +424,7 @@
   }
 
   function maybeBackupToast() {
-    if(!setupCompleted())return; const bs=backupStatus(); if(!bs.due||sessionStorage.getItem("wp-v6-backup-toast"))return; sessionStorage.setItem("wp-v6-backup-toast","1"); setTimeout(()=>toast("💾",tr("backupToast")),1200);
+    if(!setupCompleted())return; const bs=backupStatus(); if(!bs.due||sessionStorage.getItem("wp-v6-backup-toast"))return; sessionStorage.setItem("wp-v6-backup-toast","1"); setTimeout(()=>toast("💾",tr("backupToast"),"warning"),1200);
   }
 
   function bindUI() {
@@ -430,7 +449,7 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.1 · Sidebar & Typography Update · ข้อมูลเก็บใน Browser":"Workday Journey V7.1 · Sidebar & Typography Update · Local browser data";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.2 · Toast & Journal Date Update · ข้อมูลเก็บใน Browser":"Workday Journey V7.2 · Toast & Journal Date Update · Local browser data";
     const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7";
   }
 

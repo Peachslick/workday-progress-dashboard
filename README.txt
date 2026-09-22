@@ -1,4 +1,4 @@
-# Workday Journey V7.1
+# Workday Journey V7.2
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -29,7 +29,7 @@ Open `index.html` directly, use `start-dashboard.bat`, or use `start-pwa-local.b
 Upload the contents of `workday_progress-dashboard/` to the existing GitHub repository. If Vercel is connected to the repository, the new commit deploys automatically.
 
 
-## V7.1 updates
+## V7.2 updates
 - Desktop sidebar can be collapsed and reopened from the top bar.
 - Font size now scales rem-based typography across the whole app with clearly different Small / Medium / Large levels.
 - Thai mode now fully translates the V7 Settings page and sidebar labels.

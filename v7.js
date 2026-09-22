@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "7.1.0";
+  const VERSION = "7.2.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -32,13 +32,13 @@
       dashboard:"แดชบอร์ด", journal:"บันทึกประจำวัน", projects:"โปรเจกต์", achievements:"ความสำเร็จ", reports:"รายงานและการวิเคราะห์", calendar:"ปฏิทินและการเข้างาน", settings:"ตั้งค่า",
       dashboardSub:"ภาพรวมวันนี้และ Journey", journalSub:"บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้", projectsSub:"ติดตามงานและความคืบหน้าของ Project", achievementsSub:"Milestones, Trophy Room และ Journey Story", reportsSub:"Attendance, Heatmap และรายงานสรุป", calendarSub:"วันลา วันหยุดบริษัท และวันทำงานชดเชย", settingsSub:"โปรไฟล์ รูปแบบการแสดงผล และข้อมูล",
       privateLocal:"Private · Local data", menu:"เมนู", quickActions:"ทางลัด", addJournal:"เพิ่ม Journal วันนี้", manageProjects:"จัดการ Projects", openReports:"ดู Reports", openCalendar:"เปิด Calendar",
-      journalTitle:"Daily Work Journal", journalHelp:"บันทึกว่าวันนี้ทำอะไร เรียนรู้อะไร และ Project ที่เกี่ยวข้อง", journalDate:"วันที่", workDone:"วันนี้ทำอะไร", learned:"สิ่งที่ได้เรียนรู้", mood:"ความรู้สึกวันนี้", relatedProjects:"Project ที่เกี่ยวข้อง", saveJournal:"บันทึก Journal", deleteJournal:"ลบบันทึก", recentEntries:"บันทึกล่าสุด", noEntries:"ยังไม่มีบันทึก", demoLocked:"Journal ถูกซ่อนใน Public Demo Mode", journalSaved:"บันทึก Journal แล้ว", journalDeleted:"ลบบันทึกแล้ว",
+      journalTitle:"Daily Work Journal", journalHelp:"บันทึกว่าวันนี้ทำอะไร เรียนรู้อะไร และ Project ที่เกี่ยวข้อง", journalDate:"วันที่", workDone:"วันนี้ทำอะไร", learned:"สิ่งที่ได้เรียนรู้", mood:"ความรู้สึกวันนี้", relatedProjects:"Project ที่เกี่ยวข้อง", saveJournal:"บันทึก Journal", deleteJournal:"ลบบันทึก", recentEntries:"บันทึกล่าสุด", noEntries:"ยังไม่มีบันทึก", demoLocked:"Journal ถูกซ่อนใน Public Demo Mode", journalSaved:"บันทึก Journal แล้ว", journalDeleted:"ลบบันทึกแล้ว", journalDateInvalid:"กรุณาใส่วันที่ให้ถูกต้องในรูปแบบ DD/MM/YYYY",
       projectsTitle:"Project Tracker", projectsHelp:"ติดตาม Project, Status และ Progress พร้อมเชื่อมกับ Daily Journal", projectName:"ชื่อ Project", category:"หมวดหมู่", progress:"Progress (%)", status:"สถานะ", description:"รายละเอียด", active:"กำลังทำ", paused:"พักไว้", completed:"เสร็จแล้ว", saveProject:"บันทึก Project", newProject:"Project ใหม่", noProjects:"ยังไม่มี Project", journalDays:"วันที่มี Journal", projectSaved:"บันทึก Project แล้ว", projectDeleted:"ลบ Project แล้ว",
       achievementsTitle:"Achievement Center", achievementsHelp:"รวม Badge, Milestone และเรื่องราวสำคัญของ Journey", unlocked:"ปลดล็อกแล้ว", locked:"ยังไม่ปลดล็อก", achievementProgress:"ปลดล็อก {n}/{total} Achievement",
       reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.1 · Sidebar & Typography Update", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.2 · Toast & Journal Date Update", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
       deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้"
     },
@@ -46,13 +46,13 @@
       dashboard:"Dashboard", journal:"Daily Journal", projects:"Projects", achievements:"Achievements", reports:"Reports & Analytics", calendar:"Calendar & Attendance", settings:"Settings",
       dashboardSub:"Today and journey overview", journalSub:"Record your work and learning", projectsSub:"Track project status and progress", achievementsSub:"Milestones, Trophy Room and Journey Story", reportsSub:"Attendance, heatmap and journey reports", calendarSub:"Leave, company holidays and compensatory days", settingsSub:"Profile, appearance and data tools",
       privateLocal:"Private · Local data", menu:"Menu", quickActions:"Quick Actions", addJournal:"Add Today's Journal", manageProjects:"Manage Projects", openReports:"View Reports", openCalendar:"Open Calendar",
-      journalTitle:"Daily Work Journal", journalHelp:"Record what you worked on, what you learned, and the related projects", journalDate:"Date", workDone:"What did you work on?", learned:"What did you learn?", mood:"Today's mood", relatedProjects:"Related Projects", saveJournal:"Save Journal", deleteJournal:"Delete Entry", recentEntries:"Recent Entries", noEntries:"No entries yet", demoLocked:"Journal is hidden in Public Demo Mode", journalSaved:"Journal saved", journalDeleted:"Journal deleted",
+      journalTitle:"Daily Work Journal", journalHelp:"Record what you worked on, what you learned, and the related projects", journalDate:"Date", workDone:"What did you work on?", learned:"What did you learn?", mood:"Today's mood", relatedProjects:"Related Projects", saveJournal:"Save Journal", deleteJournal:"Delete Entry", recentEntries:"Recent Entries", noEntries:"No entries yet", demoLocked:"Journal is hidden in Public Demo Mode", journalSaved:"Journal saved", journalDeleted:"Journal deleted", journalDateInvalid:"Enter a valid date in DD/MM/YYYY format",
       projectsTitle:"Project Tracker", projectsHelp:"Track project status and progress and connect it with Daily Journal", projectName:"Project Name", category:"Category", progress:"Progress (%)", status:"Status", description:"Description", active:"Active", paused:"Paused", completed:"Completed", saveProject:"Save Project", newProject:"New Project", noProjects:"No projects yet", journalDays:"Journal Days", projectSaved:"Project saved", projectDeleted:"Project deleted",
       achievementsTitle:"Achievement Center", achievementsHelp:"Badges, milestones and memorable moments from your journey", unlocked:"Unlocked", locked:"Locked", achievementProgress:"{n}/{total} achievements unlocked",
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.1 · Sidebar & Typography Update", localPrivacy:"All data is stored locally in each user's browser",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.2 · Toast & Journal Date Update", localPrivacy:"All data is stored locally in each user's browser",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
       deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today"
     }
@@ -67,15 +67,50 @@
     ["dashboard","🏠"], ["journal","📓"], ["projects","🧩"], ["achievements","🏆"], ["reports","📊"], ["calendar","📅"], ["settings","⚙"]
   ];
 
-  function toast(icon, message) {
+  function toastType(icon, message="") {
+    const text=String(message||"").toLowerCase();
+    if(["✓","✅","↓","📸"].includes(icon)) return "success";
+    if(icon==="!" || icon==="✕" || /required|invalid|กรุณา|ไม่ถูกต้อง|ผิดพลาด/.test(text)) return "error";
+    if(["⚠","⚠️","🔕","💾"].includes(icon)) return "warning";
+    return "info";
+  }
+  function toast(icon, message, type="") {
     const stack = $("toastStack");
     if (!stack) return;
+    const tone=type||toastType(icon,message);
     const node = document.createElement("div");
-    node.className = "toast v7-toast";
+    node.className = `app-toast v7-toast toast-${tone}`;
+    node.setAttribute("role",tone==="error"?"alert":"status");
     node.innerHTML = `<span>${icon}</span><div><strong>${esc(message)}</strong></div>`;
     stack.appendChild(node);
-    requestAnimationFrame(() => node.classList.add("show"));
-    setTimeout(() => { node.classList.remove("show"); setTimeout(() => node.remove(), 250); }, 2600);
+    setTimeout(() => { node.classList.add("out"); setTimeout(() => node.remove(), 250); }, 3200);
+  }
+
+  function formatJournalDateKey(key) {
+    const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(key||""));
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : "";
+  }
+  function parseJournalDateText(value) {
+    const text=String(value||"").trim();
+    const m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(text);
+    if(!m) return "";
+    const d=Number(m[1]),mo=Number(m[2]),y=Number(m[3]);
+    if(y<1900||y>2200||mo<1||mo>12||d<1||d>31) return "";
+    const dt=new Date(y,mo-1,d);
+    if(dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d) return "";
+    return `${String(y).padStart(4,"0")}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+  }
+  function maskJournalDate(value) {
+    const digits=String(value||"").replace(/\D/g,"").slice(0,8);
+    if(digits.length<=2) return digits;
+    if(digits.length<=4) return `${digits.slice(0,2)}/${digits.slice(2)}`;
+    return `${digits.slice(0,2)}/${digits.slice(2,4)}/${digits.slice(4)}`;
+  }
+  function openJournalPicker(textInput,picker) {
+    if(!picker) return;
+    const parsed=parseJournalDateText(textInput?.value);
+    if(parsed) picker.value=parsed;
+    try { if(typeof picker.showPicker==="function") picker.showPicker(); else picker.click(); } catch { picker.click(); }
   }
 
   function currentRoute() {
@@ -94,7 +129,7 @@
     const sidebar = document.createElement("aside");
     sidebar.className = "v7-sidebar";
     sidebar.innerHTML = `
-      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.1 · App Layout</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
+      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.2 · App Layout</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
       <nav class="v7-nav" aria-label="Workday Journey navigation">${NAV.map(([key,icon]) => `<button type="button" data-v7-route="${key}"><span>${icon}</span><div><strong data-v7-nav-label="${key}"></strong><small data-v7-nav-sub="${key}"></small></div></button>`).join("")}</nav>
       <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><small id="v7SideRange">—</small></div></div>
       <div class="v7-private-chip">🔐 <span id="v7PrivateLabel"></span></div>`;
@@ -154,7 +189,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.1</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.2</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
@@ -261,7 +296,7 @@
     root.innerHTML = `${pageHeader("📓",t("journalTitle"),t("journalHelp"))}
       <div class="v7-journal-grid">
         <form id="v7JournalForm" class="card v7-form-card">
-          <label><span>${esc(t("journalDate"))}</span><input id="v7JournalDate" type="date" min="${esc(cfg.startDate)}" max="${esc(cfg.endDate)}" value="${esc(key)}"></label>
+          <label><span>${esc(t("journalDate"))}</span><div class="journal-date-control"><input id="v7JournalDate" class="journal-date-text" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(formatJournalDateKey(key))}"><button id="v7JournalDateBtn" class="journal-date-picker-btn" type="button" aria-label="Calendar" title="Calendar">🗓</button><input id="v7JournalDatePicker" class="journal-date-native" type="date" tabindex="-1" aria-hidden="true" min="${esc(cfg.startDate)}" max="${esc(cfg.endDate)}" value="${esc(key)}"></div></label>
           <label><span>${esc(t("workDone"))}</span><textarea id="v7JournalWork" rows="5">${esc(entry.work||"")}</textarea></label>
           <label><span>${esc(t("learned"))}</span><textarea id="v7JournalLearned" rows="5">${esc(entry.learned||"")}</textarea></label>
           <div class="v7-two-col"><label><span>${esc(t("mood"))}</span><select id="v7JournalMood">${[["productive","😊 Productive"],["good","🙂 Good"],["neutral","😐 Normal"],["tired","😴 Tired"],["challenging","💪 Challenging"]].map(([v,l])=>`<option value="${v}" ${entry.mood===v?"selected":""}>${l}</option>`).join("")}</select></label><div><span class="v7-field-label">${esc(t("relatedProjects"))}</span><div class="v7-project-checks">${projects.length?projects.map(p=>`<label><input type="checkbox" value="${esc(p.id)}" ${entry.projectIds?.includes(p.id)?"checked":""}><span>${esc(p.name)}</span></label>`).join(""):`<p class="muted">${esc(t("noProjects"))}</p>`}</div></div></div>
@@ -269,9 +304,20 @@
         </form>
         <aside class="card v7-list-card"><div class="v7-card-title"><div><p class="eyebrow">JOURNAL HISTORY</p><h3>${esc(t("recentEntries"))}</h3></div><span class="percentage-chip subtle">${recent.length}</span></div><div class="v7-recent-list">${recent.length?recent.map(([d,e])=>`<button type="button" data-v7-journal-date="${d}"><div><strong>${esc(formatDate(dateFromKey(d)))}</strong><span>${esc(e.work||e.learned||t("noData"))}</span></div><small>${esc((e.projectIds||[]).map(id=>projects.find(p=>p.id===id)?.name).filter(Boolean).join(" · "))}</small></button>`).join(""):`<div class="v7-empty">📓 ${esc(t("noEntries"))}</div>`}</div></aside>
       </div>`;
-    $("v7JournalDate")?.addEventListener("change",e=>renderJournalPage(e.target.value));
+    const journalText=$("v7JournalDate"), journalPicker=$("v7JournalDatePicker"), journalPickerBtn=$("v7JournalDateBtn");
+    journalText?.addEventListener("input",()=>{journalText.value=maskJournalDate(journalText.value);});
+    const loadJournalDate=()=>{
+      const parsed=parseJournalDateText(journalText?.value);
+      if(!parsed || parsed<cfg.startDate || parsed>cfg.endDate){ toast("!",t("journalDateInvalid"),"error"); journalText?.focus(); return; }
+      if(journalPicker) journalPicker.value=parsed;
+      renderJournalPage(parsed);
+    };
+    journalText?.addEventListener("change",loadJournalDate);
+    journalText?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();loadJournalDate();}});
+    journalPicker?.addEventListener("change",()=>{if(journalPicker.value){journalText.value=formatJournalDateKey(journalPicker.value);renderJournalPage(journalPicker.value);}});
+    journalPickerBtn?.addEventListener("click",()=>openJournalPicker(journalText,journalPicker));
     qa("[data-v7-journal-date]",root).forEach(btn=>btn.addEventListener("click",()=>renderJournalPage(btn.dataset.v7JournalDate)));
-    $("v7JournalForm")?.addEventListener("submit",e=>{ e.preventDefault(); const all=getJournals(); const k=$("v7JournalDate").value; all[k]={date:k,work:$("v7JournalWork").value.trim(),learned:$("v7JournalLearned").value.trim(),mood:$("v7JournalMood").value,projectIds:qa(".v7-project-checks input:checked").map(x=>x.value),updatedAt:new Date().toISOString()}; write(KEYS.journal,all); signalDataChanged(); toast("✓",t("journalSaved")); renderJournalPage(k); });
+    $("v7JournalForm")?.addEventListener("submit",e=>{ e.preventDefault(); const all=getJournals(); const k=parseJournalDateText($("v7JournalDate").value); if(!k || k<cfg.startDate || k>cfg.endDate){toast("!",t("journalDateInvalid"),"error");return;} all[k]={date:k,work:$("v7JournalWork").value.trim(),learned:$("v7JournalLearned").value.trim(),mood:$("v7JournalMood").value,projectIds:qa(".v7-project-checks input:checked").map(x=>x.value),updatedAt:new Date().toISOString()}; write(KEYS.journal,all); signalDataChanged(); toast("✓",t("journalSaved"),"success"); renderJournalPage(k); });
     $("v7JournalDelete")?.addEventListener("click",()=>{ if(!confirm(t("deleteConfirm")))return; const all=getJournals(); delete all[key]; write(KEYS.journal,all); signalDataChanged(); toast("🗑",t("journalDeleted")); renderJournalPage(key); });
   }
 
@@ -281,7 +327,7 @@
     const cards=projects.length?projects.map(p=>{ const days=Object.values(journals).filter(j=>j.projectIds?.includes(p.id)).length; return `<article class="card v7-project-card"><div class="v7-project-head"><div><span class="v7-status-dot ${esc(p.status)}"></span><strong>${esc(p.name)}</strong><small>${esc(p.category||"")}</small></div><b>${Math.round(p.progress||0)}%</b></div><div class="v7-project-progress"><i style="width:${Math.max(0,Math.min(100,Number(p.progress)||0))}%"></i></div><p>${esc(p.description||t("noData"))}</p><small>${days} ${esc(t("journalDays"))}</small><div class="v7-card-actions"><button class="small-text-btn" data-v7-project-edit="${esc(p.id)}" type="button">✎</button><button class="small-text-btn danger-text" data-v7-project-delete="${esc(p.id)}" type="button">🗑</button></div></article>`; }).join(""):`<div class="card v7-empty">🧩 ${esc(t("noProjects"))}</div>`;
     root.innerHTML=`${pageHeader("🧩",t("projectsTitle"),t("projectsHelp"))}<div class="v7-project-layout"><form id="v7ProjectForm" class="card v7-form-card"><input id="v7ProjectId" type="hidden" value="${esc(edit.id)}"><div class="v7-two-col"><label><span>${esc(t("projectName"))}</span><input id="v7ProjectName" maxlength="60" value="${esc(edit.name)}"></label><label><span>${esc(t("category"))}</span><input id="v7ProjectCategory" maxlength="40" value="${esc(edit.category)}" placeholder="Web / Power BI / Learning"></label></div><div class="v7-two-col"><label><span>${esc(t("progress"))}</span><input id="v7ProjectProgress" type="number" min="0" max="100" step="5" value="${Math.round(edit.progress||0)}"></label><label><span>${esc(t("status"))}</span><select id="v7ProjectStatus"><option value="active" ${edit.status==="active"?"selected":""}>${esc(t("active"))}</option><option value="paused" ${edit.status==="paused"?"selected":""}>${esc(t("paused"))}</option><option value="completed" ${edit.status==="completed"?"selected":""}>${esc(t("completed"))}</option></select></label></div><label><span>${esc(t("description"))}</span><textarea id="v7ProjectDescription" rows="4">${esc(edit.description)}</textarea></label><div class="v7-form-actions"><button id="v7ProjectNew" class="secondary-btn" type="button">＋ ${esc(t("newProject"))}</button><button class="primary-btn" type="submit">${esc(t("saveProject"))}</button></div></form><div class="v7-project-cards">${cards}</div></div>`;
     $("v7ProjectNew")?.addEventListener("click",()=>renderProjectsPage());
-    $("v7ProjectForm")?.addEventListener("submit",e=>{e.preventDefault();const name=$("v7ProjectName").value.trim();if(!name){toast("!",t("projectNameRequired"));return;}const list=getProjects(),id=$("v7ProjectId").value||`p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`,old=list.find(p=>p.id===id);const item={id,name,category:$("v7ProjectCategory").value.trim(),progress:Math.max(0,Math.min(100,Number($("v7ProjectProgress").value)||0)),status:$("v7ProjectStatus").value,description:$("v7ProjectDescription").value.trim(),createdAt:old?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};const next=list.filter(p=>p.id!==id);next.push(item);next.sort((a,b)=>(a.status==="completed")-(b.status==="completed")||a.name.localeCompare(b.name));write(KEYS.projects,next);signalDataChanged();toast("✓",t("projectSaved"));renderProjectsPage();});
+    $("v7ProjectForm")?.addEventListener("submit",e=>{e.preventDefault();const name=$("v7ProjectName").value.trim();if(!name){toast("!",t("projectNameRequired"),"error");return;}const list=getProjects(),id=$("v7ProjectId").value||`p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`,old=list.find(p=>p.id===id);const item={id,name,category:$("v7ProjectCategory").value.trim(),progress:Math.max(0,Math.min(100,Number($("v7ProjectProgress").value)||0)),status:$("v7ProjectStatus").value,description:$("v7ProjectDescription").value.trim(),createdAt:old?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};const next=list.filter(p=>p.id!==id);next.push(item);next.sort((a,b)=>(a.status==="completed")-(b.status==="completed")||a.name.localeCompare(b.name));write(KEYS.projects,next);signalDataChanged();toast("✓",t("projectSaved"),"success");renderProjectsPage();});
     qa("[data-v7-project-edit]",root).forEach(btn=>btn.addEventListener("click",()=>renderProjectsPage(btn.dataset.v7ProjectEdit)));
     qa("[data-v7-project-delete]",root).forEach(btn=>btn.addEventListener("click",()=>{if(!confirm(t("deleteConfirm")))return;const id=btn.dataset.v7ProjectDelete;write(KEYS.projects,getProjects().filter(p=>p.id!==id));const js=getJournals();Object.values(js).forEach(j=>{if(Array.isArray(j.projectIds))j.projectIds=j.projectIds.filter(x=>x!==id);});write(KEYS.journal,js);signalDataChanged();toast("🗑",t("projectDeleted"));renderProjectsPage();}));
   }

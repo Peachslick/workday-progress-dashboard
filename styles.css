@@ -974,3 +974,31 @@ body.setup-open { overflow: hidden; }
 
 @media(max-width:1100px){.v6-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v6-journal-layout,.v6-project-layout{grid-template-columns:1fr}.v6-recent-panel{border-left:0;border-top:1px solid var(--border,#e4e9f1);padding:16px 0 0}.v6-project-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.v6-hub-grid,.v6-project-list,.v6-report-kpis,.v6-report-hero,.v6-two-col,.v6-project-check-grid{grid-template-columns:1fr}.v6-recap-card{grid-template-columns:auto 1fr}.v6-recap-actions{grid-column:1/-1;justify-content:flex-start}.v6-report-toolbar{align-items:stretch;flex-direction:column}.v6-inline-form{grid-template-columns:1fr}.v6-backup-reminder-row{align-items:stretch;flex-direction:column}.v6-modal-backdrop{padding:10px}.v6-modal{width:100%;max-height:94vh;border-radius:20px}}
+
+
+/* V7.2 status toast cards + journal date input */
+.app-toast {
+  position: relative; overflow: hidden; min-height: 62px; border-width: 1.5px;
+  background: var(--surface-solid); box-shadow: 0 18px 46px rgba(15,23,42,.18);
+}
+.app-toast::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--accent); }
+.app-toast > span:first-child { font-weight: 900; font-size: 1rem; }
+.app-toast strong { font-size: .78rem; line-height: 1.45; }
+.app-toast.toast-success { border-color: color-mix(in srgb,#16a34a 58%,var(--border)); background: color-mix(in srgb,var(--surface-solid) 91%,#dcfce7 9%); }
+.app-toast.toast-success::before { background:#16a34a; }
+.app-toast.toast-success > span:first-child { color:#15803d; background:color-mix(in srgb,#22c55e 16%,var(--surface-soft)); }
+.app-toast.toast-warning { border-color: color-mix(in srgb,#d97706 62%,var(--border)); background: color-mix(in srgb,var(--surface-solid) 90%,#fef3c7 10%); }
+.app-toast.toast-warning::before { background:#f59e0b; }
+.app-toast.toast-warning > span:first-child { color:#b45309; background:color-mix(in srgb,#f59e0b 17%,var(--surface-soft)); }
+.app-toast.toast-error { border-color: color-mix(in srgb,#dc2626 64%,var(--border)); background: color-mix(in srgb,var(--surface-solid) 90%,#fee2e2 10%); }
+.app-toast.toast-error::before { background:#ef4444; }
+.app-toast.toast-error > span:first-child { color:#b91c1c; background:color-mix(in srgb,#ef4444 15%,var(--surface-soft)); }
+.app-toast.toast-info { border-color: color-mix(in srgb,var(--accent) 52%,var(--border)); background: color-mix(in srgb,var(--surface-solid) 92%,var(--accent-soft) 8%); }
+.app-toast.toast-info::before { background:var(--accent); }
+.app-toast.toast-info > span:first-child { color:var(--accent); background:var(--accent-soft); }
+.journal-date-control { position: relative; display: grid; grid-template-columns:minmax(0,1fr) 48px; gap:8px; align-items:center; }
+.journal-date-text { min-width:0; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+.journal-date-picker-btn { width:48px; height:100%; min-height:43px; display:grid; place-items:center; border:1px solid var(--border); border-radius:11px; background:var(--surface-soft); color:var(--accent); font:700 1.05rem/1 var(--app-font); cursor:pointer; }
+.journal-date-picker-btn:hover { border-color:var(--accent); background:var(--accent-soft); transform:translateY(-1px); }
+.journal-date-native { position:absolute!important; right:0; bottom:0; width:1px!important; height:1px!important; min-height:0!important; padding:0!important; border:0!important; opacity:0; pointer-events:none; }
+@media (max-width:640px){ .toast-stack{right:10px;bottom:10px;width:calc(100vw - 20px)} .app-toast{min-height:58px} .journal-date-control{grid-template-columns:minmax(0,1fr) 46px} }
