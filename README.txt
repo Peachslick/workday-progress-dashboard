@@ -1,4 +1,4 @@
-# Workday Journey V7.4
+# Workday Journey V7.5
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -47,3 +47,8 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Unlockable profile titles linked to harder achievements.
 - Select an unlocked title from Settings; it appears on the sidebar and top profile.
 - Existing users are migrated without achievement-popup spam.
+
+V7.5 additions:
+- Compact Daily Journal project selector for large project lists.
+- Tier Mastery rewards and profile aura effects.
+- New titles for 500 Hours, 75% Complete, 90% Complete and Chronicle Master.

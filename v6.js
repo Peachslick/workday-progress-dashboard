@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "7.4.0";
+  const V6_VERSION = "7.5.0";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -449,8 +449,8 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.4 · Achievement Challenges & Titles · ข้อมูลเก็บใน Browser":"Workday Journey V7.4 · Achievement Challenges & Titles · Local browser data";
-    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7.4";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.5 · Tier Mastery & Titles · ข้อมูลเก็บใน Browser":"Workday Journey V7.5 · Tier Mastery & Titles · Local browser data";
+    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7.5";
   }
 
   function init() {

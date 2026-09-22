@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "7.4.0";
+  const VERSION = "7.5.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -39,9 +39,9 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.4 · Achievement Challenges & Titles", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.5 · Tier Mastery & Titles", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
-      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"ทำ Challenge จากเวลา Project Journal และ Attendance เพื่อปลดล็อก Badge และฉายา", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer",
+      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"ทำ Challenge จากเวลา Project Journal และ Attendance เพื่อปลดล็อก Badge และฉายา", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"รางวัลพิชิตระดับ", masteryComplete:"พิชิตระดับสำเร็จ", masteryLocked:"ทำ Challenge ระดับนี้ให้ครบเพื่อปลดล็อกรางวัล", masteryReward:"รางวัล Mastery", masteryTitle:"ฉายาพิเศษ", masteryEffect:"เอฟเฟกต์โปรไฟล์", tierMasteries:"Tier Mastery", masteryProgress:"พิชิตแล้ว {n}/4 ระดับ",
       deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้"
     },
     en: {
@@ -54,9 +54,9 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.4 · Achievement Challenges & Titles", localPrivacy:"All data is stored locally in each user's browser",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.5 · Tier Mastery & Titles", localPrivacy:"All data is stored locally in each user's browser",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
-      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"Complete challenges across time, projects, journals and attendance to unlock badges and titles", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer",
+      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"Complete challenges across time, projects, journals and attendance to unlock badges and titles", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"Tier Mastery Reward", masteryComplete:"Tier mastered", masteryLocked:"Complete every challenge in this tier to unlock the reward", masteryReward:"Mastery Reward", masteryTitle:"Exclusive Title", masteryEffect:"Profile Effect", tierMasteries:"Tier Mastery", masteryProgress:"{n}/4 tiers mastered",
       deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today"
     }
   };
@@ -78,21 +78,45 @@
     {id:"steady-voyager",achievement:"streak-10",tier:"rare",th:"นักเดินทางผู้มั่นคง",en:"Steady Voyager"},
     {id:"project-conqueror",achievement:"project-finisher",tier:"rare",th:"ผู้พิชิตโครงการ",en:"Project Conqueror"},
     {id:"chronicle-keeper",achievement:"journals-7",tier:"rare",th:"ผู้รักษาบันทึก",en:"Chronicle Keeper"},
+    {id:"five-hundred-guardian",achievement:"500-hours",tier:"epic",th:"ผู้พิทักษ์ห้าร้อยชั่วโมง",en:"Guardian of Five Hundred"},
+    {id:"three-quarter-conqueror",achievement:"75-percent",tier:"epic",th:"ผู้พิชิตสามในสี่เส้นทาง",en:"Three-Quarter Conqueror"},
     {id:"unbroken-vanguard",achievement:"streak-20",tier:"epic",th:"แนวหน้าไร้รอยร้าว",en:"Unbroken Vanguard"},
     {id:"achievement-architect",achievement:"projects-complete-3",tier:"epic",th:"สถาปนิกแห่งความสำเร็จ",en:"Architect of Achievement"},
     {id:"chronicle-warden",achievement:"journals-30",tier:"epic",th:"ผู้พิทักษ์พงศาวดาร",en:"Warden of Chronicles"},
     {id:"eight-hundred-master",achievement:"800-hours",tier:"epic",th:"จ้าวแห่งแปดร้อยชั่วโมง",en:"Master of Eight Hundred"},
     {id:"discipline-guardian",achievement:"perfect-month",tier:"epic",th:"ผู้พิทักษ์วินัย",en:"Guardian of Discipline"},
     {id:"nine-hundred-sovereign",achievement:"900-hours",tier:"legendary",th:"จักรพรรดิแห่งเก้าร้อยชั่วโมง",en:"Sovereign of Nine Hundred"},
+    {id:"final-gate-sovereign",achievement:"90-percent",tier:"legendary",th:"ผู้ครองประตูสุดท้าย",en:"Sovereign of the Final Gate"},
+    {id:"grand-chronicler",achievement:"journals-60",tier:"legendary",th:"มหาปราชญ์แห่งพงศาวดาร",en:"Grand Chronicler"},
     {id:"thousand-hour-monarch",achievement:"1000-hours",tier:"legendary",th:"ราชันแห่งพันชั่วโมง",en:"Thousand-Hour Monarch"},
     {id:"eternal-vanguard",achievement:"streak-30",tier:"legendary",th:"ผู้ยืนหยัดนิรันดร์",en:"Eternal Vanguard"},
     {id:"journey-legend",achievement:"completed",tier:"legendary",th:"ตำนานแห่งการเดินทาง",en:"Legend of the Journey"}
   ];
+  const TIER_MASTERY_DEFS = [
+    {id:"mastery-common",masteryTier:"common",tier:"common",th:"ผู้เบิกทางแห่งรุ่งอรุณ",en:"Dawn Pathfinder",effectTh:"ประกายคราม · Azure Pulse",effectEn:"Azure Pulse"},
+    {id:"mastery-rare",masteryTier:"rare",tier:"rare",th:"อัศวินแห่งดารา",en:"Astral Knight",effectTh:"รัศมีม่วง · Violet Halo",effectEn:"Violet Halo"},
+    {id:"mastery-epic",masteryTier:"epic",tier:"epic",th:"จอมทัพแห่งความเพียร",en:"Vanguard of Resolve",effectTh:"ออโรราเพลิง · Aurora Flame",effectEn:"Aurora Flame"},
+    {id:"mastery-legendary",masteryTier:"legendary",tier:"legendary",th:"จักรพรรดิแห่งนิรันดร์",en:"Eternal Sovereign",effectTh:"รัศมีราชันสีทอง · Sovereign Aura",effectEn:"Golden Sovereign Aura"}
+  ];
+  const ALL_TITLE_DEFS = [...TITLE_DEFS, ...TIER_MASTERY_DEFS];
   const titleName = item => item ? item[lang()] : "";
+  const masteryEffectName = item => item ? (lang()==="th" ? item.effectTh : item.effectEn) : "";
   function achievementMap() { return new Map(API.getAchievements(API.getStats()).map(a=>[a.id,a])); }
+  function tierMasteryStates(achievements=API.getAchievements(API.getStats())) {
+    return ["common","rare","epic","legendary"].map(tier=>{
+      const items=achievements.filter(a=>(a.tier||"common")===tier);
+      const done=items.filter(a=>a.unlocked).length;
+      const reward=TIER_MASTERY_DEFS.find(x=>x.masteryTier===tier);
+      return {tier,items,done,total:items.length,unlocked:items.length>0&&done===items.length,reward};
+    });
+  }
   function titleStates() {
     const map=achievementMap();
-    return TITLE_DEFS.map(item=>({...item,unlocked:!!map.get(item.achievement)?.unlocked,achievementData:map.get(item.achievement)||null}));
+    const mastery=new Map(tierMasteryStates([...map.values()]).map(x=>[x.tier,x]));
+    return ALL_TITLE_DEFS.map(item=>{
+      if(item.masteryTier){const st=mastery.get(item.masteryTier);return {...item,unlocked:!!st?.unlocked,achievementData:null,masteryData:st||null};}
+      return {...item,unlocked:!!map.get(item.achievement)?.unlocked,achievementData:map.get(item.achievement)||null};
+    });
   }
   function selectedTitle() {
     const id=localStorage.getItem(KEYS.selectedTitle)||"";
@@ -168,7 +192,7 @@
     const sidebar = document.createElement("aside");
     sidebar.className = "v7-sidebar";
     sidebar.innerHTML = `
-      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.4 · Challenges & Titles</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
+      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.5 · Tier Mastery</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
       <nav class="v7-nav" aria-label="Workday Journey navigation">${NAV.map(([key,icon]) => `<button type="button" data-v7-route="${key}"><span>${icon}</span><div><strong data-v7-nav-label="${key}"></strong><small data-v7-nav-sub="${key}"></small></div></button>`).join("")}</nav>
       <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><em id="v7SideTitle" class="v7-profile-title" hidden></em><small id="v7SideRange">—</small></div></div>
       <div class="v7-private-chip">🔐 <span id="v7PrivateLabel"></span></div>`;
@@ -231,7 +255,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.4</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.5</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
@@ -294,8 +318,11 @@
     const cfg = API.getConfig();
     if ($("v7SideName")) $("v7SideName").textContent = isDemo() ? t("publicDemo") : (cfg.profileName || t("myJourney"));
     const activeTitle=selectedTitle();
-    const sideTitle=$("v7SideTitle"); if(sideTitle){sideTitle.hidden=!activeTitle;sideTitle.textContent=activeTitle?`✦ ${titleName(activeTitle)}`:"";sideTitle.dataset.tier=activeTitle?.tier||"";}
-    const topTitle=$("v7TopTitle"); if(topTitle){topTitle.hidden=!activeTitle;topTitle.textContent=activeTitle?titleName(activeTitle):"";topTitle.dataset.tier=activeTitle?.tier||"";}
+    const masteryTier=activeTitle?.masteryTier||"";
+    const sideTitle=$("v7SideTitle"); if(sideTitle){sideTitle.hidden=!activeTitle;sideTitle.textContent=activeTitle?`✦ ${titleName(activeTitle)}`:"";sideTitle.dataset.tier=activeTitle?.tier||"";sideTitle.dataset.mastery=masteryTier;}
+    const topTitle=$("v7TopTitle"); if(topTitle){topTitle.hidden=!activeTitle;topTitle.textContent=activeTitle?titleName(activeTitle):"";topTitle.dataset.tier=activeTitle?.tier||"";topTitle.dataset.mastery=masteryTier;}
+    const sideProfile=q(".v7-sidebar-profile"); if(sideProfile)sideProfile.dataset.mastery=masteryTier;
+    const topProfile=$("profileQuickBtn"); if(topProfile)topProfile.dataset.mastery=masteryTier;
     if ($("v7SideRange")) $("v7SideRange").textContent = `${API.formatCompactDate(cfg.startDate)} → ${API.formatCompactDate(cfg.endDate)}`;
     if ($("v7PrivateLabel")) $("v7PrivateLabel").textContent = t("privateLocal");
     const collapseBtn = $("v7CollapseBtn");
@@ -344,8 +371,8 @@
           <label><span>${esc(t("journalDate"))}</span><div class="journal-date-control"><input id="v7JournalDate" class="journal-date-text" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(formatJournalDateKey(key))}"><button id="v7JournalDateBtn" class="journal-date-picker-btn" type="button" aria-label="Calendar" title="Calendar">🗓</button><input id="v7JournalDatePicker" class="journal-date-native" type="date" tabindex="-1" aria-hidden="true" min="${esc(cfg.startDate)}" max="${esc(cfg.endDate)}" value="${esc(key)}"></div></label>
           <label><span>${esc(t("workDone"))}</span><textarea id="v7JournalWork" rows="5">${esc(entry.work||"")}</textarea></label>
           <label><span>${esc(t("learned"))}</span><textarea id="v7JournalLearned" rows="5">${esc(entry.learned||"")}</textarea></label>
-          <div class="v7-two-col"><label><span>${esc(t("mood"))}</span><select id="v7JournalMood">${[["productive","😊 Productive"],["good","🙂 Good"],["neutral","😐 Normal"],["tired","😴 Tired"],["challenging","💪 Challenging"]].map(([v,l])=>`<option value="${v}" ${entry.mood===v?"selected":""}>${l}</option>`).join("")}</select></label><div><span class="v7-field-label">${esc(t("relatedProjects"))}</span><div class="v7-project-checks">${projects.length?projects.map(p=>`<label><input type="checkbox" value="${esc(p.id)}" ${entry.projectIds?.includes(p.id)?"checked":""}><span>${esc(p.name)}</span></label>`).join(""):`<p class="muted">${esc(t("noProjects"))}</p>`}</div></div></div>
-          <div class="v7-form-actions"><button id="v7JournalDelete" class="danger-btn" type="button" ${journals[key]?"":"disabled"}>${esc(t("deleteJournal"))}</button><button class="primary-btn" type="submit">${esc(t("saveJournal"))}</button></div>
+          <div class="v7-journal-meta"><label class="v7-journal-mood"><span>${esc(t("mood"))}</span><select id="v7JournalMood">${[["productive","😊 Productive"],["good","🙂 Good"],["neutral","😐 Normal"],["tired","😴 Tired"],["challenging","💪 Challenging"]].map(([v,l])=>`<option value="${v}" ${entry.mood===v?"selected":""}>${l}</option>`).join("")}</select></label><div class="v7-related-projects"><span class="v7-field-label">${esc(t("relatedProjects"))}</span><div class="v7-project-checks">${projects.length?projects.map(p=>`<label title="${esc(p.name)}"><input type="checkbox" value="${esc(p.id)}" ${entry.projectIds?.includes(p.id)?"checked":""}><span>${esc(p.name)}</span></label>`).join(""):`<p class="muted">${esc(t("noProjects"))}</p>`}</div></div></div>
+          <div class="v7-form-actions v7-journal-actions"><button id="v7JournalDelete" class="danger-btn" type="button" ${journals[key]?"":"disabled"}>${esc(t("deleteJournal"))}</button><button class="primary-btn" type="submit">${esc(t("saveJournal"))}</button></div>
         </form>
         <aside class="card v7-list-card"><div class="v7-card-title"><div><p class="eyebrow">JOURNAL HISTORY</p><h3>${esc(t("recentEntries"))}</h3></div><span class="percentage-chip subtle">${recent.length}</span></div><div class="v7-recent-list">${recent.length?recent.map(([d,e])=>`<button type="button" data-v7-journal-date="${d}"><div><strong>${esc(formatDate(dateFromKey(d)))}</strong><span>${esc(e.work||e.learned||t("noData"))}</span></div><small>${esc((e.projectIds||[]).map(id=>projects.find(p=>p.id===id)?.name).filter(Boolean).join(" · "))}</small></button>`).join(""):`<div class="v7-empty">📓 ${esc(t("noEntries"))}</div>`}</div></aside>
       </div>`;
@@ -388,17 +415,19 @@
   function renderAchievementsPage() {
     const root=$("v7AchievementsPage");if(!root)return;const stats=API.getStats(),ach=API.getAchievements(stats),unlocked=ach.filter(a=>a.unlocked).length;
     const tiers=["common","rare","epic","legendary"];
+    const masteryStates=tierMasteryStates(ach),masteredCount=masteryStates.filter(x=>x.unlocked).length;
     const titles=titleStates(),titlesUnlocked=titles.filter(x=>x.unlocked).length,activeTitle=selectedTitle();
     const tierSections=tiers.map(tier=>{
       const items=ach.filter(a=>(a.tier||"common")===tier);if(!items.length)return"";
-      const done=items.filter(a=>a.unlocked).length;
+      const done=items.filter(a=>a.unlocked).length,mastery=masteryStates.find(x=>x.tier===tier),reward=mastery?.reward;
       const cards=items.map(a=>{
-        const reward=titleRewardForAchievement(a.id),progress=Math.max(0,Math.min(100,Number(a.percent)||0)),state=a.unlocked?"unlocked":progress>0?"progress":"locked";
-        return `<article class="card v7-achievement-card v7-challenge-card ${state}" data-tier="${esc(tier)}"><div class="v7-challenge-top"><span class="v7-trophy">${a.unlocked?a.icon:"🔒"}</span><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div><div class="v7-challenge-copy"><span class="v7-category">${esc(categoryLabel(a.category))}</span><strong>${esc(API.translate(a.titleKey))}</strong><p>${esc(API.translate(a.descKey))}</p></div><div class="v7-challenge-progress"><div><i style="width:${progress}%"></i></div><span>${a.unlocked?`✓ ${esc(t("challengeComplete"))}`:esc(challengeProgressText(a))}</span></div>${reward?`<div class="v7-title-reward ${a.unlocked?"earned":"locked"}" data-tier="${esc(reward.tier)}">👑 <span>${esc(t("rewardTitle"))}: <strong>${esc(titleName(reward))}</strong></span></div>`:""}</article>`;
+        const titleReward=titleRewardForAchievement(a.id),progress=Math.max(0,Math.min(100,Number(a.percent)||0)),state=a.unlocked?"unlocked":progress>0?"progress":"locked";
+        return `<article class="card v7-achievement-card v7-challenge-card ${state}" data-tier="${esc(tier)}"><div class="v7-challenge-top"><span class="v7-trophy">${a.unlocked?a.icon:"🔒"}</span><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div><div class="v7-challenge-copy"><span class="v7-category">${esc(categoryLabel(a.category))}</span><strong>${esc(API.translate(a.titleKey))}</strong><p>${esc(API.translate(a.descKey))}</p></div><div class="v7-challenge-progress"><div><i style="width:${progress}%"></i></div><span>${a.unlocked?`✓ ${esc(t("challengeComplete"))}`:esc(challengeProgressText(a))}</span></div>${titleReward?`<div class="v7-title-reward ${a.unlocked?"earned":"locked"}" data-tier="${esc(titleReward.tier)}">👑 <span>${esc(t("rewardTitle"))}: <strong>${esc(titleName(titleReward))}</strong></span></div>`:""}</article>`;
       }).join("");
-      return `<section class="v7-tier-section" data-tier="${esc(tier)}"><div class="v7-tier-heading"><div><span class="v7-tier-orb"></span><div><p class="eyebrow">${esc(tierLabel(tier).toUpperCase())}</p><h3>${done}/${items.length} ${esc(t("challenges"))}</h3></div></div><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div><div class="v7-achievement-grid">${cards}</div></section>`;
+      const masteryCard=reward?`<div class="v7-tier-mastery ${mastery?.unlocked?"unlocked":"locked"}" data-tier="${esc(tier)}"><div class="v7-mastery-icon">${mastery?.unlocked?"✦":"◇"}</div><div class="v7-mastery-copy"><span>${esc(t("tierMastery"))}</span><strong>${esc(titleName(reward))}</strong><small>${mastery?.unlocked?esc(t("masteryComplete")):esc(t("masteryLocked"))}</small><div class="v7-mastery-rewards"><em>👑 ${esc(t("masteryTitle"))}</em><em>✨ ${esc(t("masteryEffect"))}: ${esc(masteryEffectName(reward))}</em></div></div><div class="v7-mastery-status"><b>${done}/${items.length}</b><span>${mastery?.unlocked?"MASTERED":""}</span></div></div>`:"";
+      return `<section class="v7-tier-section ${mastery?.unlocked?"mastered":""}" data-tier="${esc(tier)}"><div class="v7-tier-heading"><div><span class="v7-tier-orb"></span><div><p class="eyebrow">${esc(tierLabel(tier).toUpperCase())}</p><h3>${done}/${items.length} ${esc(t("challenges"))}</h3></div></div><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div>${masteryCard}<div class="v7-achievement-grid">${cards}</div></section>`;
     }).join("");
-    root.innerHTML=`${pageHeader("🏆",t("challengeCenter"),t("challengeHelp"))}<div class="card v7-achievement-summary"><div><span>${esc(t("achievementsCount"))}</span><strong>${unlocked}/${ach.length}</strong><small>${esc(t("achievementProgress",{n:unlocked,total:ach.length}))}</small></div><div class="v7-achievement-meter"><i style="width:${ach.length?unlocked/ach.length*100:0}%"></i></div><div class="v7-title-summary"><span>👑 ${esc(t("titleSystem"))}</span><strong>${titlesUnlocked}/${titles.length}</strong><small>${activeTitle?esc(titleName(activeTitle)):esc(t("noTitle"))}</small></div></div>${tierSections}`;
+    root.innerHTML=`${pageHeader("🏆",t("challengeCenter"),t("challengeHelp"))}<div class="card v7-achievement-summary"><div><span>${esc(t("achievementsCount"))}</span><strong>${unlocked}/${ach.length}</strong><small>${esc(t("achievementProgress",{n:unlocked,total:ach.length}))}</small></div><div class="v7-achievement-meter"><i style="width:${ach.length?unlocked/ach.length*100:0}%"></i></div><div class="v7-title-summary"><span>👑 ${esc(t("titleSystem"))}</span><strong>${titlesUnlocked}/${titles.length}</strong><small>${activeTitle?esc(titleName(activeTitle)):esc(t("noTitle"))}</small></div><div class="v7-title-summary v7-mastery-summary"><span>✦ ${esc(t("tierMasteries"))}</span><strong>${masteredCount}/4</strong><small>${esc(t("masteryProgress",{n:masteredCount}))}</small></div></div>${tierSections}`;
   }
 
   function renderReportsPage() {
@@ -436,7 +465,7 @@
     root.innerHTML=`${pageHeader("⚙",t("settingsTitle"),t("settingsHelp"))}
       <div class="v7-settings-grid">
         <section class="card v7-settings-card"><div class="v7-card-title"><div><p class="eyebrow">${esc(t("profileSection"))}</p><h3>${esc(t("profileJourney"))}</h3></div><button id="v7EditJourney" class="outline-btn" type="button">${esc(t("editJourney"))}</button></div><div class="v7-profile-summary"><strong>${esc(isDemo()?t("publicDemo"):(cfg.profileName||t("myJourney")))}</strong>${activeTitle?`<em class="v7-profile-title v7-profile-title-inline" data-tier="${esc(activeTitle.tier)}">✦ ${esc(titleName(activeTitle))}</em>`:""}<span>${esc(API.formatCompactDate(cfg.startDate))} → ${esc(API.formatCompactDate(cfg.endDate))}</span><small>${esc(cfg.workdayStart)} – ${esc(cfg.workdayEnd)} · ${esc(state.timezone)}</small></div></section>
-        <section class="card v7-settings-card v7-title-settings-card"><div class="v7-card-title"><div><p class="eyebrow">TITLES</p><h3>👑 ${esc(t("titleSystem"))}</h3></div><span class="mini-chip">${esc(t("titleUnlockedCount",{n:titleList.filter(x=>x.unlocked).length,total:TITLE_DEFS.length}))}</span></div><p class="muted v7-title-help">${esc(t("titleHelp"))}</p><label class="v7-title-select-label"><span>${esc(t("selectedTitle"))}</span><select id="v7TitleSelect"><option value="">— ${esc(t("noTitle"))} —</option>${TITLE_DEFS.map(item=>{const st=titleList.find(x=>x.id===item.id);return `<option value="${esc(item.id)}" ${localStorage.getItem(KEYS.selectedTitle)===item.id?"selected":""} ${st?.unlocked?"":"disabled"}>${st?.unlocked?"👑":"🔒"} ${esc(titleName(item))} · ${esc(tierLabel(item.tier))}</option>`;}).join("")}</select></label><div class="v7-title-preview ${activeTitle?"active":""}" data-tier="${esc(activeTitle?.tier||"common")}"><span>👑</span><div><small>${esc(t("selectedTitle"))}</small><strong>${esc(activeTitle?titleName(activeTitle):t("noTitle"))}</strong></div></div></section>
+        <section class="card v7-settings-card v7-title-settings-card"><div class="v7-card-title"><div><p class="eyebrow">TITLES</p><h3>👑 ${esc(t("titleSystem"))}</h3></div><span class="mini-chip">${esc(t("titleUnlockedCount",{n:titleList.filter(x=>x.unlocked).length,total:ALL_TITLE_DEFS.length}))}</span></div><p class="muted v7-title-help">${esc(t("titleHelp"))}</p><label class="v7-title-select-label"><span>${esc(t("selectedTitle"))}</span><select id="v7TitleSelect"><option value="">— ${esc(t("noTitle"))} —</option>${ALL_TITLE_DEFS.map(item=>{const st=titleList.find(x=>x.id===item.id);return `<option value="${esc(item.id)}" ${localStorage.getItem(KEYS.selectedTitle)===item.id?"selected":""} ${st?.unlocked?"":"disabled"}>${st?.unlocked?(item.masteryTier?"✦":"👑"):"🔒"} ${esc(titleName(item))} · ${esc(tierLabel(item.tier))}${item.masteryTier?" · MASTERY":""}</option>`;}).join("")}</select></label><div class="v7-title-preview ${activeTitle?"active":""}" data-tier="${esc(activeTitle?.tier||"common")}" data-mastery="${esc(activeTitle?.masteryTier||"")}"><span>${activeTitle?.masteryTier?"✦":"👑"}</span><div><small>${esc(t("selectedTitle"))}</small><strong>${esc(activeTitle?titleName(activeTitle):t("noTitle"))}</strong></div></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("displaySection"))}</p><h3>${esc(t("appearance"))}</h3><div class="v7-settings-fields"><label><span>${esc(t("theme"))}</span><select id="v7Theme"></select></label><label><span>${esc(t("font"))}</span><select id="v7Font"></select></label><label><span>${esc(t("fontSize"))}</span><select id="v7FontSize"></select></label><label><span>${esc(t("density"))}</span><select id="v7Density"></select></label></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("regionSection"))}</p><h3>${esc(t("regionSection"))}</h3><div class="v7-settings-fields"><label><span>${esc(t("timezone"))}</span><select id="v7Timezone"></select></label><label><span>${esc(t("locale"))}</span><select id="v7Locale"></select></label></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("behaviorSection"))}</p><h3>${esc(t("behavior"))}</h3><div class="v7-toggle-list"><label><span>${esc(t("seconds"))}</span><input id="v7Seconds" type="checkbox"></label><label><span>${esc(t("animation"))}</span><input id="v7Animation" type="checkbox"></label><label><span>${esc(t("moodSetting"))}</span><input id="v7Mood" type="checkbox"></label><label><span>${esc(t("notifications"))}</span><input id="v7Notifications" type="checkbox"></label></div></section>
