@@ -1,4 +1,4 @@
-# Workday Journey V7.3
+# Workday Journey V7.4
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -39,3 +39,11 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Project Tracker editor now uses the full content width.
 - Project cards are displayed below the editor in a responsive grid.
 - Top application header now has a distinct background, border and shadow for clearer hierarchy.
+
+
+## V7.4 updates
+- 30 achievement challenges across time, journey, projects, journals, attendance, and exploration.
+- Common / Rare / Epic / Legendary tiers with progress bars.
+- Unlockable profile titles linked to harder achievements.
+- Select an unlocked title from Settings; it appears on the sidebar and top profile.
+- Existing users are migrated without achievement-popup spam.

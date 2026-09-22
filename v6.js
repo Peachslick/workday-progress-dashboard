@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "7.3.0";
+  const V6_VERSION = "7.4.0";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -318,7 +318,7 @@
     const saved=calendarPresets.length?calendarPresets.map(p=>`<article class="v6-preset-card"><div><strong>${esc(p.name)}</strong><small>${Object.keys(p.overrides||{}).length} dates</small></div><div><button class="small-text-btn" data-preset-load="${esc(p.id)}" type="button">${esc(tr("load"))}</button><button class="small-text-btn danger-text" data-preset-delete="${esc(p.id)}" type="button">${esc(tr("delete"))}</button></div></article>`).join(""):`<p class="v6-empty">${esc(tr("noPresets"))}</p>`;
     openModal("calendar",tr("calendarPresets"),`<div class="v6-calendar-tools-modal"><section class="v6-tool-panel"><h3>${esc(tr("builtInCompanyCalendar"))}</h3><div class="v6-date-chip-list">${defaults}</div><button id="v6LoadDefaults" class="primary-btn" type="button">${esc(tr("loadDefaults"))}</button></section><section class="v6-tool-panel"><h3>${esc(tr("savePreset"))}</h3><div class="v6-inline-form"><input id="v6PresetName" maxlength="50" placeholder="${esc(tr("presetName"))}"><button id="v6SavePreset" class="outline-btn" type="button">${esc(tr("savePreset"))}</button></div><div class="v6-preset-list"><h4>${esc(tr("savedPresets"))}</h4>${saved}</div></section><section class="v6-tool-panel"><h3>${esc(tr("currentCalendar"))}</h3><div class="v6-tool-actions"><button id="v6ExportCalendar" class="outline-btn" type="button">↓ ${esc(tr("exportCalendar"))}</button><button id="v6ImportCalendar" class="outline-btn" type="button">↑ ${esc(tr("importCalendar"))}</button><button id="v6ClearCalendar" class="danger-btn" type="button">${esc(tr("clearSpecialDates"))}</button></div></section></div>`);
     $("v6LoadDefaults")?.addEventListener("click",()=>{ const o=API.getDayOverrides(); for(const key of API.defaultCompanyHolidays) o[key]={type:"holiday",note:""}; API.setDayOverrides(o); toast("✓",tr("defaultsLoaded")); openCalendarPresets(); });
-    $("v6SavePreset")?.addEventListener("click",()=>{ const name=$("v6PresetName").value.trim(); if(!name)return; calendarPresets.push({id:`c_${Date.now().toString(36)}`,name,overrides:API.getDayOverrides(),createdAt:new Date().toISOString()}); write(KEYS.calendarPresets,calendarPresets); openCalendarPresets(); });
+    $("v6SavePreset")?.addEventListener("click",()=>{ const name=$("v6PresetName").value.trim(); if(!name)return; calendarPresets.push({id:`c_${Date.now().toString(36)}`,name,overrides:API.getDayOverrides(),createdAt:new Date().toISOString()}); write(KEYS.calendarPresets,calendarPresets); API.markAchievementFlag?.("calendar-preset"); openCalendarPresets(); });
     document.querySelectorAll("[data-preset-load]").forEach(btn=>btn.addEventListener("click",()=>{ const p=calendarPresets.find(x=>x.id===btn.dataset.presetLoad); if(!p||!confirm(tr("replaceCalendarConfirm")))return; API.setDayOverrides(p.overrides||{}); closeModal(); toast("✓",p.name); }));
     document.querySelectorAll("[data-preset-delete]").forEach(btn=>btn.addEventListener("click",()=>{ if(!confirm(tr("confirmDelete")))return; calendarPresets=calendarPresets.filter(x=>x.id!==btn.dataset.presetDelete); write(KEYS.calendarPresets,calendarPresets); openCalendarPresets(); }));
     $("v6ExportCalendar")?.addEventListener("click",exportCalendar);
@@ -330,7 +330,7 @@
     downloadJson(payload,`workday-calendar-${keyFromDate(now())}.json`); toast("↓",tr("calendarExported"));
   }
   async function importCalendarFile(file) {
-    try { const payload=JSON.parse(await file.text()); const overrides=payload?.type==="workday-calendar-preset"?payload.overrides:(payload?.overrides||payload); if(!overrides||typeof overrides!=="object"||Array.isArray(overrides))throw new Error(); const clean={}; for(const [key,value] of Object.entries(overrides)){ if(!/^\d{4}-\d{2}-\d{2}$/.test(key)||!value||!["holiday","leave","work"].includes(value.type))continue; clean[key]={...value}; } if(!Object.keys(clean).length && Object.keys(overrides).length)throw new Error(); if(!confirm(tr("replaceCalendarConfirm")))return; API.setDayOverrides(clean); toast("✓",tr("calendarImported")); if(modalType==="calendar")openCalendarPresets(); } catch { toast("!",tr("invalidCalendar")); } finally { $("v6CalendarFileInput").value=""; }
+    try { const payload=JSON.parse(await file.text()); const overrides=payload?.type==="workday-calendar-preset"?payload.overrides:(payload?.overrides||payload); if(!overrides||typeof overrides!=="object"||Array.isArray(overrides))throw new Error(); const clean={}; for(const [key,value] of Object.entries(overrides)){ if(!/^\d{4}-\d{2}-\d{2}$/.test(key)||!value||!["holiday","leave","work"].includes(value.type))continue; clean[key]={...value}; } if(!Object.keys(clean).length && Object.keys(overrides).length)throw new Error(); if(!confirm(tr("replaceCalendarConfirm")))return; API.setDayOverrides(clean); API.markAchievementFlag?.("calendar-preset"); toast("✓",tr("calendarImported")); if(modalType==="calendar")openCalendarPresets(); } catch { toast("!",tr("invalidCalendar")); } finally { $("v6CalendarFileInput").value=""; }
   }
   function downloadJson(payload, filename) { const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}), url=URL.createObjectURL(blob), a=document.createElement("a"); a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000); }
 
@@ -449,8 +449,8 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.3 · Project Layout & Header Update · ข้อมูลเก็บใน Browser":"Workday Journey V7.3 · Project Layout & Header Update · Local browser data";
-    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V7.4 · Achievement Challenges & Titles · ข้อมูลเก็บใน Browser":"Workday Journey V7.4 · Achievement Challenges & Titles · Local browser data";
+    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V7.4";
   }
 
   function init() {

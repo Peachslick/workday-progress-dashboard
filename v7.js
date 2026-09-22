@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "7.3.0";
+  const VERSION = "7.4.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -24,7 +24,8 @@
     projects: "wp-v6-projects",
     lastBackup: "wp-v6-last-backup-at",
     backupDays: "wp-v6-backup-reminder-days",
-    sidebarCollapsed: "wp-v7-sidebar-collapsed"
+    sidebarCollapsed: "wp-v7-sidebar-collapsed",
+    selectedTitle: "wp-v7-selected-title"
   };
 
   const TEXT = {
@@ -38,8 +39,9 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.3 · Project Layout & Header Update", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.4 · Achievement Challenges & Titles", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
+      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"ทำ Challenge จากเวลา Project Journal และ Attendance เพื่อปลดล็อก Badge และฉายา", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer",
       deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้"
     },
     en: {
@@ -52,8 +54,9 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.3 · Project Layout & Header Update", localPrivacy:"All data is stored locally in each user's browser",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.4 · Achievement Challenges & Titles", localPrivacy:"All data is stored locally in each user's browser",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
+      challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"Complete challenges across time, projects, journals and attendance to unlock badges and titles", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer",
       deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today"
     }
   };
@@ -66,6 +69,42 @@
   const NAV = [
     ["dashboard","🏠"], ["journal","📓"], ["projects","🧩"], ["achievements","🏆"], ["reports","📊"], ["calendar","📅"], ["settings","⚙"]
   ];
+
+
+  const TITLE_DEFS = [
+    {id:"journey-initiate",achievement:"first-day",tier:"common",th:"ผู้เริ่มต้นแห่งเส้นทาง",en:"Journey Initiate"},
+    {id:"project-pioneer",achievement:"first-project",tier:"common",th:"ผู้บุกเบิกโครงการ",en:"Project Pioneer"},
+    {id:"daily-scribe",achievement:"first-journal",tier:"common",th:"ผู้จารึกวันวาน",en:"Daily Scribe"},
+    {id:"steady-voyager",achievement:"streak-10",tier:"rare",th:"นักเดินทางผู้มั่นคง",en:"Steady Voyager"},
+    {id:"project-conqueror",achievement:"project-finisher",tier:"rare",th:"ผู้พิชิตโครงการ",en:"Project Conqueror"},
+    {id:"chronicle-keeper",achievement:"journals-7",tier:"rare",th:"ผู้รักษาบันทึก",en:"Chronicle Keeper"},
+    {id:"unbroken-vanguard",achievement:"streak-20",tier:"epic",th:"แนวหน้าไร้รอยร้าว",en:"Unbroken Vanguard"},
+    {id:"achievement-architect",achievement:"projects-complete-3",tier:"epic",th:"สถาปนิกแห่งความสำเร็จ",en:"Architect of Achievement"},
+    {id:"chronicle-warden",achievement:"journals-30",tier:"epic",th:"ผู้พิทักษ์พงศาวดาร",en:"Warden of Chronicles"},
+    {id:"eight-hundred-master",achievement:"800-hours",tier:"epic",th:"จ้าวแห่งแปดร้อยชั่วโมง",en:"Master of Eight Hundred"},
+    {id:"discipline-guardian",achievement:"perfect-month",tier:"epic",th:"ผู้พิทักษ์วินัย",en:"Guardian of Discipline"},
+    {id:"nine-hundred-sovereign",achievement:"900-hours",tier:"legendary",th:"จักรพรรดิแห่งเก้าร้อยชั่วโมง",en:"Sovereign of Nine Hundred"},
+    {id:"thousand-hour-monarch",achievement:"1000-hours",tier:"legendary",th:"ราชันแห่งพันชั่วโมง",en:"Thousand-Hour Monarch"},
+    {id:"eternal-vanguard",achievement:"streak-30",tier:"legendary",th:"ผู้ยืนหยัดนิรันดร์",en:"Eternal Vanguard"},
+    {id:"journey-legend",achievement:"completed",tier:"legendary",th:"ตำนานแห่งการเดินทาง",en:"Legend of the Journey"}
+  ];
+  const titleName = item => item ? item[lang()] : "";
+  function achievementMap() { return new Map(API.getAchievements(API.getStats()).map(a=>[a.id,a])); }
+  function titleStates() {
+    const map=achievementMap();
+    return TITLE_DEFS.map(item=>({...item,unlocked:!!map.get(item.achievement)?.unlocked,achievementData:map.get(item.achievement)||null}));
+  }
+  function selectedTitle() {
+    const id=localStorage.getItem(KEYS.selectedTitle)||"";
+    return titleStates().find(x=>x.id===id&&x.unlocked)||null;
+  }
+  function titleRewardForAchievement(id) { return TITLE_DEFS.find(x=>x.achievement===id)||null; }
+  function setSelectedTitle(id) {
+    const item=titleStates().find(x=>x.id===id&&x.unlocked);
+    if(id && !item) return;
+    if(id) localStorage.setItem(KEYS.selectedTitle,id); else localStorage.removeItem(KEYS.selectedTitle);
+    renderSidebar(); renderSettingsPage(); toast("👑",t("titleSaved"),"success");
+  }
 
   function toastType(icon, message="") {
     const text=String(message||"").toLowerCase();
@@ -129,9 +168,9 @@
     const sidebar = document.createElement("aside");
     sidebar.className = "v7-sidebar";
     sidebar.innerHTML = `
-      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.3 · App Layout</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
+      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.4 · Challenges & Titles</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
       <nav class="v7-nav" aria-label="Workday Journey navigation">${NAV.map(([key,icon]) => `<button type="button" data-v7-route="${key}"><span>${icon}</span><div><strong data-v7-nav-label="${key}"></strong><small data-v7-nav-sub="${key}"></small></div></button>`).join("")}</nav>
-      <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><small id="v7SideRange">—</small></div></div>
+      <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><em id="v7SideTitle" class="v7-profile-title" hidden></em><small id="v7SideRange">—</small></div></div>
       <div class="v7-private-chip">🔐 <span id="v7PrivateLabel"></span></div>`;
 
     const backdrop = document.createElement("div");
@@ -139,6 +178,9 @@
     backdrop.className = "v7-sidebar-backdrop";
     backdrop.hidden = true;
     shell.append(sidebar, workspace, backdrop);
+
+    const profileBtn=$("profileQuickBtn"), profileName=$("profileQuickName");
+    if(profileBtn&&profileName&&!$("v7TopTitle")){ const wrap=document.createElement("span");wrap.className="v7-top-profile-copy";profileName.parentNode.insertBefore(wrap,profileName);wrap.appendChild(profileName);const title=document.createElement("small");title.id="v7TopTitle";title.className="v7-top-profile-title";title.hidden=true;wrap.appendChild(title); }
 
     const topbarActions = q(".topbar-actions");
     if (topbarActions && !$("v7MenuBtn")) {
@@ -189,7 +231,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.3</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.4</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
@@ -251,6 +293,9 @@
     });
     const cfg = API.getConfig();
     if ($("v7SideName")) $("v7SideName").textContent = isDemo() ? t("publicDemo") : (cfg.profileName || t("myJourney"));
+    const activeTitle=selectedTitle();
+    const sideTitle=$("v7SideTitle"); if(sideTitle){sideTitle.hidden=!activeTitle;sideTitle.textContent=activeTitle?`✦ ${titleName(activeTitle)}`:"";sideTitle.dataset.tier=activeTitle?.tier||"";}
+    const topTitle=$("v7TopTitle"); if(topTitle){topTitle.hidden=!activeTitle;topTitle.textContent=activeTitle?titleName(activeTitle):"";topTitle.dataset.tier=activeTitle?.tier||"";}
     if ($("v7SideRange")) $("v7SideRange").textContent = `${API.formatCompactDate(cfg.startDate)} → ${API.formatCompactDate(cfg.endDate)}`;
     if ($("v7PrivateLabel")) $("v7PrivateLabel").textContent = t("privateLocal");
     const collapseBtn = $("v7CollapseBtn");
@@ -332,12 +377,32 @@
     qa("[data-v7-project-delete]",root).forEach(btn=>btn.addEventListener("click",()=>{if(!confirm(t("deleteConfirm")))return;const id=btn.dataset.v7ProjectDelete;write(KEYS.projects,getProjects().filter(p=>p.id!==id));const js=getJournals();Object.values(js).forEach(j=>{if(Array.isArray(j.projectIds))j.projectIds=j.projectIds.filter(x=>x!==id);});write(KEYS.journal,js);signalDataChanged();toast("🗑",t("projectDeleted"));renderProjectsPage();}));
   }
 
+  function challengeProgressText(a) {
+    const current=Math.min(Number(a.current)||0,Number(a.target)||1),target=Number(a.target)||1;
+    if(a.unit==="hours")return `${current.toLocaleString(lang()==="th"?"th-TH":"en-US",{maximumFractionDigits:1})} / ${target.toLocaleString(lang()==="th"?"th-TH":"en-US")} h`;
+    if(a.unit==="percent")return `${current.toFixed(1)} / ${target}%`;
+    return `${Math.floor(current)} / ${Math.floor(target)}`;
+  }
+  function tierLabel(tier){return t(tier)||tier;}
+  function categoryLabel(category){return t(`category${String(category||"").charAt(0).toUpperCase()+String(category||"").slice(1)}`)||category;}
   function renderAchievementsPage() {
     const root=$("v7AchievementsPage");if(!root)return;const stats=API.getStats(),ach=API.getAchievements(stats),unlocked=ach.filter(a=>a.unlocked).length;
-    root.innerHTML=`${pageHeader("🏆",t("achievementsTitle"),t("achievementsHelp"))}<div class="card v7-achievement-summary"><div><span>${esc(t("achievementsCount"))}</span><strong>${unlocked}/${ach.length}</strong><small>${esc(t("achievementProgress",{n:unlocked,total:ach.length}))}</small></div><div class="v7-achievement-meter"><i style="width:${ach.length?unlocked/ach.length*100:0}%"></i></div></div><div class="v7-achievement-grid">${ach.map(a=>`<article class="card v7-achievement-card ${a.unlocked?"unlocked":"locked"}"><span class="v7-trophy">${a.icon}</span><div><strong>${esc(API.translate(a.titleKey))}</strong><p>${esc(API.translate(a.descKey))}</p><small>${a.unlocked?"✓ "+esc(t("unlocked")):"🔒 "+esc(t("locked"))}</small></div></article>`).join("")}</div>`;
+    const tiers=["common","rare","epic","legendary"];
+    const titles=titleStates(),titlesUnlocked=titles.filter(x=>x.unlocked).length,activeTitle=selectedTitle();
+    const tierSections=tiers.map(tier=>{
+      const items=ach.filter(a=>(a.tier||"common")===tier);if(!items.length)return"";
+      const done=items.filter(a=>a.unlocked).length;
+      const cards=items.map(a=>{
+        const reward=titleRewardForAchievement(a.id),progress=Math.max(0,Math.min(100,Number(a.percent)||0)),state=a.unlocked?"unlocked":progress>0?"progress":"locked";
+        return `<article class="card v7-achievement-card v7-challenge-card ${state}" data-tier="${esc(tier)}"><div class="v7-challenge-top"><span class="v7-trophy">${a.unlocked?a.icon:"🔒"}</span><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div><div class="v7-challenge-copy"><span class="v7-category">${esc(categoryLabel(a.category))}</span><strong>${esc(API.translate(a.titleKey))}</strong><p>${esc(API.translate(a.descKey))}</p></div><div class="v7-challenge-progress"><div><i style="width:${progress}%"></i></div><span>${a.unlocked?`✓ ${esc(t("challengeComplete"))}`:esc(challengeProgressText(a))}</span></div>${reward?`<div class="v7-title-reward ${a.unlocked?"earned":"locked"}" data-tier="${esc(reward.tier)}">👑 <span>${esc(t("rewardTitle"))}: <strong>${esc(titleName(reward))}</strong></span></div>`:""}</article>`;
+      }).join("");
+      return `<section class="v7-tier-section" data-tier="${esc(tier)}"><div class="v7-tier-heading"><div><span class="v7-tier-orb"></span><div><p class="eyebrow">${esc(tierLabel(tier).toUpperCase())}</p><h3>${done}/${items.length} ${esc(t("challenges"))}</h3></div></div><span class="v7-tier-badge" data-tier="${esc(tier)}">${esc(tierLabel(tier))}</span></div><div class="v7-achievement-grid">${cards}</div></section>`;
+    }).join("");
+    root.innerHTML=`${pageHeader("🏆",t("challengeCenter"),t("challengeHelp"))}<div class="card v7-achievement-summary"><div><span>${esc(t("achievementsCount"))}</span><strong>${unlocked}/${ach.length}</strong><small>${esc(t("achievementProgress",{n:unlocked,total:ach.length}))}</small></div><div class="v7-achievement-meter"><i style="width:${ach.length?unlocked/ach.length*100:0}%"></i></div><div class="v7-title-summary"><span>👑 ${esc(t("titleSystem"))}</span><strong>${titlesUnlocked}/${titles.length}</strong><small>${activeTitle?esc(titleName(activeTitle)):esc(t("noTitle"))}</small></div></div>${tierSections}`;
   }
 
   function renderReportsPage() {
+    API.markAchievementFlag?.("monthly-report");
     const root=$("v7ReportsPage");if(!root)return;const stats=API.getStats(),months=API.getMonthlyStats(),journals=getJournals(),projects=getProjects();
     const rows=months.map(m=>{const ym=`${m.date.getFullYear()}-${String(m.date.getMonth()+1).padStart(2,"0")}`,journalCount=Object.keys(journals).filter(k=>k.startsWith(ym)).length,projectIds=new Set();Object.entries(journals).filter(([k])=>k.startsWith(ym)).forEach(([,j])=>(j.projectIds||[]).forEach(id=>projectIds.add(id)));return `<tr><td>${esc(formatMonth(m.date))}</td><td>${esc(fmt(m.planned))}</td><td>${esc(fmt(m.worked))}</td><td>${esc(fmt(m.leave))}</td><td>${m.holidays}</td><td>${esc(fmt(m.comp))}</td><td>${journalCount}</td><td>${projectIds.size}</td></tr>`;}).join("");
     root.innerHTML=`${pageHeader("📊",t("reportsTitle"),t("reportsHelp"),`<button id="v7DetailedStats" class="outline-btn" type="button">${esc(t("detailedStats"))}</button><button id="v7FinalReport" class="primary-btn" type="button">🎓 ${esc(t("finalReport"))}</button>`)}<div class="v7-report-kpis"><div class="card"><span>${esc(t("workTime"))}</span><strong>${esc(fmt(stats.elapsedMinutes))}</strong></div><div class="card"><span>${esc(t("attendance"))}</span><strong>${stats.attendancePercent.toFixed(1)}%</strong></div><div class="card"><span>${esc(t("personalLeave"))}</span><strong>${esc(fmt(stats.leaveMinutesLost))}</strong></div><div class="card"><span>${esc(t("workdaysLeft"))}</span><strong>${stats.futureWorkdays}</strong></div></div><div class="card v7-monthly-table-card"><div class="v7-card-title"><div><p class="eyebrow">MONTHLY BREAKDOWN</p><h3>${esc(t("monthlyReport"))}</h3></div><button id="v7OpenMonthly" class="outline-btn" type="button">${esc(t("monthlyReport"))} →</button></div><div class="v7-table-wrap"><table><thead><tr><th>${esc(t("month"))}</th><th>${esc(t("planned"))}</th><th>${esc(t("actual"))}</th><th>${esc(t("leave"))}</th><th>${esc(t("holidays"))}</th><th>${esc(t("comp"))}</th><th>${esc(t("journals"))}</th><th>${esc(t("projectsMentioned"))}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
@@ -367,9 +432,11 @@
 
   function renderSettingsPage() {
     const root=$("v7SettingsPage");if(!root)return;const cfg=API.getConfig(),state=API.getState();
+    const titleList=titleStates(),selectedTitleId=localStorage.getItem(KEYS.selectedTitle)||"",activeTitle=titleList.find(x=>x.id===selectedTitleId&&x.unlocked)||null;
     root.innerHTML=`${pageHeader("⚙",t("settingsTitle"),t("settingsHelp"))}
       <div class="v7-settings-grid">
-        <section class="card v7-settings-card"><div class="v7-card-title"><div><p class="eyebrow">${esc(t("profileSection"))}</p><h3>${esc(t("profileJourney"))}</h3></div><button id="v7EditJourney" class="outline-btn" type="button">${esc(t("editJourney"))}</button></div><div class="v7-profile-summary"><strong>${esc(isDemo()?t("publicDemo"):(cfg.profileName||t("myJourney")))}</strong><span>${esc(API.formatCompactDate(cfg.startDate))} → ${esc(API.formatCompactDate(cfg.endDate))}</span><small>${esc(cfg.workdayStart)} – ${esc(cfg.workdayEnd)} · ${esc(state.timezone)}</small></div></section>
+        <section class="card v7-settings-card"><div class="v7-card-title"><div><p class="eyebrow">${esc(t("profileSection"))}</p><h3>${esc(t("profileJourney"))}</h3></div><button id="v7EditJourney" class="outline-btn" type="button">${esc(t("editJourney"))}</button></div><div class="v7-profile-summary"><strong>${esc(isDemo()?t("publicDemo"):(cfg.profileName||t("myJourney")))}</strong>${activeTitle?`<em class="v7-profile-title v7-profile-title-inline" data-tier="${esc(activeTitle.tier)}">✦ ${esc(titleName(activeTitle))}</em>`:""}<span>${esc(API.formatCompactDate(cfg.startDate))} → ${esc(API.formatCompactDate(cfg.endDate))}</span><small>${esc(cfg.workdayStart)} – ${esc(cfg.workdayEnd)} · ${esc(state.timezone)}</small></div></section>
+        <section class="card v7-settings-card v7-title-settings-card"><div class="v7-card-title"><div><p class="eyebrow">TITLES</p><h3>👑 ${esc(t("titleSystem"))}</h3></div><span class="mini-chip">${esc(t("titleUnlockedCount",{n:titleList.filter(x=>x.unlocked).length,total:TITLE_DEFS.length}))}</span></div><p class="muted v7-title-help">${esc(t("titleHelp"))}</p><label class="v7-title-select-label"><span>${esc(t("selectedTitle"))}</span><select id="v7TitleSelect"><option value="">— ${esc(t("noTitle"))} —</option>${TITLE_DEFS.map(item=>{const st=titleList.find(x=>x.id===item.id);return `<option value="${esc(item.id)}" ${localStorage.getItem(KEYS.selectedTitle)===item.id?"selected":""} ${st?.unlocked?"":"disabled"}>${st?.unlocked?"👑":"🔒"} ${esc(titleName(item))} · ${esc(tierLabel(item.tier))}</option>`;}).join("")}</select></label><div class="v7-title-preview ${activeTitle?"active":""}" data-tier="${esc(activeTitle?.tier||"common")}"><span>👑</span><div><small>${esc(t("selectedTitle"))}</small><strong>${esc(activeTitle?titleName(activeTitle):t("noTitle"))}</strong></div></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("displaySection"))}</p><h3>${esc(t("appearance"))}</h3><div class="v7-settings-fields"><label><span>${esc(t("theme"))}</span><select id="v7Theme"></select></label><label><span>${esc(t("font"))}</span><select id="v7Font"></select></label><label><span>${esc(t("fontSize"))}</span><select id="v7FontSize"></select></label><label><span>${esc(t("density"))}</span><select id="v7Density"></select></label></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("regionSection"))}</p><h3>${esc(t("regionSection"))}</h3><div class="v7-settings-fields"><label><span>${esc(t("timezone"))}</span><select id="v7Timezone"></select></label><label><span>${esc(t("locale"))}</span><select id="v7Locale"></select></label></div></section>
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("behaviorSection"))}</p><h3>${esc(t("behavior"))}</h3><div class="v7-toggle-list"><label><span>${esc(t("seconds"))}</span><input id="v7Seconds" type="checkbox"></label><label><span>${esc(t("animation"))}</span><input id="v7Animation" type="checkbox"></label><label><span>${esc(t("moodSetting"))}</span><input id="v7Mood" type="checkbox"></label><label><span>${esc(t("notifications"))}</span><input id="v7Notifications" type="checkbox"></label></div></section>
@@ -382,6 +449,7 @@
     mirrorSelect("v7Timezone","timezoneSelect",qa("#timezoneSelect option").map(o=>[o.value,o.textContent]));
     mirrorSelect("v7Locale","localeSelect",qa("#localeSelect option").map(o=>[o.value,o.textContent]));
     mirrorToggle("v7Seconds","showSecondsToggle");mirrorToggle("v7Animation","animationToggle");mirrorToggle("v7Mood","dynamicMoodToggle");mirrorToggle("v7Notifications","notificationToggle");
+    $("v7TitleSelect")?.addEventListener("change",e=>setSelectedTitle(e.target.value));
     $("v7EditJourney")?.addEventListener("click",()=>$("editJourneyBtn")?.click());$("v7ExportBackup")?.addEventListener("click",()=>$("exportBackupBtn")?.click());$("v7ImportBackup")?.addEventListener("click",()=>$("importBackupBtn")?.click());$("v7Customize")?.addEventListener("click",()=>$("v6SettingsCustomize")?.click());$("v7OpenAdvanced")?.addEventListener("click",()=>$("settingsOpen")?.click());$("v7NewJourney")?.addEventListener("click",()=>$("startNewJourneyBtn")?.click());$("v7ResetData")?.addEventListener("click",()=>$("resetAllDataBtn")?.click());
   }
 

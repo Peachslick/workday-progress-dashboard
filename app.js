@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "7.3.0";
+  const APP_VERSION = "7.4.0";
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
@@ -388,7 +388,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.3 · Project Layout & Header Update · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.4 · Achievement Challenges & Titles · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -416,10 +416,61 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.3 · Project Layout & Header Update · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.4 · Achievement Challenges & Titles · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
+  });
+
+
+  // V7.4 — Achievement Challenges & Titles
+  Object.assign(translations.th, {
+    p25Title: "25% Complete", p25Desc: "เดินทางผ่านหนึ่งในสี่ของ Journey แล้ว",
+    p90Title: "90% Complete", p90Desc: "เหลืออีกเพียงช่วงสุดท้ายก่อนจบ Journey",
+    h900Title: "900 Hours", h900Desc: "สะสมเวลาทำงานครบ 900 ชั่วโมง",
+    firstProjectTitle: "Project แรก", firstProjectDesc: "สร้าง Project แรกใน Project Tracker",
+    projects3Title: "Project Collector", projects3Desc: "สร้าง Project อย่างน้อย 3 รายการ",
+    projectFinisherTitle: "Project Finisher", projectFinisherDesc: "ทำ Project แรกให้ Progress ครบ 100%",
+    projects3CompleteTitle: "Triple Finisher", projects3CompleteDesc: "ทำ Project ให้ครบ 100% จำนวน 3 รายการ",
+    firstJournalTitle: "First Entry", firstJournalDesc: "เขียน Daily Work Journal ครั้งแรก",
+    journals7Title: "7 Entries", journals7Desc: "บันทึก Daily Journal ครบ 7 ครั้ง",
+    journals30Title: "Journal Keeper", journals30Desc: "บันทึก Daily Journal ครบ 30 ครั้ง",
+    journals60Title: "Chronicle Master", journals60Desc: "บันทึก Daily Journal ครบ 60 ครั้ง",
+    streak5Title: "5-Day Streak", streak5Desc: "ทำงานต่อเนื่อง 5 วันทำงานโดยไม่ลา",
+    streak10Title: "10-Day Streak", streak10Desc: "ทำงานต่อเนื่อง 10 วันทำงานโดยไม่ลา",
+    streak20Title: "Unbroken 20", streak20Desc: "ทำงานต่อเนื่อง 20 วันทำงานโดยไม่ลา",
+    streak30Title: "30-Day Vanguard", streak30Desc: "ทำงานต่อเนื่อง 30 วันทำงานโดยไม่ลา",
+    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "ผ่านเดือนทำงานเต็มเดือนโดยไม่มีวันลา",
+    reportExplorerTitle: "Report Explorer", reportExplorerDesc: "เปิดดู Reports & Analytics เป็นครั้งแรก",
+    backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "ส่งออก Backup ของ Journey ครั้งแรก",
+    calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "บันทึกหรือนำเข้า Calendar Preset ครั้งแรก",
+    snapshotCreatorTitle: "Snapshot Creator", snapshotCreatorDesc: "สร้าง Journey Snapshot ครั้งแรก",
+    projectsShort: "โปรเจกต์", entriesShort: "บันทึก", actionsShort: "ครั้ง", monthsShort: "เดือน",
+    challengeUnlockedMeta: "Challenge ใหม่สำเร็จแล้ว และรางวัลถูกเพิ่มเข้า Trophy Room"
+  });
+  Object.assign(translations.en, {
+    p25Title: "25% Complete", p25Desc: "Reached one quarter of the journey",
+    p90Title: "90% Complete", p90Desc: "Entered the final stretch of the journey",
+    h900Title: "900 Hours", h900Desc: "Completed 900 working hours",
+    firstProjectTitle: "First Project", firstProjectDesc: "Created your first project in Project Tracker",
+    projects3Title: "Project Collector", projects3Desc: "Created at least 3 projects",
+    projectFinisherTitle: "Project Finisher", projectFinisherDesc: "Completed your first project at 100% progress",
+    projects3CompleteTitle: "Triple Finisher", projects3CompleteDesc: "Completed 3 projects at 100% progress",
+    firstJournalTitle: "First Entry", firstJournalDesc: "Wrote your first Daily Work Journal entry",
+    journals7Title: "7 Entries", journals7Desc: "Wrote 7 Daily Journal entries",
+    journals30Title: "Journal Keeper", journals30Desc: "Wrote 30 Daily Journal entries",
+    journals60Title: "Chronicle Master", journals60Desc: "Wrote 60 Daily Journal entries",
+    streak5Title: "5-Day Streak", streak5Desc: "Completed 5 consecutive working days without personal leave",
+    streak10Title: "10-Day Streak", streak10Desc: "Completed 10 consecutive working days without personal leave",
+    streak20Title: "Unbroken 20", streak20Desc: "Completed 20 consecutive working days without personal leave",
+    streak30Title: "30-Day Vanguard", streak30Desc: "Completed 30 consecutive working days without personal leave",
+    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "Completed a full working month without personal leave",
+    reportExplorerTitle: "Report Explorer", reportExplorerDesc: "Opened Reports & Analytics for the first time",
+    backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "Exported your first Journey backup",
+    calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "Saved or imported your first Calendar Preset",
+    snapshotCreatorTitle: "Snapshot Creator", snapshotCreatorDesc: "Created your first Journey Snapshot",
+    projectsShort: "projects", entriesShort: "entries", actionsShort: "times", monthsShort: "months",
+    challengeUnlockedMeta: "A new challenge is complete and its reward has been added to your Trophy Room"
   });
 
 
@@ -742,22 +793,107 @@
     return months;
   }
 
+  function challengeStorageSet(key) {
+    const value = safeParse(localStorage.getItem(key), []);
+    return new Set(Array.isArray(value) ? value : []);
+  }
+  function markAchievementFlag(flag) {
+    if (!flag) return;
+    const flags = safeParse(localStorage.getItem("wp-v7-achievement-flags"), {});
+    if (flags && typeof flags === "object" && flags[flag]) return;
+    localStorage.setItem("wp-v7-achievement-flags", JSON.stringify({ ...(flags && typeof flags === "object" ? flags : {}), [flag]: true }));
+  }
+  function hasPerfectWorkMonth(now = getConfiguredNow()) {
+    const today = localDateOnly(now);
+    let cursor = new Date(CONFIG.internshipStart.getFullYear(), CONFIG.internshipStart.getMonth(), 1);
+    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    while (cursor < lastMonth) {
+      const monthStart = new Date(cursor), monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+      if (CONFIG.internshipStart <= monthStart && CONFIG.internshipEnd >= monthEnd) {
+        let scheduledDays = 0, hadLeave = false;
+        for (let d = new Date(monthStart); d <= monthEnd; d = addDays(d, 1)) {
+          if (getScheduledMinutes(d) > 0) scheduledDays++;
+          if (getOverride(d)?.type === "leave") { hadLeave = true; break; }
+        }
+        if (scheduledDays > 0 && !hadLeave) return true;
+      }
+      cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+    }
+    return false;
+  }
   function getAchievements(stats) {
     const hours = stats.elapsedMinutes / 60;
-    const defs = [
-      { id: "first-day", icon: "🌱", titleKey: "firstDayTitle", descKey: "firstDayDesc", unlocked: stats.startedDays >= 1 },
-      { id: "100-hours", icon: "⏱", titleKey: "h100Title", descKey: "h100Desc", unlocked: hours >= 100 },
-      { id: "250-hours", icon: "🚀", titleKey: "h250Title", descKey: "h250Desc", unlocked: hours >= 250 },
-      { id: "halfway", icon: "⭐", titleKey: "halfwayTitle", descKey: "halfwayDesc", unlocked: stats.percent >= 50 },
-      { id: "500-hours", icon: "🏆", titleKey: "h500Title", descKey: "h500Desc", unlocked: hours >= 500 },
-      { id: "750-hours", icon: "💪", titleKey: "h750Title", descKey: "h750Desc", unlocked: hours >= 750 },
-      { id: "75-percent", icon: "🎯", titleKey: "p75Title", descKey: "p75Desc", unlocked: stats.percent >= 75 },
-      { id: "800-hours", icon: "🏅", titleKey: "h800Title", descKey: "h800Desc", unlocked: hours >= 800 },
-      { id: "1000-hours", icon: "🔥", titleKey: "h1000Title", descKey: "h1000Desc", unlocked: hours >= 1000 },
-      { id: "completed", icon: "🎓", titleKey: "completeTitle", descKey: "completeDesc", unlocked: stats.journeyComplete }
-    ];
-    const hourTargets = { "100-hours":100, "250-hours":250, "500-hours":500, "750-hours":750, "800-hours":800, "1000-hours":1000 };
-    return defs.filter(item => !hourTargets[item.id] || hourTargets[item.id] * 60 <= stats.totalAttainableMinutes + .001);
+    const projectsRaw = safeParse(localStorage.getItem("wp-v6-projects"), []);
+    const projects = Array.isArray(projectsRaw) ? projectsRaw : [];
+    const journalsRaw = safeParse(localStorage.getItem("wp-v6-journal"), {});
+    const journalCount = journalsRaw && typeof journalsRaw === "object" && !Array.isArray(journalsRaw) ? Object.keys(journalsRaw).length : 0;
+    const completedProjects = projects.filter(p => Number(p?.progress) >= 100).length;
+    const streak = getStreakStats(getConfiguredNow());
+    const flags = safeParse(localStorage.getItem("wp-v7-achievement-flags"), {});
+    const perfectMonth = hasPerfectWorkMonth(getConfiguredNow());
+    const defs = [];
+    const add = (id, icon, titleKey, descKey, tier, category, current, target, unit) => defs.push({
+      id, icon, titleKey, descKey, tier, category, current: Number(current) || 0, target: Number(target) || 1, unit,
+      unlockedNow: (Number(current) || 0) >= (Number(target) || 1) - .001
+    });
+
+    // Time & journey milestones
+    add("first-day","🌱","firstDayTitle","firstDayDesc","common","journey",stats.startedDays,1,"days");
+    add("100-hours","⏱","h100Title","h100Desc","common","time",hours,100,"hours");
+    add("250-hours","🚀","h250Title","h250Desc","rare","time",hours,250,"hours");
+    add("500-hours","🏆","h500Title","h500Desc","epic","time",hours,500,"hours");
+    add("750-hours","💪","h750Title","h750Desc","epic","time",hours,750,"hours");
+    add("800-hours","🏅","h800Title","h800Desc","epic","time",hours,800,"hours");
+    add("900-hours","👑","h900Title","h900Desc","legendary","time",hours,900,"hours");
+    add("1000-hours","🔥","h1000Title","h1000Desc","legendary","time",hours,1000,"hours");
+    add("25-percent","🥉","p25Title","p25Desc","common","journey",stats.percent,25,"percent");
+    add("halfway","⭐","halfwayTitle","halfwayDesc","rare","journey",stats.percent,50,"percent");
+    add("75-percent","🎯","p75Title","p75Desc","epic","journey",stats.percent,75,"percent");
+    add("90-percent","💎","p90Title","p90Desc","legendary","journey",stats.percent,90,"percent");
+    add("completed","🎓","completeTitle","completeDesc","legendary","journey",stats.journeyComplete?1:0,1,"count");
+
+    // Project challenges
+    add("first-project","🧩","firstProjectTitle","firstProjectDesc","common","projects",projects.length,1,"projects");
+    add("projects-3","🗂️","projects3Title","projects3Desc","rare","projects",projects.length,3,"projects");
+    add("project-finisher","✅","projectFinisherTitle","projectFinisherDesc","rare","projects",completedProjects,1,"projects");
+    add("projects-complete-3","🏛️","projects3CompleteTitle","projects3CompleteDesc","epic","projects",completedProjects,3,"projects");
+
+    // Journal challenges
+    add("first-journal","✍️","firstJournalTitle","firstJournalDesc","common","journal",journalCount,1,"entries");
+    add("journals-7","📖","journals7Title","journals7Desc","rare","journal",journalCount,7,"entries");
+    add("journals-30","📚","journals30Title","journals30Desc","epic","journal",journalCount,30,"entries");
+    add("journals-60","🪶","journals60Title","journals60Desc","legendary","journal",journalCount,60,"entries");
+
+    // Attendance & consistency
+    add("streak-5","🔥","streak5Title","streak5Desc","common","attendance",streak.longest,5,"days");
+    add("streak-10","⚡","streak10Title","streak10Desc","rare","attendance",streak.longest,10,"days");
+    add("streak-20","🛡️","streak20Title","streak20Desc","epic","attendance",streak.longest,20,"days");
+    add("streak-30","⚔️","streak30Title","streak30Desc","legendary","attendance",streak.longest,30,"days");
+    add("perfect-month","🌟","perfectMonthTitle","perfectMonthDesc","epic","attendance",perfectMonth?1:0,1,"months");
+
+    // Exploration challenges
+    add("report-explorer","📊","reportExplorerTitle","reportExplorerDesc","common","exploration",flags?.["monthly-report"]?1:0,1,"actions");
+    add("backup-guardian","💾","backupGuardianTitle","backupGuardianDesc","rare","exploration",flags?.["backup-exported"]?1:0,1,"actions");
+    add("calendar-architect","🗓️","calendarArchitectTitle","calendarArchitectDesc","rare","exploration",flags?.["calendar-preset"]?1:0,1,"actions");
+    add("snapshot-creator","📸","snapshotCreatorTitle","snapshotCreatorDesc","epic","exploration",flags?.["snapshot-created"]?1:0,1,"actions");
+
+    const attainableHours = stats.totalAttainableMinutes / 60;
+    const visible = defs.filter(item => item.category !== "time" || item.target <= attainableHours + .001);
+    const ever = challengeStorageSet("wp-v7-ever-achievements");
+    const unlockedAt = safeParse(localStorage.getItem("wp-v7-achievement-unlocked-at"), {});
+    let changed = false, timeChanged = false;
+    const nowIso = new Date().toISOString();
+    visible.forEach(item => {
+      if (item.unlockedNow && !ever.has(item.id)) { ever.add(item.id); changed = true; }
+      if (item.unlockedNow && !unlockedAt[item.id]) { unlockedAt[item.id] = nowIso; timeChanged = true; }
+      item.unlocked = item.unlockedNow || ever.has(item.id);
+      item.unlockedAt = unlockedAt[item.id] || "";
+      item.percent = clamp(item.current / Math.max(.0001,item.target) * 100, 0, 100);
+      delete item.unlockedNow;
+    });
+    if (changed) localStorage.setItem("wp-v7-ever-achievements", JSON.stringify([...ever]));
+    if (timeChanged) localStorage.setItem("wp-v7-achievement-unlocked-at", JSON.stringify(unlockedAt));
+    return visible;
   }
 
   function getNextMilestone(stats) {
@@ -1051,6 +1187,12 @@
     if (!unlocked.length || els.achievementModal.classList.contains("open") || els.completionModal.classList.contains("open")) return;
     const initialized = localStorage.getItem("wp-achievements-initialized") === "true";
     const seen = new Set(safeParse(localStorage.getItem("wp-seen-achievements"), []));
+    if (initialized && localStorage.getItem("wp-v74-achievements-migrated") !== "true") {
+      unlocked.forEach(a => seen.add(a.id));
+      localStorage.setItem("wp-seen-achievements", JSON.stringify([...seen]));
+      localStorage.setItem("wp-v74-achievements-migrated", "true");
+      return;
+    }
     if (!initialized) {
       unlocked.forEach(a => seen.add(a.id));
       localStorage.setItem("wp-seen-achievements", JSON.stringify([...seen]));
@@ -1226,16 +1368,20 @@
     const items=getStoryItems(stats); els.storyProgressBadge.textContent=`${stats.percent.toFixed(1)}%`;
     els.journeyStoryList.innerHTML=items.map(item=>`<article class="story-item ${item.done?"done":item.next?"next":""}"><span class="story-item-icon">${item.icon}</span><strong>${escapeHtml(t(item.labelKey))}</strong><time>${escapeHtml(formatPredictionDate(item.date))}</time><span class="story-state">${escapeHtml(t(item.done?"storyDone":item.next?"storyNext":"storyUpcoming"))}</span></article>`).join("");
   }
-  function achievementTargetMinutes(item, stats) {
-    const map={"first-day":0,"100-hours":6000,"250-hours":15000,"halfway":stats.totalPlannedMinutes*.5,"500-hours":30000,"750-hours":45000,"75-percent":stats.totalPlannedMinutes*.75,"800-hours":48000,"1000-hours":60000,"completed":stats.totalPlannedMinutes};
-    return Math.min(stats.totalPlannedMinutes, map[item.id] ?? stats.totalPlannedMinutes);
+  function achievementProgressText(item) {
+    const current=Math.min(Number(item.current)||0,Number(item.target)||1), target=Number(item.target)||1;
+    if(item.unit==="hours") return `${localeNumber(current,{maximumFractionDigits:1})} / ${localeNumber(target,{maximumFractionDigits:0})} ${t("hoursShort")}`;
+    if(item.unit==="percent") return `${current.toFixed(1)} / ${target}%`;
+    if(item.unit==="projects") return `${Math.floor(current)} / ${Math.floor(target)} ${t("projectsShort")}`;
+    if(item.unit==="entries") return `${Math.floor(current)} / ${Math.floor(target)} ${t("entriesShort")}`;
+    if(item.unit==="days") return `${Math.floor(current)} / ${Math.floor(target)} ${t("daysShort")}`;
+    if(item.unit==="months") return `${Math.floor(current)} / ${Math.floor(target)} ${t("monthsShort")}`;
+    return `${Math.floor(current)} / ${Math.floor(target)} ${t("actionsShort")}`;
   }
   function renderAchievementShowcase(stats, achievements) {
     const unlocked=achievements.filter(a=>a.unlocked); els.statsAchievementCount.textContent=`${unlocked.length} / ${achievements.length}`;
     els.achievementsGrid.innerHTML=achievements.map(item=>{
-      const target=achievementTargetMinutes(item,stats);
-      const date=item.id==="halfway"||item.id==="75-percent" ? cumulativeScheduledTargetDate(target) : item.id==="completed" ? dateWithMinutes(CONFIG.internshipEnd,parseTime(CONFIG.workdayEnd)) : cumulativeTargetDate(target);
-      const when=(item.unlocked?t("unlockedOn"):t("expectedOn")).replace("{date}",formatPredictionDate(date));
+      const when=item.unlocked ? t("unlocked") : achievementProgressText(item);
       return `<div class="achievement-card ${item.unlocked?"unlocked":"locked"}"><div class="achievement-icon">${item.unlocked?item.icon:"🔒"}</div><div class="achievement-copy"><strong>${escapeHtml(t(item.titleKey))}</strong><small>${escapeHtml(t(item.descKey))}</small><span class="achievement-date">${escapeHtml(when)}</span></div><span class="achievement-status">${escapeHtml(t(item.unlocked?"unlocked":"locked"))}</span></div>`;
     }).join("");
   }
@@ -1306,6 +1452,7 @@
   function applyV4Preferences(){ if(els.dynamicMoodToggle) els.dynamicMoodToggle.checked=state.dynamicMood; if(els.notificationToggle) els.notificationToggle.checked=state.notificationsEnabled; updateConnectionStatus(); }
   function roundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
   async function createJourneySnapshot(finalMode=false) {
+    markAchievementFlag("snapshot-created");
     const now=getConfiguredNow(),stats=getInternshipStats(now),streak=getStreakStats(now),achievements=getAchievements(stats),unlocked=achievements.filter(a=>a.unlocked),milestone=getNextMilestone(stats);
     try{await document.fonts?.ready;}catch{}
     const canvas=document.createElement("canvas");canvas.width=1600;canvas.height=900;const ctx=canvas.getContext("2d");
@@ -1737,6 +1884,7 @@
     renderTranslations(); renderJourneyConfigUI(); renderDashboard();
   }
   function exportBackup() {
+    markAchievementFlag("backup-exported");
     const data = {};
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i); if (key?.startsWith("wp-") && !key.startsWith("wp-notify-")) data[key] = localStorage.getItem(key);
@@ -1759,7 +1907,7 @@
   }
   function clearJourneyStorage() {
     const fixed = ["wp-day-overrides","wp-seen-achievements","wp-achievements-initialized","wp-completion-seen","wp-journey-config","wp-setup-completed",
-      "wp-v6-journal","wp-v6-projects","wp-v6-recap-dismissed"];
+      "wp-v6-journal","wp-v6-projects","wp-v6-recap-dismissed","wp-v7-achievement-flags","wp-v7-ever-achievements","wp-v7-achievement-unlocked-at","wp-v7-selected-title","wp-v74-achievements-migrated"];
     fixed.forEach(k => localStorage.removeItem(k));
     const transient = []; for (let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(key?.startsWith("wp-notify-")) transient.push(key); } transient.forEach(k=>localStorage.removeItem(k));
     window.dispatchEvent(new CustomEvent("workday:journey-cleared"));
@@ -1966,6 +2114,7 @@
     formatCompactDate: value => formatCompactDate(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
     dateKey: value => dateKey(value instanceof Date ? value : parseConfigDate(String(value), new Date())),
     translate: key => t(key),
+    markAchievementFlag: flag => markAchievementFlag(flag),
     defaultCompanyHolidays: [...DEFAULT_COMPANY_HOLIDAYS]
   };
 
