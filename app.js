@@ -1,7 +1,8 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "7.5.0";
+  const APP_VERSION = "7.6.1";
+  const BACKUP_SCHEMA_VERSION = 2;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
@@ -388,7 +389,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.5 · Tier Mastery & Titles · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.6.1 · Journal Calendar Update · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -416,14 +417,14 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.5 · Tier Mastery & Titles · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.6.1 · Journal Calendar Update · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
   });
 
 
-  // V7.5 — Tier Mastery & Titles
+  // V7.6.1 — Journal Calendar Update
   Object.assign(translations.th, {
     p25Title: "25% Complete", p25Desc: "เดินทางผ่านหนึ่งในสี่ของ Journey แล้ว",
     p90Title: "90% Complete", p90Desc: "เหลืออีกเพียงช่วงสุดท้ายก่อนจบ Journey",
@@ -1889,15 +1890,27 @@
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i); if (key?.startsWith("wp-") && !key.startsWith("wp-notify-")) data[key] = localStorage.getItem(key);
     }
-    const payload = { app: "Workday Journey", version: APP_VERSION, exportedAt: new Date().toISOString(), data };
+    const payload = { app: "Workday Journey", version: APP_VERSION, schemaVersion: BACKUP_SCHEMA_VERSION, exportedAt: new Date().toISOString(), data };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob), a = document.createElement("a"); a.href = url; a.download = `workday-journey-backup-${dateKey(getConfiguredNow())}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast("💾", t("backupCreated"));
   }
+  function migrateBackupPayload(payload) {
+    const schema = Number(payload?.schemaVersion || 1);
+    if (!payload || payload.app !== "Workday Journey" || typeof payload.data !== "object" || Array.isArray(payload.data)) throw new Error("invalid");
+    if (!Number.isFinite(schema) || schema < 1 || schema > BACKUP_SCHEMA_VERSION) throw new Error("schema");
+    const data = { ...payload.data };
+    if (schema < 2 && typeof data["wp-v6-projects"] === "string") {
+      try {
+        const projects = JSON.parse(data["wp-v6-projects"]);
+        if (Array.isArray(projects)) data["wp-v6-projects"] = JSON.stringify(projects.map(project => ({ ...project, archived: !!project.archived })));
+      } catch {}
+    }
+    return { ...payload, schemaVersion: BACKUP_SCHEMA_VERSION, data };
+  }
   async function importBackupFile(file) {
     try {
-      const payload = JSON.parse(await file.text());
-      if (!payload || typeof payload.data !== "object" || Array.isArray(payload.data)) throw new Error("invalid");
+      const payload = migrateBackupPayload(JSON.parse(await file.text()));
       if (!confirm(t("importConfirm"))) return;
       [...Array(localStorage.length)].map((_,i) => localStorage.key(i)).filter(Boolean).filter(k => k.startsWith("wp-")).forEach(k => localStorage.removeItem(k));
       for (const [key, value] of Object.entries(payload.data)) if (key.startsWith("wp-") && typeof value === "string") localStorage.setItem(key, value);
