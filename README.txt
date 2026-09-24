@@ -1,4 +1,4 @@
-# Workday Journey V7.6.1
+# Workday Journey V7.6.2
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -48,13 +48,13 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Select an unlocked title from Settings; it appears on the sidebar and top profile.
 - Existing users are migrated without achievement-popup spam.
 
-V7.6.1 additions:
+V7.6.2 additions:
 - Compact Daily Journal project selector for large project lists.
 - UX & Quality rewards and profile aura effects.
 - New titles for 500 Hours, 75% Complete, 90% Complete and Chronicle Master.
 
 
-V7.6.1 UX & Quality Update:
+V7.6.2 UX & Quality Update:
 - Journal search/filter by text, project, mood and month
 - Project archive with Active / Completed / Archived tabs
 - Achievement detail modal with keyboard access and unlock metadata
@@ -62,7 +62,13 @@ V7.6.1 UX & Quality Update:
 - Custom confirm + 8-second undo for journal/project/calendar changes
 - Backup schemaVersion + migration for older backups
 - Dashboard quick summary, accessibility focus states, mobile polish and lighter periodic rendering
-- Existing PWA update-available flow retained and cache bumped to V7.6.1
+- Existing PWA update-available flow retained and cache bumped to V7.6.2
 
 - Daily Work Journal now includes a monthly completion calendar: saved days show a check mark and past working days without a journal remain visibly pending.
 - Ctrl+K Command Palette removed.
+
+V7.6.2 Journal Form Layout Update:
+- Daily Work Journal no longer stretches to the height of Journal History.
+- Work/Learned text areas are more compact and remain vertically resizable.
+- Mood and Project selection use a bounded section with internal scrolling.
+- Save/Delete buttons return to compact sizes on desktop with responsive mobile behavior.
