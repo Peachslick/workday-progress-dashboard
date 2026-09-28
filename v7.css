@@ -36,7 +36,7 @@
 @media(max-width:980px){.v7-journal-meta{grid-template-columns:1fr}.v7-project-checks{grid-template-columns:repeat(auto-fill,minmax(135px,1fr));max-height:150px}.v7-achievement-summary{grid-template-columns:1fr}.v7-mastery-summary{padding-left:0;border-left:0;border-top:1px solid var(--border);padding-top:10px}.v7-tier-mastery{grid-template-columns:auto minmax(0,1fr)}.v7-mastery-status{grid-column:2;justify-items:start;grid-auto-flow:column;justify-content:start;gap:8px}.v7-mastery-status span{align-self:center}}@media(max-width:520px){.v7-project-checks{grid-template-columns:1fr;max-height:160px}.v7-journal-actions{flex-direction:row;justify-content:stretch}.v7-journal-actions button{width:50%;min-width:0}.v7-tier-section{padding:8px}.v7-tier-mastery{padding:11px;grid-template-columns:38px minmax(0,1fr)}.v7-mastery-icon{width:38px;height:38px}.v7-mastery-rewards{display:grid;grid-template-columns:1fr}.v7-mastery-status{grid-column:1/-1}}
 
 
-/* V7.6.2 - Journal Calendar & UX refinement */
+/* V7.6.3 - Journal Calendar & UX refinement */
 :where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 36%,transparent);outline-offset:2px}
 .v76-dashboard-insights{padding:18px 20px}.v76-insight-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.v76-insight-grid button{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface-soft);color:var(--text);text-align:left}.v76-insight-grid button>span{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:var(--accent-soft)}.v76-insight-grid strong,.v76-insight-grid small{display:block}.v76-insight-grid strong{font-size:.82rem}.v76-insight-grid small{margin-top:2px;color:var(--muted);font-size:.59rem}
 .v76-journal-filters{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr auto;gap:7px;margin:13px 0 8px}.v76-journal-filters input,.v76-journal-filters select{min-width:0;width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:10px;background:var(--surface-soft);color:var(--text);font:inherit;font-size:.62rem}.v76-journal-history .v7-recent-list{margin-top:8px}.v7-project-checks label em{margin-left:auto;font-style:normal;font-size:.55rem}.v76-project-tabs{display:flex;gap:6px;flex-wrap:wrap}.v76-project-tabs button{border:1px solid var(--border);border-radius:999px;padding:7px 10px;background:var(--surface-soft);color:var(--muted);font:inherit;font-size:.62rem;font-weight:800;cursor:pointer}.v76-project-tabs button.active{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,var(--border));color:var(--accent)}.v76-project-tabs b{margin-left:3px}.v7-project-card.archived{opacity:.76;filter:saturate(.65)}
@@ -51,7 +51,7 @@
 @media(max-width:640px){.v76-data-meta{justify-content:flex-start}}
 
 
-/* V7.6.2 Journal completion calendar */
+/* V7.6.3 Journal completion calendar */
 .v761-journal-calendar{padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid var(--border)}
 .v761-jcal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.v761-jcal-head h4{margin:3px 0 0;font-size:.9rem}.v761-jcal-pending{flex:0 0 auto;padding:5px 8px;border-radius:999px;font-size:.58rem;font-weight:800;border:1px solid var(--border);background:var(--surface-soft);color:var(--muted)}.v761-jcal-pending.has-pending{color:#a16207;border-color:color-mix(in srgb,#f59e0b 38%,var(--border));background:color-mix(in srgb,#fef3c7 54%,var(--surface))}.v761-jcal-pending.all-done{color:#15803d;border-color:color-mix(in srgb,#22c55e 35%,var(--border));background:color-mix(in srgb,#dcfce7 48%,var(--surface))}
 .v761-jcal-nav{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:7px;margin:12px 0 8px}.v761-jcal-nav strong{text-align:center;font-size:.72rem}.v761-jcal-nav button{width:34px;height:30px;border:1px solid var(--border);border-radius:9px;background:var(--surface-soft);color:var(--text);font:800 1rem/1 var(--app-font);cursor:pointer}.v761-jcal-nav button:hover:not(:disabled){border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:var(--accent-soft);color:var(--accent)}.v761-jcal-nav button:disabled{opacity:.3;cursor:not-allowed}
@@ -60,7 +60,7 @@
 @media(max-width:520px){.v761-jcal-head{align-items:center}.v761-jcal-pending{font-size:.54rem}.v761-jcal-weekdays,.v761-jcal-grid{gap:3px}.v761-jcal-day{min-height:38px;border-radius:8px}.v761-jcal-check{right:3px;top:3px}}
 
 
-/* V7.6.2 - Daily Work Journal form layout refinement */
+/* V7.6.3 - Daily Work Journal form layout refinement */
 body[data-v7-route="journal"] .v7-journal-grid{
   align-items:start;
 }

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "7.6.2";
+  const APP_VERSION = "7.6.3";
   const BACKUP_SCHEMA_VERSION = 2;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -389,7 +389,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.6.2 · Journal Form Layout Update · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.6.3 · Perfect Month Logic Fix · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -417,14 +417,14 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.6.2 · Journal Form Layout Update · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.6.3 · Perfect Month Logic Fix · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
   });
 
 
-  // V7.6.2 — Journal Form Layout Update
+  // V7.6.3 — Perfect Month Logic Fix
   Object.assign(translations.th, {
     p25Title: "25% Complete", p25Desc: "เดินทางผ่านหนึ่งในสี่ของ Journey แล้ว",
     p90Title: "90% Complete", p90Desc: "เหลืออีกเพียงช่วงสุดท้ายก่อนจบ Journey",
@@ -441,7 +441,7 @@
     streak10Title: "10-Day Streak", streak10Desc: "ทำงานต่อเนื่อง 10 วันทำงานโดยไม่ลา",
     streak20Title: "Unbroken 20", streak20Desc: "ทำงานต่อเนื่อง 20 วันทำงานโดยไม่ลา",
     streak30Title: "30-Day Vanguard", streak30Desc: "ทำงานต่อเนื่อง 30 วันทำงานโดยไม่ลา",
-    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "ผ่านเดือนทำงานเต็มเดือนโดยไม่มีวันลา",
+    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "ทำงานครบทุกวันทำงานที่กำหนดในเดือนหนึ่งของ Journey โดยไม่มี Personal Leave",
     reportExplorerTitle: "Report Explorer", reportExplorerDesc: "เปิดดู Reports & Analytics เป็นครั้งแรก",
     backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "ส่งออก Backup ของ Journey ครั้งแรก",
     calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "บันทึกหรือนำเข้า Calendar Preset ครั้งแรก",
@@ -465,7 +465,7 @@
     streak10Title: "10-Day Streak", streak10Desc: "Completed 10 consecutive working days without personal leave",
     streak20Title: "Unbroken 20", streak20Desc: "Completed 20 consecutive working days without personal leave",
     streak30Title: "30-Day Vanguard", streak30Desc: "Completed 30 consecutive working days without personal leave",
-    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "Completed a full working month without personal leave",
+    perfectMonthTitle: "Perfect Month", perfectMonthDesc: "Completed every scheduled workday in one Journey month period without personal leave",
     reportExplorerTitle: "Report Explorer", reportExplorerDesc: "Opened Reports & Analytics for the first time",
     backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "Exported your first Journey backup",
     calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "Saved or imported your first Calendar Preset",
@@ -804,24 +804,53 @@
     if (flags && typeof flags === "object" && flags[flag]) return;
     localStorage.setItem("wp-v7-achievement-flags", JSON.stringify({ ...(flags && typeof flags === "object" ? flags : {}), [flag]: true }));
   }
-  function hasPerfectWorkMonth(now = getConfiguredNow()) {
+  function getPerfectWorkMonthInfo(now = getConfiguredNow()) {
     const today = localDateOnly(now);
-    let cursor = new Date(CONFIG.internshipStart.getFullYear(), CONFIG.internshipStart.getMonth(), 1);
-    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    while (cursor < lastMonth) {
-      const monthStart = new Date(cursor), monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
-      if (CONFIG.internshipStart <= monthStart && CONFIG.internshipEnd >= monthEnd) {
-        let scheduledDays = 0, hadLeave = false;
-        for (let d = new Date(monthStart); d <= monthEnd; d = addDays(d, 1)) {
-          if (getScheduledMinutes(d) > 0) scheduledDays++;
-          if (getOverride(d)?.type === "leave") { hadLeave = true; break; }
+    const journeyStart = localDateOnly(CONFIG.internshipStart);
+    const journeyEnd = localDateOnly(CONFIG.internshipEnd);
+    let cursor = new Date(journeyStart.getFullYear(), journeyStart.getMonth(), 1);
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const finalJourneyMonth = new Date(journeyEnd.getFullYear(), journeyEnd.getMonth(), 1);
+    const lastMonth = currentMonth < finalJourneyMonth ? currentMonth : finalJourneyMonth;
+
+    while (cursor <= lastMonth) {
+      const monthStart = new Date(cursor);
+      const monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+      const periodStart = monthStart < journeyStart ? journeyStart : monthStart;
+      const periodEnd = monthEnd > journeyEnd ? journeyEnd : monthEnd;
+
+      if (periodStart <= periodEnd) {
+        let scheduledDays = 0;
+        let hadLeave = false;
+        let lastScheduledDay = null;
+
+        for (let d = new Date(periodStart); d <= periodEnd; d = addDays(d, 1)) {
+          const scheduled = getScheduledMinutes(d);
+          if (scheduled <= 0) continue;
+          scheduledDays++;
+          lastScheduledDay = new Date(d);
+          if (getOverride(d)?.type === "leave" && getLeaveMinutes(d) > 0) hadLeave = true;
         }
-        if (scheduledDays > 0 && !hadLeave) return true;
+
+        const periodFinished = !!lastScheduledDay && (
+          lastScheduledDay < today ||
+          (sameDate(lastScheduledDay, today) && getWorkedMinutes(lastScheduledDay, now) >= getScheduledMinutes(lastScheduledDay) - .001)
+        );
+
+        if (scheduledDays > 0 && periodFinished && !hadLeave) {
+          return {
+            achieved: true,
+            monthKey: `${periodStart.getFullYear()}-${pad(periodStart.getMonth() + 1)}`,
+            startKey: dateKey(periodStart),
+            endKey: dateKey(periodEnd)
+          };
+        }
       }
       cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
     }
-    return false;
+    return { achieved: false, monthKey: "", startKey: "", endKey: "" };
   }
+  function hasPerfectWorkMonth(now = getConfiguredNow()) { return getPerfectWorkMonthInfo(now).achieved; }
   function getAchievements(stats) {
     const hours = stats.elapsedMinutes / 60;
     const projectsRaw = safeParse(localStorage.getItem("wp-v6-projects"), []);
@@ -831,7 +860,7 @@
     const completedProjects = projects.filter(p => Number(p?.progress) >= 100).length;
     const streak = getStreakStats(getConfiguredNow());
     const flags = safeParse(localStorage.getItem("wp-v7-achievement-flags"), {});
-    const perfectMonth = hasPerfectWorkMonth(getConfiguredNow());
+    const perfectMonth = getPerfectWorkMonthInfo(getConfiguredNow());
     const defs = [];
     const add = (id, icon, titleKey, descKey, tier, category, current, target, unit) => defs.push({
       id, icon, titleKey, descKey, tier, category, current: Number(current) || 0, target: Number(target) || 1, unit,
@@ -870,7 +899,26 @@
     add("streak-10","⚡","streak10Title","streak10Desc","rare","attendance",streak.longest,10,"days");
     add("streak-20","🛡️","streak20Title","streak20Desc","epic","attendance",streak.longest,20,"days");
     add("streak-30","⚔️","streak30Title","streak30Desc","legendary","attendance",streak.longest,30,"days");
-    add("perfect-month","🌟","perfectMonthTitle","perfectMonthDesc","epic","attendance",perfectMonth?1:0,1,"months");
+    add("perfect-month","🌟","perfectMonthTitle","perfectMonthDesc","epic","attendance",perfectMonth.achieved?1:0,1,"months");
+    const perfectMonthDef = defs[defs.length - 1];
+    let savedPerfectMonthKey = localStorage.getItem("wp-v7-perfect-month-key") || "";
+    if (perfectMonth.achieved && !savedPerfectMonthKey && perfectMonth.monthKey) {
+      savedPerfectMonthKey = perfectMonth.monthKey;
+      localStorage.setItem("wp-v7-perfect-month-key", savedPerfectMonthKey);
+    }
+    if (savedPerfectMonthKey || perfectMonth.achieved) {
+      const key = savedPerfectMonthKey || perfectMonth.monthKey || "";
+      perfectMonthDef.perfectMonthKey = key;
+      if (key) {
+        const [y, m] = key.split("-").map(Number);
+        const monthStart = new Date(y, Math.max(0, (m || 1) - 1), 1);
+        const monthEnd = new Date(y, Math.max(0, (m || 1) - 1) + 1, 0);
+        const rangeStart = monthStart < CONFIG.internshipStart ? CONFIG.internshipStart : monthStart;
+        const rangeEnd = monthEnd > CONFIG.internshipEnd ? CONFIG.internshipEnd : monthEnd;
+        perfectMonthDef.perfectMonthStart = dateKey(rangeStart);
+        perfectMonthDef.perfectMonthEnd = dateKey(rangeEnd);
+      }
+    }
 
     // Exploration challenges
     add("report-explorer","📊","reportExplorerTitle","reportExplorerDesc","common","exploration",flags?.["monthly-report"]?1:0,1,"actions");
@@ -1920,7 +1968,7 @@
   }
   function clearJourneyStorage() {
     const fixed = ["wp-day-overrides","wp-seen-achievements","wp-achievements-initialized","wp-completion-seen","wp-journey-config","wp-setup-completed",
-      "wp-v6-journal","wp-v6-projects","wp-v6-recap-dismissed","wp-v7-achievement-flags","wp-v7-ever-achievements","wp-v7-achievement-unlocked-at","wp-v7-selected-title","wp-v74-achievements-migrated"];
+      "wp-v6-journal","wp-v6-projects","wp-v6-recap-dismissed","wp-v7-achievement-flags","wp-v7-ever-achievements","wp-v7-achievement-unlocked-at","wp-v7-selected-title","wp-v7-perfect-month-key","wp-v74-achievements-migrated"];
     fixed.forEach(k => localStorage.removeItem(k));
     const transient = []; for (let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(key?.startsWith("wp-notify-")) transient.push(key); } transient.forEach(k=>localStorage.removeItem(k));
     window.dispatchEvent(new CustomEvent("workday:journey-cleared"));
