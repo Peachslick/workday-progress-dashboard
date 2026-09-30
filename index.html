@@ -16,16 +16,17 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=7.6.3" />
-  <link rel="stylesheet" href="v7.css?v=7.6.3" />
+  <link href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&family=Chonburi&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Itim&family=Kanit:wght@400;500;600;700&family=Mitr:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Pattaya&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700;800&family=Trirong:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Anakotmai/Anakotmai.css" />
+  <link rel="stylesheet" href="styles.css?v=7.6.5" />
+  <link rel="stylesheet" href="v7.css?v=7.6.5" />
 </head>
 <body>
   <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
 
   <div id="setupBackdrop" class="setup-backdrop" hidden>
     <section id="setupModal" class="setup-wizard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.6.3</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
+      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.6.5</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
       <div class="setup-progress" aria-label="Setup progress">
         <button type="button" class="setup-progress-item active" data-setup-jump="1"><span>1</span><strong data-i18n="setupProfile">โปรไฟล์</strong></button>
         <i></i><button type="button" class="setup-progress-item" data-setup-jump="2"><span>2</span><strong data-i18n="setupJourney">ช่วงเวลา</strong></button>
@@ -437,14 +438,58 @@
       </section>
     </main>
 
-    <footer class="footer"><span><span data-i18n="footerText">Workday Journey V7.6.3 · Perfect Month Logic Fix · ข้อมูลเก็บใน Browser</span> · <b id="footerVersion">v7.6.3</b></span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
+    <footer class="footer"><span><span data-i18n="footerText">Workday Journey V7.6.5 · Font Picker Update · ข้อมูลเก็บใน Browser</span> · <b id="footerVersion">v7.6.5</b></span><span id="lastUpdated">อัปเดต 09:45:00</span></footer>
   </div>
 
   <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
   <aside id="settingsPanel" class="settings-panel" aria-hidden="true">
     <div class="settings-header"><div><p class="eyebrow" data-i18n="personalize">ปรับแต่ง</p><h2 data-i18n="settings">ตั้งค่า</h2></div><button id="settingsClose" class="icon-btn" type="button" aria-label="Close settings">×</button></div>
     <div class="settings-content">
-      <section class="setting-group"><label for="fontFamilySelect" data-i18n="fontFamily">รูปแบบตัวอักษร</label><select id="fontFamilySelect"><option value="sarabun">Sarabun · Local Project Font</option><option value="system">System UI</option><option value="noto">Noto Sans Thai</option><option value="ibm">IBM Plex Sans Thai</option><option value="leelawadee">Leelawadee UI</option><option value="tahoma">Tahoma</option></select><p class="setting-help" data-i18n="fontHelp">Sarabun จะโหลดจากไฟล์ภายในโปรเจกต์ หลังติดตั้งครั้งแรกด้วย setup-sarabun-font.bat และใช้งาน Offline ได้</p></section>
+      <section class="setting-group font-setting-group"><label data-i18n="fontFamily">รูปแบบตัวอักษร</label>
+        <div id="fontPicker" class="font-picker">
+          <button id="fontPickerTrigger" class="font-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="fontPickerMenu">
+            <span class="font-picker-trigger-copy"><small id="fontPickerCategory">แนะนำสำหรับระบบงาน</small><strong id="fontPickerSelected">Sarabun · แนะนำ</strong></span><span class="font-picker-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div id="fontPickerMenu" class="font-picker-menu" role="listbox" aria-label="Font family" hidden>
+            <section class="font-picker-group font-group-recommended" data-font-category="recommended">
+              <div class="font-picker-group-title"><span class="font-group-dot"></span><strong data-font-group-title data-th="แนะนำสำหรับระบบงาน" data-en="Recommended for work">แนะนำสำหรับระบบงาน</strong><small>Recommended</small></div>
+              <div class="font-picker-options">
+                <button class="font-picker-option" type="button" role="option" data-font="sarabun" data-label="Sarabun · แนะนำ" style="font-family:'Sarabun','Noto Sans Thai',sans-serif">Sarabun <em>แนะนำ</em></button>
+                <button class="font-picker-option" type="button" role="option" data-font="bai" data-label="Bai Jamjuree" style="font-family:'Bai Jamjuree','Sarabun',sans-serif">Bai Jamjuree</button>
+                <button class="font-picker-option" type="button" role="option" data-font="noto" data-label="Noto Sans Thai" style="font-family:'Noto Sans Thai','Sarabun',sans-serif">Noto Sans Thai</button>
+                <button class="font-picker-option" type="button" role="option" data-font="ibm" data-label="IBM Plex Sans Thai" style="font-family:'IBM Plex Sans Thai','Sarabun',sans-serif">IBM Plex Sans Thai</button>
+              </div>
+            </section>
+            <section class="font-picker-group font-group-style" data-font-category="style">
+              <div class="font-picker-group-title"><span class="font-group-dot"></span><strong data-font-group-title data-th="ฟอนต์สไตล์ / เน้นเอกลักษณ์" data-en="Style & display fonts">ฟอนต์สไตล์ / เน้นเอกลักษณ์</strong><small>Style & Display</small></div>
+              <div class="font-picker-options">
+                <button class="font-picker-option" type="button" role="option" data-font="trirong" data-label="Trirong (มีเชิง)" style="font-family:'Trirong',serif">Trirong <em>มีเชิง</em></button>
+                <button class="font-picker-option" type="button" role="option" data-font="itim" data-label="Itim (ลายมือ)" style="font-family:'Itim','Sarabun',cursive">Itim <em>ลายมือ</em></button>
+                <button class="font-picker-option" type="button" role="option" data-font="pattaya" data-label="Pattaya (Display)" style="font-family:'Pattaya','Sarabun',cursive">Pattaya <em>Display</em></button>
+                <button class="font-picker-option" type="button" role="option" data-font="chonburi" data-label="Chonburi (Display)" style="font-family:'Chonburi','Sarabun',serif">Chonburi <em>Display</em></button>
+              </div>
+            </section>
+            <section class="font-picker-group font-group-general" data-font-category="general">
+              <div class="font-picker-group-title"><span class="font-group-dot"></span><strong data-font-group-title data-th="อ่านง่าย / ใช้งานทั่วไป" data-en="Readable & everyday fonts">อ่านง่าย / ใช้งานทั่วไป</strong><small>Everyday</small></div>
+              <div class="font-picker-options">
+                <button class="font-picker-option" type="button" role="option" data-font="leelawadee" data-label="Leelawadee UI" style="font-family:'Leelawadee UI',Tahoma,sans-serif">Leelawadee UI</button>
+                <button class="font-picker-option" type="button" role="option" data-font="tahoma" data-label="Tahoma" style="font-family:Tahoma,'Segoe UI',sans-serif">Tahoma</button>
+                <button class="font-picker-option" type="button" role="option" data-font="system" data-label="Segoe UI / System" style="font-family:system-ui,'Segoe UI',sans-serif">Segoe UI / System</button>
+                <button class="font-picker-option" type="button" role="option" data-font="prompt" data-label="Prompt" style="font-family:'Prompt','Sarabun',sans-serif">Prompt</button>
+                <button class="font-picker-option" type="button" role="option" data-font="kanit" data-label="Kanit" style="font-family:'Kanit','Sarabun',sans-serif">Kanit</button>
+                <button class="font-picker-option" type="button" role="option" data-font="mitr" data-label="Mitr" style="font-family:'Mitr','Sarabun',sans-serif">Mitr</button>
+                <button class="font-picker-option" type="button" role="option" data-font="anakotmai" data-label="Anakotmai" style="font-family:'Anakotmai','Sarabun',sans-serif">Anakotmai</button>
+                <button class="font-picker-option" type="button" role="option" data-font="athiti" data-label="Athiti" style="font-family:'Athiti','Sarabun',sans-serif">Athiti</button>
+              </div>
+            </section>
+          </div>
+        </div>
+        <select id="fontFamilySelect" class="font-family-native-select" aria-hidden="true" tabindex="-1">
+          <option value="sarabun">Sarabun · แนะนำ</option><option value="bai">Bai Jamjuree</option><option value="noto">Noto Sans Thai</option><option value="ibm">IBM Plex Sans Thai</option>
+          <option value="trirong">Trirong (มีเชิง)</option><option value="itim">Itim (ลายมือ)</option><option value="pattaya">Pattaya (Display)</option><option value="chonburi">Chonburi (Display)</option>
+          <option value="leelawadee">Leelawadee UI</option><option value="tahoma">Tahoma</option><option value="system">Segoe UI / System</option><option value="prompt">Prompt</option><option value="kanit">Kanit</option><option value="mitr">Mitr</option><option value="anakotmai">Anakotmai</option><option value="athiti">Athiti</option>
+        </select>
+        <div id="fontPreviewCard" class="font-preview-card"><span>FONT PREVIEW</span><strong>ภาษาไทย · Workday Journey · ABC 123</strong><small>เลือกแบบอักษรเพื่อดูตัวอย่างการแสดงผล</small></div><p class="setting-help" data-i18n="fontHelp">ฟอนต์เว็บจะโหลดจาก Google Fonts/Thai Web Fonts เมื่อออนไลน์ และ Browser จะใช้ fallback ที่เหมาะสมหากฟอนต์ยังโหลดไม่สำเร็จ</p></section>
       <section class="setting-group two-column-setting"><div><label for="fontSizeSelect" data-i18n="fontSize">ขนาดตัวอักษร</label><select id="fontSizeSelect"><option value="small" data-i18n="small">เล็ก</option><option value="medium" data-i18n="medium">กลาง</option><option value="large" data-i18n="large">ใหญ่</option></select></div><div><label for="themeSelect" data-i18n="theme">ธีม</label><select id="themeSelect"><option value="system" data-i18n="systemTheme">ตามระบบ</option><option value="light" data-i18n="lightTheme">สว่าง</option><option value="dark" data-i18n="darkTheme">มืด</option></select></div></section>
       <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option></select></div></section>
       <section class="setting-group toggle-setting-group"><label class="toggle-row"><span><strong data-i18n="showSeconds">แสดงวินาที</strong><small data-i18n="showSecondsHelp">แสดงวินาทีในนาฬิกาหลัก</small></span><input id="showSecondsToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="animations">Animation</strong><small data-i18n="animationsHelp">เปิดการเคลื่อนไหวของ Progress และ Card</small></span><input id="animationToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="dynamicMood">Dynamic Dashboard Mood</strong><small data-i18n="dynamicMoodHelp">เปลี่ยนบรรยากาศพื้นหลังตามช่วงเวลาและสถานะการทำงาน</small></span><input id="dynamicMoodToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="smartNotifications">Smart Notifications</strong><small data-i18n="smartNotificationsHelp">แจ้งเตือนก่อนพัก กลับเข้าทำงาน เหลือ 1 ชั่วโมง และจบวันทำงาน</small></span><input id="notificationToggle" type="checkbox" /><i class="toggle-ui"></i></label></section>
@@ -536,8 +581,8 @@
   </section>
 
   <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
-  <script src="app.js?v=7.6.3"></script>
-  <script src="v6.js?v=7.6.3"></script>
-  <script src="v7.js?v=7.6.3"></script>
+  <script src="app.js?v=7.6.5"></script>
+  <script src="v6.js?v=7.6.5"></script>
+  <script src="v7.js?v=7.6.5"></script>
 </body>
 </html>

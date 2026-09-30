@@ -1,12 +1,12 @@
-const CACHE_NAME = "workday-journey-v7.6.3";
+const CACHE_NAME = "workday-journey-v7.6.5";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=7.6.3",
-  "./app.js?v=7.6.3",
-  "./v6.js?v=7.6.3",
-  "./v7.css?v=7.6.3",
-  "./v7.js?v=7.6.3",
+  "./styles.css?v=7.6.5",
+  "./app.js?v=7.6.5",
+  "./v6.js?v=7.6.5",
+  "./v7.css?v=7.6.5",
+  "./v7.js?v=7.6.5",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png"
@@ -53,7 +53,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
+  if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com" || url.hostname === "cdn.jsdelivr.net") {
     event.respondWith(
       caches.match(request).then(cached => {
         const network = fetch(request).then(response => {

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "7.6.3";
+  const APP_VERSION = "7.6.5";
   const BACKUP_SCHEMA_VERSION = 2;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -171,7 +171,7 @@
       calendarDays: "วันตามปฏิทิน", workingDays: "วันทำงาน", workingHours: "ชั่วโมงทำงาน", calendar: "ปฏิทิน", today: "วันนี้",
       calendarInstruction: "คลิกวันที่เพื่อกำหนดวันหยุด วันลา หรือวันทำงานพิเศษ", pastWorkday: "วันทำงานที่ผ่านมา", holiday: "วันหยุด", leave: "วันลา",
       customWorkday: "วันทำงานพิเศษ", footerText: "Workday Progress Dashboard · ใช้งานแบบออฟไลน์ได้", personalize: "ปรับแต่ง", settings: "ตั้งค่า",
-      fontFamily: "รูปแบบตัวอักษร", fontHelp: "Sarabun จะโหลดจากไฟล์ภายในโปรเจกต์ หลังติดตั้งครั้งแรกด้วย setup-sarabun-font.bat และใช้งาน Offline ได้",
+      fontFamily: "รูปแบบตัวอักษร", fontHelp: "เลือกฟอนต์ได้หลายสไตล์ ฟอนต์เว็บจะโหลดจาก Google Fonts/Thai Web Fonts เมื่อออนไลน์ และใช้ fallback อัตโนมัติหากยังโหลดไม่สำเร็จ",
       fontSize: "ขนาดตัวอักษร", small: "เล็ก", medium: "กลาง", large: "ใหญ่", theme: "ธีม", systemTheme: "ตามระบบ", lightTheme: "สว่าง", darkTheme: "มืด",
       clockFormat: "รูปแบบเวลา", layoutDensity: "ระยะห่างหน้าจอ", comfortable: "สบายตา", compact: "กระชับ", showSeconds: "แสดงวินาที",
       showSecondsHelp: "แสดงวินาทีในนาฬิกาหลัก", animations: "Animation", animationsHelp: "เปิดการเคลื่อนไหวของ Progress และ Card", schedule: "เวลาทำงาน",
@@ -221,7 +221,7 @@
       weeklySummary: "This week is {percent}% through its scheduled working time", countdown: "COUNTDOWN", untilEnd: "Until Internship Ends", calendarDays: "calendar days",
       workingDays: "workdays", workingHours: "working hours", calendar: "CALENDAR", today: "Today", calendarInstruction: "Click a date to mark a holiday, leave, or special working day",
       pastWorkday: "Past workday", holiday: "Holiday", leave: "Leave", customWorkday: "Special workday", footerText: "Workday Progress Dashboard · Offline Ready", personalize: "PERSONALIZE",
-      settings: "Settings", fontFamily: "Font Family", fontHelp: "Sarabun loads from this project after one-time setup with setup-sarabun-font.bat, then works offline.",
+      settings: "Settings", fontFamily: "Font Family", fontHelp: "Choose from multiple Thai font styles. Web fonts load from Google Fonts/Thai Web Fonts when online and fall back automatically if unavailable.",
       fontSize: "Font Size", small: "Small", medium: "Medium", large: "Large", theme: "Theme", systemTheme: "System", lightTheme: "Light", darkTheme: "Dark",
       clockFormat: "Clock Format", layoutDensity: "Layout Density", comfortable: "Comfortable", compact: "Compact", showSeconds: "Show Seconds", showSecondsHelp: "Show seconds on the main clock",
       animations: "Animations", animationsHelp: "Animate progress and dashboard cards", schedule: "Work Schedule", workTime: "Actual Work Time", totalBreak: "Total Break", internshipRange: "Internship Period",
@@ -389,7 +389,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.6.3 · Perfect Month Logic Fix · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.6.5 · Font Picker Update · ข้อมูลเก็บใน Browser",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -417,14 +417,14 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.6.3 · Perfect Month Logic Fix · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.6.5 · Font Picker Update · Data stays in your browser",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
   });
 
 
-  // V7.6.3 — Perfect Month Logic Fix
+  // V7.6.5 — Font Picker Update
   Object.assign(translations.th, {
     p25Title: "25% Complete", p25Desc: "เดินทางผ่านหนึ่งในสี่ของ Journey แล้ว",
     p90Title: "90% Complete", p90Desc: "เหลืออีกเพียงช่วงสุดท้ายก่อนจบ Journey",
@@ -477,11 +477,21 @@
 
   const FONT_MAP = {
     sarabun: '"Sarabun Local", "Sarabun", "Noto Sans Thai", "Leelawadee UI", Tahoma, "Segoe UI", sans-serif',
+    bai: '"Bai Jamjuree", "Sarabun", "Noto Sans Thai", sans-serif',
+    noto: '"Noto Sans Thai", "Sarabun", "Leelawadee UI", Tahoma, sans-serif',
+    ibm: '"IBM Plex Sans Thai", "Sarabun", "Leelawadee UI", Tahoma, sans-serif',
+    leelawadee: '"Leelawadee UI", Tahoma, "Segoe UI", sans-serif',
+    tahoma: 'Tahoma, "Segoe UI", sans-serif',
     system: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    noto: '"Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif',
-    ibm: '"IBM Plex Sans Thai", "Leelawadee UI", Tahoma, sans-serif',
-    leelawadee: '"Leelawadee UI", Tahoma, sans-serif',
-    tahoma: 'Tahoma, "Segoe UI", sans-serif'
+    prompt: '"Prompt", "Sarabun", "Noto Sans Thai", sans-serif',
+    kanit: '"Kanit", "Sarabun", "Noto Sans Thai", sans-serif',
+    mitr: '"Mitr", "Sarabun", "Noto Sans Thai", sans-serif',
+    anakotmai: '"Anakotmai", "Sarabun", "Noto Sans Thai", sans-serif',
+    athiti: '"Athiti", "Sarabun", "Noto Sans Thai", sans-serif',
+    trirong: '"Trirong", Georgia, "Times New Roman", serif',
+    itim: '"Itim", "Sarabun", "Noto Sans Thai", cursive',
+    pattaya: '"Pattaya", "Sarabun", "Noto Sans Thai", cursive',
+    chonburi: '"Chonburi", "Sarabun", "Noto Sans Thai", serif'
   };
   const FONT_SCALE_MAP = { small: .90, medium: 1, large: 1.18 };
 
@@ -2031,13 +2041,46 @@
     if (!state.setupCompleted) setTimeout(() => openSetupWizard("first"), 80);
   }
 
+  function renderFontPicker() {
+    const picker = document.getElementById("fontPicker");
+    const selected = document.getElementById("fontPickerSelected");
+    const category = document.getElementById("fontPickerCategory");
+    if (!picker || !selected || !category) return;
+    const option = picker.querySelector(`.font-picker-option[data-font="${state.fontFamily}"]`) || picker.querySelector('.font-picker-option[data-font="sarabun"]');
+    picker.querySelectorAll(".font-picker-option").forEach(btn => {
+      const active = btn === option;
+      btn.classList.toggle("is-selected", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    if (option) {
+      selected.textContent = option.dataset.label || option.textContent.trim();
+      selected.style.fontFamily = FONT_MAP[state.fontFamily] || FONT_MAP.system;
+      const group = option.closest(".font-picker-group");
+      const title = group?.querySelector("[data-font-group-title]");
+      category.textContent = title ? (state.language === "th" ? title.dataset.th : title.dataset.en) : "Font";
+    }
+    picker.querySelectorAll("[data-font-group-title]").forEach(title => {
+      title.textContent = state.language === "th" ? title.dataset.th : title.dataset.en;
+    });
+  }
+
+  function closeFontPicker() {
+    const picker = document.getElementById("fontPicker");
+    const menu = document.getElementById("fontPickerMenu");
+    const trigger = document.getElementById("fontPickerTrigger");
+    if (!picker || !menu || !trigger) return;
+    menu.hidden = true; picker.classList.remove("is-open"); trigger.setAttribute("aria-expanded", "false");
+  }
+
   function resolveTheme(value) { return value === "system" ? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light") : value; }
   function applyPreferences() {
     document.documentElement.style.setProperty("--app-font", FONT_MAP[state.fontFamily] || FONT_MAP.system);
     const fontScale = FONT_SCALE_MAP[state.fontSize] || 1; document.documentElement.style.setProperty("--font-scale", fontScale); document.documentElement.style.fontSize = `${16 * fontScale}px`;
     const resolved = resolveTheme(state.theme); document.documentElement.dataset.theme = resolved; els.themeToggle.textContent = resolved === "dark" ? "☀" : "☾";
     document.body.classList.toggle("no-animations", !state.animations); document.body.classList.toggle("compact", state.density === "compact");
-    els.fontFamilySelect.value = state.fontFamily; els.fontSizeSelect.value = state.fontSize; els.themeSelect.value = state.theme; els.clockFormatSelect.value = state.clockFormat; els.densitySelect.value = state.density; els.showSecondsToggle.checked = state.showSeconds; els.animationToggle.checked = state.animations;
+    if (els.fontFamilySelect) els.fontFamilySelect.value = state.fontFamily; els.fontSizeSelect.value = state.fontSize; els.themeSelect.value = state.theme; els.clockFormatSelect.value = state.clockFormat; els.densitySelect.value = state.density; els.showSecondsToggle.checked = state.showSeconds; els.animationToggle.checked = state.animations;
+    renderFontPicker();
+    const fontPreview = document.getElementById("fontPreviewCard"); if (fontPreview) fontPreview.style.fontFamily = FONT_MAP[state.fontFamily] || FONT_MAP.system;
     applyV4Preferences();
     if (els.timezoneSelect) els.timezoneSelect.value = CONFIG.timezone; if (els.localeSelect) els.localeSelect.value = CONFIG.locale; applyPrivacyMode();
   }
@@ -2123,12 +2166,26 @@
     setTimeout(() => { els.confettiLayer.innerHTML = ""; }, 7000);
   }
 
-  function setLanguage(language) { if (!translations[language]) return; state.language = language; persistPreferences(); renderTranslations(); renderDashboard(); }
+  function setLanguage(language) { if (!translations[language]) return; state.language = language; persistPreferences(); renderTranslations(); renderFontPicker(); renderDashboard(); }
   function bindEvents() {
     document.querySelectorAll(".lang-btn").forEach(button => button.addEventListener("click", () => setLanguage(button.dataset.lang)));
     els.themeToggle.addEventListener("click", () => { state.theme = resolveTheme(state.theme) === "dark" ? "light" : "dark"; persistPreferences(); applyPreferences(); });
     els.settingsOpen.addEventListener("click", openSettings); els.settingsClose.addEventListener("click", closeSettings); els.settingsBackdrop.addEventListener("click", closeSettings);
     els.fontFamilySelect.addEventListener("change", e => { state.fontFamily = e.target.value; persistPreferences(); applyPreferences(); });
+    const fontPicker = document.getElementById("fontPicker"), fontPickerTrigger = document.getElementById("fontPickerTrigger"), fontPickerMenu = document.getElementById("fontPickerMenu");
+    if (fontPicker && fontPickerTrigger && fontPickerMenu) {
+      fontPickerTrigger.addEventListener("click", () => {
+        const open = fontPickerMenu.hidden;
+        fontPickerMenu.hidden = !open; fontPicker.classList.toggle("is-open", open); fontPickerTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) fontPickerMenu.querySelector('.font-picker-option.is-selected')?.scrollIntoView({ block: "nearest" });
+      });
+      fontPickerMenu.addEventListener("click", e => {
+        const option = e.target.closest(".font-picker-option[data-font]"); if (!option) return;
+        state.fontFamily = option.dataset.font; if (els.fontFamilySelect) els.fontFamilySelect.value = state.fontFamily; persistPreferences(); applyPreferences(); closeFontPicker(); fontPickerTrigger.focus();
+      });
+      document.addEventListener("click", e => { if (!fontPicker.contains(e.target)) closeFontPicker(); });
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && !fontPickerMenu.hidden) { closeFontPicker(); fontPickerTrigger.focus(); } });
+    }
     els.fontSizeSelect.addEventListener("change", e => { state.fontSize = e.target.value; persistPreferences(); applyPreferences(); });
     els.themeSelect.addEventListener("change", e => { state.theme = e.target.value; persistPreferences(); applyPreferences(); });
     els.clockFormatSelect.addEventListener("change", e => { state.clockFormat = e.target.value; persistPreferences(); renderDashboard(); });
