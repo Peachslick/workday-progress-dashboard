@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.1";
+  const VERSION = "8.0.2";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -37,7 +37,8 @@
       draftSaved:"บันทึกร่างล่าสุด {time}", draftRestored:"กู้ร่างที่ยังไม่ได้บันทึกกลับมาแล้ว", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"เลือกตารางทำงานสำเร็จรูป หรือบันทึกตารางปัจจุบันเพื่อใช้และแชร์กับเพื่อน", templateIntern:"Internship · จ–ศ · 07:00–16:10", templateOffice8:"Office · จ–ศ · 08:00–17:00", templateOffice9:"Office · จ–ศ · 09:00–18:00", applyTemplate:"ใช้ Template", saveCurrentTemplate:"บันทึกตารางปัจจุบัน", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"ชื่อ Template", templateSaved:"บันทึก Template แล้ว", templateApplied:"ใช้ตารางใหม่แล้ว ระบบจะ Reload", templateImported:"Import Template สำเร็จ", templateInvalid:"ไฟล์ Template ไม่ถูกต้อง", templateApplyConfirm:"เปลี่ยนตารางทำงานปัจจุบันตาม Template นี้หรือไม่?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"ตรวจสุขภาพข้อมูล Local, Backup, Cloud Sync และเวอร์ชัน PWA", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"ปกติ", statusWarning:"ควรตรวจสอบ", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"ล้าง App Cache แล้ว", updateChecked:"ตรวจสอบอัปเดตแล้ว", storageIssue:"พบข้อมูล Local ที่อ่านไม่ได้ {n} รายการ", backupHealth:"Backup", cloudHealth:"Cloud Sync",
       publicJourney:"Public Journey Card", publicJourneyHelp:"สร้างลิงก์สรุป Journey สำหรับ Portfolio โดยไม่แนบ Journal, Leave, Calendar หรือข้อมูลส่วนตัวอื่น", includeName:"แสดงชื่อใน Public Card", copyPublicLink:"คัดลอกลิงก์ Public", downloadPublicCard:"ดาวน์โหลดภาพ", sharePublic:"แชร์", publicLinkCopied:"คัดลอก Public Link แล้ว", publicSummary:"Journey Summary", workHours:"ชั่วโมงทำงาน", workdays:"วันทำงาน", projectCount:"Projects", achievementCount:"Achievements", journeyProgress:"Journey", publicSafe:"ข้อมูลสาธารณะชุดนี้ไม่มี Journal, Leave หรือ Calendar รายวัน", close:"ปิด",
-      cloudSetup:"Cloud Setup", autoDraft:"Auto Save Draft", diagnostics:"Diagnostics", mobileReady:"Mobile ready"
+      cloudSetup:"Cloud Setup", autoDraft:"Auto Save Draft", diagnostics:"Diagnostics", mobileReady:"Mobile ready",
+      profileMenu:"เมนูโปรไฟล์", editProfile:"แก้ไขโปรไฟล์ / Journey", languageLabel:"ภาษา", themeLabel:"ธีม", installLabel:"ติดตั้งแอป", settingsLabel:"ตั้งค่า", lightLabel:"สว่าง", darkLabel:"มืด", accountMenu:"บัญชีและ Cloud Sync"
     },
     en: {
       cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created. Check your email to confirm it, then sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"Both this device and Cloud contain data", cloudConflictHelp:"Choose which copy should become the source of truth. V8 will not silently overwrite either copy.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
@@ -45,7 +46,8 @@
       draftSaved:"Draft saved {time}", draftRestored:"Unsaved draft restored", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"Choose a ready-made schedule or save your current schedule to reuse and share", templateIntern:"Internship · Mon–Fri · 07:00–16:10", templateOffice8:"Office · Mon–Fri · 08:00–17:00", templateOffice9:"Office · Mon–Fri · 09:00–18:00", applyTemplate:"Apply Template", saveCurrentTemplate:"Save current schedule", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"Template name", templateSaved:"Template saved", templateApplied:"Schedule updated. The app will reload.", templateImported:"Template imported", templateInvalid:"Invalid template file", templateApplyConfirm:"Replace the current work schedule with this template?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"Check Local data, backups, Cloud Sync and PWA version health", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"Healthy", statusWarning:"Needs attention", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"App cache cleared", updateChecked:"Update check completed", storageIssue:"{n} Local data items could not be parsed", backupHealth:"Backup", cloudHealth:"Cloud Sync",
       publicJourney:"Public Journey Card", publicJourneyHelp:"Create a portfolio-safe Journey link without Journal, Leave, Calendar or other private details", includeName:"Include display name", copyPublicLink:"Copy public link", downloadPublicCard:"Download card", sharePublic:"Share", publicLinkCopied:"Public link copied", publicSummary:"Journey Summary", workHours:"Work Hours", workdays:"Workdays", projectCount:"Projects", achievementCount:"Achievements", journeyProgress:"Journey", publicSafe:"This public payload contains no Journal, Leave or daily Calendar data", close:"Close",
-      cloudSetup:"Cloud Setup", autoDraft:"Auto Save Draft", diagnostics:"Diagnostics", mobileReady:"Mobile ready"
+      cloudSetup:"Cloud Setup", autoDraft:"Auto Save Draft", diagnostics:"Diagnostics", mobileReady:"Mobile ready",
+      profileMenu:"Profile menu", editProfile:"Edit profile / Journey", languageLabel:"Language", themeLabel:"Theme", installLabel:"Install app", settingsLabel:"Settings", lightLabel:"Light", darkLabel:"Dark", accountMenu:"Account & Cloud Sync"
     }
   };
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
@@ -233,9 +235,73 @@
     if(!cloud.client||!cloud.user)return true;
     try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
-  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal};
+  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
+  // ---------- V8.0.2 Clean Top Bar ----------
+  const TOPBAR_ROUTES = {
+    th:{
+      dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
+      journal:["📓","บันทึกประจำวัน","บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้"],
+      projects:["🧩","โปรเจกต์","ติดตามงานและความคืบหน้าของ Project"],
+      achievements:["🏆","ความสำเร็จ","Challenges, Milestones และฉายา"],
+      reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
+      calendar:["🗓️","ปฏิทินและการเข้างาน","วันลา วันหยุดบริษัท และวันทำงานชดเชย"],
+      settings:["⚙️","ตั้งค่า","โปรไฟล์ การแสดงผล Cloud และข้อมูล"]
+    },
+    en:{
+      dashboard:["🏠","Dashboard","Today and Journey overview"],
+      journal:["📓","Daily Journal","Record your work and learning"],
+      projects:["🧩","Projects","Track project status and progress"],
+      achievements:["🏆","Achievements","Challenges, milestones and titles"],
+      reports:["📊","Reports & Analytics","Attendance, heatmap and journey reports"],
+      calendar:["🗓️","Calendar & Attendance","Leave, company holidays and compensatory work"],
+      settings:["⚙️","Settings","Profile, appearance, cloud and data"]
+    }
+  };
+  function activeRoute(){return (location.hash.replace(/^#\/?/,"").split(/[?&]/)[0]||"dashboard").toLowerCase();}
+  function refreshTopContext(){
+    const route=TOPBAR_ROUTES[lang()]?.[activeRoute()]?activeRoute():"dashboard";
+    const item=TOPBAR_ROUTES[lang()][route];
+    const icon=$("v802ContextIcon"),eyebrow=$("v802ContextEyebrow"),title=$("v802ContextTitle");
+    if(icon)icon.textContent=item[0]; if(eyebrow)eyebrow.textContent=item[2]; if(title)title.textContent=item[1];
+    document.title=`${item[1]} · Workday Journey`;
+  }
+  function closeProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;menu.hidden=true;menu.classList.remove("open");$("profileQuickBtn")?.setAttribute("aria-expanded","false");}
+  function toggleProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;const next=menu.hidden;menu.hidden=!next;menu.classList.toggle("open",next);$("profileQuickBtn")?.setAttribute("aria-expanded",String(next));if(next)renderProfileMenu();}
+  function triggerLegacy(id){const el=$(id);if(el)el.click();}
+  function renderProfileMenu(){
+    const menu=$("v802ProfileMenu");if(!menu)return;
+    const cfg=API.getConfig(),st=API.getState(),resolved=document.documentElement.dataset.theme||"light",signed=!!cloud.user;
+    const installVisible=$("installAppBtn") && !$("installAppBtn").hidden;
+    menu.innerHTML=`
+      <div class="v802-menu-head"><div class="v802-menu-avatar v771-avatar-slot" id="v802MenuAvatar">🐣</div><div><strong>${esc(cfg.profileName||"My Journey")}</strong><small>${signed?esc(cloud.user.email||""):esc(t("localDefault"))}</small></div></div>
+      <div class="v802-menu-section">
+        <button type="button" data-v802-action="profile"><span>👤</span><div><strong>${esc(t("editProfile"))}</strong><small>${esc(cfg.startDate)} → ${esc(cfg.endDate)}</small></div></button>
+        <button type="button" data-v802-action="cloud"><span>☁</span><div><strong>${esc(t("accountMenu"))}</strong><small>${esc(cloudStatusLabel())}</small></div></button>
+      </div>
+      <div class="v802-menu-section v802-menu-inline"><span>${esc(t("languageLabel"))}</span><div><button type="button" data-v802-lang="th" class="${st.language!=="en"?"active":""}">TH</button><button type="button" data-v802-lang="en" class="${st.language==="en"?"active":""}">EN</button></div></div>
+      <div class="v802-menu-section">
+        <button type="button" data-v802-action="theme"><span>${resolved==="dark"?"☀":"☾"}</span><div><strong>${esc(t("themeLabel"))}</strong><small>${esc(resolved==="dark"?t("darkLabel"):t("lightLabel"))}</small></div></button>
+        ${installVisible?`<button type="button" data-v802-action="install"><span>＋</span><div><strong>${esc(t("installLabel"))}</strong><small>PWA</small></div></button>`:""}
+        <button type="button" data-v802-action="settings"><span>⚙</span><div><strong>${esc(t("settingsLabel"))}</strong><small>Workday Journey</small></div></button>
+      </div>
+      ${signed?`<div class="v802-menu-section"><button class="danger" type="button" data-v802-action="signout"><span>↪</span><div><strong>${esc(t("signOut"))}</strong><small>${esc(cloud.user.email||"")}</small></div></button></div>`:""}`;
+    // Reuse the exact avatar renderer from V7.7.1 for the menu preview.
+    const src=$("profileQuickAvatar"); const dst=$("v802MenuAvatar"); if(src&&dst) dst.innerHTML=src.innerHTML;
+    qa("[data-v802-action]",menu).forEach(btn=>btn.onclick=async()=>{const action=btn.dataset.v802Action;closeProfileMenu();if(action==="profile")triggerLegacy("editJourneyBtn");if(action==="cloud")openAccountModal();if(action==="theme")triggerLegacy("themeToggle");if(action==="install")triggerLegacy("installAppBtn");if(action==="settings")location.hash="#/settings";if(action==="signout")await authSignOut();setTimeout(()=>{refreshTopContext();renderProfileMenu();},50);});
+    qa("[data-v802-lang]",menu).forEach(btn=>btn.onclick=()=>{q(`.lang-btn[data-lang="${btn.dataset.v802Lang}"]`)?.click();setTimeout(()=>{refreshTopContext();renderProfileMenu();},80);});
+  }
+  function ensureCleanTopbar(){
+    const actions=q(".topbar-actions"); if(!actions)return;
+    [$("onlineStatus"),$("installAppBtn"),q(".language-switch",actions),$("themeToggle"),$("settingsOpen")].filter(Boolean).forEach(el=>el.classList.add("v802-legacy-top-control"));
+    const profile=$("profileQuickBtn");if(profile){profile.classList.add("v802-profile-btn");profile.setAttribute("aria-haspopup","menu");profile.setAttribute("aria-expanded","false");if(!$('v802ProfileCaret')){const caret=document.createElement("span");caret.id="v802ProfileCaret";caret.className="v802-profile-caret";caret.textContent="⌄";profile.appendChild(caret);}if(!profile.dataset.v802Bound){profile.dataset.v802Bound="1";profile.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();toggleProfileMenu();},true);}}
+    if(!$('v802ProfileMenu')){const menu=document.createElement("div");menu.id="v802ProfileMenu";menu.className="v802-profile-menu";menu.hidden=true;menu.setAttribute("role","menu");document.body.appendChild(menu);}
+    const bell=$("v8NotifBtn"),cloudBtn=$("v8CloudBtn"); if(bell)bell.classList.add("v802-top-compact");if(cloudBtn)cloudBtn.classList.add("v802-top-compact");
+    // Keep a predictable, uncluttered order: menu (when needed), notifications, cloud, profile.
+    [bell,cloudBtn,profile].filter(Boolean).forEach(el=>actions.appendChild(el));
+    document.body.classList.add("v802-clean-topbar");refreshTopContext();
+  }
   // ---------- Core V8 UI ----------
   function ensureUi(){
     const actions=q(".topbar-actions");
@@ -280,6 +346,7 @@
     const label=$("v8CloudLabel"),btn=$("v8CloudBtn"),dot=$("v8CloudDot");if(label)label.textContent=cloudStatusLabel();if(btn){btn.dataset.state=cloud.user?(navigator.onLine?cloud.status:"offline"):"local";btn.title=cloud.user?(cloud.user.email||t("account")):t("account");}if(dot)dot.dataset.state=btn?.dataset.state||"local";
     const priv=$("v7PrivateLabel");if(priv)priv.textContent=cloud.user?(cloud.status==="synced"?`☁ ${t("cloudSynced")}`:`☁ ${cloudStatusLabel()}`):t("localDefault");
     renderAccountModal();
+    if($("v802ProfileMenu")?.hidden===false)renderProfileMenu();
   }
 
   // ---------- Auto Save Draft ----------
@@ -374,7 +441,7 @@
 
   // ---------- Route Enhancements ----------
   function enhanceRoute(){
-    ensureUi();ensureSetupTemplates();ensureSetupCloudPrompt();restoreJournalDraft();restoreProjectDraft();
+    ensureUi();ensureCleanTopbar();ensureSetupTemplates();ensureSetupCloudPrompt();restoreJournalDraft();restoreProjectDraft();
     if(location.hash.includes("calendar"))ensureCalendarTemplates();
     if(location.hash.includes("settings"))ensureDataHealth();
     if(location.hash.includes("reports"))ensurePublicShareCard();
@@ -404,12 +471,12 @@
   window.addEventListener("online",()=>{if(cloud.user){cloud.status="syncing";syncNow();}else updateCloudIndicators();});
   window.addEventListener("offline",()=>{if(cloud.user)cloud.status="offline";updateCloudIndicators();});
   document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cloud.user&&navigator.onLine)syncNow();});
-  document.addEventListener("click",e=>{if(!e.target.closest?.("#v8NotifPanel,#v8NotifBtn")&&$("v8NotifPanel")?.hidden===false)setNotificationPanel(false);});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();}});
+  document.addEventListener("click",e=>{if(!e.target.closest?.("#v8NotifPanel,#v8NotifBtn")&&$("v8NotifPanel")?.hidden===false)setNotificationPanel(false);if(!e.target.closest?.("#v802ProfileMenu,#profileQuickBtn"))closeProfileMenu();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();closeProfileMenu();}});
 
   // ---------- Boot ----------
   function boot(){
-    ensureUi();
+    ensureUi();ensureCleanTopbar();
     if(!localStorage.getItem(KEYS.dataUpdated))setCloudMeta(KEYS.dataUpdated,new Date().toISOString());
     const currentHash=snapshotHash(),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";cloud.localDirty=!!lastHash&&lastHash!==currentHash;
     initializeNotificationReadState();initSupabase();enhanceRoute();detectPublicLink();

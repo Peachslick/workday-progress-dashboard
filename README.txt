@@ -1,4 +1,4 @@
-WORKDAY JOURNEY V8.0.0
+WORKDAY JOURNEY V8.0.2
 ======================
 
 V8 adds optional Supabase Account + Cloud Sync while keeping Local Mode available.
