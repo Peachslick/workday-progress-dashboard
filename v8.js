@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.4";
+  const VERSION = "8.0.5";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -238,7 +238,7 @@
   window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
-  // ---------- V8.0.4 Clean Top Bar + Stable Interactions ----------
+  // ---------- V8.0.5 Clean Top Bar + Stable Interactions ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
