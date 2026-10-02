@@ -149,3 +149,9 @@ html[data-theme="dark"] .v8-public-stats>div{
   background:rgba(20,21,24,.9);
   border-color:#303339;
 }
+
+
+/* V8.0.6 - global interaction stability */
+.v802-profile-menu button,.v8-notif-panel button,.v8-auth-modal button,.v8-conflict-modal button,.v8-public-view button,#fontPicker button,#fontPickerMenu button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.v802-profile-menu,.v8-notif-panel,.v8-auth-modal,.v8-conflict-modal,.v8-public-view{pointer-events:auto}
+.v802-profile-menu button,.v8-notif-panel button{position:relative;z-index:1}

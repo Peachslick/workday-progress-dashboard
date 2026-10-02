@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.5";
+  const VERSION = "8.0.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -178,8 +178,8 @@
     cloud.status="syncing";updateCloudIndicators();
     const payload=buildCloudPayload(),hash=snapshotHash(payload.data),now=new Date().toISOString();
     try{
-      const {data,error}=await cloud.client.from(CLOUD_TABLE).upsert({user_id:cloud.user.id,payload,client_updated_at:now},{onConflict:"user_id"}).select("updated_at").single();
-      if(error)throw error;markSynced(hash,data?.updated_at||now);if(!silent)toast("☁",t("cloudUploaded"),"success");return true;
+      const {data,error}=await cloud.client.from(CLOUD_TABLE).upsert({user_id:cloud.user.id,payload,client_updated_at:now},{onConflict:"user_id"}).select("updated_at,client_updated_at").single();
+      if(error)throw error;markSynced(hash,data?.client_updated_at||data?.updated_at||now);if(!silent)toast("☁",t("cloudUploaded"),"success");return true;
     }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();refreshNotificationCenter();if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
   function applyCloudPayload(payload,updatedAt){
@@ -195,7 +195,7 @@
   }
   async function loadCloudState({reload=true,silent=false}={}){
     if(!cloud.client||!cloud.user||!navigator.onLine)return false;cloud.status="syncing";updateCloudIndicators();
-    try{const row=await fetchCloudRow();if(!row?.payload){if(!silent)toast("☁",t("cloudReady"),"info");cloud.status="synced";updateCloudIndicators();return false;}applyCloudPayload(row.payload,row.updated_at);cloud.status="synced";if(!silent)toast("☁",t("cloudLoaded"),"success");if(reload)setTimeout(()=>location.reload(),180);return true;}
+    try{const row=await fetchCloudRow();if(!row?.payload){if(!silent)toast("☁",t("cloudReady"),"info");cloud.status="synced";updateCloudIndicators();return false;}applyCloudPayload(row.payload,row.client_updated_at||row.updated_at);cloud.status="synced";if(!silent)toast("☁",t("cloudLoaded"),"success");if(reload)setTimeout(()=>location.reload(),180);return true;}
     catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
   async function reconcileCloudOnLogin(){
@@ -203,23 +203,40 @@
     try{
       const row=await fetchCloudRow();const localData=collectLocalData(),localHash=snapshotHash(localData);
       if(!row?.payload?.data){await uploadCloudState({silent:true});renderAccountModal();return;}
-      const cloudHash=snapshotHash(row.payload.data),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"",lastCloudUpdated=localStorage.getItem(KEYS.cloudLastUpdated)||"";
-      if(localHash===cloudHash){markSynced(localHash,row.updated_at);renderAccountModal();return;}
-      if(!meaningfulLocalData()){applyCloudPayload(row.payload,row.updated_at);location.reload();return;}
-      const localChanged=!!lastHash&&localHash!==lastHash;
-      const cloudChanged=!!lastCloudUpdated&&String(row.updated_at||"")!==lastCloudUpdated;
-      if(localChanged&&!cloudChanged){await uploadCloudState({silent:true});renderAccountModal();return;}
-      if(!localChanged&&cloudChanged){applyCloudPayload(row.payload,row.updated_at);location.reload();return;}
+      const cloudHash=snapshotHash(row.payload.data),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";
+      const remoteUpdatedAt=row.client_updated_at||row.updated_at||"";
+      // If both copies already contain the same data, simply refresh the synced
+      // metadata. Returning to this tab must never reopen the conflict dialog.
+      if(localHash===cloudHash){markSynced(localHash,remoteUpdatedAt);renderAccountModal();return;}
+      if(!meaningfulLocalData()){applyCloudPayload(row.payload,remoteUpdatedAt);location.reload();return;}
+
+      // The last successfully synced DATA hash is the common ancestor for both
+      // copies. Comparing hashes is reliable even if a database updated_at column
+      // is not refreshed by every UPSERT.
+      if(lastHash){
+        const localChanged=localHash!==lastHash;
+        const cloudChanged=cloudHash!==lastHash;
+        if(localChanged&&!cloudChanged){await uploadCloudState({silent:true});renderAccountModal();return;}
+        if(!localChanged&&cloudChanged){applyCloudPayload(row.payload,remoteUpdatedAt);location.reload();return;}
+        if(!localChanged&&!cloudChanged){markSynced(lastHash,remoteUpdatedAt);renderAccountModal();return;}
+        // Both sides changed from the same baseline: this is a real conflict.
+        cloud.conflictRow=row;cloud.status="error";updateCloudIndicators();openConflictModal(row);return;
+      }
+
+      // First reconciliation has no common baseline yet. Ask once which copy
+      // should become the source of truth, then store its hash for future checks.
       cloud.conflictRow=row;cloud.status="error";updateCloudIndicators();openConflictModal(row);
     }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();}
     finally{cloud.reconciling=false;}
   }
-  async function syncNow(){
-    if(!cloud.user){openAccountModal();return;}
-    if(!navigator.onLine){cloud.status="offline";updateCloudIndicators();toast("☁",t("cloudOffline"),"warning");return;}
-    cloud.reconciling=false;
+  async function syncNow({silent=false}={}){
+    if(!cloud.user){if(!silent)openAccountModal();return;}
+    if(!navigator.onLine){cloud.status="offline";updateCloudIndicators();if(!silent)toast("☁",t("cloudOffline"),"warning");return;}
+    // Never reset the reconciliation guard. A visibility/focus event can arrive
+    // while another sync is still running; forcing the flag false creates races.
+    if(cloud.reconciling||cloud.conflictRow)return;
     await reconcileCloudOnLogin();
-    if(cloud.status==="synced"&&!cloud.conflictRow)toast("✓",t("cloudSynced"),"success");
+    if(!silent&&cloud.status==="synced"&&!cloud.conflictRow)toast("✓",t("cloudSynced"),"success");
   }
 
   async function authSignIn(){
@@ -238,7 +255,7 @@
   window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
-  // ---------- V8.0.5 Clean Top Bar + Stable Interactions ----------
+  // ---------- V8.0.7 Cloud Reconciliation + Interaction Stability ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
@@ -329,7 +346,7 @@
     }
     if(!$("v8ConflictBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8ConflictBackdrop";wrap.className="v8-modal-backdrop v8-conflict-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-conflict-modal" role="dialog" aria-modal="true"><div class="v8-conflict-icon">↔</div><h2>${esc(t("cloudConflict"))}</h2><p>${esc(t("cloudConflictHelp"))}</p><div id="v8ConflictMeta" class="v8-conflict-meta"></div><div class="v8-conflict-actions"><button id="v8ConflictLocal" class="primary-btn" type="button">💻 ${esc(t("thisDevice"))}</button><button id="v8ConflictCloud" class="outline-btn" type="button">☁ ${esc(t("cloudCopy"))}</button></div><small>${esc(t("cloudAutoHelp"))}</small></section>`;document.body.appendChild(wrap);
-      $("v8ConflictLocal").onclick=async()=>{wrap.hidden=true;await uploadCloudState();cloud.conflictRow=null;};$("v8ConflictCloud").onclick=()=>{const row=cloud.conflictRow;if(!row)return;wrap.hidden=true;applyCloudPayload(row.payload,row.updated_at);cloud.conflictRow=null;location.reload();};
+      $("v8ConflictLocal").onclick=async()=>{wrap.hidden=true;await uploadCloudState();cloud.conflictRow=null;};$("v8ConflictCloud").onclick=()=>{const row=cloud.conflictRow;if(!row)return;wrap.hidden=true;applyCloudPayload(row.payload,row.client_updated_at||row.updated_at);cloud.conflictRow=null;location.reload();};
     }
     if(!$("v8PublicBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8PublicBackdrop";wrap.className="v8-public-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-public-view"><button id="v8PublicClose" class="v8-modal-close" type="button">×</button><div id="v8PublicViewBody"></div></section>`;document.body.appendChild(wrap);$("v8PublicClose").onclick=closePublicView;
@@ -353,11 +370,25 @@
   }
   function openConflictModal(row){ensureUi();const meta=$("v8ConflictMeta"),localStamp=localStorage.getItem(KEYS.dataUpdated),cloudStamp=row?.client_updated_at||row?.updated_at;meta.innerHTML=`<div><span>💻 ${esc(t("thisDevice"))}</span><strong>${esc(safeDateLabel(localStamp))}</strong></div><div><span>☁ ${esc(t("cloudCopy"))}</span><strong>${esc(safeDateLabel(cloudStamp))}</strong></div>`;$("v8ConflictBackdrop").hidden=false;requestAnimationFrame(()=>$("v8ConflictBackdrop").classList.add("open"));}
   function cloudStatusLabel(){if(!navigator.onLine&&cloud.user)return t("cloudOffline");return ({local:t("cloudLocal"),synced:t("cloudSynced"),syncing:t("cloudSyncing"),offline:t("cloudOffline"),error:t("cloudError")})[cloud.status]||t("cloudLocal");}
+  function refreshOpenInteractiveStatus(){
+    // Never replace an open interactive surface just because Cloud status changed.
+    // Replacing DOM between pointerdown and click makes controls feel intermittent.
+    const auth=$("v8AuthBackdrop");
+    if(auth && !auth.hidden && cloud.user){
+      const state=auth.querySelector(".v8-cloud-state strong"); if(state)state.textContent=cloudStatusLabel();
+      const dot=auth.querySelector(".v8-cloud-state i"); if(dot)dot.dataset.state=cloud.user?(navigator.onLine?cloud.status:"offline"):"local";
+      const last=auth.querySelector(".v8-account-card small"); if(last)last.textContent=`${t("lastSync")}: ${safeDateLabel(localStorage.getItem(KEYS.cloudLastSync))}`;
+    }
+    const menu=$("v802ProfileMenu");
+    if(menu && !menu.hidden){
+      const cloudRow=menu.querySelector('[data-v802-action="cloud"] small'); if(cloudRow)cloudRow.textContent=cloudStatusLabel();
+      const email=menu.querySelector(".v802-menu-head small"); if(email)email.textContent=cloud.user?(cloud.user.email||""):t("localDefault");
+    }
+  }
   function updateCloudIndicators(){
     const label=$("v8CloudLabel"),btn=$("v8CloudBtn"),dot=$("v8CloudDot");if(label)label.textContent=cloudStatusLabel();if(btn){btn.dataset.state=cloud.user?(navigator.onLine?cloud.status:"offline"):"local";btn.title=cloud.user?(cloud.user.email||t("account")):t("account");}if(dot)dot.dataset.state=btn?.dataset.state||"local";
     const priv=$("v7PrivateLabel");if(priv)priv.textContent=cloud.user?(cloud.status==="synced"?`☁ ${t("cloudSynced")}`:`☁ ${cloudStatusLabel()}`):t("localDefault");
-    renderAccountModal();
-    if($("v802ProfileMenu")?.hidden===false)renderProfileMenu();
+    refreshOpenInteractiveStatus();
   }
 
   // ---------- Auto Save Draft ----------
@@ -400,10 +431,20 @@
     const marker="wp-v8-notifications-initialized";if(localStorage.getItem(marker)==="1")return;
     const set=notificationReadSet();API.getAchievements(API.getStats()).filter(a=>a.unlocked&&a.unlockedAt).forEach(a=>set.add(`ach:${a.id}:${a.unlockedAt}`));saveNotificationRead(set);localStorage.setItem(marker,"1");
   }
-  function refreshNotificationCenter(){ensureUi();const list=buildNotifications(),read=notificationReadSet(),unread=list.filter(n=>!read.has(n.id));const badge=$("v8NotifBadge");if(badge){badge.hidden=!unread.length;badge.textContent=unread.length>9?"9+":String(unread.length);}const host=$("v8NotifList");if(!host)return;host.innerHTML=list.length?list.map(n=>`<button class="v8-notif-item ${read.has(n.id)?"read":"unread"}" data-v8-notif="${esc(n.id)}" data-route="${esc(n.route||"")}" data-date="${esc(n.date||"")}" type="button"><span class="v8-notif-icon ${esc(n.tone||"info")}">${n.icon}</span><div><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>${read.has(n.id)?"":"<i></i>"}</button>`).join(""):`<div class="v8-empty-notif">🔕<strong>${esc(t("noNotifications"))}</strong></div>`;qa("[data-v8-notif]",host).forEach(btn=>btn.onclick=()=>{const set=notificationReadSet();set.add(btn.dataset.v8Notif);saveNotificationRead(set);if(btn.dataset.date)localStorage.setItem(KEYS.pendingJournalDate,btn.dataset.date);if(btn.dataset.route)location.hash=`#/${btn.dataset.route}`;setNotificationPanel(false);setTimeout(enhanceRoute,100);refreshNotificationCenter();});}
-  function markAllNotificationsRead(){const set=notificationReadSet();buildNotifications().forEach(n=>set.add(n.id));saveNotificationRead(set);refreshNotificationCenter();}
+  function refreshNotificationCenter(forceList=false){
+    ensureUi();const list=buildNotifications(),read=notificationReadSet(),unread=list.filter(n=>!read.has(n.id));const badge=$("v8NotifBadge");
+    if(badge){badge.hidden=!unread.length;badge.textContent=unread.length>9?"9+":String(unread.length);}
+    const host=$("v8NotifList");if(!host)return;
+    const panel=$("v8NotifPanel"),panelOpen=panel && !panel.hidden;
+    // Keep the existing notification buttons stable while the panel is open.
+    if(panelOpen && !forceList && host.dataset.v806Rendered==="1") return;
+    host.innerHTML=list.length?list.map(n=>`<button class="v8-notif-item ${read.has(n.id)?"read":"unread"}" data-v8-notif="${esc(n.id)}" data-route="${esc(n.route||"")}" data-date="${esc(n.date||"")}" type="button"><span class="v8-notif-icon ${esc(n.tone||"info")}">${n.icon}</span><div><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>${read.has(n.id)?"":"<i></i>"}</button>`).join(""):`<div class="v8-empty-notif">🔕<strong>${esc(t("noNotifications"))}</strong></div>`;
+    host.dataset.v806Rendered="1";
+    qa("[data-v8-notif]",host).forEach(btn=>btn.onclick=()=>{const set=notificationReadSet();set.add(btn.dataset.v8Notif);saveNotificationRead(set);if(btn.dataset.date)localStorage.setItem(KEYS.pendingJournalDate,btn.dataset.date);if(btn.dataset.route)location.hash=`#/${btn.dataset.route}`;setNotificationPanel(false);requestEnhance(100);refreshNotificationCenter(true);});
+  }
+  function markAllNotificationsRead(){const set=notificationReadSet();buildNotifications().forEach(n=>set.add(n.id));saveNotificationRead(set);refreshNotificationCenter(true);}
   function toggleNotificationPanel(){setNotificationPanel($("v8NotifPanel")?.hidden!==false);}
-  function setNotificationPanel(open){const p=$("v8NotifPanel");if(!p)return;p.hidden=!open;p.classList.toggle("open",open);if(open)refreshNotificationCenter();}
+  function setNotificationPanel(open){const p=$("v8NotifPanel");if(!p)return;p.hidden=!open;p.classList.toggle("open",open);if(open)refreshNotificationCenter(true);}
 
   // ---------- Schedule Templates ----------
   const BUILTIN_TEMPLATES = [
@@ -473,15 +514,43 @@
     if(e.target.id==="v7ProjectForm"){setTimeout(()=>rawRemove(KEYS.projectDraft),20);}
   },true);
 
-  const observer=new MutationObserver(()=>{clearTimeout(observer._timer);observer._timer=setTimeout(enhanceRoute,80);});
+  // ---------- Stable interaction / route enhancement scheduler ----------
+  let interactionActive=false,enhancePending=false,enhanceTimer=null;
+  const INTERACTIVE_SELECTOR='button,a,input,select,textarea,[role="button"],[role="menuitem"],#fontPicker,#fontPickerMenu,#v802ProfileMenu,#v8NotifPanel,.v8-modal-backdrop,.modal-backdrop';
+  function requestEnhance(delay=60){
+    clearTimeout(enhanceTimer);
+    if(interactionActive){enhancePending=true;return;}
+    enhanceTimer=setTimeout(()=>{enhancePending=false;enhanceRoute();},delay);
+  }
+  document.addEventListener("pointerdown",e=>{if(e.target.closest?.(INTERACTIVE_SELECTOR))interactionActive=true;},true);
+  const releaseInteraction=()=>setTimeout(()=>{interactionActive=false;if(enhancePending)requestEnhance(20);},90);
+  document.addEventListener("pointerup",releaseInteraction,true);
+  document.addEventListener("pointercancel",releaseInteraction,true);
+
+  const ROUTE_ROOT_IDS=new Set(["v7JournalPage","v7ProjectsPage","v7ReportsPage","v7CalendarIntro","v7SettingsPage"]);
+  const observer=new MutationObserver(records=>{
+    // V7 replaces the direct contents of route roots when a page is genuinely
+    // re-rendered. Ignore nested real-time updates (clock, progress, mascot),
+    // otherwise open menus can be rebuilt every second.
+    const routeWasRebuilt=records.some(r=>r.type==="childList" && r.addedNodes.length && ROUTE_ROOT_IDS.has(r.target?.id));
+    if(routeWasRebuilt)requestEnhance(50);
+  });
   const main=q("main.dashboard");if(main)observer.observe(main,{childList:true,subtree:true});
 
-  window.addEventListener("hashchange",()=>setTimeout(enhanceRoute,60));
-  window.addEventListener("workday:v7-data-changed",()=>setTimeout(enhanceRoute,60));
+  window.addEventListener("hashchange",()=>requestEnhance(60));
+  window.addEventListener("workday:v7-data-changed",()=>requestEnhance(60));
+  document.addEventListener("click",e=>{if(e.target.closest?.(".lang-btn"))requestEnhance(100);},true);
   window.addEventListener("workday:journey-cleared",()=>{rawRemove(KEYS.journalDrafts);rawRemove(KEYS.projectDraft);rawRemove(KEYS.notifRead);cloud.localDirty=true;updateCloudIndicators();});
-  window.addEventListener("online",()=>{if(cloud.user){cloud.status="syncing";syncNow();}else updateCloudIndicators();});
+  window.addEventListener("online",()=>{if(cloud.user){cloud.status="syncing";syncNow({silent:true});}else updateCloudIndicators();});
   window.addEventListener("offline",()=>{if(cloud.user)cloud.status="offline";updateCloudIndicators();});
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cloud.user&&navigator.onLine)syncNow();});
+  let v807VisibilitySyncTimer=null;
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden||!cloud.user||!navigator.onLine||cloud.conflictRow)return;
+    clearTimeout(v807VisibilitySyncTimer);
+    v807VisibilitySyncTimer=setTimeout(()=>{
+      if(!document.hidden&&cloud.user&&navigator.onLine&&!cloud.conflictRow&&!cloud.reconciling)syncNow({silent:true});
+    },350);
+  });
   document.addEventListener("click",e=>{if(!e.target.closest?.("#v8NotifPanel,#v8NotifBtn")&&$("v8NotifPanel")?.hidden===false)setNotificationPanel(false);if(!e.target.closest?.("#v802ProfileMenu,#profileQuickBtn"))closeProfileMenu();});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();closeProfileMenu();}});
 
