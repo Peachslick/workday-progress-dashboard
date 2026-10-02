@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.1.0";
+  const VERSION = "8.1.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -73,17 +73,17 @@
       achievementReward: "Achievement",
       migrationReward: "Legacy progress",
       themeSakura: "Sakura",
-      themeSakuraDesc: "โทนชมพูอ่อนและกลีบดอกไม้สำหรับ Dashboard",
+      themeSakuraDesc: "เปลี่ยนทั้งหน้าเป็นบรรยากาศซากุระ ชมพูละมุนพร้อมกลีบดอกไม้เคลื่อนไหว",
       themeAurora: "Aurora",
-      themeAuroraDesc: "แสงเหนือสีฟ้าเขียวแบบนุ่ม ๆ",
+      themeAuroraDesc: "Aurora เต็มหน้าจอพร้อมแสงสีฟ้า เขียว และม่วงที่เคลื่อนไหวอย่างนุ่มนวล",
       themeGolden: "Golden",
-      themeGoldenDesc: "โทนทองสำหรับ Journey ระดับตำนาน",
+      themeGoldenDesc: "บรรยากาศทองเต็มหน้า พร้อมแสงและประกายแบบ Legendary Journey",
       effectSparkle: "Profile Sparkle",
-      effectSparkleDesc: "ประกายเล็ก ๆ รอบ Profile และ Mascot",
+      effectSparkleDesc: "ประกายดาวลอยทั่วหน้าจอ พร้อมแสงวิบวับรอบ Profile และ Mascot",
       effectHalo: "Soft Halo",
-      effectHaloDesc: "วงแสงนุ่ม ๆ รอบ Profile ที่ใช้งานอยู่",
+      effectHaloDesc: "วง Aurora Halo เคลื่อนไหวรอบหน้า พร้อมแสงพิเศษรอบ Profile และ Mascot",
       effectCelebration: "Celebration Aura",
-      effectCelebrationDesc: "Aura แบบฉลองรอบ Profile และ Mascot",
+      effectCelebrationDesc: "เอฟเฟกต์ฉลองเต็มหน้าจอ มี confetti แสง และประกายรอบ Profile กับ Mascot",
       chick: "Default Chick",
       cat: "Office Cat",
       bear: "Sleepy Bear",
@@ -137,17 +137,17 @@
       achievementReward: "Achievement",
       migrationReward: "Legacy progress",
       themeSakura: "Sakura",
-      themeSakuraDesc: "A soft pink floral dashboard atmosphere",
+      themeSakuraDesc: "A full-page sakura atmosphere with soft pink gradients and drifting petals",
       themeAurora: "Aurora",
-      themeAuroraDesc: "A subtle blue-green aurora glow",
+      themeAuroraDesc: "A full-screen animated aurora with blue, green and violet light",
       themeGolden: "Golden",
-      themeGoldenDesc: "A golden atmosphere for legendary journeys",
+      themeGoldenDesc: "A full-page golden atmosphere with legendary light and shimmer",
       effectSparkle: "Profile Sparkle",
-      effectSparkleDesc: "Small sparkles around the active Profile and Mascot",
+      effectSparkleDesc: "Floating stars across the screen with extra sparkle around Profile and Mascot",
       effectHalo: "Soft Halo",
-      effectHaloDesc: "A soft halo around the active Profile",
+      effectHaloDesc: "Animated aurora halo waves plus a luminous Profile and Mascot",
       effectCelebration: "Celebration Aura",
-      effectCelebrationDesc: "A celebratory aura around Profile and Mascot",
+      effectCelebrationDesc: "Full-screen celebration confetti, glow and a festive Profile and Mascot aura",
       chick: "Default Chick",
       cat: "Office Cat",
       bear: "Sleepy Bear",
@@ -358,7 +358,8 @@
     if (reward.type === "mascot") localStorage.setItem(KEYS.mascot, reward.id);
     if (reward.type === "theme") localStorage.setItem(KEYS.theme, reward.id);
     if (reward.type === "effect") localStorage.setItem(KEYS.effect, reward.id);
-    applyEquippedRewards();
+    applyEquippedRewards(reward.type === "effect");
+    flashRewardChange(reward.type);
     toast("✓", `${t("equippedToast")}: ${rewardName(reward)}`, "success");
     refreshAll();
     window.dispatchEvent(new CustomEvent("workday:v7-data-changed"));
@@ -388,11 +389,72 @@
     return { id, emoji:def.emoji, name:rewardName(def), message:copy[pKey] || copy.work, accessory:accessories[pKey] || snapshot.accessory || "", accent:def.accent };
   }
 
-  function applyEquippedRewards() {
+  function ensureRewardVisualLayers() {
+    let themeLayer = $("v81ThemeBackdrop");
+    if (!themeLayer) {
+      themeLayer = document.createElement("div");
+      themeLayer.id = "v81ThemeBackdrop";
+      themeLayer.className = "v81-theme-backdrop";
+      themeLayer.setAttribute("aria-hidden", "true");
+      document.body.prepend(themeLayer);
+    }
+    let effectLayer = $("v81EffectLayer");
+    if (!effectLayer) {
+      effectLayer = document.createElement("div");
+      effectLayer.id = "v81EffectLayer";
+      effectLayer.className = "v81-effect-layer";
+      effectLayer.setAttribute("aria-hidden", "true");
+      document.body.appendChild(effectLayer);
+    }
+    return {themeLayer, effectLayer};
+  }
+
+  function effectParticleMarkup(effect) {
+    if (effect === "sparkle") {
+      return Array.from({length:28}, (_,i) => {
+        const x=(i*37+11)%97, y=(i*53+7)%91, size=7+(i%5)*3, delay=-((i*17)%70)/10, duration=3.8+(i%6)*.55;
+        const glyph=i%4===0?"✧":i%3===0?"·":"✦";
+        return `<i class="v81-fx-spark" style="--x:${x}%;--y:${y}%;--size:${size}px;--delay:${delay}s;--dur:${duration}s">${glyph}</i>`;
+      }).join("");
+    }
+    if (effect === "halo") {
+      return `<i class="v81-fx-halo h1"></i><i class="v81-fx-halo h2"></i><i class="v81-fx-halo h3"></i><i class="v81-fx-halo-core"></i>`;
+    }
+    if (effect === "celebration") {
+      const shapes=["●","◆","✦","■","▲"];
+      return `<i class="v81-fx-celebrate-glow one"></i><i class="v81-fx-celebrate-glow two"></i>` + Array.from({length:34}, (_,i) => {
+        const x=(i*29+5)%98, size=6+(i%5)*2, delay=-((i*13)%85)/10, duration=5.2+(i%7)*.42, spin=(i%2?1:-1), drift=spin*35, rot=spin*720;
+        return `<i class="v81-fx-confetti c${i%6}" style="--x:${x}%;--size:${size}px;--delay:${delay}s;--dur:${duration}s;--drift:${drift}px;--rot:${rot}deg">${shapes[i%shapes.length]}</i>`;
+      }).join("");
+    }
+    return "";
+  }
+
+  function renderRewardVisuals(force=false) {
+    const {themeLayer,effectLayer}=ensureRewardVisualLayers();
+    const theme=selectedThemeId(), effect=selectedEffectId();
+    themeLayer.dataset.theme=theme;
+    if (force || effectLayer.dataset.effect !== effect) {
+      effectLayer.dataset.effect=effect;
+      effectLayer.innerHTML=effectParticleMarkup(effect);
+    }
+  }
+
+  function flashRewardChange(kind) {
+    const root=document.documentElement;
+    root.classList.remove("v811-reward-switching");
+    void root.offsetWidth;
+    root.dataset.rewardSwitchKind=kind||"reward";
+    root.classList.add("v811-reward-switching");
+    setTimeout(()=>root.classList.remove("v811-reward-switching"),760);
+  }
+
+  function applyEquippedRewards(forceVisual=false) {
     const root = document.documentElement;
     root.dataset.rewardTheme = selectedThemeId();
     root.dataset.rewardEffect = selectedEffectId();
     root.dataset.rewardMascot = selectedMascotId();
+    renderRewardVisuals(forceVisual);
   }
 
   function ensureCoinChip() {
