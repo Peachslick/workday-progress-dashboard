@@ -1,4 +1,4 @@
-# Workday Journey V8.0.2
+# Workday Journey V8.0.3
 
 A bilingual, local-first work and internship journey app built with HTML, CSS and JavaScript. V8 adds optional Supabase accounts and Cloud Sync while preserving full Local Mode.
 
@@ -85,7 +85,7 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 The app uses hash routing (`#/dashboard`, `#/journal`, etc.), so no extra Vercel route configuration is required.
 
 
-## V8.0.2 Clean Top Bar
+## V8.0.3 Clean Top Bar
 - Top bar now focuses on current page, notifications, cloud status and profile.
 - Language, theme, install, settings and account shortcuts live in the Profile menu.
 - The original controls remain in the DOM for compatibility but are hidden from the header.

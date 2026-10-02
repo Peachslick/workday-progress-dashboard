@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.2";
+  const VERSION = "8.0.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -238,7 +238,7 @@
   window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
-  // ---------- V8.0.2 Clean Top Bar ----------
+  // ---------- V8.0.3 Clean Top Bar + Stable Progress Tab Title ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
@@ -265,7 +265,6 @@
     const item=TOPBAR_ROUTES[lang()][route];
     const icon=$("v802ContextIcon"),eyebrow=$("v802ContextEyebrow"),title=$("v802ContextTitle");
     if(icon)icon.textContent=item[0]; if(eyebrow)eyebrow.textContent=item[2]; if(title)title.textContent=item[1];
-    document.title=`${item[1]} · Workday Journey`;
   }
   function closeProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;menu.hidden=true;menu.classList.remove("open");$("profileQuickBtn")?.setAttribute("aria-expanded","false");}
   function toggleProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;const next=menu.hidden;menu.hidden=!next;menu.classList.toggle("open",next);$("profileQuickBtn")?.setAttribute("aria-expanded",String(next));if(next)renderProfileMenu();}

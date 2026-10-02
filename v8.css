@@ -14,7 +14,7 @@
 @media(max-width:460px){.v8-health-grid{grid-template-columns:1fr}.v8-public-stats{grid-template-columns:1fr 1fr}.v8-public-preview{padding:18px}.v8-public-progress strong{font-size:2rem}.v8-template-actions>*,.v8-diagnostic-actions>*,.v8-public-actions>*{flex:1 1 100%}}
 
 
-/* V8.0.2 - Clean Top Bar & Profile Menu */
+/* V8.0.3 - Clean Top Bar & Profile Menu */
 .v802-legacy-top-control{display:none!important}
 .v802-clean-topbar .v7-workspace .topbar{min-height:72px;padding:10px 16px 10px 18px;background:color-mix(in srgb,var(--card,#fff) 94%,#eef4ff 6%);border:1px solid color-mix(in srgb,var(--border,#dfe6f0) 86%,#b9caff 14%);box-shadow:0 10px 30px rgba(36,58,96,.07)}
 .v802-clean-topbar .v7-workspace .topbar-actions{margin-left:auto;padding:0;background:transparent;gap:8px;flex-wrap:nowrap}
