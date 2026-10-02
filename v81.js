@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.1.1";
+  const VERSION = "8.2.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -20,10 +20,17 @@
     theme: "wp-v81-equipped-theme",
     effect: "wp-v81-equipped-effect",
     retro: "wp-v81-retro-rewards-v1",
-    tab: "wp-v81-shop-tab"
+    tab: "wp-v81-shop-tab",
+    rebalance: "wp-v82-coin-rebalance-v1",
+    missions: "wp-v82-daily-missions",
+    activity: "wp-v82-daily-activity",
+    chests: "wp-v82-chests",
+    themeTrial: "wp-v82-theme-trial",
+    mascotXp: "wp-v82-mascot-xp"
   };
 
-  const TIER_COINS = { common: 5, rare: 10, epic: 20, legendary: 35 };
+  const ECONOMY = { workday:15, journal:10, project:50 };
+  const TIER_COINS = { common: 20, rare: 40, epic: 80, legendary: 150 };
 
   const TEXT = {
     th: {
@@ -34,8 +41,8 @@
       coinBalance: "Work Coins",
       lifetimeEarned: "ได้รับทั้งหมด",
       lifetimeSpent: "ใช้ไปทั้งหมด",
-      retroTitle: "Previous Progress Rewarded",
-      retroHelp: "V8.1 จะให้ Coin ย้อนหลังจาก Workday, Journal, Project และ Achievement ที่คุณทำสำเร็จก่อนอัปเดต โดยให้เพียงครั้งเดียว",
+      retroTitle: "V8.2 Coin Economy Rebalance",
+      retroHelp: "V8.2 ปรับเรท Coin ใหม่และเติมส่วนต่างย้อนหลังให้ Workday, Journal, Project และ Achievement เดิมโดยอัตโนมัติ พร้อม Daily Missions และ Chests",
       howToEarn: "รับ Coins ยังไง",
       earnWorkday: "ทำงานครบวัน",
       earnJournal: "บันทึก Daily Journal",
@@ -98,8 +105,8 @@
       coinBalance: "Work Coins",
       lifetimeEarned: "Lifetime earned",
       lifetimeSpent: "Lifetime spent",
-      retroTitle: "Previous Progress Rewarded",
-      retroHelp: "V8.1 grants one-time retroactive Coins for completed Workdays, Journals, Projects and Achievements from before this update",
+      retroTitle: "V8.2 Coin Economy Rebalance",
+      retroHelp: "V8.2 rebalances Coin rewards and automatically tops up previous Workdays, Journals, Projects and Achievements, plus Daily Missions and Chests",
       howToEarn: "How to earn Coins",
       earnWorkday: "Complete a workday",
       earnJournal: "Write a Daily Journal",
@@ -277,14 +284,14 @@
       const worked = Number(API.getWorkedMinutes(d, now) || 0);
       if (leave <= .001 && worked >= scheduled - .001) {
         const key = dateKey(d);
-        events.push({ id:`earn:workday:${key}`, amount:10, type:"workday", labelTh:`${t("workdayComplete")} · ${key}`, labelEn:`Completed Workday · ${key}`, createdAt:isoFromDateKey(key), meta:{date:key} });
+        events.push({ id:`earn:workday:${key}`, amount:ECONOMY.workday, type:"workday", labelTh:`${t("workdayComplete")} · ${key}`, labelEn:`Completed Workday · ${key}`, createdAt:isoFromDateKey(key), meta:{date:key} });
       }
     }
 
     const journals = read("wp-v6-journal", {});
     if (journals && typeof journals === "object" && !Array.isArray(journals)) {
       Object.entries(journals).forEach(([key, entry]) => {
-        events.push({ id:`earn:journal:${key}`, amount:5, type:"journal", labelTh:`${t("journalEntry")} · ${key}`, labelEn:`Daily Journal · ${key}`, createdAt:entry?.updatedAt || entry?.createdAt || isoFromDateKey(key), meta:{date:key} });
+        events.push({ id:`earn:journal:${key}`, amount:ECONOMY.journal, type:"journal", labelTh:`${t("journalEntry")} · ${key}`, labelEn:`Daily Journal · ${key}`, createdAt:entry?.updatedAt || entry?.createdAt || isoFromDateKey(key), meta:{date:key} });
       });
     }
 
@@ -293,7 +300,7 @@
       if (Number(project?.progress || 0) < 100) return;
       const pid = project?.id || `legacy-${stableHash(`${project?.name||"project"}|${project?.createdAt||index}`)}`;
       const name = String(project?.name || "Project");
-      events.push({ id:`earn:project:${pid}`, amount:20, type:"project", labelTh:`${t("projectComplete")} · ${name}`, labelEn:`Project Completed · ${name}`, createdAt:project?.updatedAt || project?.createdAt || new Date().toISOString(), meta:{projectId:pid,name} });
+      events.push({ id:`earn:project:${pid}`, amount:ECONOMY.project, type:"project", labelTh:`${t("projectComplete")} · ${name}`, labelEn:`Project Completed · ${name}`, createdAt:project?.updatedAt || project?.createdAt || new Date().toISOString(), meta:{projectId:pid,name} });
     });
 
     const achievements = API.getAchievements(API.getStats(now));
@@ -306,6 +313,27 @@
     return events;
   }
 
+  function coreTargetAmount(item) {
+    if (!item) return 0;
+    if (item.type === "workday" || String(item.id||"").startsWith("earn:workday:")) return ECONOMY.workday;
+    if (item.type === "journal" || String(item.id||"").startsWith("earn:journal:")) return ECONOMY.journal;
+    if (item.type === "project" || String(item.id||"").startsWith("earn:project:")) return ECONOMY.project;
+    if (item.type === "achievement" || String(item.id||"").startsWith("earn:achievement:")) return TIER_COINS[String(item.meta?.tier||"common").toLowerCase()] || TIER_COINS.common;
+    return 0;
+  }
+
+  function rebalanceEvents(list) {
+    const ids = new Set(list.map(item=>item.id));
+    return list.flatMap(item => {
+      const target = coreTargetAmount(item), current = Number(item?.amount||0);
+      if (target <= current || current < 0) return [];
+      const id = `rebalance:v82:${item.id}`;
+      if (ids.has(id)) return [];
+      const diff = Math.round(target-current);
+      return [{id,amount:diff,type:"rebalance",labelTh:`V8.2 Rebalance · ${historyLabel(item)}`,labelEn:`V8.2 Rebalance · ${item.labelEn||item.labelTh||item.id}`,createdAt:new Date().toISOString(),meta:{sourceId:item.id,targetAmount:target,oldAmount:current}}];
+    });
+  }
+
   let reconcileBusy = false;
   async function reconcileRewards({notify=true}={}) {
     if (reconcileBusy) return {added:0,count:0};
@@ -313,17 +341,22 @@
     try {
       const list = ledger();
       const ids = new Set(list.map(item => item.id));
-      const additions = candidateEvents().filter(item => !ids.has(item.id));
+      const coreAdditions = candidateEvents().filter(item => !ids.has(item.id));
+      const provisional = [...list, ...coreAdditions];
+      const rebalanceAdditions = rebalanceEvents(provisional).filter(item => !ids.has(item.id) && !coreAdditions.some(x=>x.id===item.id));
+      const additions = [...coreAdditions, ...rebalanceAdditions];
       if (additions.length) {
         const next = [...list, ...additions].sort((a,b) => new Date(a.createdAt||0) - new Date(b.createdAt||0));
         write(KEYS.ledger, next);
       }
-      const firstMigration = localStorage.getItem(KEYS.retro) !== "done";
-      if (firstMigration) localStorage.setItem(KEYS.retro, "done");
+      const firstRebalance = localStorage.getItem(KEYS.rebalance) !== "done";
+      if (firstRebalance) localStorage.setItem(KEYS.rebalance, "done");
       const total = additions.reduce((sum,item)=>sum+Math.max(0,Number(item.amount)||0),0);
       if (notify && additions.length) {
-        if (firstMigration) toast("🪙", t("retroAwarded", {coins:total}), "success");
-        else toast("🪙", `+${total} ${t("coinBalance")}`, "success");
+        const msg = firstRebalance
+          ? (lang()==="th"?`V8.2 ปรับ Economy + แจกย้อนหลังแล้ว +${total} Coins`:`V8.2 economy rebalance + retro rewards +${total} Coins`)
+          : `+${total} ${t("coinBalance")}`;
+        toast("🪙", msg, "success");
       }
       refreshAll();
       return {added:total,count:additions.length};
@@ -356,7 +389,7 @@
   function equipReward(reward) {
     if (!reward || !isOwned(reward)) return;
     if (reward.type === "mascot") localStorage.setItem(KEYS.mascot, reward.id);
-    if (reward.type === "theme") localStorage.setItem(KEYS.theme, reward.id);
+    if (reward.type === "theme") { localStorage.setItem(KEYS.theme, reward.id); localStorage.removeItem(KEYS.themeTrial); }
     if (reward.type === "effect") localStorage.setItem(KEYS.effect, reward.id);
     applyEquippedRewards(reward.type === "effect");
     flashRewardChange(reward.type);
@@ -432,7 +465,7 @@
 
   function renderRewardVisuals(force=false) {
     const {themeLayer,effectLayer}=ensureRewardVisualLayers();
-    const theme=selectedThemeId(), effect=selectedEffectId();
+    const theme=effectiveThemeId(), effect=selectedEffectId();
     themeLayer.dataset.theme=theme;
     if (force || effectLayer.dataset.effect !== effect) {
       effectLayer.dataset.effect=effect;
@@ -451,7 +484,7 @@
 
   function applyEquippedRewards(forceVisual=false) {
     const root = document.documentElement;
-    root.dataset.rewardTheme = selectedThemeId();
+    root.dataset.rewardTheme = effectiveThemeId();
     root.dataset.rewardEffect = selectedEffectId();
     root.dataset.rewardMascot = selectedMascotId();
     renderRewardVisuals(forceVisual);
@@ -475,6 +508,7 @@
   }
 
   function historyLabel(item) { return lang() === "th" ? (item.labelTh || item.labelEn || item.id) : (item.labelEn || item.labelTh || item.id); }
+  function historyValue(item) { const n=Number(item?.amount||0); if(n===0&&item?.meta?.rewardText)return item.meta.rewardText; return `${n>=0?"+":""}${n} 🪙`; }
   function formatHistoryDate(iso) {
     const d = new Date(iso || Date.now());
     if (Number.isNaN(d.getTime())) return "";
@@ -483,7 +517,8 @@
   function rewardCard(reward) {
     const owned = isOwned(reward), equipped = isEquipped(reward), currentBalance = balance();
     const visual = reward.type === "mascot" ? reward.emoji : reward.icon;
-    const desc = reward.type === "mascot" ? (lang()==="th" ? "เปลี่ยนบุคลิกและข้อความตาม Workday Progress" : "Changes personality and messages with Workday Progress") : t(reward.descKey);
+    const bond = reward.type === "mascot" ? mascotBond(reward.id) : null;
+    const desc = reward.type === "mascot" ? `${lang()==="th" ? "เปลี่ยนบุคลิกและข้อความตาม Workday Progress" : "Changes personality and messages with Workday Progress"} · Bond Lv.${bond.level} (${bond.progress}/100 XP)` : t(reward.descKey);
     let action = "";
     if (equipped) action = `<button type="button" class="v81-reward-btn equipped" disabled>✓ ${esc(t("equipped"))}</button>`;
     else if (owned) action = `<button type="button" class="v81-reward-btn" data-v81-equip="${esc(reward.type)}:${esc(reward.id)}">${esc(t("equip"))}</button>`;
@@ -497,11 +532,11 @@
     const tab = localStorage.getItem(KEYS.tab) || "mascots";
     const list = ledger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const bal = balance(list), earned = lifetimeEarned(list), spent = lifetimeSpent(list);
-    const tabContent = tab === "mascots" ? MASCOTS.map(rewardCard).join("") : tab === "themes" ? THEMES.map(rewardCard).join("") : tab === "effects" ? EFFECTS.map(rewardCard).join("") : `<div class="v81-history-list">${list.length ? list.slice(0,120).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${Number(item.amount)>=0?"+":""}${Number(item.amount)} 🪙</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
+    const tabContent = tab === "mascots" ? MASCOTS.map(rewardCard).join("") : tab === "themes" ? THEMES.map(rewardCard).join("") : tab === "effects" ? EFFECTS.map(rewardCard).join("") : `<div class="v81-history-list">${list.length ? list.slice(0,120).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.1</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.2</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
-      <section class="v81-earn-card"><div><p class="eyebrow">${esc(t("howToEarn"))}</p><h3>${esc(t("retroTitle"))}</h3><p>${esc(t("retroHelp"))}</p></div><div class="v81-earn-grid"><span>🕒 <b>+10</b> ${esc(t("earnWorkday"))}</span><span>📓 <b>+5</b> ${esc(t("earnJournal"))}</span><span>🧩 <b>+20</b> ${esc(t("earnProject"))}</span><span>🏆 <b>+5 / +10 / +20 / +35</b> ${esc(t("earnAchievement"))}</span></div></section>
+      <section class="v81-earn-card"><div><p class="eyebrow">${esc(t("howToEarn"))}</p><h3>${esc(t("retroTitle"))}</h3><p>${esc(t("retroHelp"))}</p></div><div class="v81-earn-grid"><span>🕒 <b>+15</b> ${esc(t("earnWorkday"))}</span><span>📓 <b>+10</b> ${esc(t("earnJournal"))}</span><span>🧩 <b>+50</b> ${esc(t("earnProject"))}</span><span>🏆 <b>+20 / +40 / +80 / +150</b> ${esc(t("earnAchievement"))}</span><span>🎯 <b>+5 – +20</b> ${lang()==="th"?"Daily Mission":"Daily Mission"}</span><span>🎁 <b>+5 – +100</b> ${lang()==="th"?"Daily / Weekly Chest":"Daily / Weekly Chest"}</span></div></section>
       <div class="v81-shop-tabs">${[["mascots","🐣",t("mascots")],["themes","🎨",t("themes")],["effects","✨",t("effects")],["history","📜",t("history")]].map(([id,icon,label])=>`<button type="button" data-v81-tab="${id}" class="${tab===id?"active":""}">${icon}<span>${esc(label)}</span></button>`).join("")}</div>
       <section class="v81-shop-grid ${tab==="history"?"history":""}">${tabContent}</section>`;
 
@@ -510,10 +545,153 @@
     qa("[data-v81-equip]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Equip.split(":"); equipReward(rewardBy(type,id)); }));
   }
 
+
+  // ---------- V8.2 Daily Missions + Chests ----------
+  const MISSION_DEFS = {
+    half_shift:{group:"work",reward:8,icon:"◔",th:"ผ่านครึ่งวัน",en:"Halfway Shift",descTh:"ทำงานให้ได้อย่างน้อย 50% ของเวลาวันนี้",descEn:"Complete at least 50% of today's work time"},
+    focus_4h:{group:"work",reward:10,icon:"⏱",th:"Focus 4 Hours",en:"Focus 4 Hours",descTh:"สะสมเวลาทำงานให้ครบ 4 ชั่วโมง",descEn:"Accumulate 4 hours of work time"},
+    strong_finish:{group:"work",reward:12,icon:"⚡",th:"Strong Finish",en:"Strong Finish",descTh:"ทำงานให้ได้อย่างน้อย 80% ของวัน",descEn:"Reach at least 80% of today's work time"},
+    full_shift:{group:"work",reward:15,icon:"🏁",th:"Full Workday",en:"Full Workday",descTh:"ทำงานครบวันตามตาราง",descEn:"Complete the full scheduled workday"},
+    journal_today:{group:"journal",reward:10,icon:"📓",th:"Daily Chronicle",en:"Daily Chronicle",descTh:"บันทึก Daily Journal ของวันนี้",descEn:"Write today's Daily Journal"},
+    journal_reflection:{group:"journal",reward:12,icon:"✍️",th:"Reflection Note",en:"Reflection Note",descTh:"เขียนสิ่งที่เรียนรู้วันนี้อย่างน้อย 20 ตัวอักษร",descEn:"Write at least 20 characters in today's learning note"},
+    journal_project:{group:"journal",reward:12,icon:"🔗",th:"Connect the Work",en:"Connect the Work",descTh:"เชื่อม Journal วันนี้กับ Project อย่างน้อย 1 Project",descEn:"Link today's Journal to at least one Project"},
+    project_update:{group:"project",reward:12,icon:"🧩",th:"Project Momentum",en:"Project Momentum",descTh:"บันทึกหรืออัปเดต Project อย่างน้อย 1 รายการวันนี้",descEn:"Save or update at least one Project today"},
+    project_push50:{group:"project",reward:15,icon:"🚀",th:"Push Past 50",en:"Push Past 50",descTh:"อัปเดต Project วันนี้และให้ Progress ถึง 50% ขึ้นไป",descEn:"Update a Project today and reach at least 50% progress"},
+    balanced_day:{group:"bonus",reward:15,icon:"⚖️",th:"Balanced Day",en:"Balanced Day",descTh:"ทำงานเกินครึ่งวันและมี Journal วันนี้",descEn:"Reach half a workday and write today's Journal"},
+    power_day:{group:"bonus",reward:20,icon:"🔥",th:"Power Day",en:"Power Day",descTh:"ทำงานครบวันพร้อมบันทึก Journal",descEn:"Complete the workday and today's Journal"},
+    rewards_visit:{group:"explore",reward:5,icon:"🎁",th:"Reward Explorer",en:"Reward Explorer",descTh:"เข้าไปดู Reward Shop วันนี้",descEn:"Visit the Reward Shop today"},
+    achievements_visit:{group:"explore",reward:5,icon:"🏆",th:"Achievement Check",en:"Achievement Check",descTh:"เข้าไปดูหน้า Achievements วันนี้",descEn:"Visit the Achievements page today"}
+  };
+
+  function dayKeyNow(){ return dateKey(API.getNow()); }
+  function isoDay(value){ try { const d=new Date(value); return Number.isNaN(d.getTime())?"":dateKey(d); } catch { return ""; } }
+  function activityMap(){ const value=read(KEYS.activity,{}); return value&&typeof value==="object"&&!Array.isArray(value)?value:{}; }
+  function markRouteVisit(){
+    const key=dayKeyNow(), route=(location.hash.replace(/^#\/?/,"").split(/[?&]/)[0]||"dashboard").toLowerCase();
+    const map=activityMap(), row=map[key]||{routes:[],openedAt:new Date().toISOString()};
+    if(!Array.isArray(row.routes)) row.routes=[];
+    if(!row.routes.includes(route)){ row.routes.push(route); row.updatedAt=new Date().toISOString(); map[key]=row; write(KEYS.activity,map); }
+  }
+  function missionContext(key=dayKeyNow()){
+    const d=dateFromKey(key), now=API.getNow(), scheduled=Number(API.getScheduledMinutes(d)||0), capacity=Number(API.getActualDayCapacity(d)||0), leave=Number(API.getLeaveMinutes(d)||0), worked=Number(API.getWorkedMinutes(d,now)||0);
+    const journals=read("wp-v6-journal",{}), journal=journals?.[key]||null;
+    const projectsRaw=read("wp-v6-projects",[]), projects=Array.isArray(projectsRaw)?projectsRaw:[];
+    const updatedToday=projects.filter(p=>isoDay(p?.updatedAt)===key);
+    const routes=activityMap()?.[key]?.routes||[];
+    return {key,d,now,scheduled,capacity,leave,worked,journal,projects,updatedToday,routes};
+  }
+  function missionEligible(id,c){
+    if(["half_shift","strong_finish","balanced_day"].includes(id)) return c.capacity>0;
+    if(id==="focus_4h") return c.capacity>=240;
+    if(["full_shift","power_day"].includes(id)) return c.scheduled>0&&c.leave<=.001;
+    if(id==="journal_project") return c.projects.length>0;
+    if(["project_update","project_push50"].includes(id)) return c.projects.some(p=>!p.archived);
+    return true;
+  }
+  function missionProgress(id,c){
+    if(id==="half_shift") return {value:Math.min(c.worked,c.capacity*.5),target:Math.max(1,c.capacity*.5)};
+    if(id==="focus_4h") return {value:Math.min(c.worked,240),target:240};
+    if(id==="strong_finish") return {value:Math.min(c.worked,c.capacity*.8),target:Math.max(1,c.capacity*.8)};
+    if(id==="full_shift") return {value:Math.min(c.worked,c.scheduled),target:Math.max(1,c.scheduled)};
+    if(id==="journal_today") return {value:c.journal?1:0,target:1};
+    if(id==="journal_reflection") return {value:Math.min(String(c.journal?.learned||"").trim().length,20),target:20};
+    if(id==="journal_project") return {value:(c.journal?.projectIds||[]).length?1:0,target:1};
+    if(id==="project_update") return {value:c.updatedToday.length?1:0,target:1};
+    if(id==="project_push50") return {value:c.updatedToday.some(p=>Number(p.progress||0)>=50)?1:0,target:1};
+    if(id==="balanced_day") return {value:(c.worked>=c.capacity*.5&&c.journal)?1:0,target:1};
+    if(id==="power_day") return {value:(c.worked>=c.scheduled-.001&&c.leave<=.001&&c.journal)?1:0,target:1};
+    if(id==="rewards_visit") return {value:c.routes.includes("rewards")?1:0,target:1};
+    if(id==="achievements_visit") return {value:c.routes.includes("achievements")?1:0,target:1};
+    return {value:0,target:1};
+  }
+  function seedNumber(text){ return parseInt(stableHash(text),36)>>>0; }
+  function pickSeeded(ids,seed){ return [...ids].sort((a,b)=>seedNumber(`${seed}:${a}`)-seedNumber(`${seed}:${b}`))[0]; }
+  function missionStore(){ const value=read(KEYS.missions,{}); return value&&typeof value==="object"&&!Array.isArray(value)?value:{}; }
+  function dailyMissionSet(key=dayKeyNow()){
+    const store=missionStore(); if(store[key]?.ids?.length===3) return store[key];
+    const c=missionContext(key), cfg=API.getConfig(), seed=`${key}|${cfg.startDate}|${cfg.profileName||"journey"}`;
+    const claimed=ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).map(x=>String(x.id).split(":").pop()).filter(id=>MISSION_DEFS[id]);
+    const groups=[];
+    if(c.capacity>0) groups.push(["half_shift","focus_4h","strong_finish","full_shift"].filter(id=>missionEligible(id,c)));
+    else groups.push(["rewards_visit","achievements_visit"]);
+    groups.push(["journal_today","journal_reflection","journal_project"].filter(id=>missionEligible(id,c)));
+    groups.push(["project_update","project_push50","balanced_day","power_day","rewards_visit","achievements_visit"].filter(id=>missionEligible(id,c)));
+    const ids=[...new Set(claimed)];
+    groups.forEach((pool,i)=>{ const clean=pool.filter(id=>!ids.includes(id)); if(ids.length<3&&clean.length) ids.push(pickSeeded(clean,`${seed}:${i}`)); });
+    const fallback=Object.keys(MISSION_DEFS).filter(id=>missionEligible(id,c)&&!ids.includes(id));
+    while(ids.length<3&&fallback.length){ const id=pickSeeded(fallback,`${seed}:fallback:${ids.length}`); ids.push(id); fallback.splice(fallback.indexOf(id),1); }
+    store[key]={ids:ids.slice(0,3),generatedAt:new Date().toISOString()}; write(KEYS.missions,store); return store[key];
+  }
+  function missionClaimed(key,id){ return ledger().some(x=>x.id===`earn:mission:${key}:${id}`); }
+  function missionClaimCount(key){ return ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).length; }
+  function claimMission(id){
+    const key=dayKeyNow(), set=dailyMissionSet(key); if(!set.ids.includes(id)||missionClaimed(key,id)||missionClaimCount(key)>=3)return;
+    const def=MISSION_DEFS[id], p=missionProgress(id,missionContext(key)); if(p.value+1e-6<p.target){toast("🎯",lang()==="th"?"ภารกิจนี้ยังไม่สำเร็จ":"This mission is not complete yet","error");return;}
+    const list=ledger(); list.push({id:`earn:mission:${key}:${id}`,amount:def.reward,type:"mission",labelTh:`Daily Mission · ${def.th}`,labelEn:`Daily Mission · ${def.en}`,createdAt:new Date().toISOString(),meta:{date:key,missionId:id}}); write(KEYS.ledger,list);
+    toast("🎯",`+${def.reward} Coins · ${lang()==="th"?def.th:def.en}`,"success"); refreshAll();
+  }
+  function mascotXpMap(){ const v=read(KEYS.mascotXp,{}); return v&&typeof v==="object"&&!Array.isArray(v)?v:{}; }
+  function mascotBond(id){ const xp=Math.max(0,Math.round(Number(mascotXpMap()[id]||0))); return {xp,level:Math.floor(xp/100)+1,progress:xp%100}; }
+  function addMascotXp(id,amount){ const map=mascotXpMap(); map[id]=Math.max(0,Math.round(Number(map[id]||0)+Number(amount||0))); write(KEYS.mascotXp,map); }
+  function activeThemeTrial(){
+    const trial=read(KEYS.themeTrial,null); if(!trial?.themeId||!rewardBy("theme",trial.themeId)) return null;
+    const expires=new Date(trial.expiresAt||0).getTime(); if(!expires||Date.now()>=expires){localStorage.removeItem(KEYS.themeTrial);return null;} return trial;
+  }
+  function effectiveThemeId(){ return activeThemeTrial()?.themeId || selectedThemeId(); }
+  function grantThemeTrial(hours,seed){
+    const locked=THEMES.filter(x=>x.price>0&&!isOwned(x));
+    if(!locked.length) return null;
+    const theme=locked[seedNumber(seed)%locked.length], start=Date.now(), end=start+hours*3600000;
+    const trial={themeId:theme.id,startedAt:new Date(start).toISOString(),expiresAt:new Date(end).toISOString(),hours}; write(KEYS.themeTrial,trial); return trial;
+  }
+  function weekKey(date=API.getNow()){
+    const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()), day=(d.getDay()+6)%7; d.setDate(d.getDate()-day);
+    const y=d.getFullYear(), first=new Date(y,0,1), week=Math.floor((d-first)/86400000/7)+1; return `${y}-W${String(week).padStart(2,"0")}`;
+  }
+  function weekStartDate(date=API.getNow()){ const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()), day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return d; }
+  function dailyChestOpened(key){ return ledger().some(x=>x.id===`chest:daily:${key}`); }
+  function weeklyChestOpened(key=weekKey()){ return ledger().some(x=>x.id===`chest:weekly:${key}`); }
+  function completedDailyInWeek(){ const start=weekStartDate(), keys=[]; for(let i=0;i<7;i++)keys.push(dateKey(addDays(start,i))); return keys.filter(dailyChestOpened).length; }
+  function chestReward(kind,key){
+    const cfg=API.getConfig(), seed=`${kind}|${key}|${cfg.startDate}|${cfg.profileName||"journey"}`, roll=seedNumber(seed)%100;
+    if(kind==="daily"){
+      if(roll<70){const coins=[5,10,15,20,25,30][seedNumber(seed+":coins")%6];return{type:"coins",coins,text:`+${coins} Coins`};}
+      if(roll<85){const theme=THEMES.filter(x=>x.price>0&&!isOwned(x));if(theme.length)return{type:"trial",hours:24,text:lang()==="th"?"Theme Trial 24 ชั่วโมง":"24h Theme Trial"};}
+      const xp=[15,20,25,30][seedNumber(seed+":xp")%4];return{type:"xp",xp,text:`+${xp} Mascot XP`};
+    }
+    if(roll<60){const coins=[40,50,60,70,80,100][seedNumber(seed+":coins")%6];return{type:"coins",coins,text:`+${coins} Coins`};}
+    if(roll<80){const theme=THEMES.filter(x=>x.price>0&&!isOwned(x));if(theme.length)return{type:"trial",hours:48,text:lang()==="th"?"Theme Trial 48 ชั่วโมง":"48h Theme Trial"};}
+    const xp=[60,80,100,120][seedNumber(seed+":xp")%4];return{type:"xp",xp,text:`+${xp} Mascot XP`};
+  }
+  function openChest(kind){
+    const dailyKey=dayKeyNow(), key=kind==="daily"?dailyKey:weekKey(), id=`chest:${kind}:${key}`;
+    if(ledger().some(x=>x.id===id))return;
+    if(kind==="daily"&&missionClaimCount(dailyKey)<3){toast("🎁",lang()==="th"?"ทำ Daily Missions ให้ครบ 3 ภารกิจก่อน":"Complete all 3 Daily Missions first","error");return;}
+    if(kind==="weekly"&&completedDailyInWeek()<5){toast("🎁",lang()==="th"?"เปิด Daily Chest ให้ครบ 5 วันในสัปดาห์ก่อน":"Open Daily Chests on 5 days this week first","error");return;}
+    const reward=chestReward(kind,key), list=ledger(); let amount=0, rewardText=reward.text;
+    if(reward.type==="coins") amount=reward.coins;
+    if(reward.type==="trial"){const trial=grantThemeTrial(reward.hours,`${kind}:${key}`);if(trial){const theme=rewardBy("theme",trial.themeId);rewardText=`${rewardName(theme)} · ${reward.hours}h Trial`;}else{amount=kind==="daily"?20:70;rewardText=`+${amount} Coins`;}}
+    if(reward.type==="xp"){const mascot=selectedMascotId();addMascotXp(mascot,reward.xp);rewardText=`+${reward.xp} XP · ${rewardName(rewardBy("mascot",mascot))}`;}
+    list.push({id,amount,type:"chest",labelTh:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,labelEn:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,createdAt:new Date().toISOString(),meta:{kind,key,rewardType:reward.type,rewardText}}); write(KEYS.ledger,list);
+    toast("🎁",rewardText,"success");applyEquippedRewards(true);refreshAll();
+  }
+  function progressText(value,target){ if(target<=1)return value>=target?(lang()==="th"?"สำเร็จแล้ว":"Completed"):`${Math.round(value)}/${Math.round(target)}`; return `${Math.round(value)}/${Math.round(target)} min`; }
+  function renderMissions(){
+    const root=$("v82MissionsPage"); if(!root)return; markRouteVisit();
+    const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyOpen=dailyChestOpened(key), weeklyDone=completedDailyInWeek(), weeklyOpen=weeklyChestOpened(), trial=activeThemeTrial();
+    const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
+    const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.2</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
+    qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
+  }
+
   function refreshAll() {
+    markRouteVisit();
     applyEquippedRewards();
     ensureCoinChip();
     if (location.hash.includes("/rewards")) renderShop();
+    if (location.hash.includes("/missions")) renderMissions();
   }
 
   window.WorkdayRewards = {
@@ -525,6 +703,10 @@
     getEquippedTheme: () => selectedThemeId(),
     getEquippedEffect: () => selectedEffectId(),
     renderShop,
+    renderMissions,
+    claimMission,
+    openChest,
+    getMascotBond: id => mascotBond(id),
     reconcile: reconcileRewards
   };
 
@@ -545,7 +727,8 @@
     setTimeout(() => initialReconcile(), 700);
     window.addEventListener("workday:v7-data-changed", () => setTimeout(() => reconcileRewards({notify:true}), 80));
     window.addEventListener("workday:v8-data-changed", () => setTimeout(() => reconcileRewards({notify:false}), 80));
-    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-")) refreshAll(); });
+    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-")) refreshAll(); });
+    window.addEventListener("hashchange", () => { markRouteVisit(); setTimeout(refreshAll,40); });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) reconcileRewards({notify:false}); });
     window.addEventListener("online", () => reconcileRewards({notify:false}));
     setInterval(() => reconcileRewards({notify:true}), 15000);
