@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.0";
+  const VERSION = "8.0.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -265,7 +265,12 @@
   function renderAccountModal(){
     const body=$("v8AuthBody");if(!body)return;
     if(!cloud.configured){body.innerHTML=`<div class="v8-cloud-unconfigured"><span>🧩</span><h3>${esc(t("cloudNotConfigured"))}</h3><p>${esc(t("cloudNotConfiguredHelp"))}</p><code>supabase-config.js + supabase-setup.sql</code></div>`;return;}
-    if(!cloud.user){body.innerHTML=`<div class="v8-auth-form"><label><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label><span>${esc(t("password"))}</span><input id="v8AuthPassword" type="password" autocomplete="current-password" minlength="6" placeholder="••••••••"></label><div class="v8-auth-actions"><button id="v8SignIn" class="primary-btn" type="button">${esc(t("signIn"))}</button><button id="v8SignUp" class="outline-btn" type="button">${esc(t("createAccount"))}</button></div><p class="v8-auth-note">🔐 ${esc(t("localDefault"))}</p></div>`;$("v8SignIn").onclick=authSignIn;$("v8SignUp").onclick=authSignUp;return;}
+    if(!cloud.user){
+      // Dashboard time/progress is refreshed every second. V8 also observes those DOM
+      // changes to enhance the current route. Do not rebuild the auth form while the
+      // user is typing, otherwise the inputs are replaced and appear to refresh/reset.
+      if($("v8AuthEmail") && $("v8AuthPassword") && $("v8SignIn") && $("v8SignUp")) return;
+      body.innerHTML=`<div class="v8-auth-form"><label><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label><span>${esc(t("password"))}</span><input id="v8AuthPassword" type="password" autocomplete="current-password" minlength="6" placeholder="••••••••"></label><div class="v8-auth-actions"><button id="v8SignIn" class="primary-btn" type="button">${esc(t("signIn"))}</button><button id="v8SignUp" class="outline-btn" type="button">${esc(t("createAccount"))}</button></div><p class="v8-auth-note">🔐 ${esc(t("localDefault"))}</p></div>`;$("v8SignIn").onclick=authSignIn;$("v8SignUp").onclick=authSignUp;return;}
     const last=localStorage.getItem(KEYS.cloudLastSync);body.innerHTML=`<div class="v8-account-card"><div class="v8-account-avatar">☁</div><div><span>${esc(t("signedInAs"))}</span><strong>${esc(cloud.user.email||cloud.user.id)}</strong><small>${esc(t("lastSync"))}: ${esc(safeDateLabel(last))}</small></div></div><div class="v8-cloud-state"><i data-state="${esc(cloud.status)}"></i><strong>${esc(cloudStatusLabel())}</strong></div><div class="v8-auth-actions grid"><button id="v8SyncNow" class="primary-btn" type="button">↻ ${esc(t("syncNow"))}</button><button id="v8UploadDevice" class="outline-btn" type="button">💻↑ ${esc(t("uploadDevice"))}</button><button id="v8LoadCloud" class="outline-btn" type="button">☁↓ ${esc(t("loadCloud"))}</button><button id="v8SignOut" class="secondary-btn" type="button">${esc(t("signOut"))}</button></div>`;
     $("v8SyncNow").onclick=syncNow;$("v8UploadDevice").onclick=()=>uploadCloudState();$("v8LoadCloud").onclick=()=>loadCloudState();$("v8SignOut").onclick=authSignOut;
   }

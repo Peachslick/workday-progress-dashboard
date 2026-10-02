@@ -1,4 +1,4 @@
-# Workday Journey V8.0.0
+# Workday Journey V8.0.1
 
 A bilingual, local-first work and internship journey app built with HTML, CSS and JavaScript. V8 adds optional Supabase accounts and Cloud Sync while preserving full Local Mode.
 
