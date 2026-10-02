@@ -1,95 +1,28 @@
-# Workday Journey V7.7.1
+WORKDAY JOURNEY V8.0.0
+======================
 
-A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
+V8 adds optional Supabase Account + Cloud Sync while keeping Local Mode available.
 
-## V7 — App Layout Redesign
+NEW IN V8
+- Optional Email/Password account
+- Cross-device Cloud Sync for wp-* Workday Journey data
+- Existing local-data migration and conflict choice
+- Auto Save Draft for Journal and new Project forms
+- Notification Center
+- Schedule Templates + Import/Export JSON
+- Data Health / Storage Status
+- PWA diagnostics (Check Update / Clear Cache / Reload Latest)
+- Privacy-safe Public Journey Card / share link
+- Mobile UI polish
 
-V7 reorganizes the feature-rich V6 dashboard into a clearer app-style layout with seven dedicated areas:
+SUPABASE SETUP
+1. Create a Supabase project.
+2. Run supabase-setup.sql in Supabase SQL Editor.
+3. Edit supabase-config.js with Project URL and Publishable/Anon key.
+4. Do NOT use a service_role/secret key in browser code.
+5. See SUPABASE_SETUP.md for full instructions.
 
-- Dashboard — today's progress, live countdown, timeline, internship overview and quick actions
-- Daily Journal — full daily journal editor and journal history
-- Projects — project tracker with status, progress and journal links
-- Achievements — achievement center, milestones, journey timeline and story
-- Reports & Analytics — attendance, monthly breakdown, heatmap, milestone predictor and final report
-- Calendar & Attendance — leave, company holidays, compensatory workdays and calendar presets
-- Settings — profile, appearance, timezone/date format, backup and dashboard tools
+Without Supabase configuration, the app continues to work locally exactly as before.
 
-The app uses hash routing (`#/dashboard`, `#/journal`, etc.), so it works on Vercel without server-side routing configuration.
-
-## Data & privacy
-
-Journey data is stored in the user's browser with `localStorage`. Users opening the same Vercel URL do not share each other's local data. Existing V5/V6 local data remains compatible with V7.
-
-## Run locally
-
-Open `index.html` directly, use `start-dashboard.bat`, or use `start-pwa-local.bat` to test PWA features on localhost.
-
-## Deploy
-
-Upload the contents of `workday_progress-dashboard/` to the existing GitHub repository. If Vercel is connected to the repository, the new commit deploys automatically.
-
-
-## V7.2 updates
-- Desktop sidebar can be collapsed and reopened from the top bar.
-- Font size now scales rem-based typography across the whole app with clearly different Small / Medium / Large levels.
-- Thai mode now fully translates the V7 Settings page and sidebar labels.
-
-
-## V7.3 updates
-- Project Tracker editor now uses the full content width.
-- Project cards are displayed below the editor in a responsive grid.
-- Top application header now has a distinct background, border and shadow for clearer hierarchy.
-
-
-## V7.4 updates
-- 30 achievement challenges across time, journey, projects, journals, attendance, and exploration.
-- Common / Rare / Epic / Legendary tiers with progress bars.
-- Unlockable profile titles linked to harder achievements.
-- Select an unlocked title from Settings; it appears on the sidebar and top profile.
-- Existing users are migrated without achievement-popup spam.
-
-V7.7.1 additions:
-- Compact Daily Journal project selector for large project lists.
-- UX & Quality rewards and profile aura effects.
-- New titles for 500 Hours, 75% Complete, 90% Complete and Chronicle Master.
-
-
-V7.7.1 UX & Quality Update:
-- Journal search/filter by text, project, mood and month
-- Project archive with Active / Completed / Archived tabs
-- Achievement detail modal with keyboard access and unlock metadata
-- Title preview before applying
-- Custom confirm + 8-second undo for journal/project/calendar changes
-- Backup schemaVersion + migration for older backups
-- Dashboard quick summary, accessibility focus states, mobile polish and lighter periodic rendering
-- Existing PWA update-available flow retained and cache bumped to V7.7.1
-
-- Daily Work Journal now includes a monthly completion calendar: saved days show a check mark and past working days without a journal remain visibly pending.
-- Ctrl+K Command Palette removed.
-
-V7.7.1 Progress Mascot:
-- Daily Work Journal no longer stretches to the height of Journal History.
-- Work/Learned text areas are more compact and remain vertically resizable.
-- Mood and Project selection use a bounded section with internal scrolling.
-- Save/Delete buttons return to compact sizes on desktop with responsive mobile behavior.
-
-
-## V7.7.1 Progress Mascot
-- Perfect Month now evaluates the Journey portion of a month, so a Journey beginning mid-month can still qualify.
-- A month qualifies after all scheduled workdays in that Journey month period are complete with no Personal Leave.
-- Company holidays and weekends do not count as Personal Leave.
-- Achievement details now show which month and Journey date range earned Perfect Month.
-
-
-V7.7 Progress Mascot:
-- Default Chick appears on Dashboard and changes state/message with daily progress.
-- Break/rest/holiday/leave/100% states are supported.
-- No data reset. Coins and Reward Shop are not included yet.
-
-
-V7.7.1 Profile Avatar:
-- Profile can use the live Default Chick mascot or a user-uploaded photo.
-- Uploaded images are center-cropped, resized to 256x256, compressed, and stored locally in the browser.
-- Avatar selection is shown in the top profile, sidebar profile, and Settings preview.
-- Public Demo Mode always shows the mascot to avoid exposing a personal photo.
-- Avatar data is included automatically in JSON backups because it uses wp-* localStorage keys.
+DEPLOY
+Replace the existing workday_progress-dashboard files in GitHub and commit. Vercel will deploy automatically if the repository is connected.

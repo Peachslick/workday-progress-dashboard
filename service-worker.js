@@ -1,12 +1,14 @@
-const CACHE_NAME = "workday-journey-v7.7.1";
+const CACHE_NAME = "workday-journey-v8.0.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=7.7.1",
-  "./app.js?v=7.7.1",
-  "./v6.js?v=7.7.1",
-  "./v7.css?v=7.7.1",
-  "./v7.js?v=7.7.1",
+  "./styles.css?v=8.0.0",
+  "./app.js?v=8.0.0",
+  "./v6.js?v=8.0.0",
+  "./v7.css?v=8.0.0",
+  "./v7.js?v=8.0.0",
+  "./v8.css?v=8.0.0",
+  "./v8.js?v=8.0.0",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png"
@@ -31,6 +33,11 @@ self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
   const request = event.request;
   const url = new URL(request.url);
+
+  if (url.pathname.endsWith("/supabase-config.js")) {
+    event.respondWith(fetch(request, { cache: "no-store" }));
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(

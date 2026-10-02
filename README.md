@@ -1,90 +1,85 @@
-# Workday Journey V7.7.1
+# Workday Journey V8.0.0
 
-A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
+A bilingual, local-first work and internship journey app built with HTML, CSS and JavaScript. V8 adds optional Supabase accounts and Cloud Sync while preserving full Local Mode.
 
-## V7 — App Layout Redesign
+## V8 highlights
 
-V7 reorganizes the feature-rich V6 dashboard into a clearer app-style layout with seven dedicated areas:
+### Account & Cloud Sync
+- Local Mode still works without an account.
+- Optional Email + Password account through Supabase Auth.
+- Syncs Workday Journey `wp-*` data across PC, iPad and mobile: profile, schedule, settings, avatar, calendar/leave, journals, projects, achievements, titles, drafts and preferences.
+- Existing local data can be uploaded to Cloud after sign-in.
+- On a new device, sign in and choose Cloud data.
+- If Local and Cloud both contain different data, V8 shows a conflict choice instead of silently overwriting either copy.
+- New local changes auto-upload while signed in and online.
 
-- Dashboard — today's progress, live countdown, timeline, internship overview and quick actions
-- Daily Journal — full daily journal editor and journal history
-- Projects — project tracker with status, progress and journal links
-- Achievements — achievement center, milestones, journey timeline and story
-- Reports & Analytics — attendance, monthly breakdown, heatmap, milestone predictor and final report
-- Calendar & Attendance — leave, company holidays, compensatory workdays and calendar presets
-- Settings — profile, appearance, timezone/date format, backup and dashboard tools
+Cloud Sync requires one deployment-owner setup. See **SUPABASE_SETUP.md** and `supabase-setup.sql`.
 
-The app uses hash routing (`#/dashboard`, `#/journal`, etc.), so it works on Vercel without server-side routing configuration.
+### Auto Save Draft
+- Daily Journal text, mood and selected projects are saved as a draft automatically.
+- New Project forms are also saved as a draft.
+- Refreshing or accidentally closing the tab no longer loses unfinished form text.
 
-## Data & privacy
+### Notification Center
+The top-bar bell can surface:
+- Missing Daily Journals for completed workdays
+- Backup reminders
+- Upcoming 900 / 1,000-hour milestones
+- Recently unlocked achievements
+- Unsynced Cloud changes
 
-Journey data is stored in the user's browser with `localStorage`. Users opening the same Vercel URL do not share each other's local data. Existing V5/V6 local data remains compatible with V7.
+### Schedule Templates
+- Built-in Internship 07:00–16:10 template
+- Office 08:00–17:00 template
+- Office 09:00–18:00 template
+- Save the current schedule as a custom template
+- Import / Export schedule templates as JSON for sharing
+- Built-in templates are also available during First-Time Setup
 
-## Run locally
+### Data Health & PWA Diagnostics
+Settings now shows:
+- Journal count
+- Project count
+- Achievement count
+- Approximate localStorage size
+- Last backup
+- Last Cloud Sync
+- App version
+- Local JSON health
 
-Open `index.html` directly, use `start-dashboard.bat`, or use `start-pwa-local.bat` to test PWA features on localhost.
+Diagnostics include Check for Update, Clear App Cache and Reload Latest Version.
 
-## Deploy
+### Public Journey Card
+Reports & Analytics can create a privacy-safe share link / card containing only:
+- Journey progress
+- Total work hours
+- Completed workdays
+- Project count
+- Achievement count
 
-Upload the contents of `workday_progress-dashboard/` to the existing GitHub repository. If Vercel is connected to the repository, the new commit deploys automatically.
+The public payload does **not** include Journal text, Leave details or Calendar entries.
 
+### Mobile polish
+V8 adds responsive layouts for Cloud account UI, Notification Center, Data Health, Templates and Public Journey cards.
 
-## V7.2 updates
-- Desktop sidebar can be collapsed and reopened from the top bar.
-- Font size now scales rem-based typography across the whole app with clearly different Small / Medium / Large levels.
-- Thai mode now fully translates the V7 Settings page and sidebar labels.
+## Supabase setup
 
+1. Create a Supabase project.
+2. Run `supabase-setup.sql` in Supabase SQL Editor.
+3. Put the Project URL and browser-safe Publishable/Anon key in `supabase-config.js`.
+4. If email confirmation is enabled, add the Vercel production URL in Supabase Auth URL settings.
+5. Commit to GitHub and let Vercel redeploy.
 
-## V7.3 updates
-- Project Tracker editor now uses the full content width.
-- Project cards are displayed below the editor in a responsive grid.
-- Top application header now has a distinct background, border and shadow for clearer hierarchy.
+**Never put a service_role/secret key in this static project.**
 
+See `SUPABASE_SETUP.md` for details.
 
-## V7.4 updates
-- 30 achievement challenges across time, journey, projects, journals, attendance, and exploration.
-- Common / Rare / Epic / Legendary tiers with progress bars.
-- Unlockable profile titles linked to harder achievements.
-- Select an unlocked title from Settings; it appears on the sidebar and top profile.
-- Existing users are migrated without achievement-popup spam.
+## Local Mode
 
-## V7.5 additions
-- Daily Journal project selector stays compact with a scrollable project grid and smaller action buttons.
-- Challenge Center adds Tier Mastery rewards for completing every Common, Rare, Epic, or Legendary challenge.
-- Tier Mastery rewards unlock exclusive titles and profile aura effects.
-- Added title rewards for 500 Hours, 75% Complete, 90% Complete, and Chronicle Master.
+If `supabase-config.js` remains empty, the app simply stays in Local Mode. All V7 features continue working normally.
 
+## Deployment
 
-V7.7.1 UX & Quality Update:
-- Journal search/filter by text, project, mood and month
-- Project archive with Active / Completed / Archived tabs
-- Achievement detail modal with keyboard access and unlock metadata
-- Title preview before applying
-- Custom confirm + 8-second undo for journal/project/calendar changes
-- Backup schemaVersion + migration for older backups
-- Dashboard quick summary, accessibility focus states, mobile polish and lighter periodic rendering
-- Existing PWA update-available flow retained and cache bumped to V7.7.1
+Upload the contents of `workday_progress-dashboard/` to the existing GitHub repository. If Vercel is already connected, the commit deploys automatically.
 
-- Daily Work Journal now includes a monthly completion calendar: saved days show a check mark and past working days without a journal remain visibly pending.
-- Ctrl+K Command Palette removed.
-
-## V7.7.1 Progress Mascot
-- Prevented the Daily Work Journal form card from stretching to match the much taller history/calendar column.
-- Reduced journal textarea height while keeping manual vertical resize available.
-- Kept mood and related projects in a compact, bounded meta section with an internal project scroll area.
-- Restored compact action buttons and balanced spacing across desktop, tablet, and mobile layouts.
-
-
-## V7.7 Progress Mascot
-- Adds the default Chick mascot to the Dashboard.
-- Mascot reacts to before-work, active work, breaks, halfway progress, near-finish, 100%, leave/holiday/rest days, and completed journeys.
-- Uses the existing work schedule and progress calculations; no new user data or reset is required.
-- Work Coins and Reward Shop are intentionally deferred to the cloud-sync roadmap.
-
-
-V7.7.1 Profile Avatar:
-- Profile can use the live Default Chick mascot or a user-uploaded photo.
-- Uploaded images are center-cropped, resized to 256x256, compressed, and stored locally in the browser.
-- Avatar selection is shown in the top profile, sidebar profile, and Settings preview.
-- Public Demo Mode always shows the mascot to avoid exposing a personal photo.
-- Avatar data is included automatically in JSON backups because it uses wp-* localStorage keys.
+The app uses hash routing (`#/dashboard`, `#/journal`, etc.), so no extra Vercel route configuration is required.

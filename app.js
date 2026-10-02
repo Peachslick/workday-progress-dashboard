@@ -1,8 +1,8 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "7.7.1";
-  const BACKUP_SCHEMA_VERSION = 2;
+  const APP_VERSION = "8.0.0";
+  const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
 
@@ -367,7 +367,7 @@
 
   // V5 — Multi-user setup, privacy, backup and public deployment
   Object.assign(translations.th, {
-    welcomeTitle: "ยินดีต้อนรับสู่ Workday Journey", welcomeSubtitle: "สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้",
+    welcomeTitle: "ยินดีต้อนรับสู่ Workday Journey", welcomeSubtitle: "สร้าง Journey ของคุณเอง ข้อมูลจะเก็บใน Browser เป็นค่าเริ่มต้น และสามารถ Login เพื่อ Sync ข้ามอุปกรณ์ได้",
     setupProfile: "โปรไฟล์", setupJourney: "ช่วงเวลา", setupSchedule: "ตารางทำงาน", setupCalendar: "\u0e1b\u0e0f\u0e34\u0e17\u0e34\u0e19", yourName: "ชื่อ / ชื่อเล่น", optional: "ไม่บังคับ",
     timezone: "เขตเวลา", locale: "รูปแบบวันที่และตัวเลข", next: "ถัดไป", back: "ย้อนกลับ", startJourney: "เริ่ม Journey", saveChanges: "บันทึกการเปลี่ยนแปลง",
     useRecommended: "ใช้ค่าแนะนำ", startDateSetup: "วันเริ่มต้น", endDateSetup: "วันสิ้นสุด", workingDaysSetup: "วันทำงานประจำ",
@@ -383,19 +383,19 @@
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "เริ่ม Journey ใหม่", resetAllData: "ล้างข้อมูลทั้งหมด", resetAllConfirm: "ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่?",
     newJourneyConfirm: "ต้องการเริ่ม Journey ใหม่หรือไม่? Calendar, Achievement และข้อมูล Journey ปัจจุบันจะถูกล้าง แต่ Theme/Font จะยังอยู่",
     importConfirm: "นำเข้า Backup นี้และแทนที่ข้อมูล Workday Journey ปัจจุบันหรือไม่?", invalidBackup: "ไฟล์ Backup ไม่ถูกต้อง", backupCreated: "สร้าง Backup เรียบร้อยแล้ว", backupImported: "นำเข้า Backup สำเร็จแล้ว",
-    privacyNoticeTitle: "ความเป็นส่วนตัว", privacyNotice: "ข้อมูล Journey, วันลา และ Settings ถูกเก็บใน localStorage ของ Browser นี้ และไม่ได้อัปโหลดไปยัง Server ของเว็บ",
+    privacyNoticeTitle: "ความเป็นส่วนตัว", privacyNotice: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น หาก Login ระบบจะ Sync ข้อมูลของบัญชีคุณผ่าน Supabase Cloud",
     shareSummary: "แชร์สรุป", shareCopied: "คัดลอกสรุป Journey แล้ว", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
     versionLabel: "เวอร์ชัน", updateAvailable: "มีเวอร์ชันใหม่พร้อมใช้งาน", updateHelp: "Refresh เพื่อโหลดไฟล์ล่าสุดจาก Deployment", refreshNow: "Refresh ตอนนี้",
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
-    setupPrivacy: "ข้อมูลของคุณจะอยู่ใน Browser นี้เท่านั้น คนอื่นที่เปิด URL เดียวกันจะมีข้อมูลแยกของตัวเอง", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
+    setupPrivacy: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น และแยกจากผู้ใช้อื่น หาก Login สามารถ Sync ข้อมูลของบัญชีข้ามอุปกรณ์ได้", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V7.7.1 · Profile Avatar · ข้อมูลเก็บใน Browser",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V8.0.0 · Cloud Sync Ready · Local-first",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
   });
   Object.assign(translations.en, {
-    welcomeTitle: "Welcome to Workday Journey", welcomeSubtitle: "Create your own journey. Your data stays in this browser.",
+    welcomeTitle: "Welcome to Workday Journey", welcomeSubtitle: "Create your own journey. Data stays local by default, with optional account-based Cloud Sync.",
     setupProfile: "Profile", setupJourney: "Journey", setupSchedule: "Schedule", setupCalendar: "Calendar", yourName: "Name / Nickname", optional: "Optional",
     timezone: "Timezone", locale: "Date & number format", next: "Next", back: "Back", startJourney: "Start My Journey", saveChanges: "Save Changes",
     useRecommended: "Use Recommended Defaults", startDateSetup: "Start Date", endDateSetup: "End Date", workingDaysSetup: "Regular Working Days",
@@ -411,20 +411,20 @@
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "Start New Journey", resetAllData: "Reset All Data", resetAllConfirm: "Reset all Workday Journey data stored in this browser?",
     newJourneyConfirm: "Start a new journey? Calendar, achievements and current journey data will be cleared, while appearance settings stay.",
     importConfirm: "Import this backup and replace the current Workday Journey data?", invalidBackup: "Invalid backup file", backupCreated: "Backup created", backupImported: "Backup imported",
-    privacyNoticeTitle: "Privacy", privacyNotice: "Journey data, leave records and settings are stored in this browser's localStorage and are not uploaded to the website server.",
+    privacyNoticeTitle: "Privacy", privacyNotice: "Data stays local by default. When you sign in, your account data can sync through Supabase Cloud.",
     shareSummary: "Share Summary", shareCopied: "Journey summary copied", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
     versionLabel: "Version", updateAvailable: "A new version is available", updateHelp: "Refresh to load the latest deployed files", refreshNow: "Refresh Now",
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
-    setupPrivacy: "Your data stays in this browser. Other people opening the same URL get their own separate data.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
+    setupPrivacy: "Data stays local by default and separate from other users. Sign in if you want to sync your account across devices.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V7.7.1 · Profile Avatar · Data stays in your browser",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V8.0.0 · Cloud Sync Ready · Local-first",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
   });
 
 
-  // V7.7.1 — Progress Mascot + Profile Avatar
+  // V8.0.0 — Progress Mascot + Profile Avatar
   Object.assign(translations.th, {
     p25Title: "25% Complete", p25Desc: "เดินทางผ่านหนึ่งในสี่ของ Journey แล้ว",
     p90Title: "90% Complete", p90Desc: "เหลืออีกเพียงช่วงสุดท้ายก่อนจบ Journey",
@@ -1946,7 +1946,7 @@
     markAchievementFlag("backup-exported");
     const data = {};
     for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i); if (key?.startsWith("wp-") && !key.startsWith("wp-notify-")) data[key] = localStorage.getItem(key);
+      const key = localStorage.key(i); if (key?.startsWith("wp-") && !key.startsWith("wp-notify-") && !key.startsWith("wp-v8-cloud-") && key !== "wp-v8-data-updated-at") data[key] = localStorage.getItem(key);
     }
     const payload = { app: "Workday Journey", version: APP_VERSION, schemaVersion: BACKUP_SCHEMA_VERSION, exportedAt: new Date().toISOString(), data };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -1987,8 +1987,9 @@
     if (!confirm(t("newJourneyConfirm"))) return;
     clearJourneyStorage(); state.dayOverrides = {}; state.setupCompleted = false; applyJourneyConfig(DEFAULT_JOURNEY_CONFIG, false); journeyConfig = normalizeJourneyConfig(DEFAULT_JOURNEY_CONFIG); openSetupWizard("first");
   }
-  function resetAllData() {
+  async function resetAllData() {
     if (!confirm(t("resetAllConfirm"))) return;
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) { const ok = await window.WorkdayV8Cloud.deleteCloudState?.(); if (ok === false) return; }
     const keys=[]; for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);} keys.forEach(k=>localStorage.removeItem(k)); localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION); location.reload();
   }
   async function shareJourneySummary() {
