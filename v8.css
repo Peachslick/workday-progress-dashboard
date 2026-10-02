@@ -30,3 +30,11 @@
 [data-theme="dark"] .v802-clean-topbar .v7-workspace .topbar{background:color-mix(in srgb,#172033 94%,#213657 6%);border-color:#2c3a50}.v802-clean-topbar[data-theme="dark"] .v802-top-context .v802-context-icon,[data-theme="dark"] .v802-context-icon{background:#1c2942;color:#8fb0ff}[data-theme="dark"] .v802-profile-menu{background:#151f31;border-color:#2e3d54}[data-theme="dark"] .v802-menu-avatar,[data-theme="dark"] .v802-menu-section>button>span:first-child{background:#1c2942}
 @media(max-width:920px){.v802-context-copy .eyebrow{display:none}.v802-context-copy h1{max-width:34vw}.v802-clean-topbar .v8-cloud-btn span:not(.v8-top-icon){display:none}.v802-clean-topbar .v8-cloud-btn{width:40px;justify-content:center;padding:0}.v802-profile-btn{max-width:132px}.v802-profile-btn .v7-top-profile-copy{max-width:72px}}
 @media(max-width:720px){.v802-clean-topbar .v7-workspace .topbar{min-height:62px;padding:8px 10px}.v802-top-context .v802-context-icon{width:38px;height:38px;border-radius:12px}.v802-context-copy h1{font-size:.92rem;max-width:32vw}.v802-clean-topbar .v8-top-btn{min-height:38px}.v802-clean-topbar .v8-notif-btn,.v802-clean-topbar .v8-cloud-btn{width:38px}.v802-profile-btn{width:38px!important;min-width:38px!important;padding:0!important;justify-content:center!important}.v802-profile-btn .v7-top-profile-copy,.v802-profile-caret{display:none!important}.v802-profile-btn .v771-avatar-slot{width:30px!important;height:30px!important}.v802-profile-menu{right:8px;top:66px;width:min(340px,calc(100vw - 16px));max-height:calc(100vh - 76px)}}
+
+/* V8.0.4 - stable top bar interaction */
+.v802-clean-topbar .v7-workspace .topbar{position:relative;z-index:40}
+.v802-clean-topbar .v7-workspace .topbar-actions{position:relative;z-index:45;pointer-events:auto}
+.v802-clean-topbar .v7-workspace .topbar-actions>.v8-top-btn,
+.v802-clean-topbar .v7-workspace .topbar-actions>#profileQuickBtn{pointer-events:auto;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}
+.v802-clean-topbar .v7-workspace .topbar-actions>.v8-top-btn:active,
+.v802-clean-topbar .v7-workspace .topbar-actions>#profileQuickBtn:active{transform:translateY(0) scale(.98)}

@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.0.3";
+  const VERSION = "8.0.4";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -238,7 +238,7 @@
   window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
-  // ---------- V8.0.3 Clean Top Bar + Stable Progress Tab Title ----------
+  // ---------- V8.0.4 Clean Top Bar + Stable Interactions ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
@@ -297,8 +297,20 @@
     const profile=$("profileQuickBtn");if(profile){profile.classList.add("v802-profile-btn");profile.setAttribute("aria-haspopup","menu");profile.setAttribute("aria-expanded","false");if(!$('v802ProfileCaret')){const caret=document.createElement("span");caret.id="v802ProfileCaret";caret.className="v802-profile-caret";caret.textContent="⌄";profile.appendChild(caret);}if(!profile.dataset.v802Bound){profile.dataset.v802Bound="1";profile.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();toggleProfileMenu();},true);}}
     if(!$('v802ProfileMenu')){const menu=document.createElement("div");menu.id="v802ProfileMenu";menu.className="v802-profile-menu";menu.hidden=true;menu.setAttribute("role","menu");document.body.appendChild(menu);}
     const bell=$("v8NotifBtn"),cloudBtn=$("v8CloudBtn"); if(bell)bell.classList.add("v802-top-compact");if(cloudBtn)cloudBtn.classList.add("v802-top-compact");
-    // Keep a predictable, uncluttered order: menu (when needed), notifications, cloud, profile.
-    [bell,cloudBtn,profile].filter(Boolean).forEach(el=>actions.appendChild(el));
+    // Keep a predictable, uncluttered order: notifications, cloud, profile.
+    // IMPORTANT: appendChild() moves an existing DOM node. Calling it on every
+    // real-time dashboard refresh can replace the element underneath the pointer
+    // between mousedown and mouseup, which makes clicks feel intermittent.
+    // Reorder only when the structure is actually different.
+    const desired=[bell,cloudBtn,profile].filter(Boolean);
+    const current=[...actions.children].filter(el=>desired.includes(el));
+    const orderIsStable=desired.length===current.length
+      && desired.every((el,i)=>el.parentElement===actions && current[i]===el);
+    if(!orderIsStable){
+      const frag=document.createDocumentFragment();
+      desired.forEach(el=>frag.appendChild(el));
+      actions.appendChild(frag);
+    }
     document.body.classList.add("v802-clean-topbar");refreshTopContext();
   }
   // ---------- Core V8 UI ----------
