@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "7.7.0";
+  const VERSION = "7.7.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -27,7 +27,9 @@
     sidebarCollapsed: "wp-v7-sidebar-collapsed",
     selectedTitle: "wp-v7-selected-title",
     journalFilters: "wp-v76-journal-filters",
-    projectView: "wp-v76-project-view"
+    projectView: "wp-v76-project-view",
+    avatarMode: "wp-profile-avatar-mode",
+    avatarPhoto: "wp-profile-avatar-image"
   };
 
   const TEXT = {
@@ -41,10 +43,10 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.7 · Progress Mascot", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.7.1 · Profile Avatar", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
       challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"ทำ Challenge จากเวลา Project Journal และ Attendance เพื่อปลดล็อก Badge และฉายา", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"รางวัลพิชิตระดับ", masteryComplete:"พิชิตระดับสำเร็จ", masteryLocked:"ทำ Challenge ระดับนี้ให้ครบเพื่อปลดล็อกรางวัล", masteryReward:"รางวัล Mastery", masteryTitle:"ฉายาพิเศษ", masteryEffect:"เอฟเฟกต์โปรไฟล์", tierMasteries:"UX & Quality", masteryProgress:"พิชิตแล้ว {n}/4 ระดับ",
-      journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"ยังไม่ถึงเวลาเริ่มงาน พักอีกนิดนะ 💤", mascotStart:"เพิ่งเริ่มเอง ค่อย ๆ ลุยไปด้วยกัน!", mascotWork:"กำลังไปได้สวย ลุยกันต่อ!", mascotHalf:"ผ่านครึ่งทางแล้ว! เก่งมาก ☕", mascotAlmost:"อีกนิดเดียววว เตรียมตัวฉลอง!", mascotBreak:"พักก่อนนะ เดี๋ยวค่อยกลับมาลุยต่อ ☕", mascotDone:"วันนี้สำเร็จแล้ว กลับบ้านได้! 🎉", mascotRest:"วันนี้เป็นวันพัก เติมพลังให้เต็มที่ 🌿", mascotHoliday:"วันหยุดบริษัท วันนี้พักให้เต็มที่ 🏡", mascotLeave:"วันนี้เป็นวันลา พักผ่อนให้เต็มที่ 🌿", mascotJourneyDone:"Journey สำเร็จแล้ว! ลูกเจี๊ยบภูมิใจมาก 🏆", mascotProgress:"ความคืบหน้าวันนี้"
+      journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"ยังไม่ถึงเวลาเริ่มงาน พักอีกนิดนะ 💤", mascotStart:"เพิ่งเริ่มเอง ค่อย ๆ ลุยไปด้วยกัน!", mascotWork:"กำลังไปได้สวย ลุยกันต่อ!", mascotHalf:"ผ่านครึ่งทางแล้ว! เก่งมาก ☕", mascotAlmost:"อีกนิดเดียววว เตรียมตัวฉลอง!", mascotBreak:"พักก่อนนะ เดี๋ยวค่อยกลับมาลุยต่อ ☕", mascotDone:"วันนี้สำเร็จแล้ว กลับบ้านได้! 🎉", mascotRest:"วันนี้เป็นวันพัก เติมพลังให้เต็มที่ 🌿", mascotHoliday:"วันหยุดบริษัท วันนี้พักให้เต็มที่ 🏡", mascotLeave:"วันนี้เป็นวันลา พักผ่อนให้เต็มที่ 🌿", mascotJourneyDone:"Journey สำเร็จแล้ว! ลูกเจี๊ยบภูมิใจมาก 🏆", mascotProgress:"ความคืบหน้าวันนี้", avatarTitle:"รูปโปรไฟล์", avatarHelp:"เลือกใช้ Mascot หรือรูปของคุณเองใน Profile", avatarMascot:"ใช้ Mascot", avatarPhoto:"ใช้รูปของฉัน", avatarUpload:"อัปโหลดรูป", avatarChange:"เปลี่ยนรูป", avatarRemove:"ลบรูป", avatarStoredLocal:"รูปจะถูกย่อขนาดและเก็บไว้ใน Browser นี้ รวมอยู่ในไฟล์ Backup ด้วย", avatarUploaded:"อัปโหลดรูปโปรไฟล์แล้ว", avatarRemoved:"ลบรูปโปรไฟล์แล้ว", avatarInvalid:"กรุณาเลือกไฟล์รูปภาพที่ถูกต้อง", avatarTooLarge:"ไฟล์รูปใหญ่เกินไป กรุณาเลือกไฟล์ไม่เกิน 12 MB", avatarRemoveConfirm:"ต้องการลบรูปโปรไฟล์ที่อัปโหลดไว้หรือไม่?", avatarMascotDemo:"Public Demo Mode จะแสดง Mascot แทนรูปส่วนตัว"
     },
     en: {
       dashboard:"Dashboard", journal:"Daily Journal", projects:"Projects", achievements:"Achievements", reports:"Reports & Analytics", calendar:"Calendar & Attendance", settings:"Settings",
@@ -56,10 +58,10 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.7 · Progress Mascot", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"All data is stored locally in each user's browser",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.7.1 · Profile Avatar", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"All data is stored locally in each user's browser",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
       challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"Complete challenges across time, projects, journals and attendance to unlock badges and titles", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"UX & Quality Reward", masteryComplete:"Tier mastered", masteryLocked:"Complete every challenge in this tier to unlock the reward", masteryReward:"Mastery Reward", masteryTitle:"Exclusive Title", masteryEffect:"Profile Effect", tierMasteries:"UX & Quality", masteryProgress:"{n}/4 tiers mastered",
-      journalSearch:"Search journal", journalFilterProject:"All Projects", journalFilterMood:"All Moods", journalFilterMonth:"All Months", clearFilters:"Clear filters", entriesFound:"{n} entries found", projectActiveTab:"Active", projectCompletedTab:"Completed", projectArchivedTab:"Archived", archiveProject:"Archive", restoreProject:"Restore", projectArchived:"Project archived", projectRestored:"Project restored", confirmTitle:"Confirm action", confirmDeleteJournal:"Delete this journal entry?", confirmDeleteProject:"Delete this project? Linked journal entries will keep their notes but lose this project link.", cancel:"Cancel", confirm:"Confirm", undo:"Undo", undone:"Action undone", achievementDetail:"Achievement Details", condition:"Condition", progressNow:"Progress", unlockedDate:"Unlocked", stillLocked:"Still locked", close:"Close", titlePreview:"Title Preview", applyTitle:"Use This Title", titlePreviewHelp:"Choose a title to preview it, then apply when ready", achievementNear:"Achievements close", activeProjects:"Active projects", journalStreak:"Journal streak", backupHealth:"Backup health", days:"days", dashboardInsights:"Quick Summary", archived:"Archived", updateReady:"A new version is ready", refreshNow:"Update now", calendarUpdated:"Calendar updated", projectArchiveConfirm:"Archive this project?", delete:"Delete", schemaVersion:"Data schema", confirmResetData:"Reset all Workday Journey data stored in this browser? This action cannot be undone.",      deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"Work has not started yet. A little more rest 💤", mascotStart:"Just getting started. Let’s ease into the day!", mascotWork:"Looking good — keep going!", mascotHalf:"Halfway there! Nice work ☕", mascotAlmost:"Almost there — celebration is close!", mascotBreak:"Take a break. We’ll get back to it soon ☕", mascotDone:"100% — today is complete! 🎉", mascotRest:"Rest day today. Recharge your energy 🌿", mascotHoliday:"Company holiday — enjoy the day off 🏡", mascotLeave:"Leave day today. Get some good rest 🌿", mascotJourneyDone:"Journey complete! Your chick is proud 🏆", mascotProgress:"Today’s progress"
+      journalSearch:"Search journal", journalFilterProject:"All Projects", journalFilterMood:"All Moods", journalFilterMonth:"All Months", clearFilters:"Clear filters", entriesFound:"{n} entries found", projectActiveTab:"Active", projectCompletedTab:"Completed", projectArchivedTab:"Archived", archiveProject:"Archive", restoreProject:"Restore", projectArchived:"Project archived", projectRestored:"Project restored", confirmTitle:"Confirm action", confirmDeleteJournal:"Delete this journal entry?", confirmDeleteProject:"Delete this project? Linked journal entries will keep their notes but lose this project link.", cancel:"Cancel", confirm:"Confirm", undo:"Undo", undone:"Action undone", achievementDetail:"Achievement Details", condition:"Condition", progressNow:"Progress", unlockedDate:"Unlocked", stillLocked:"Still locked", close:"Close", titlePreview:"Title Preview", applyTitle:"Use This Title", titlePreviewHelp:"Choose a title to preview it, then apply when ready", achievementNear:"Achievements close", activeProjects:"Active projects", journalStreak:"Journal streak", backupHealth:"Backup health", days:"days", dashboardInsights:"Quick Summary", archived:"Archived", updateReady:"A new version is ready", refreshNow:"Update now", calendarUpdated:"Calendar updated", projectArchiveConfirm:"Archive this project?", delete:"Delete", schemaVersion:"Data schema", confirmResetData:"Reset all Workday Journey data stored in this browser? This action cannot be undone.",      deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"Work has not started yet. A little more rest 💤", mascotStart:"Just getting started. Let’s ease into the day!", mascotWork:"Looking good — keep going!", mascotHalf:"Halfway there! Nice work ☕", mascotAlmost:"Almost there — celebration is close!", mascotBreak:"Take a break. We’ll get back to it soon ☕", mascotDone:"100% — today is complete! 🎉", mascotRest:"Rest day today. Recharge your energy 🌿", mascotHoliday:"Company holiday — enjoy the day off 🏡", mascotLeave:"Leave day today. Get some good rest 🌿", mascotJourneyDone:"Journey complete! Your chick is proud 🏆", mascotProgress:"Today’s progress", avatarTitle:"Profile Picture", avatarHelp:"Choose the current Mascot or your own uploaded photo for your profile", avatarMascot:"Use Mascot", avatarPhoto:"Use My Photo", avatarUpload:"Upload Photo", avatarChange:"Change Photo", avatarRemove:"Remove Photo", avatarStoredLocal:"Your photo is resized and stored in this browser and is included in exported backups", avatarUploaded:"Profile photo uploaded", avatarRemoved:"Profile photo removed", avatarInvalid:"Please choose a valid image file", avatarTooLarge:"This image is too large. Please choose a file under 12 MB", avatarRemoveConfirm:"Remove the uploaded profile photo?", avatarMascotDemo:"Public Demo Mode shows the Mascot instead of your personal photo"
     }
   };
   const t = (key, vars={}) => {
@@ -253,9 +255,9 @@
     const sidebar = document.createElement("aside");
     sidebar.className = "v7-sidebar";
     sidebar.innerHTML = `
-      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.7 · Progress Mascot</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
+      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.7.1 · Profile Avatar</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
       <nav class="v7-nav" aria-label="Workday Journey navigation">${NAV.map(([key,icon]) => `<button type="button" data-v7-route="${key}"><span>${icon}</span><div><strong data-v7-nav-label="${key}"></strong><small data-v7-nav-sub="${key}"></small></div></button>`).join("")}</nav>
-      <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><em id="v7SideTitle" class="v7-profile-title" hidden></em><small id="v7SideRange">—</small></div></div>
+      <div class="v7-sidebar-profile"><span id="v7SideAvatar" class="v7-avatar v771-avatar-slot">🐣</span><div><strong id="v7SideName">My Journey</strong><em id="v7SideTitle" class="v7-profile-title" hidden></em><small id="v7SideRange">—</small></div></div>
       <div class="v7-private-chip">🔐 <span id="v7PrivateLabel"></span></div>`;
 
     const backdrop = document.createElement("div");
@@ -265,6 +267,7 @@
     shell.append(sidebar, workspace, backdrop);
 
     const profileBtn=$("profileQuickBtn"), profileName=$("profileQuickName");
+    const quickAvatar=profileBtn?.querySelector("span"); if(quickAvatar){ quickAvatar.id="profileQuickAvatar"; quickAvatar.classList.add("v771-avatar-slot"); }
     if(profileBtn&&profileName&&!$("v7TopTitle")){ const wrap=document.createElement("span");wrap.className="v7-top-profile-copy";profileName.parentNode.insertBefore(wrap,profileName);wrap.appendChild(profileName);const title=document.createElement("small");title.id="v7TopTitle";title.className="v7-top-profile-title";title.hidden=true;wrap.appendChild(title); }
 
     const topbarActions = q(".topbar-actions");
@@ -317,7 +320,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.7</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.7.1</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
@@ -393,6 +396,7 @@
     const topProfile=$("profileQuickBtn"); if(topProfile)topProfile.dataset.mastery=masteryTier;
     if ($("v7SideRange")) $("v7SideRange").textContent = `${API.formatCompactDate(cfg.startDate)} → ${API.formatCompactDate(cfg.endDate)}`;
     if ($("v7PrivateLabel")) $("v7PrivateLabel").textContent = t("privateLocal");
+    renderProfileAvatars();
     const collapseBtn = $("v7CollapseBtn");
     if (collapseBtn) { collapseBtn.setAttribute("aria-label", t("collapseSidebar")); collapseBtn.title = t("collapseSidebar"); }
     const menuBtn = $("v7MenuBtn");
@@ -421,6 +425,56 @@
     const [h,m] = String(value || "0:0").split(":").map(Number);
     return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
   }
+  function avatarPrefs() {
+    const photo = localStorage.getItem(KEYS.avatarPhoto) || "";
+    const requested = localStorage.getItem(KEYS.avatarMode) === "photo" ? "photo" : "mascot";
+    return { photo, mode: requested === "photo" && photo ? "photo" : "mascot" };
+  }
+  function setAvatarMode(mode) {
+    const prefs = avatarPrefs();
+    localStorage.setItem(KEYS.avatarMode, mode === "photo" && prefs.photo ? "photo" : "mascot");
+    renderProfileAvatars(); renderSidebar();
+  }
+  function avatarSlotMarkup(mode, photo, snap, large=false) {
+    if (mode === "photo" && photo) return `<img src="${esc(photo)}" alt="" class="v771-avatar-photo">`;
+    return `<span class="v771-avatar-mascot" aria-hidden="true">🐣</span><i class="v771-avatar-accessory" aria-hidden="true">${esc(snap?.accessory || "")}</i>`;
+  }
+  function renderProfileAvatars() {
+    const prefs = avatarPrefs(), snap = mascotSnapshot();
+    const effectiveMode = isDemo() ? "mascot" : prefs.mode;
+    [["profileQuickAvatar",false],["v7SideAvatar",false],["v771AvatarPreview",true]].forEach(([id,large])=>{
+      const el=$(id); if(!el)return;
+      el.classList.add("v771-avatar-slot"); if(large)el.classList.add("v771-avatar-preview");
+      el.dataset.avatarMode=effectiveMode;
+      el.innerHTML=avatarSlotMarkup(effectiveMode,prefs.photo,snap,large);
+    });
+    qa("[data-v771-avatar-mode]").forEach(btn=>btn.classList.toggle("active",btn.dataset.v771AvatarMode===prefs.mode));
+  }
+  async function avatarDataFromFile(file) {
+    if (!file || !String(file.type||"").startsWith("image/")) throw new Error("invalid");
+    if (file.size > 12 * 1024 * 1024) throw new Error("large");
+    const url=URL.createObjectURL(file);
+    try {
+      const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url;});
+      const w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;if(!w||!h)throw new Error("invalid");
+      const side=Math.min(w,h),sx=(w-side)/2,sy=(h-side)/2,canvas=document.createElement("canvas");
+      canvas.width=256;canvas.height=256;const ctx=canvas.getContext("2d");if(!ctx)throw new Error("invalid");
+      ctx.fillStyle="#ffffff";ctx.fillRect(0,0,256,256);ctx.drawImage(img,sx,sy,side,side,0,0,256,256);
+      return canvas.toDataURL("image/jpeg",0.84);
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function injectAvatarSettings(root) {
+    const profileCard=q(".v7-settings-card",root); if(!profileCard || $("v771AvatarSettings")) return;
+    const prefs=avatarPrefs(), panel=document.createElement("div"); panel.id="v771AvatarSettings"; panel.className="v771-avatar-settings";
+    panel.innerHTML=`<div id="v771AvatarPreview" class="v771-avatar-slot v771-avatar-preview"></div><div class="v771-avatar-settings-copy"><div><strong>${esc(t("avatarTitle"))}</strong><p>${esc(t("avatarHelp"))}</p></div><div class="v771-avatar-choice"><button type="button" data-v771-avatar-mode="mascot" class="outline-btn ${prefs.mode==="mascot"?"active":""}">🐣 ${esc(t("avatarMascot"))}</button><button type="button" data-v771-avatar-mode="photo" class="outline-btn ${prefs.mode==="photo"?"active":""}" ${prefs.photo?"":"disabled"}>🖼 ${esc(t("avatarPhoto"))}</button></div><div class="v771-avatar-actions"><button id="v771UploadAvatar" class="secondary-btn" type="button">${prefs.photo?esc(t("avatarChange")):esc(t("avatarUpload"))}</button>${prefs.photo?`<button id="v771RemoveAvatar" class="outline-btn danger-soft" type="button">${esc(t("avatarRemove"))}</button>`:""}<input id="v771AvatarFile" type="file" accept="image/*" hidden></div><small>${esc(isDemo()?t("avatarMascotDemo"):t("avatarStoredLocal"))}</small></div>`;
+    q(".v7-card-title",profileCard)?.insertAdjacentElement("afterend",panel);
+    qa("[data-v771-avatar-mode]",panel).forEach(btn=>btn.addEventListener("click",()=>{const mode=btn.dataset.v771AvatarMode;if(mode==="photo"&&!avatarPrefs().photo){$("v771AvatarFile")?.click();return;}setAvatarMode(mode);renderSettingsPage();}));
+    $("v771UploadAvatar")?.addEventListener("click",()=>$("v771AvatarFile")?.click());
+    $("v771RemoveAvatar")?.addEventListener("click",async()=>{if(!(await askConfirm(t("avatarRemoveConfirm"),false)))return;localStorage.removeItem(KEYS.avatarPhoto);localStorage.setItem(KEYS.avatarMode,"mascot");toast("✓",t("avatarRemoved"),"success");renderSidebar();renderSettingsPage();});
+    $("v771AvatarFile")?.addEventListener("change",async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const data=await avatarDataFromFile(file);localStorage.setItem(KEYS.avatarPhoto,data);localStorage.setItem(KEYS.avatarMode,"photo");toast("✓",t("avatarUploaded"),"success");renderSidebar();renderSettingsPage();}catch(err){toast("!",t(err?.message==="large"?"avatarTooLarge":"avatarInvalid"),"error");}});
+    renderProfileAvatars();
+  }
+
   function mascotSnapshot() {
     const cfg = API.getConfig(), now = API.getNow(), nowKey = API.dateKey(now);
     const startKey = String(cfg.startDate || ""), endKey = String(cfg.endDate || "");
@@ -455,6 +509,7 @@
     if ($("v77MascotPercent")) $("v77MascotPercent").textContent = `${pct.toFixed(1)}%`;
     if ($("v77MascotBar")) $("v77MascotBar").style.width = `${pct}%`;
     if ($("v77MascotStatus")) $("v77MascotStatus").textContent = `${t("mascotProgress")} · ${pct.toFixed(1)}%`;
+    renderProfileAvatars();
   }
 
   function renderDashboardExtras() {
@@ -646,6 +701,7 @@
         <section class="card v7-settings-card"><p class="eyebrow">${esc(t("behaviorSection"))}</p><h3>${esc(t("behavior"))}</h3><div class="v7-toggle-list"><label><span>${esc(t("seconds"))}</span><input id="v7Seconds" type="checkbox"></label><label><span>${esc(t("animation"))}</span><input id="v7Animation" type="checkbox"></label><label><span>${esc(t("moodSetting"))}</span><input id="v7Mood" type="checkbox"></label><label><span>${esc(t("notifications"))}</span><input id="v7Notifications" type="checkbox"></label></div></section>
         <section class="card v7-settings-card v7-settings-wide"><div class="v7-card-title"><div><p class="eyebrow">${esc(t("dataSection"))}</p><h3>${esc(t("dataBackup"))}</h3></div><div class="v76-data-meta"><span class="mini-chip">${esc(t("backupStatus"))}: ${esc(backupLabel())}</span><span class="mini-chip">${esc(t("schemaVersion"))}: v2</span></div></div><div class="v7-settings-actions"><button id="v7ExportBackup" class="outline-btn" type="button">↓ ${esc(t("exportBackup"))}</button><button id="v7ImportBackup" class="outline-btn" type="button">↑ ${esc(t("importBackup"))}</button><button id="v7Customize" class="outline-btn" type="button">⚙ ${esc(t("dashboardLayout"))}</button><button id="v7OpenAdvanced" class="outline-btn" type="button">${esc(t("openFullSettings"))}</button><button id="v7NewJourney" class="secondary-btn" type="button">${esc(t("newJourney"))}</button><button id="v7ResetData" class="danger-btn" type="button">${esc(t("resetData"))}</button></div><p class="muted v7-privacy-text">🔐 ${esc(t("localPrivacy"))}</p></section>
       </div>`;
+    injectAvatarSettings(root);
     mirrorSelect("v7Theme","themeSelect",[["light",t("light")],["dark",t("dark")],["system",t("system")]]);
     mirrorSelect("v7Font","fontFamilySelect",[
       {group:lang()==="th"?"แนะนำสำหรับระบบงาน":"Recommended",options:[["sarabun","Sarabun · Recommended"],["bai","Bai Jamjuree"],["noto","Noto Sans Thai"],["ibm","IBM Plex Sans Thai"]]},
