@@ -1,4 +1,4 @@
-# Workday Journey V7.6.5
+# Workday Journey V7.7.0
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -48,13 +48,13 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Select an unlocked title from Settings; it appears on the sidebar and top profile.
 - Existing users are migrated without achievement-popup spam.
 
-V7.6.5 additions:
+V7.7.0 additions:
 - Compact Daily Journal project selector for large project lists.
 - UX & Quality rewards and profile aura effects.
 - New titles for 500 Hours, 75% Complete, 90% Complete and Chronicle Master.
 
 
-V7.6.5 UX & Quality Update:
+V7.7.0 UX & Quality Update:
 - Journal search/filter by text, project, mood and month
 - Project archive with Active / Completed / Archived tabs
 - Achievement detail modal with keyboard access and unlock metadata
@@ -62,20 +62,26 @@ V7.6.5 UX & Quality Update:
 - Custom confirm + 8-second undo for journal/project/calendar changes
 - Backup schemaVersion + migration for older backups
 - Dashboard quick summary, accessibility focus states, mobile polish and lighter periodic rendering
-- Existing PWA update-available flow retained and cache bumped to V7.6.5
+- Existing PWA update-available flow retained and cache bumped to V7.7.0
 
 - Daily Work Journal now includes a monthly completion calendar: saved days show a check mark and past working days without a journal remain visibly pending.
 - Ctrl+K Command Palette removed.
 
-V7.6.5 Font Picker Update:
+V7.7.0 Progress Mascot:
 - Daily Work Journal no longer stretches to the height of Journal History.
 - Work/Learned text areas are more compact and remain vertically resizable.
 - Mood and Project selection use a bounded section with internal scrolling.
 - Save/Delete buttons return to compact sizes on desktop with responsive mobile behavior.
 
 
-## V7.6.5 Font Picker Update
+## V7.7.0 Progress Mascot
 - Perfect Month now evaluates the Journey portion of a month, so a Journey beginning mid-month can still qualify.
 - A month qualifies after all scheduled workdays in that Journey month period are complete with no Personal Leave.
 - Company holidays and weekends do not count as Personal Leave.
 - Achievement details now show which month and Journey date range earned Perfect Month.
+
+
+V7.7 Progress Mascot:
+- Default Chick appears on Dashboard and changes state/message with daily progress.
+- Break/rest/holiday/leave/100% states are supported.
+- No data reset. Coins and Reward Shop are not included yet.

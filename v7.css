@@ -143,7 +143,7 @@ body[data-v7-route="journal"] .v7-list-card{
 .v764-font-preview{display:grid;gap:3px;margin-top:12px;padding:13px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface-soft)}
 .v764-font-preview small{color:var(--accent);font-size:.58rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.v764-font-preview strong{font-size:1rem;line-height:1.45}.v764-font-preview span{color:var(--muted);font-size:.62rem}
 
-/* V7.6.5 - Compact categorized font picker */
+/* V7.7.0 - Progress Mascot + existing font picker */
 .font-setting-group{position:relative}
 .font-family-native-select{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;padding:0!important;border:0!important}
 .font-picker{position:relative}
@@ -164,3 +164,27 @@ body[data-v7-route="journal"] .v7-list-card{
 .font-picker-option[aria-selected="true"],.font-picker-option.is-selected{color:var(--accent);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,var(--border));box-shadow:inset 3px 0 0 var(--accent)}
 .font-picker-option em{margin-left:auto;color:var(--muted);font-family:var(--app-font);font-size:.52rem;font-style:normal;font-weight:750}
 @media(max-width:420px){.font-picker-menu{max-height:340px}.font-picker-options{grid-template-columns:1fr}.font-picker-group-title{grid-template-columns:8px minmax(0,1fr)}.font-picker-group-title small{display:none}}
+
+
+/* V7.7 - Progress Mascot */
+.v77-mascot-card{display:grid;grid-template-columns:118px minmax(0,1fr);gap:18px;align-items:center;padding:18px 22px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--surface) 0%,var(--surface) 58%,var(--accent-soft) 140%)}
+.v77-mascot-card::after{content:"";position:absolute;right:-40px;top:-54px;width:160px;height:160px;border-radius:50%;background:color-mix(in srgb,var(--accent) 7%,transparent);pointer-events:none}
+.v77-mascot-stage{position:relative;width:104px;height:104px;display:grid;place-items:center;border-radius:28px;background:linear-gradient(145deg,#fff7cc,#ffe89a);box-shadow:inset 0 0 0 1px rgba(224,174,30,.16),0 12px 30px rgba(55,76,120,.10)}
+html[data-theme="dark"] .v77-mascot-stage{background:linear-gradient(145deg,#403a26,#5a4820)}
+.v77-mascot-emoji{font-size:3.55rem;line-height:1;filter:drop-shadow(0 8px 9px rgba(40,50,70,.13));transform-origin:50% 90%;animation:v77MascotFloat 2.4s ease-in-out infinite}
+.v77-mascot-accessory{position:absolute;right:8px;top:6px;min-width:34px;height:34px;padding:0 5px;display:grid;place-items:center;border-radius:13px;background:var(--surface);box-shadow:0 7px 18px rgba(38,54,84,.14);font-size:1.18rem;animation:v77Accessory 1.8s ease-in-out infinite}
+.v77-mascot-copy{min-width:0;display:grid;gap:10px;position:relative;z-index:1}
+.v77-mascot-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.v77-mascot-head h3{margin:2px 0 0;font-size:1.08rem}.v77-mascot-head .eyebrow{margin:0}
+.v77-mascot-bubble{width:fit-content;max-width:min(620px,100%);padding:10px 14px;border:1px solid var(--border);border-radius:6px 16px 16px 16px;background:var(--surface-soft);font-size:.8rem;font-weight:700;line-height:1.45;color:var(--text);box-shadow:0 5px 14px rgba(41,56,86,.05)}
+.v77-mascot-progress{height:8px;border-radius:999px;background:var(--border);overflow:hidden}.v77-mascot-progress i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--work));transition:width .45s ease}
+.v77-mascot-copy>small{font-size:.62rem}.v77-mascot-card[data-mascot-state="break"] .v77-mascot-stage{background:linear-gradient(145deg,#fff0d2,#ffd8a2)}
+.v77-mascot-card[data-mascot-state="almost"] .v77-mascot-stage,.v77-mascot-card[data-mascot-state="done"] .v77-mascot-stage,.v77-mascot-card[data-mascot-state="journey-done"] .v77-mascot-stage{background:linear-gradient(145deg,#fff7c7,#ffe06d)}
+.v77-mascot-card[data-mascot-state="done"] .v77-mascot-emoji,.v77-mascot-card[data-mascot-state="journey-done"] .v77-mascot-emoji{animation:v77MascotCelebrate .85s ease-in-out infinite alternate}
+.v77-mascot-card[data-mascot-state="rest"] .v77-mascot-emoji,.v77-mascot-card[data-mascot-state="before"] .v77-mascot-emoji{animation:v77MascotSleep 3s ease-in-out infinite}
+.no-animations .v77-mascot-emoji,.no-animations .v77-mascot-accessory{animation:none!important}
+@keyframes v77MascotFloat{0%,100%{transform:translateY(1px) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
+@keyframes v77Accessory{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.05)}}
+@keyframes v77MascotCelebrate{0%{transform:translateY(1px) rotate(-4deg) scale(1)}100%{transform:translateY(-7px) rotate(5deg) scale(1.06)}}
+@keyframes v77MascotSleep{0%,100%{transform:translateY(2px) rotate(-2deg) scale(.98)}50%{transform:translateY(0) rotate(1deg) scale(1)}}
+@media(max-width:720px){.v77-mascot-card{grid-template-columns:82px minmax(0,1fr);gap:13px;padding:15px}.v77-mascot-stage{width:76px;height:76px;border-radius:21px}.v77-mascot-emoji{font-size:2.65rem}.v77-mascot-accessory{right:2px;top:0;min-width:28px;height:28px;border-radius:10px;font-size:.95rem}.v77-mascot-head{align-items:center}.v77-mascot-bubble{font-size:.72rem}.v77-mascot-copy>small{font-size:.58rem}}
+@media(max-width:480px){.v77-mascot-card{grid-template-columns:1fr;text-align:center}.v77-mascot-stage{margin:auto}.v77-mascot-head{justify-content:center}.v77-mascot-head>div{text-align:left}.v77-mascot-bubble{margin:auto}.v77-mascot-copy>small{text-align:center}}

@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "7.6.5";
+  const VERSION = "7.7.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -41,10 +41,10 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.6.5 · Font Picker Update", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V7.7 · Progress Mascot", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"ข้อมูลทั้งหมดเก็บใน Browser ของผู้ใช้แต่ละคน",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
       challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"ทำ Challenge จากเวลา Project Journal และ Attendance เพื่อปลดล็อก Badge และฉายา", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"รางวัลพิชิตระดับ", masteryComplete:"พิชิตระดับสำเร็จ", masteryLocked:"ทำ Challenge ระดับนี้ให้ครบเพื่อปลดล็อกรางวัล", masteryReward:"รางวัล Mastery", masteryTitle:"ฉายาพิเศษ", masteryEffect:"เอฟเฟกต์โปรไฟล์", tierMasteries:"UX & Quality", masteryProgress:"พิชิตแล้ว {n}/4 ระดับ",
-      journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้"
+      journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"ยังไม่ถึงเวลาเริ่มงาน พักอีกนิดนะ 💤", mascotStart:"เพิ่งเริ่มเอง ค่อย ๆ ลุยไปด้วยกัน!", mascotWork:"กำลังไปได้สวย ลุยกันต่อ!", mascotHalf:"ผ่านครึ่งทางแล้ว! เก่งมาก ☕", mascotAlmost:"อีกนิดเดียววว เตรียมตัวฉลอง!", mascotBreak:"พักก่อนนะ เดี๋ยวค่อยกลับมาลุยต่อ ☕", mascotDone:"วันนี้สำเร็จแล้ว กลับบ้านได้! 🎉", mascotRest:"วันนี้เป็นวันพัก เติมพลังให้เต็มที่ 🌿", mascotHoliday:"วันหยุดบริษัท วันนี้พักให้เต็มที่ 🏡", mascotLeave:"วันนี้เป็นวันลา พักผ่อนให้เต็มที่ 🌿", mascotJourneyDone:"Journey สำเร็จแล้ว! ลูกเจี๊ยบภูมิใจมาก 🏆", mascotProgress:"ความคืบหน้าวันนี้"
     },
     en: {
       dashboard:"Dashboard", journal:"Daily Journal", projects:"Projects", achievements:"Achievements", reports:"Reports & Analytics", calendar:"Calendar & Attendance", settings:"Settings",
@@ -56,10 +56,10 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.6.5 · Font Picker Update", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"All data is stored locally in each user's browser",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V7.7 · Progress Mascot", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"All data is stored locally in each user's browser",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
       challenges:"Challenges", challengeCenter:"Challenge Center", challengeHelp:"Complete challenges across time, projects, journals and attendance to unlock badges and titles", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", tierMastery:"UX & Quality Reward", masteryComplete:"Tier mastered", masteryLocked:"Complete every challenge in this tier to unlock the reward", masteryReward:"Mastery Reward", masteryTitle:"Exclusive Title", masteryEffect:"Profile Effect", tierMasteries:"UX & Quality", masteryProgress:"{n}/4 tiers mastered",
-      journalSearch:"Search journal", journalFilterProject:"All Projects", journalFilterMood:"All Moods", journalFilterMonth:"All Months", clearFilters:"Clear filters", entriesFound:"{n} entries found", projectActiveTab:"Active", projectCompletedTab:"Completed", projectArchivedTab:"Archived", archiveProject:"Archive", restoreProject:"Restore", projectArchived:"Project archived", projectRestored:"Project restored", confirmTitle:"Confirm action", confirmDeleteJournal:"Delete this journal entry?", confirmDeleteProject:"Delete this project? Linked journal entries will keep their notes but lose this project link.", cancel:"Cancel", confirm:"Confirm", undo:"Undo", undone:"Action undone", achievementDetail:"Achievement Details", condition:"Condition", progressNow:"Progress", unlockedDate:"Unlocked", stillLocked:"Still locked", close:"Close", titlePreview:"Title Preview", applyTitle:"Use This Title", titlePreviewHelp:"Choose a title to preview it, then apply when ready", achievementNear:"Achievements close", activeProjects:"Active projects", journalStreak:"Journal streak", backupHealth:"Backup health", days:"days", dashboardInsights:"Quick Summary", archived:"Archived", updateReady:"A new version is ready", refreshNow:"Update now", calendarUpdated:"Calendar updated", projectArchiveConfirm:"Archive this project?", delete:"Delete", schemaVersion:"Data schema", confirmResetData:"Reset all Workday Journey data stored in this browser? This action cannot be undone.",      deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today"
+      journalSearch:"Search journal", journalFilterProject:"All Projects", journalFilterMood:"All Moods", journalFilterMonth:"All Months", clearFilters:"Clear filters", entriesFound:"{n} entries found", projectActiveTab:"Active", projectCompletedTab:"Completed", projectArchivedTab:"Archived", archiveProject:"Archive", restoreProject:"Restore", projectArchived:"Project archived", projectRestored:"Project restored", confirmTitle:"Confirm action", confirmDeleteJournal:"Delete this journal entry?", confirmDeleteProject:"Delete this project? Linked journal entries will keep their notes but lose this project link.", cancel:"Cancel", confirm:"Confirm", undo:"Undo", undone:"Action undone", achievementDetail:"Achievement Details", condition:"Condition", progressNow:"Progress", unlockedDate:"Unlocked", stillLocked:"Still locked", close:"Close", titlePreview:"Title Preview", applyTitle:"Use This Title", titlePreviewHelp:"Choose a title to preview it, then apply when ready", achievementNear:"Achievements close", activeProjects:"Active projects", journalStreak:"Journal streak", backupHealth:"Backup health", days:"days", dashboardInsights:"Quick Summary", archived:"Archived", updateReady:"A new version is ready", refreshNow:"Update now", calendarUpdated:"Calendar updated", projectArchiveConfirm:"Archive this project?", delete:"Delete", schemaVersion:"Data schema", confirmResetData:"Reset all Workday Journey data stored in this browser? This action cannot be undone.",      deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"Work has not started yet. A little more rest 💤", mascotStart:"Just getting started. Let’s ease into the day!", mascotWork:"Looking good — keep going!", mascotHalf:"Halfway there! Nice work ☕", mascotAlmost:"Almost there — celebration is close!", mascotBreak:"Take a break. We’ll get back to it soon ☕", mascotDone:"100% — today is complete! 🎉", mascotRest:"Rest day today. Recharge your energy 🌿", mascotHoliday:"Company holiday — enjoy the day off 🏡", mascotLeave:"Leave day today. Get some good rest 🌿", mascotJourneyDone:"Journey complete! Your chick is proud 🏆", mascotProgress:"Today’s progress"
     }
   };
   const t = (key, vars={}) => {
@@ -253,7 +253,7 @@
     const sidebar = document.createElement("aside");
     sidebar.className = "v7-sidebar";
     sidebar.innerHTML = `
-      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.6.5 · Font Picker</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
+      <div class="v7-sidebar-brand"><div class="v7-sidebar-brand-main"><div class="brand-mark">%</div><div><strong>Workday Journey</strong><small>V7.7 · Progress Mascot</small></div></div><button id="v7CollapseBtn" class="v7-collapse-btn" type="button" aria-label="Hide sidebar" title="Hide sidebar">‹</button></div>
       <nav class="v7-nav" aria-label="Workday Journey navigation">${NAV.map(([key,icon]) => `<button type="button" data-v7-route="${key}"><span>${icon}</span><div><strong data-v7-nav-label="${key}"></strong><small data-v7-nav-sub="${key}"></small></div></button>`).join("")}</nav>
       <div class="v7-sidebar-profile"><span class="v7-avatar">👤</span><div><strong id="v7SideName">My Journey</strong><em id="v7SideTitle" class="v7-profile-title" hidden></em><small id="v7SideRange">—</small></div></div>
       <div class="v7-private-chip">🔐 <span id="v7PrivateLabel"></span></div>`;
@@ -317,7 +317,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.6.5</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V7.7</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
@@ -327,6 +327,11 @@
     const dashQuick = document.createElement("section");
     dashQuick.id = "v7DashboardQuick"; dashQuick.className = "card v7-dashboard-quick"; dashQuick.dataset.v7Page = "dashboard";
     dashQuick.innerHTML = `<div class="section-heading"><div><p class="eyebrow">WORKDAY JOURNEY</p><h3 id="v7QuickTitle"></h3></div></div><div class="v7-quick-grid">${[["journal","📓"],["projects","🧩"],["reports","📊"],["calendar","📅"]].map(([r,i])=>`<button type="button" data-v7-go="${r}"><span>${i}</span><strong data-v7-quick="${r}"></strong><small>→</small></button>`).join("")}</div></section>`;
+    const mascot = document.createElement("section");
+    mascot.id = "v77MascotCard"; mascot.className = "card v77-mascot-card"; mascot.dataset.v7Page = "dashboard";
+    mascot.innerHTML = `<div class="v77-mascot-stage" aria-hidden="true"><div id="v77MascotEmoji" class="v77-mascot-emoji">🐣</div><span id="v77MascotAccessory" class="v77-mascot-accessory">💤</span></div><div class="v77-mascot-copy"><div class="v77-mascot-head"><div><p class="eyebrow" id="v77MascotEyebrow"></p><h3 id="v77MascotName"></h3></div><span id="v77MascotPercent" class="percentage-chip subtle">0%</span></div><div id="v77MascotBubble" class="v77-mascot-bubble"></div><div class="v77-mascot-progress"><i id="v77MascotBar"></i></div><small id="v77MascotStatus" class="muted"></small></div>`;
+    q("#completionBanner", main)?.insertAdjacentElement("afterend", mascot);
+
     const overview = q(".three-grid", main);
     overview?.insertAdjacentElement("afterend", dashQuick);
     const insights=document.createElement("section");insights.id="v76DashboardInsights";insights.className="card v76-dashboard-insights";insights.dataset.v7Page="dashboard";dashQuick.insertAdjacentElement("afterend",insights);
@@ -345,7 +350,7 @@
 
   function assignExistingPages() {
     const groups = {
-      dashboard:[".hero-card","#completionBanner","#v6DailyRecap",".main-grid",".timeline-card",".three-grid","#v7DashboardQuick","#v76DashboardInsights"],
+      dashboard:[".hero-card","#v77MascotCard","#completionBanner","#v6DailyRecap",".main-grid",".timeline-card",".three-grid","#v7DashboardQuick","#v76DashboardInsights"],
       achievements:[".journey-overview-card",".journey-timeline-card",".journey-story-card","#v7AchievementsPage"],
       reports:[".attendance-card",".smart-journey-grid",".heatmap-card","#v7ReportsPage"],
       calendar:[".calendar-card","#v7CalendarIntro"],
@@ -412,7 +417,48 @@
       const key=dateKey(d),scheduled=API.getScheduledMinutes(d)>0;if(!scheduled)continue;seen++;if(journals[key])streak++;else break;
     }return streak;
   }
+  function parseClockMinutes(value) {
+    const [h,m] = String(value || "0:0").split(":").map(Number);
+    return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
+  }
+  function mascotSnapshot() {
+    const cfg = API.getConfig(), now = API.getNow(), nowKey = API.dateKey(now);
+    const startKey = String(cfg.startDate || ""), endKey = String(cfg.endDate || "");
+    const capacity = Math.max(0, API.getActualDayCapacity(now) || 0);
+    const worked = capacity ? Math.max(0, API.getWorkedMinutes(now, now) || 0) : 0;
+    const percent = capacity ? Math.max(0, Math.min(100, worked / capacity * 100)) : 0;
+    const current = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    const start = parseClockMinutes(cfg.workdayStart), end = parseClockMinutes(cfg.workdayEnd);
+    const active = (cfg.schedule || []).find(seg => current >= parseClockMinutes(seg.start) && current < parseClockMinutes(seg.end));
+    const dayType = API.getDayType(now);
+    if (endKey && nowKey > endKey) return { key:"mascotJourneyDone", accessory:"🏆", state:"journey-done", percent:100 };
+    if (startKey && nowKey < startKey) return { key:"mascotBefore", accessory:"💤", state:"before", percent:0 };
+    if (dayType === "holiday") return { key:"mascotHoliday", accessory:"🏡", state:"rest", percent:0 };
+    if (dayType === "leave" && capacity <= 0) return { key:"mascotLeave", accessory:"🌿", state:"rest", percent:0 };
+    if (capacity <= 0) return { key:"mascotRest", accessory:"🌿", state:"rest", percent:0 };
+    if (current < start) return { key:"mascotBefore", accessory:"💤", state:"before", percent };
+    if (current >= end || percent >= 99.999) return { key:"mascotDone", accessory:"🎉", state:"done", percent:100 };
+    if (active?.type === "break") return { key:"mascotBreak", accessory:"☕", state:"break", percent };
+    if (percent <= 15) return { key:"mascotStart", accessory:"💤", state:"start", percent };
+    if (percent < 50) return { key:"mascotWork", accessory:"💻", state:"work", percent };
+    if (percent < 80) return { key:"mascotHalf", accessory:"☕", state:"half", percent };
+    return { key:"mascotAlmost", accessory:"👀", state:"almost", percent };
+  }
+  function renderMascot() {
+    const card = $("v77MascotCard"); if (!card) return;
+    const snap = mascotSnapshot(), pct = Math.max(0, Math.min(100, Number(snap.percent) || 0));
+    card.dataset.mascotState = snap.state;
+    if ($("v77MascotEyebrow")) $("v77MascotEyebrow").textContent = t("mascotTitle");
+    if ($("v77MascotName")) $("v77MascotName").textContent = t("mascotName");
+    if ($("v77MascotAccessory")) $("v77MascotAccessory").textContent = snap.accessory;
+    if ($("v77MascotBubble")) $("v77MascotBubble").textContent = t(snap.key);
+    if ($("v77MascotPercent")) $("v77MascotPercent").textContent = `${pct.toFixed(1)}%`;
+    if ($("v77MascotBar")) $("v77MascotBar").style.width = `${pct}%`;
+    if ($("v77MascotStatus")) $("v77MascotStatus").textContent = `${t("mascotProgress")} · ${pct.toFixed(1)}%`;
+  }
+
   function renderDashboardExtras() {
+    renderMascot();
     if ($("v7QuickTitle")) $("v7QuickTitle").textContent = t("quickActions");
     const root=$("v76DashboardInsights");if(!root)return;const ach=API.getAchievements(API.getStats()),near=ach.filter(a=>!a.unlocked&&Number(a.percent)>=70).length,projects=getProjects(),active=projects.filter(p=>!p.archived&&p.status!=="completed").length,streak=journalStreakCount(),stamp=localStorage.getItem(KEYS.lastBackup);let backup=t("never");if(stamp){const diff=Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/86400000));backup=diff===0?t("today"):t("daysAgo",{n:diff});}
     root.innerHTML=`<div class="v7-card-title"><div><p class="eyebrow">SMART SUMMARY</p><h3>${esc(t("dashboardInsights"))}</h3></div><small class="muted">${esc(t("summaryLive"))}</small></div><div class="v76-insight-grid"><button type="button" data-v7-go="achievements"><span>🏆</span><div><strong>${near}</strong><small>${esc(t("achievementNear"))}</small></div></button><button type="button" data-v7-go="projects"><span>🧩</span><div><strong>${active}</strong><small>${esc(t("activeProjects"))}</small></div></button><button type="button" data-v7-go="journal"><span>📓</span><div><strong>${streak}</strong><small>${esc(t("journalStreak"))} · ${esc(t("days"))}</small></div></button><button type="button" data-v7-go="settings"><span>💾</span><div><strong>${esc(backup)}</strong><small>${esc(t("backupHealth"))}</small></div></button></div>`;
@@ -640,6 +686,7 @@
     if (!location.hash || !NAV.some(([key]) => location.hash.includes(key))) history.replaceState(null,"","#/dashboard");
     applyRoute();
     setInterval(()=>{ const route=currentRoute(); if(["dashboard","reports","calendar"].includes(route)) renderPage(route); renderSidebar(); }, 90000);
+    setInterval(()=>{ if(currentRoute()==="dashboard") renderMascot(); }, 1000);
   }
 
   init();

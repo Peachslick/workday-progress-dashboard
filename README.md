@@ -1,4 +1,4 @@
-# Workday Journey V7.6.5
+# Workday Journey V7.7.0
 
 A bilingual, private-by-default work and internship journey tracker built with HTML, CSS and JavaScript.
 
@@ -55,7 +55,7 @@ Upload the contents of `workday_progress-dashboard/` to the existing GitHub repo
 - Added title rewards for 500 Hours, 75% Complete, 90% Complete, and Chronicle Master.
 
 
-V7.6.5 UX & Quality Update:
+V7.7.0 UX & Quality Update:
 - Journal search/filter by text, project, mood and month
 - Project archive with Active / Completed / Archived tabs
 - Achievement detail modal with keyboard access and unlock metadata
@@ -63,13 +63,20 @@ V7.6.5 UX & Quality Update:
 - Custom confirm + 8-second undo for journal/project/calendar changes
 - Backup schemaVersion + migration for older backups
 - Dashboard quick summary, accessibility focus states, mobile polish and lighter periodic rendering
-- Existing PWA update-available flow retained and cache bumped to V7.6.5
+- Existing PWA update-available flow retained and cache bumped to V7.7.0
 
 - Daily Work Journal now includes a monthly completion calendar: saved days show a check mark and past working days without a journal remain visibly pending.
 - Ctrl+K Command Palette removed.
 
-## V7.6.5 Font Picker Update
+## V7.7.0 Progress Mascot
 - Prevented the Daily Work Journal form card from stretching to match the much taller history/calendar column.
 - Reduced journal textarea height while keeping manual vertical resize available.
 - Kept mood and related projects in a compact, bounded meta section with an internal project scroll area.
 - Restored compact action buttons and balanced spacing across desktop, tablet, and mobile layouts.
+
+
+## V7.7 Progress Mascot
+- Adds the default Chick mascot to the Dashboard.
+- Mascot reacts to before-work, active work, breaks, halfway progress, near-finish, 100%, leave/holiday/rest days, and completed journeys.
+- Uses the existing work schedule and progress calculations; no new user data or reset is required.
+- Work Coins and Reward Shop are intentionally deferred to the cloud-sync roadmap.
