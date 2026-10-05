@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.2";
+  const VERSION = "8.4.3";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -735,7 +735,7 @@
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.2</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
       ${collectionMarkup()}
       ${weeklyMarkup()}
@@ -869,25 +869,99 @@
     if(roll<80){const theme=THEMES.filter(x=>x.price>0&&!isOwned(x));if(theme.length)return{type:"trial",hours:48,text:lang()==="th"?"Theme Trial 48 ชั่วโมง":"48h Theme Trial"};}
     const xp=[60,80,100,120][seedNumber(seed+":xp")%4];return{type:"xp",xp,text:`+${xp} Mascot XP`};
   }
+  function chestLedgerEntry(kind,key=kind==="daily"?dayKeyNow():weekKey()){
+    return ledger().find(x=>x.id===`chest:${kind}:${key}`)||null;
+  }
+  function chestEntryInfo(entry){
+    if(!entry)return null;
+    const meta=entry.meta||{}, type=meta.rewardType||"coins";
+    if(type==="coins"){
+      const coins=Math.max(0,Math.round(Number(meta.coins ?? entry.amount ?? 0)));
+      return {type,icon:"🪙",text:`+${coins} Coins`,coins,jackpot:!!meta.jackpot};
+    }
+    if(type==="trial"){
+      const theme=rewardBy("theme",meta.rewardId),hours=Math.max(1,Math.round(Number(meta.hours||24)));
+      return {type,icon:theme?.icon||"🎨",text:theme?`${rewardName(theme)} · ${hours}h`:(meta.rewardText||`${hours}h Theme Trial`),hours,rewardId:meta.rewardId||""};
+    }
+    if(type==="xp"){
+      const mascot=rewardBy("mascot",meta.mascotId),xp=Math.max(0,Math.round(Number(meta.xp||0)));
+      return {type,icon:mascot?.emoji||"🐣",text:`+${xp} XP · ${mascot?rewardName(mascot):(meta.rewardText||"Mascot")}`,xp,mascotId:meta.mascotId||"",level:Number(meta.bondLevel||0),progress:Number(meta.bondProgress||0)};
+    }
+    return {type,icon:meta.rewardIcon||"🎁",text:meta.rewardText||entry.labelTh||entry.labelEn||"Reward"};
+  }
+  function chestCardRewardMarkup(entry,kind){
+    const info=chestEntryInfo(entry); if(!info)return"";
+    const label=kind==="daily"?(lang()==="th"?"วันนี้ได้รับ":"Today's reward"):(lang()==="th"?"สัปดาห์นี้ได้รับ":"This week's reward");
+    return `<div class="v843-chest-last reward-${esc(info.type)}"><span>${info.icon}</span><div><small>${esc(label)}</small><strong>${esc(info.text)}</strong></div></div>`;
+  }
+  function chestMotionEnabled(){
+    return !document.body.classList.contains("no-animations") && localStorage.getItem("wp-animations")!=="false" && !globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  }
+  let chestRevealTimer=null;
+  function ensureChestRewardModal(){
+    let back=$("v843ChestBackdrop"); if(back)return back;
+    back=document.createElement("div"); back.id="v843ChestBackdrop"; back.className="v843-chest-backdrop"; back.hidden=true;
+    back.innerHTML=`<section id="v843ChestModal" class="v843-chest-modal" role="dialog" aria-modal="true" aria-labelledby="v843ChestTitle"><button id="v843ChestClose" class="v843-chest-close" type="button" aria-label="Close">×</button><div id="v843ChestParticles" class="v843-chest-particles" aria-hidden="true"></div><div id="v843ChestStage" class="v843-chest-stage" data-stage="opening"><div class="v843-chest-box"><span id="v843ChestBoxIcon">🎁</span><i></i></div><div class="v843-chest-question">?</div><div class="v843-chest-reward-icon" id="v843ChestRewardIcon">🪙</div></div><div class="v843-chest-copy"><p id="v843ChestEyebrow" class="eyebrow">DAILY CHEST</p><div id="v843ChestJackpot" class="v843-chest-jackpot" hidden>🔥 JACKPOT!</div><h2 id="v843ChestTitle">Reward</h2><p id="v843ChestSubtitle"></p><div id="v843ChestXp" class="v843-chest-xp" hidden><div><span id="v843ChestXpLabel"></span><strong id="v843ChestXpLevel"></strong></div><i><b id="v843ChestXpBar"></b></i></div></div><button id="v843ChestAccept" class="v843-chest-accept" type="button">รับรางวัล</button><small class="v843-chest-safe">รางวัลถูกบันทึกแล้ว · ปิด Popup ได้อย่างปลอดภัย</small></section>`;
+    document.body.appendChild(back);
+    const close=()=>closeChestRewardModal();
+    $("v843ChestClose").addEventListener("click",close); $("v843ChestAccept").addEventListener("click",close);
+    back.addEventListener("click",e=>{if(e.target===back)close();});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!back.hidden)close();});
+    return back;
+  }
+  function closeChestRewardModal(){
+    clearTimeout(chestRevealTimer); const back=$("v843ChestBackdrop"); if(back){back.classList.remove("show");back.hidden=true;} document.body.classList.remove("v843-chest-open");
+  }
+  function chestParticleMarkup(kind,jackpot){
+    const symbols=kind==="weekly"||jackpot?["✦","★","●","◆","🪙","✧","★","●","🪙","✦","◆","★"]:["✦","●","🪙","✧","●","✦","🪙","●"];
+    return symbols.map((symbol,i)=>`<i style="--i:${i};--x:${8+(i*23)%84}%;--delay:${(i%5)*.08}s">${symbol}</i>`).join("");
+  }
+  function showChestRewardModal(kind,reward){
+    const back=ensureChestRewardModal(),modal=$("v843ChestModal"),stage=$("v843ChestStage"),motion=chestMotionEnabled(),weekly=kind==="weekly";
+    clearTimeout(chestRevealTimer); modal.className=`v843-chest-modal ${kind} reward-${reward.type} ${reward.jackpot?"jackpot":""}`;
+    $("v843ChestBoxIcon").textContent=weekly?"🏆":"🎁"; $("v843ChestRewardIcon").textContent=reward.icon||"🎁";
+    $("v843ChestEyebrow").textContent=weekly?"WEEKLY CHEST":"DAILY CHEST"; $("v843ChestJackpot").hidden=!reward.jackpot;
+    $("v843ChestTitle").textContent=reward.title||reward.rewardText||"Reward"; $("v843ChestSubtitle").textContent=reward.subtitle||"";
+    $("v843ChestAccept").textContent=lang()==="th"?"รับรางวัล":"Awesome!"; q(".v843-chest-safe",modal).textContent=lang()==="th"?"รางวัลถูกบันทึกแล้ว · ปิด Popup ได้อย่างปลอดภัย":"Reward saved · you can safely close this popup";
+    const xp=$("v843ChestXp");
+    if(reward.type==="xp"){
+      xp.hidden=false; $("v843ChestXpLabel").textContent=lang()==="th"?`ความผูกพัน ${reward.progress}/100`:`Bond progress ${reward.progress}/100`; $("v843ChestXpLevel").textContent=`Lv. ${reward.level}`; $("v843ChestXpBar").style.width=`${Math.max(0,Math.min(100,reward.progress||0))}%`;
+    }else xp.hidden=true;
+    $("v843ChestParticles").innerHTML=chestParticleMarkup(kind,reward.jackpot);
+    stage.dataset.stage=motion?"opening":"revealed"; back.hidden=false; document.body.classList.add("v843-chest-open");
+    requestAnimationFrame(()=>back.classList.add("show"));
+    if(motion)chestRevealTimer=setTimeout(()=>{stage.dataset.stage="revealed";},weekly?1150:850);
+    setTimeout(()=>$("v843ChestAccept")?.focus(),motion?(weekly?1500:1200):80);
+  }
   function openChest(kind){
     const dailyKey=dayKeyNow(), key=kind==="daily"?dailyKey:weekKey(), id=`chest:${kind}:${key}`;
     if(ledger().some(x=>x.id===id))return;
     if(kind==="daily"&&missionClaimCount(dailyKey)<3){toast("🎁",lang()==="th"?"ทำ Daily Missions ให้ครบ 3 ภารกิจก่อน":"Complete all 3 Daily Missions first","error");return;}
     if(kind==="weekly"&&completedDailyInWeek()<5){toast("🎁",lang()==="th"?"เปิด Daily Chest ให้ครบ 5 วันในสัปดาห์ก่อน":"Open Daily Chests on 5 days this week first","error");return;}
-    const reward=chestReward(kind,key), list=ledger(); let amount=0, rewardText=reward.text;
-    if(reward.type==="coins") amount=reward.coins;
-    if(reward.type==="trial"){const trial=grantThemeTrial(reward.hours,`${kind}:${key}`);if(trial){const theme=rewardBy("theme",trial.themeId);rewardText=`${rewardName(theme)} · ${reward.hours}h Trial`;}else{amount=kind==="daily"?20:70;rewardText=`+${amount} Coins`;}}
-    if(reward.type==="xp"){const mascot=selectedMascotId();addMascotXp(mascot,reward.xp);rewardText=`+${reward.xp} XP · ${rewardName(rewardBy("mascot",mascot))}`;}
-    list.push({id,amount,type:"chest",labelTh:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,labelEn:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,createdAt:new Date().toISOString(),meta:{kind,key,rewardType:reward.type,rewardText}}); write(KEYS.ledger,list);
-    toast("🎁",rewardText,"success");applyEquippedRewards(true);refreshAll();
+    const reward=chestReward(kind,key), list=ledger(); let amount=0, rewardText=reward.text, resolved={type:reward.type,icon:"🎁",title:reward.text,subtitle:"",rewardText:reward.text,jackpot:false};
+    if(reward.type==="coins"){
+      amount=reward.coins; const jackpot=kind==="daily"?amount>=25:amount>=80;
+      resolved={type:"coins",icon:"🪙",title:`+${amount} Work Coins`,subtitle:kind==="weekly"?(lang()==="th"?"รางวัล Weekly Chest ของสัปดาห์นี้":"Your Weekly Chest reward"):(lang()==="th"?"รางวัล Daily Chest วันนี้":"Today's Daily Chest reward"),rewardText:`+${amount} Coins`,coins:amount,jackpot};
+    }
+    if(reward.type==="trial"){
+      const trial=grantThemeTrial(reward.hours,`${kind}:${key}`);
+      if(trial){const theme=rewardBy("theme",trial.themeId);rewardText=`${rewardName(theme)} · ${reward.hours}h Trial`;resolved={type:"trial",icon:theme?.icon||"🎨",title:rewardName(theme),subtitle:lang()==="th"?`Theme Trial ${reward.hours} ชั่วโมง · เปิดใช้งานแล้ว`:`${reward.hours}h Theme Trial · activated`,rewardText,hours:reward.hours,rewardId:trial.themeId,jackpot:false};}
+      else{amount=kind==="daily"?20:70;rewardText=`+${amount} Coins`;resolved={type:"coins",icon:"🪙",title:`+${amount} Work Coins`,subtitle:lang()==="th"?"คุณมี Theme ที่ปลดล็อกครบแล้ว จึงเปลี่ยนเป็น Coins":"All eligible themes are already unlocked, so you received Coins instead",rewardText,coins:amount,jackpot:false};}
+    }
+    if(reward.type==="xp"){
+      const mascotId=selectedMascotId(),mascot=rewardBy("mascot",mascotId);addMascotXp(mascotId,reward.xp);const bond=mascotBond(mascotId);rewardText=`+${reward.xp} XP · ${rewardName(mascot)}`;resolved={type:"xp",icon:mascot?.emoji||"🐣",title:`+${reward.xp} Mascot XP`,subtitle:rewardName(mascot),rewardText,xp:reward.xp,mascotId,level:bond.level,progress:bond.progress,jackpot:false};
+    }
+    list.push({id,amount,type:"chest",labelTh:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,labelEn:`${kind==="daily"?"Daily":"Weekly"} Chest · ${rewardText}`,createdAt:new Date().toISOString(),meta:{kind,key,rewardType:resolved.type,rewardText,rewardIcon:resolved.icon,coins:resolved.coins||0,hours:resolved.hours||0,rewardId:resolved.rewardId||"",xp:resolved.xp||0,mascotId:resolved.mascotId||"",bondLevel:resolved.level||0,bondProgress:resolved.progress||0,jackpot:!!resolved.jackpot}}); write(KEYS.ledger,list);
+    // Save first, animate second: refresh/reload during the popup can never reroll this chest.
+    applyEquippedRewards(true);refreshAll();showChestRewardModal(kind,resolved);
   }
   function progressText(value,target){ if(target<=1)return value>=target?(lang()==="th"?"สำเร็จแล้ว":"Completed"):`${Math.round(value)}/${Math.round(target)}`; return `${Math.round(value)}/${Math.round(target)} min`; }
   function renderMissions(){
     const root=$("v82MissionsPage"); if(!root)return; markRouteVisit();
-    const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyOpen=dailyChestOpened(key), weeklyDone=completedDailyInWeek(), weeklyOpen=weeklyChestOpened(), trial=activeThemeTrial();
+    const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry, weeklyDone=completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry, trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.2</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
@@ -981,7 +1055,7 @@
     const tierIndex=BANK_TIERS.findIndex(x=>x.id===tier.id),next=BANK_TIERS[tierIndex+1]||null,nextGap=next?Math.max(0,roundBank(next.min-savings)):0;
     const tierCards=BANK_TIERS.map(item=>`<article class="v83-tier-card ${item.id===tier.id?"active":""}"><span>${item.icon}</span><div><strong>${esc(lang()==="th"?item.th:item.en)}</strong><small>${item.max===Infinity?`${item.min.toLocaleString()}+`:`${item.min.toLocaleString()}–${Math.floor(item.max).toLocaleString()}`} Coins</small></div><b>${(item.rate*100).toFixed(2)}%<small>/day</small></b></article>`).join("");
     const history=list.length?list.slice(0,60).map(item=>{const n=Number(item.amount||0),kind=item.type==="interest"?"interest":n>=0?"deposit":"withdraw";return `<div class="v83-bank-history-row ${kind}"><span>${item.type==="interest"?"✨":item.type==="deposit"?"↓":"↑"}</span><div><strong>${esc(bankHistoryLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${n>=0?"+":""}${formatBankCoin(n)} 🪙</b></div>`;}).join(""):`<div class="empty-state">🏦 ${lang()==="th"?"ยังไม่มีรายการฝากถอน":"No bank transactions yet"}</div>`;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.2</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
       <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(tier.rate*100).toFixed(2)}% / day</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
       <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet":"Saved Coins cannot be spent in the Reward Shop until withdrawn."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · เศษดอกเบี้ยจะคงอยู่ใน Savings`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · fractional interest stays in Savings.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
@@ -994,7 +1068,7 @@
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
   }
 
-  // ---------- V8.4.2 Work Exchange ----------
+  // ---------- V8.4.3 Work Exchange ----------
   const EXCHANGE_EPOCH_KEY = "2026-05-05";
   const EXCHANGE_FEE_RATE = 0.01;
   const EXCHANGE_SLOTS = [9,11,13,15];
@@ -1034,7 +1108,7 @@
     {id:"exchange-master",icon:"🏆",th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
   ];
 
-  // ---------- V8.4.2 Trading Academy / Beginner Mode ----------
+  // ---------- V8.4.3 Trading Academy / Beginner Mode ----------
   const ACADEMY_LESSON_REWARD = 5;
   const EXCHANGE_ACADEMY = [
     {
@@ -1287,7 +1361,7 @@
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>`<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small></div>${earned[a.id]?`<b>✓</b>`:""}</article>`).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.2</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
       ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
