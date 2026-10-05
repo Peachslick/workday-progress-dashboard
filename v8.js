@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.3.4";
+  const VERSION = "8.4";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -266,6 +266,7 @@
       calendar:["🗓️","ปฏิทินและการเข้างาน","วันลา วันหยุดบริษัท และวันทำงานชดเชย"],
       missions:["🎯","ภารกิจรายวัน","Daily Missions, Daily Chest และ Weekly Chest"],
       bank:["🏦","Work Bank","Savings, Daily Interest และ Work Coins"],
+      exchange:["📈","Work Exchange","ตลาดหุ้นจำลอง Portfolio และ Trading ด้วย Work Coins"],
       rewards:["🎁","รางวัล","Mascot, Accessories, Frames, Theme และ Effect"],
       settings:["⚙️","ตั้งค่า","โปรไฟล์ การแสดงผล Cloud และข้อมูล"]
     },
@@ -278,6 +279,7 @@
       calendar:["🗓️","Calendar & Attendance","Leave, company holidays and compensatory work"],
       missions:["🎯","Daily Missions","Daily Missions, Daily Chest and Weekly Chest"],
       bank:["🏦","Work Bank","Savings, daily interest and Work Coins"],
+      exchange:["📈","Work Exchange","Simulated market, portfolio and Work Coin trading"],
       rewards:["🎁","Rewards","Mascots, accessories, frames, themes and effects"],
       settings:["⚙️","Settings","Profile, appearance, cloud and data"]
     }
