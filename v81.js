@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4";
+  const VERSION = "8.4.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -35,7 +35,9 @@
     exchangeWatch: "wp-v84-exchange-watchlist",
     exchangeSelected: "wp-v84-exchange-selected",
     exchangeRange: "wp-v84-exchange-range",
-    exchangeAchievements: "wp-v84-exchange-achievements"
+    exchangeAchievements: "wp-v84-exchange-achievements",
+    exchangeAcademy: "wp-v841-trading-academy",
+    exchangeBeginner: "wp-v841-beginner-mode"
   };
 
   const ECONOMY = { workday:15, journal:10, project:50 };
@@ -733,7 +735,7 @@
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.1</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
       ${collectionMarkup()}
       ${weeklyMarkup()}
@@ -885,7 +887,7 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyOpen=dailyChestOpened(key), weeklyDone=completedDailyInWeek(), weeklyOpen=weeklyChestOpened(), trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.1</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
@@ -979,7 +981,7 @@
     const tierIndex=BANK_TIERS.findIndex(x=>x.id===tier.id),next=BANK_TIERS[tierIndex+1]||null,nextGap=next?Math.max(0,roundBank(next.min-savings)):0;
     const tierCards=BANK_TIERS.map(item=>`<article class="v83-tier-card ${item.id===tier.id?"active":""}"><span>${item.icon}</span><div><strong>${esc(lang()==="th"?item.th:item.en)}</strong><small>${item.max===Infinity?`${item.min.toLocaleString()}+`:`${item.min.toLocaleString()}–${Math.floor(item.max).toLocaleString()}`} Coins</small></div><b>${(item.rate*100).toFixed(2)}%<small>/day</small></b></article>`).join("");
     const history=list.length?list.slice(0,60).map(item=>{const n=Number(item.amount||0),kind=item.type==="interest"?"interest":n>=0?"deposit":"withdraw";return `<div class="v83-bank-history-row ${kind}"><span>${item.type==="interest"?"✨":item.type==="deposit"?"↓":"↑"}</span><div><strong>${esc(bankHistoryLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${n>=0?"+":""}${formatBankCoin(n)} 🪙</b></div>`;}).join(""):`<div class="empty-state">🏦 ${lang()==="th"?"ยังไม่มีรายการฝากถอน":"No bank transactions yet"}</div>`;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.1</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
       <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(tier.rate*100).toFixed(2)}% / day</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
       <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet":"Saved Coins cannot be spent in the Reward Shop until withdrawn."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · เศษดอกเบี้ยจะคงอยู่ใน Savings`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · fractional interest stays in Savings.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
@@ -992,7 +994,7 @@
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
   }
 
-  // ---------- V8.4 Work Exchange ----------
+  // ---------- V8.4.1 Work Exchange ----------
   const EXCHANGE_EPOCH_KEY = "2026-05-05";
   const EXCHANGE_FEE_RATE = 0.01;
   const EXCHANGE_SLOTS = [9,11,13,15];
@@ -1024,12 +1026,137 @@
   ];
   const EXCHANGE_ACHIEVEMENTS = [
     {id:"first-trade",icon:"📈",th:"First Trade",en:"First Trade",descTh:"ซื้อหรือขายหุ้นครั้งแรก",descEn:"Complete your first trade"},
+    {id:"academy-graduate",icon:"🎓",th:"Academy Graduate",en:"Academy Graduate",descTh:"เรียน Trading Academy ครบทั้ง 7 บท",descEn:"Complete all 7 Trading Academy lessons"},
     {id:"investor",icon:"💼",th:"Investor",en:"Investor",descTh:"ถือหุ้นพร้อมกันอย่างน้อย 3 บริษัท",descEn:"Hold at least 3 companies at once"},
     {id:"green-portfolio",icon:"💚",th:"Green Portfolio",en:"Green Portfolio",descTh:"Portfolio มีกำไรรวมเป็นบวก",descEn:"Reach a positive total portfolio P/L"},
     {id:"market-winner",icon:"🔥",th:"Market Winner",en:"Market Winner",descTh:"กำไรรวมแตะ 100 Coins",descEn:"Reach 100 Coins of total P/L"},
     {id:"diamond-hands",icon:"💎",th:"Diamond Hands",en:"Diamond Hands",descTh:"ถือหุ้นตัวเดิมต่อเนื่องอย่างน้อย 5 วัน",descEn:"Hold the same stock for at least 5 days"},
     {id:"exchange-master",icon:"🏆",th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
   ];
+
+  // ---------- V8.4.1 Trading Academy / Beginner Mode ----------
+  const ACADEMY_LESSON_REWARD = 5;
+  const EXCHANGE_ACADEMY = [
+    {
+      id:"stock-basics",icon:"🏢",titleTh:"หุ้นคืออะไร?",titleEn:"What is a stock?",
+      introTh:"ใน Work Exchange หุ้นคือหน่วยจำลองของบริษัทที่คุณซื้อด้วย Work Coins ราคาจะขึ้นลงตาม Market Engine ของเว็บ",
+      introEn:"In Work Exchange, a stock is a simulated company share bought with Work Coins. Prices move with the app's market engine.",
+      pointsTh:["1 หุ้น = การถือหน่วยจำลองของบริษัท 1 หน่วย","ราคาขึ้นหรือลงทำให้มูลค่า Portfolio เปลี่ยน","หุ้นในเว็บนี้ไม่มีเงินจริงหรือหลักทรัพย์จริงเกี่ยวข้อง"],
+      pointsEn:["1 share = one simulated unit of a company","Price movement changes your portfolio value","No real money or real securities are involved"],
+      tipTh:"จำง่าย ๆ: ซื้อหุ้น = แลก Work Coins ไปถือสินทรัพย์จำลองที่ราคาเปลี่ยนได้",
+      tipEn:"Remember: buying a share exchanges Work Coins for a simulated asset whose price can move.",
+      questionTh:"ถ้าคุณซื้อ TECH 3 หุ้น หมายถึงอะไร?",questionEn:"What does buying 3 TECH shares mean?",
+      answers:[{id:"a",th:"ถือหน่วยจำลอง TECH จำนวน 3 หน่วย",en:"You hold 3 simulated TECH shares"},{id:"b",th:"ได้กำไร 3 Coins ทันที",en:"You instantly earn 3 Coins"},{id:"c",th:"TECH จะขึ้นราคาแน่นอน",en:"TECH is guaranteed to rise"}],correct:"a",action:"market",actionTh:"ไปดูหุ้นทั้งหมด",actionEn:"Explore the market"
+    },
+    {
+      id:"pnl-fees",icon:"📊",titleTh:"กำไร ขาดทุน และ Fee",titleEn:"Profit, loss and fees",
+      introTh:"P/L คือ Profit/Loss ส่วนค่าธรรมเนียมซื้อและขายใน Work Exchange คือ 1% จึงต้องคิด Fee ก่อนตัดสินใจเทรด",
+      introEn:"P/L means profit or loss. Work Exchange charges a 1% fee on both buys and sells, so fees matter before trading.",
+      pointsTh:["Unrealized P/L = กำไร/ขาดทุนของหุ้นที่ยังถืออยู่","Realized P/L = กำไร/ขาดทุนหลังขายแล้ว","ซื้อและขายมี Fee 1% จึงไม่ควรเทรดถี่เพราะการขยับเล็กน้อย"],
+      pointsEn:["Unrealized P/L is profit/loss on positions you still hold","Realized P/L is profit/loss after selling","Both buys and sells have a 1% fee, so tiny moves can be eaten by fees"],
+      tipTh:"ราคาขึ้นเล็กน้อยไม่ได้แปลว่ากำไรสุทธิ เพราะยังมี Fee ตอนซื้อและขาย",
+      tipEn:"A small price rise does not guarantee net profit because buy and sell fees still apply.",
+      questionTh:"ซื้อหุ้นมูลค่า 100 Coins และ Fee 1% ต้องจ่ายทั้งหมดเท่าไร?",questionEn:"If a buy is worth 100 Coins and the fee is 1%, how much do you pay?",
+      answers:[{id:"a",th:"100 Coins",en:"100 Coins"},{id:"b",th:"101 Coins",en:"101 Coins"},{id:"c",th:"99 Coins",en:"99 Coins"}],correct:"b",action:"trade",actionTh:"ดู Trade Ticket",actionEn:"Open the trade ticket"
+    },
+    {
+      id:"average-cost",icon:"🧮",titleTh:"Average Cost คืออะไร?",titleEn:"What is average cost?",
+      introTh:"ถ้าซื้อหุ้นตัวเดิมหลายครั้ง ระบบจะคำนวณต้นทุนเฉลี่ยต่อหุ้น เพื่อใช้เทียบกับราคาปัจจุบันและหา P/L",
+      introEn:"When you buy the same stock multiple times, the app calculates an average cost per share to measure P/L.",
+      pointsTh:["Average Cost ไม่ใช่ราคาซื้อล่าสุด","จำนวนหุ้นแต่ละรอบมีผลต่อต้นทุนเฉลี่ย","Portfolio แสดง Avg เพื่อช่วยดูว่าราคาปัจจุบันสูงหรือต่ำกว่าต้นทุน"],
+      pointsEn:["Average cost is not simply your latest buy price","Share quantity in each purchase affects the average","Portfolio Avg helps compare current price with your cost basis"],
+      tipTh:"ตัวอย่าง: ซื้อ 2 หุ้น @50 และ 2 หุ้น @70 → Average Cost = 60 Coins/หุ้น",
+      tipEn:"Example: buy 2 shares @50 and 2 shares @70 → Average Cost = 60 Coins/share.",
+      questionTh:"ซื้อ 2 หุ้น @50 และอีก 2 หุ้น @70 ต้นทุนเฉลี่ยคือเท่าไร?",questionEn:"Buy 2 shares @50 and 2 more @70. What is the average cost?",
+      answers:[{id:"a",th:"50 Coins",en:"50 Coins"},{id:"b",th:"60 Coins",en:"60 Coins"},{id:"c",th:"70 Coins",en:"70 Coins"}],correct:"b",action:"portfolio",actionTh:"ดู Portfolio",actionEn:"View portfolio"
+    },
+    {
+      id:"diversification",icon:"🧺",titleTh:"อย่า All-in",titleEn:"Do not go all-in",
+      introTh:"การเอา Coins ทั้งหมดลงหุ้นตัวเดียวทำให้ Portfolio ขึ้นกับหุ้นนั้นมากเกินไป การกระจายและเก็บ Wallet สำรองช่วยลดความเสี่ยง",
+      introEn:"Putting all Coins into one stock makes your portfolio depend too heavily on it. Diversification and cash reserves reduce risk.",
+      pointsTh:["ไม่จำเป็นต้องซื้อหุ้นครบทุกตัว","แบ่งเงินระหว่างหุ้นความเสี่ยงต่างกันได้","เก็บ Coins บางส่วนไว้ใน Wallet หรือ Bank เพื่อไม่ถูกบังคับขาย"],
+      pointsEn:["You do not need to own every stock","You can split Coins across different risk levels","Keep some Coins in Wallet or Bank so you are not forced to sell"],
+      tipTh:"สำหรับมือใหม่ ลองใช้เงินเทรดเพียง 20–30% ของ Wallet ต่อหุ้นหนึ่งตัวก่อน",
+      tipEn:"For beginners, consider limiting one stock to roughly 20–30% of your trading Wallet.",
+      questionTh:"ข้อไหนช่วยลดความเสี่ยงได้ดีกว่า?",questionEn:"Which approach better reduces risk?",
+      answers:[{id:"a",th:"เอา Coins ทั้งหมดซื้อ AUTO ตัวเดียว",en:"Put every Coin into AUTO"},{id:"b",th:"แบ่งหลายหุ้นและเก็บ Coins สำรอง",en:"Diversify and keep some Coins in reserve"},{id:"c",th:"ซื้อหุ้นที่ขึ้นแรงที่สุดทุกครั้ง",en:"Always buy the biggest gainer"}],correct:"b",action:"market",actionTh:"เปรียบเทียบหุ้น",actionEn:"Compare stocks"
+    },
+    {
+      id:"risk-levels",icon:"🚦",titleTh:"เข้าใจ Risk Level",titleEn:"Understand risk levels",
+      introTh:"หุ้นแต่ละตัวใน Work Exchange มี Low, Medium หรือ High Risk จากระดับความผันผวนจำลอง ไม่ได้หมายถึงดีหรือแย่ แต่หมายถึงราคาแกว่งไม่เท่ากัน",
+      introEn:"Each Work Exchange stock has Low, Medium or High Risk based on simulated volatility. It is not a quality score; it describes how much price can move.",
+      pointsTh:["Low Risk มักแกว่งน้อยกว่า","High Risk มีโอกาสขึ้นแรงและลงแรงกว่า","ดู Risk พร้อม Market Event และกราฟ ไม่ควรดูอย่างเดียว"],
+      pointsEn:["Low Risk generally moves less","High Risk can rise faster and fall faster","Use Risk together with market events and the chart"],
+      tipTh:"หุ้น High Risk ไม่ได้แปลว่าห้ามซื้อ แต่ควรใช้ขนาด Position ที่คุณรับการแกว่งได้",
+      tipEn:"High Risk does not mean never buy it; it means size the position so you can tolerate the movement.",
+      questionTh:"High Risk ในเว็บนี้หมายถึงอะไร?",questionEn:"What does High Risk mean here?",
+      answers:[{id:"a",th:"หุ้นต้องขาดทุนแน่นอน",en:"The stock must lose money"},{id:"b",th:"ราคามีโอกาสแกว่งแรงกว่า",en:"The price can move more sharply"},{id:"c",th:"ซื้อไม่ได้",en:"It cannot be bought"}],correct:"b",action:"stock",actionTh:"ดู Risk ของหุ้น",actionEn:"Inspect stock risk"
+    },
+    {
+      id:"reading-chart",icon:"📈",titleTh:"อ่านกราฟแบบง่าย",titleEn:"Read a chart simply",
+      introTh:"ไม่ต้องทายอนาคตจากเส้นกราฟ แค่ใช้กราฟดูทิศทางและความผันผวนร่วมกับ Today, 5D และ All ก็ช่วยเห็นภาพมากขึ้น",
+      introEn:"You do not need to predict the future from a chart. Use Today, 5D and All to understand direction and volatility.",
+      pointsTh:["Today แสดงการเคลื่อนไหวของรอบตลาดวันนี้","5D ช่วยเห็นภาพ 5 วันทำการล่าสุด","All ช่วยดูแนวโน้มตั้งแต่เริ่มตลาดจำลอง"],
+      pointsEn:["Today shows the current market-day path","5D shows the latest five business days","All shows the longer simulated history"],
+      tipTh:"อย่าดูแค่ตัวเลข +% ตอนนี้ ลองดูว่าราคาขึ้นสม่ำเสมอหรือแกว่งแรงด้วย",
+      tipEn:"Do not look only at the current +%. Also check whether the move is steady or highly volatile.",
+      questionTh:"ถ้าต้องการดูแนวโน้ม 5 วันทำการล่าสุด ควรกดอะไร?",questionEn:"Which range shows the latest five business days?",
+      answers:[{id:"a",th:"Today",en:"Today"},{id:"b",th:"5D",en:"5D"},{id:"c",th:"All เท่านั้น",en:"All only"}],correct:"b",action:"chart",actionTh:"ลองเปลี่ยนช่วงกราฟ",actionEn:"Try chart ranges"
+    },
+    {
+      id:"first-trade",icon:"🎯",titleTh:"เตรียมซื้อขายครั้งแรก",titleEn:"Prepare your first trade",
+      introTh:"ก่อนกดซื้อให้เช็ก Wallet, จำนวนหุ้น, ราคาปัจจุบัน, Fee และ Risk ก่อนเสมอ หลังซื้อสามารถดู Average Cost และ P/L ใน Portfolio ได้",
+      introEn:"Before buying, check Wallet, quantity, current price, fee and risk. After buying, Portfolio shows average cost and P/L.",
+      pointsTh:["เริ่มจากจำนวนหุ้นเล็ก ๆ เพื่อเรียนรู้ระบบ","ตั้งเป้าว่ารับขาดทุนได้แค่ไหนก่อนซื้อ","Trade History ใช้ย้อนดูว่าซื้อขายอะไรไปและเสีย Fee เท่าไร"],
+      pointsEn:["Start with a small quantity while learning","Decide how much loss you can tolerate before buying","Trade History shows what you traded and how much fee you paid"],
+      tipTh:"บทเรียนนี้ไม่บังคับให้ซื้อจริง คุณสามารถเรียนจบก่อน แล้วค่อยทดลองตอนตลาดเปิด",
+      tipEn:"This lesson does not force a trade. Finish the lesson first and practice when the market is open.",
+      questionTh:"ก่อนกด BUY สิ่งไหนควรเช็กมากที่สุด?",questionEn:"What should you check before pressing BUY?",
+      answers:[{id:"a",th:"ราคา จำนวน Fee Risk และ Wallet",en:"Price, quantity, fee, risk and Wallet"},{id:"b",th:"ดูแค่ว่าหุ้นเป็นสีเขียว",en:"Only whether the stock is green"},{id:"c",th:"กด MAX ทุกครั้ง",en:"Always press MAX"}],correct:"a",action:"trade",actionTh:"ไปที่ Trade Ticket",actionEn:"Go to trade ticket"
+    }
+  ];
+
+  function academyState(){
+    const raw=read(KEYS.exchangeAcademy,{}),completed=raw&&typeof raw.completed==="object"&&!Array.isArray(raw.completed)?raw.completed:{};
+    const fallback=EXCHANGE_ACADEMY.find(x=>!completed[x.id])?.id||EXCHANGE_ACADEMY[0].id;
+    const selected=EXCHANGE_ACADEMY.some(x=>x.id===raw?.selected)?raw.selected:fallback;
+    return {...(raw&&typeof raw==="object"?raw:{}),completed,selected,open:raw?.open===true};
+  }
+  function saveAcademyState(state){ write(KEYS.exchangeAcademy,state); }
+  function academyCompletedCount(state=academyState()){ return EXCHANGE_ACADEMY.filter(x=>state.completed?.[x.id]).length; }
+  function academyCoinEarned(){ const ids=new Set(EXCHANGE_ACADEMY.map(x=>`earn:academy:${x.id}`));return ledger().filter(x=>ids.has(x.id)&&Number(x.amount)>0).reduce((sum,x)=>sum+Number(x.amount||0),0); }
+  function beginnerModeEnabled(){ const raw=localStorage.getItem(KEYS.exchangeBeginner);return raw===null?academyCompletedCount()<EXCHANGE_ACADEMY.length:raw!=="0"; }
+  function setBeginnerMode(on){ localStorage.setItem(KEYS.exchangeBeginner,on?"1":"0"); }
+  function academyLesson(id){ return EXCHANGE_ACADEMY.find(x=>x.id===id)||EXCHANGE_ACADEMY[0]; }
+  function academyReconcileRewards(){
+    const state=academyState(),list=ledger(),ids=new Set(list.map(x=>x.id));let changed=false;
+    EXCHANGE_ACADEMY.forEach(def=>{if(!state.completed?.[def.id])return;const id=`earn:academy:${def.id}`;if(ids.has(id))return;list.push({id,amount:ACADEMY_LESSON_REWARD,type:"academy",labelTh:`Trading Academy · ${def.titleTh}`,labelEn:`Trading Academy · ${def.titleEn}`,createdAt:state.completed[def.id]||new Date().toISOString(),meta:{lessonId:def.id}});ids.add(id);changed=true;});
+    if(changed)write(KEYS.ledger,list);return changed;
+  }
+  function academyCompleteLesson(id,answerId,{notify=true}={}){
+    const def=academyLesson(id);if(!def||answerId!==def.correct){if(notify)toast("💡",lang()==="th"?"คำตอบยังไม่ถูก ลองอ่าน Key Takeaway แล้วตอบอีกครั้ง":"Not quite. Review the key takeaway and try again.","warning");return false;}
+    const state=academyState(),first=!state.completed?.[def.id];if(first){state.completed[def.id]=new Date().toISOString();if(!state.startedAt)state.startedAt=state.completed[def.id];const next=EXCHANGE_ACADEMY.find(x=>!state.completed[x.id]);state.selected=next?.id||def.id;if(academyCompletedCount(state)===EXCHANGE_ACADEMY.length)state.completedAt=new Date().toISOString();saveAcademyState(state);academyReconcileRewards();reconcileExchangeAchievements({notify:false});if(notify)toast("🎓",lang()==="th"?`เรียนจบบทนี้แล้ว +${ACADEMY_LESSON_REWARD} Coins`:`Lesson complete +${ACADEMY_LESSON_REWARD} Coins`,"success");}
+    else if(notify)toast("✓",lang()==="th"?"บทนี้เรียนจบแล้ว และรับรางวัลไปแล้ว":"This lesson is already complete and rewarded.","info");
+    return true;
+  }
+  function academyPractice(action,root){
+    const map={market:".v84-market-list",trade:".v84-trade-ticket",portfolio:".v84-portfolio-card",stock:".v84-stock-detail",chart:".v84-chart-wrap"},target=q(map[action]||".v84-market-list",root||document);if(!target)return;target.scrollIntoView?.({behavior:"smooth",block:"center"});target.classList.add("v841-focus");setTimeout(()=>target.classList.remove("v841-focus"),1700);
+  }
+  function academyBeginnerTip(snap,portfolio,trades){
+    if(!trades.length)return{icon:"🧭",th:"เริ่มจาก Watchlist 2–3 ตัวก่อน แล้วดู Risk + กราฟ + Market Event ยังไม่ต้องรีบกด MAX",en:"Start with a 2–3 stock watchlist. Check risk, chart and the market event before using a large position."};
+    if(snap?.risk==="high")return{icon:"🚨",th:`${snap.symbol} เป็น High Risk ราคาอาจแกว่งแรง ลองลดจำนวนหุ้นให้เล็กกว่าปกติ`,en:`${snap.symbol} is High Risk. Consider a smaller position because price can move sharply.`};
+    if(portfolio.positions.length===1)return{icon:"🧺",th:"ตอนนี้ Portfolio พึ่งหุ้นตัวเดียว ลองเปรียบเทียบหุ้น Risk ระดับอื่นก่อนเพิ่ม Position",en:"Your portfolio currently depends on one stock. Compare other risk levels before adding more."};
+    if(portfolio.totalPnl>0)return{icon:"💚",th:"Portfolio เป็นบวกแล้ว แต่อย่าลืมว่า P/L ที่ยังไม่ขายคือ Unrealized และการขายยังมี Fee 1%",en:"Your portfolio is positive, but unsold P/L is unrealized and selling still has a 1% fee."};
+    return{icon:"💡",th:"ดู Average Cost เทียบกับราคาปัจจุบัน และตัดสินใจจากแผน ไม่ใช่จากสีเขียว/แดงอย่างเดียว",en:"Compare average cost with current price and follow a plan instead of reacting only to green/red colors."};
+  }
+  function academyMarkup(portfolio,trades,snap){
+    const state=academyState(),count=academyCompletedCount(state),total=EXCHANGE_ACADEMY.length,pct=Math.round(count/total*100),def=academyLesson(state.selected),done=!!state.completed?.[def.id],mode=beginnerModeEnabled(),coins=academyCoinEarned();
+    const lessonNav=EXCHANGE_ACADEMY.map((x,i)=>`<button type="button" data-v841-lesson="${x.id}" class="${x.id===def.id?"active":""} ${state.completed?.[x.id]?"done":""}"><span>${state.completed?.[x.id]?"✓":x.icon}</span><div><small>${lang()==="th"?`บทที่ ${i+1}`:`Lesson ${i+1}`}</small><strong>${esc(lang()==="th"?x.titleTh:x.titleEn)}</strong></div></button>`).join("");
+    const points=(lang()==="th"?def.pointsTh:def.pointsEn).map(x=>`<li>${esc(x)}</li>`).join("");
+    const answers=def.answers.map(a=>`<label class="v841-answer"><input type="radio" name="v841Quiz" value="${a.id}" ${done&&a.id===def.correct?"checked disabled":""}><span>${esc(lang()==="th"?a.th:a.en)}</span></label>`).join("");
+    const certificate=count===total?`<div class="v841-certificate"><span>🎓</span><div><small>TRADING ACADEMY GRADUATE</small><strong>${lang()==="th"?"จบหลักสูตรมือใหม่แล้ว!":"Beginner course complete!"}</strong><p>${lang()==="th"?`เรียนครบ ${total} บท · รับแล้ว ${coins} Coins · ปลดล็อก Academy Graduate`:`Completed ${total} lessons · earned ${coins} Coins · Academy Graduate unlocked`}</p></div><b>7/7</b></div>`:"";
+    return `<section id="v841Academy" class="v841-academy ${state.open?"open":""}"><div class="v841-academy-summary"><div class="v841-academy-icon">🎓</div><div class="v841-academy-copy"><p class="eyebrow">TRADING ACADEMY · BEGINNER MODE</p><h3>${lang()==="th"?"เรียนหุ้นจาก Work Exchange แบบทีละขั้น":"Learn Work Exchange step by step"}</h3><p>${lang()==="th"?"7 บทสั้น + Mini Quiz · ได้ +5 Coins ต่อบทครั้งเดียว · ไม่มีเงินจริง":"7 short lessons + mini quizzes · +5 Coins per lesson once · no real money"}</p><div class="v841-academy-progress"><i><b style="width:${pct}%"></b></i><span>${count}/${total} · ${pct}%</span><em>+${coins}/${total*ACADEMY_LESSON_REWARD} 🪙</em></div></div><label class="v841-beginner-toggle"><input type="checkbox" data-v841-beginner ${mode?"checked":""}><i></i><span><strong>${lang()==="th"?"โหมดมือใหม่":"Beginner Mode"}</strong><small>${lang()==="th"?"แสดงคำแนะนำขณะเทรด":"Show trading guidance"}</small></span></label><button type="button" class="v841-academy-open" data-v841-academy-toggle>${state.open?(lang()==="th"?"ย่อบทเรียน":"Collapse"):(count?(lang()==="th"?"เรียนต่อ":"Continue"):(lang()==="th"?"เริ่มเรียน":"Start learning"))}</button></div>${state.open?`<div class="v841-academy-body"><aside class="v841-lesson-nav">${lessonNav}</aside><article class="v841-lesson"><div class="v841-lesson-head"><span>${def.icon}</span><div><small>${lang()==="th"?`บทที่ ${EXCHANGE_ACADEMY.indexOf(def)+1} / ${total}`:`Lesson ${EXCHANGE_ACADEMY.indexOf(def)+1} / ${total}`}</small><h3>${esc(lang()==="th"?def.titleTh:def.titleEn)}</h3><p>${esc(lang()==="th"?def.introTh:def.introEn)}</p></div>${done?`<b class="v841-done-chip">✓ ${lang()==="th"?"เรียนจบแล้ว":"Completed"}</b>`:""}</div><ul class="v841-lesson-points">${points}</ul><div class="v841-takeaway"><span>💡</span><div><small>KEY TAKEAWAY</small><strong>${esc(lang()==="th"?def.tipTh:def.tipEn)}</strong></div></div><div class="v841-quiz"><div><p class="eyebrow">MINI QUIZ</p><h4>${esc(lang()==="th"?def.questionTh:def.questionEn)}</h4></div><div class="v841-answers">${answers}</div><div class="v841-quiz-actions"><button type="button" class="outline-btn" data-v841-practice="${def.action}">↗ ${esc(lang()==="th"?def.actionTh:def.actionEn)}</button>${done?`<button type="button" class="primary-btn" data-v841-next>${academyCompletedCount(state)===total?(lang()==="th"?"✓ เรียนครบแล้ว":"✓ Course complete"):(lang()==="th"?"บทถัดไป →":"Next lesson →")}</button>`:`<button type="button" class="primary-btn" data-v841-submit="${def.id}">✓ ${lang()==="th"?`ตรวจคำตอบ +${ACADEMY_LESSON_REWARD} 🪙`:`Check answer +${ACADEMY_LESSON_REWARD} 🪙`}</button>`}</div></div>${certificate}</article></div>`:""}</section>`;
+  }
 
   const exchangeDayCache = new Map();
   function exchangeTrades(){ const rows=read(KEYS.exchangeTrades,[]); return Array.isArray(rows)?rows:[]; }
@@ -1139,6 +1266,7 @@
   function reconcileExchangeAchievements({notify=false}={}){
     const trades=exchangeTrades(),ctx=exchangeMarketContext(),portfolio=exchangePortfolio(trades,exchangeSnapshots(ctx)),now=Date.now(),conditions={
       "first-trade":trades.length>=1,
+      "academy-graduate":academyCompletedCount()>=EXCHANGE_ACADEMY.length,
       investor:portfolio.positions.length>=3,
       "green-portfolio":trades.length>0&&portfolio.totalPnl>0,
       "market-winner":portfolio.totalPnl>=100,
@@ -1153,13 +1281,16 @@
   function exchangeTradeHistoryMarkup(trades){if(!trades.length)return `<div class="empty-state">📜 ${lang()==="th"?"ยังไม่มีประวัติการซื้อขาย":"No trades yet"}</div>`;return trades.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,60).map(tr=>`<div class="v84-history-row ${tr.side}"><span>${tr.side==="buy"?"BUY":"SELL"}</span><div><strong>${tr.symbol} · ${tr.qty} ${lang()==="th"?"หุ้น":"shares"} @ ${Number(tr.price).toFixed(2)}</strong><small>${esc(formatHistoryDate(tr.createdAt))} · Fee ${Number(tr.fee||0)} 🪙</small></div><b>${tr.walletAmount>=0?"+":""}${Number(tr.walletAmount||0).toLocaleString()} 🪙</b></div>`).join("");}
   function renderExchange(){
     const root=$("v84ExchangePage");if(!root)return;const ctx=exchangeMarketContext(),snaps=exchangeSnapshots(ctx),portfolio=exchangePortfolio(exchangeTrades(),snaps),trades=exchangeTrades(),watch=exchangeWatchlist(),selected=exchangeSelected(),snap=snaps.find(s=>s.symbol===selected)||snaps[0],range=exchangeRange(),points=exchangeHistory(selected,range,ctx),event=exchangeEventForKey(ctx.key),sentiment=exchangeSentiment(snaps),earned=reconcileExchangeAchievements({notify:false}).state;
-    const movers=[...snaps].sort((a,b)=>b.changePct-a.changePct),gainers=movers.slice(0,2),losers=[...snaps].sort((a,b)=>a.changePct-b.changePct).slice(0,2),pos=portfolio.positions.find(p=>p.symbol===selected),held=pos?.qty||0,wallet=balance(),maxBuy=exchangeMaxBuy(snap.price,wallet),finale=exchangeFinaleInfo(ctx,portfolio,trades),statusClass=ctx.isOpen?"open":ctx.final?"final":"closed";
+    academyReconcileRewards();
+    const movers=[...snaps].sort((a,b)=>b.changePct-a.changePct),gainers=movers.slice(0,2),losers=[...snaps].sort((a,b)=>a.changePct-b.changePct).slice(0,2),pos=portfolio.positions.find(p=>p.symbol===selected),held=pos?.qty||0,wallet=balance(),maxBuy=exchangeMaxBuy(snap.price,wallet),finale=exchangeFinaleInfo(ctx,portfolio,trades),statusClass=ctx.isOpen?"open":ctx.final?"final":"closed",beginner=beginnerModeEnabled(),beginnerTip=academyBeginnerTip(snap,portfolio,trades);
     const watchRows=[...watch].map(symbol=>snaps.find(s=>s.symbol===symbol)).filter(Boolean);const watchMarkup=watchRows.length?watchRows.map(s=>`<button type="button" class="v84-watch-chip ${s.changePct>=0?"up":"down"}" data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.price.toFixed(2)}</b><small>${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</small></button>`).join(""):`<span class="v84-watch-empty">⭐ ${lang()==="th"?"กดดาวหุ้นที่สนใจเพื่อเพิ่ม Watchlist":"Star a stock to add it to your watchlist"}</span>`;
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>`<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small></div>${earned[a.id]?`<b>✓</b>`:""}</article>`).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.1</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
+      ${academyMarkup(portfolio,trades,snap)}
+      ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
       <section class="v84-event-card"><div class="v84-event-icon">${event.icon}</div><div><p class="eyebrow">TODAY'S MARKET EVENT · ${esc(ctx.key)}</p><h3>${esc(lang()==="th"?event.titleTh:event.titleEn)}</h3><p>${esc(lang()==="th"?event.bodyTh:event.bodyEn)}</p></div><span>${esc(exchangeEventEffectText(event))}</span></section>
       <section class="v84-movers"><article><p class="eyebrow">TOP GAINERS</p>${gainers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>+${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article><p class="eyebrow">TOP LOSERS</p>${losers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article class="v84-watchlist"><p class="eyebrow">MY WATCHLIST</p><div>${watchMarkup}</div></article></section>
       <section class="v84-market-grid"><article class="v84-market-list"><div class="v84-section-head"><div><p class="eyebrow">MARKET</p><h3>${lang()==="th"?"หุ้นจำลองทั้งหมด":"All simulated stocks"}</h3></div><small>${lang()==="th"?"ค่าธรรมเนียมซื้อ/ขาย 1%":"1% buy/sell fee"}</small></div><div class="v84-stock-list">${stockRows}</div></article>
@@ -1171,6 +1302,13 @@
     qa("[data-v84-select]",root).forEach(btn=>btn.addEventListener("click",()=>{localStorage.setItem(KEYS.exchangeSelected,btn.dataset.v84Select);renderExchange();}));
     qa("[data-v84-watch]",root).forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();exchangeToggleWatch(btn.dataset.v84Watch);}));
     qa("[data-v84-range]",root).forEach(btn=>btn.addEventListener("click",()=>{localStorage.setItem(KEYS.exchangeRange,btn.dataset.v84Range);renderExchange();}));
+    qa("[data-v841-academy-toggle]",root).forEach(btn=>btn.addEventListener("click",()=>{const state=academyState();state.open=!state.open;saveAcademyState(state);renderExchange();}));
+    qa("[data-v841-academy-open]",root).forEach(btn=>btn.addEventListener("click",()=>{const state=academyState();state.open=true;saveAcademyState(state);renderExchange();setTimeout(()=>$('v841Academy')?.scrollIntoView?.({behavior:"smooth",block:"start"}),40);}));
+    qa("[data-v841-beginner]",root).forEach(input=>input.addEventListener("change",()=>{setBeginnerMode(input.checked);renderExchange();}));
+    qa("[data-v841-lesson]",root).forEach(btn=>btn.addEventListener("click",()=>{const state=academyState();state.selected=btn.dataset.v841Lesson;state.open=true;saveAcademyState(state);renderExchange();}));
+    qa("[data-v841-submit]",root).forEach(btn=>btn.addEventListener("click",()=>{const answer=q('input[name="v841Quiz"]:checked',root)?.value;if(!answer){toast("🎓",lang()==="th"?"เลือกคำตอบก่อนนะ":"Choose an answer first.","warning");return;}academyCompleteLesson(btn.dataset.v841Submit,answer,{notify:true});renderExchange();}));
+    qa("[data-v841-next]",root).forEach(btn=>btn.addEventListener("click",()=>{const state=academyState(),idx=EXCHANGE_ACADEMY.findIndex(x=>x.id===state.selected),next=EXCHANGE_ACADEMY.slice(idx+1).find(x=>!state.completed[x.id])||EXCHANGE_ACADEMY.find(x=>!state.completed[x.id]);if(next){state.selected=next.id;state.open=true;saveAcademyState(state);renderExchange();}}));
+    qa("[data-v841-practice]",root).forEach(btn=>btn.addEventListener("click",()=>academyPractice(btn.dataset.v841Practice,root)));
     const qty=$("v84TradeQty"),preview=$("v84TradePreview");const updatePreview=()=>{if(!qty||!preview)return;const n=Math.max(0,Math.floor(Number(qty.value)||0)),gross=Math.round(snap.price*n),fee=n?Math.max(1,Math.round(gross*EXCHANGE_FEE_RATE)):0;preview.innerHTML=`<span>${lang()==="th"?"มูลค่า":"Value"} <b>${gross.toLocaleString()} 🪙</b></span><span>Fee 1% <b>${fee.toLocaleString()} 🪙</b></span><span>${lang()==="th"?"ซื้อรวม":"Buy total"} <b>${(gross+fee).toLocaleString()} 🪙</b></span><span>${lang()==="th"?"ขายสุทธิ":"Sell net"} <b>${Math.max(0,gross-fee).toLocaleString()} 🪙</b></span>`;};qty?.addEventListener("input",updatePreview);updatePreview();
     qa("[data-v84-qty]",root).forEach(btn=>btn.addEventListener("click",()=>{if(!qty)return;qty.value=btn.dataset.v84Qty==="max"?String(Math.max(held,maxBuy)):btn.dataset.v84Qty;updatePreview();}));
     qa("[data-v84-trade]",root).forEach(btn=>btn.addEventListener("click",()=>exchangeTrade(btn.dataset.v84Trade,selected,qty?.value)));
@@ -1204,6 +1342,8 @@
     getExchangePortfolio: () => exchangePortfolio(),
     getExchangeTrades: () => exchangeTrades().map(x=>({...x})),
     getExchangeMarket: () => exchangeSnapshots().map(x=>({...x})),
+    getTradingAcademy: () => ({state:academyState(),completed:academyCompletedCount(),total:EXCHANGE_ACADEMY.length,beginnerMode:beginnerModeEnabled()}),
+    completeTradingAcademyLesson: (id,answerId) => academyCompleteLesson(id,answerId,{notify:false}),
     tradeExchange: exchangeTrade,
     toggleExchangeWatch: exchangeToggleWatch,
     depositToBank: bankDeposit,
@@ -1235,7 +1375,7 @@
     setTimeout(() => initialReconcile(), 700);
     window.addEventListener("workday:v7-data-changed", () => setTimeout(() => reconcileRewards({notify:true}), 80));
     window.addEventListener("workday:v8-data-changed", () => setTimeout(() => { settleBankInterest({notify:false}); reconcileRewards({notify:false}); }, 80));
-    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-") || String(event.key||"").startsWith("wp-v831-") || String(event.key||"").startsWith("wp-v84-")) refreshAll(); });
+    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-") || String(event.key||"").startsWith("wp-v831-") || String(event.key||"").startsWith("wp-v84-") || String(event.key||"").startsWith("wp-v841-")) refreshAll(); });
     window.addEventListener("hashchange", () => { markRouteVisit(); setTimeout(refreshAll,40); });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) { settleBankInterest({notify:true}); reconcileRewards({notify:false}); } });
     window.addEventListener("online", () => reconcileRewards({notify:false}));
