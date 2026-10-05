@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.3.0";
+  const VERSION = "8.3.3";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -19,6 +19,8 @@
     mascot: "wp-v81-equipped-mascot",
     theme: "wp-v81-equipped-theme",
     effect: "wp-v81-equipped-effect",
+    accessory: "wp-v831-equipped-accessory",
+    frame: "wp-v831-equipped-frame",
     retro: "wp-v81-retro-rewards-v1",
     tab: "wp-v81-shop-tab",
     rebalance: "wp-v82-coin-rebalance-v1",
@@ -44,9 +46,9 @@
   const TEXT = {
     th: {
       rewards: "รางวัล",
-      rewardsSub: "Mascot, Theme, Effect และประวัติ Work Coins",
+      rewardsSub: "Mascot, Accessories, Frames, Theme, Effect และ Work Coins",
       shopTitle: "Reward Shop",
-      shopHelp: "สะสม Work Coins จากการทำงานจริง แล้วใช้ปลดล็อก Mascot, Theme และ Effect",
+      shopHelp: "ใช้ Work Coins แต่ง Journey ของคุณด้วย Mascot, Accessories, Profile Frames, Premium Themes และ Effects",
       coinBalance: "Work Coins",
       lifetimeEarned: "ได้รับทั้งหมด",
       lifetimeSpent: "ใช้ไปทั้งหมด",
@@ -64,7 +66,18 @@
       mascots: "Mascots",
       themes: "Themes",
       effects: "Effects",
+      accessories: "Accessories",
+      frames: "Profile Frames",
       history: "Coin History",
+      collection: "Collection",
+      weeklyFeatured: "ดีลประจำสัปดาห์",
+      weeklyFeaturedHelp: "สินค้าเด่นลดพิเศษ 20–30% เฉพาะ Weekly Shop · เปลี่ยนดีลใหม่ทุกวันจันทร์",
+      finaleCollection: "Internship Finale Collection",
+      finaleHelp: "ของ Limited สำหรับช่วงสุดท้ายของ Journey · ซื้อแล้วเก็บไว้ใช้ได้ตลอด",
+      finaleEnded: "Finale สิ้นสุดแล้ว",
+      limited: "LIMITED",
+      featured: "ดีลพิเศษ",
+      collected: "สะสมแล้ว",
       owned: "เป็นเจ้าของแล้ว",
       equipped: "กำลังใช้",
       equip: "ใช้",
@@ -108,9 +121,9 @@
     },
     en: {
       rewards: "Rewards",
-      rewardsSub: "Mascots, themes, effects and Work Coin history",
+      rewardsSub: "Mascots, accessories, frames, themes, effects and Work Coins",
       shopTitle: "Reward Shop",
-      shopHelp: "Earn Work Coins from real progress and unlock Mascots, Themes and Effects",
+      shopHelp: "Use Work Coins to personalize your Journey with Mascots, Accessories, Profile Frames, Premium Themes and Effects",
       coinBalance: "Work Coins",
       lifetimeEarned: "Lifetime earned",
       lifetimeSpent: "Lifetime spent",
@@ -128,7 +141,18 @@
       mascots: "Mascots",
       themes: "Themes",
       effects: "Effects",
+      accessories: "Accessories",
+      frames: "Profile Frames",
       history: "Coin History",
+      collection: "Collection",
+      weeklyFeatured: "Weekly Deals Rotation",
+      weeklyFeaturedHelp: "Weekly deals are 20–30% off when purchased here · rotates every Monday",
+      finaleCollection: "Internship Finale Collection",
+      finaleHelp: "Limited rewards for the final stretch of your Journey · owned items remain usable forever",
+      finaleEnded: "Finale ended",
+      limited: "LIMITED",
+      featured: "FEATURED",
+      collected: "Collected",
       owned: "Owned",
       equipped: "Equipped",
       equip: "Equip",
@@ -178,25 +202,51 @@
   };
 
   const MASCOTS = [
-    { id:"chick", type:"mascot", price:0, emoji:"🐣", nameKey:"chick", accent:"#f7c948" },
-    { id:"cat", type:"mascot", price:100, emoji:"🐱", nameKey:"cat", accent:"#f0a35e" },
-    { id:"bear", type:"mascot", price:200, emoji:"🐻", nameKey:"bear", accent:"#b78560" },
-    { id:"bunny", type:"mascot", price:300, emoji:"🐰", nameKey:"bunny", accent:"#ef88bd" },
-    { id:"ghost", type:"mascot", price:500, emoji:"👻", nameKey:"ghost", accent:"#9d8cff" }
+    { id:"chick", type:"mascot", price:0, emoji:"🐣", nameKey:"chick", accent:"#f7c948", rarity:"common" },
+    { id:"cat", type:"mascot", price:100, emoji:"🐱", nameKey:"cat", accent:"#f0a35e", rarity:"common" },
+    { id:"bear", type:"mascot", price:200, emoji:"🐻", nameKey:"bear", accent:"#b78560", rarity:"rare" },
+    { id:"bunny", type:"mascot", price:300, emoji:"🐰", nameKey:"bunny", accent:"#ef88bd", rarity:"rare" },
+    { id:"ghost", type:"mascot", price:500, emoji:"👻", nameKey:"ghost", accent:"#9d8cff", rarity:"epic" },
+    { id:"hamster", type:"mascot", price:450, emoji:"🐹", th:"Coffee Hamster", en:"Coffee Hamster", accent:"#bf7b4a", rarity:"rare" },
+    { id:"fox", type:"mascot", price:650, emoji:"🦊", th:"Coding Fox", en:"Coding Fox", accent:"#f28a38", rarity:"epic" },
+    { id:"penguin", type:"mascot", price:900, emoji:"🐧", th:"Executive Penguin", en:"Executive Penguin", accent:"#4678b8", rarity:"epic" },
+    { id:"dragon", type:"mascot", price:1500, emoji:"🐉", th:"Journey Dragon", en:"Journey Dragon", accent:"#8b64ef", rarity:"legendary", finale:true }
   ];
   const THEMES = [
-    { id:"default", type:"theme", price:0, icon:"◐", nameKey:"defaultTheme", descKey:"defaultTheme" },
-    { id:"sakura", type:"theme", price:150, icon:"🌸", nameKey:"themeSakura", descKey:"themeSakuraDesc" },
-    { id:"aurora", type:"theme", price:250, icon:"🌌", nameKey:"themeAurora", descKey:"themeAuroraDesc" },
-    { id:"golden", type:"theme", price:400, icon:"✨", nameKey:"themeGolden", descKey:"themeGoldenDesc" }
+    { id:"default", type:"theme", price:0, icon:"◐", nameKey:"defaultTheme", descKey:"defaultTheme", rarity:"common" },
+    { id:"sakura", type:"theme", price:150, icon:"🌸", nameKey:"themeSakura", descKey:"themeSakuraDesc", rarity:"rare" },
+    { id:"aurora", type:"theme", price:250, icon:"🌌", nameKey:"themeAurora", descKey:"themeAuroraDesc", rarity:"epic" },
+    { id:"golden", type:"theme", price:400, icon:"✨", nameKey:"themeGolden", descKey:"themeGoldenDesc", rarity:"epic" },
+    { id:"midnight", type:"theme", price:400, icon:"🌙", th:"Midnight Office", en:"Midnight Office", descTh:"โทนน้ำเงินเที่ยงคืนเต็มหน้า พร้อมแสงเมืองและประกาย Office Night", descEn:"A full-page midnight-blue office atmosphere with city glow and subtle night lights", rarity:"rare" },
+    { id:"sakuraNight", type:"theme", price:600, icon:"🌸", th:"Sakura Night", en:"Sakura Night", descTh:"ซากุระยามค่ำคืน โทนม่วงชมพูเข้มพร้อมกลีบดอกไม้เรืองแสง", descEn:"Night sakura in deep violet and pink with glowing drifting petals", rarity:"epic" },
+    { id:"auroraGalaxy", type:"theme", price:900, icon:"🪐", th:"Aurora Galaxy", en:"Aurora Galaxy", descTh:"ออโรราผสมกาแล็กซีเต็มจอ มีดาวและเนบิวลาเคลื่อนไหวแบบ Premium", descEn:"Premium full-screen aurora galaxy with stars, nebula light and animated depth", rarity:"legendary" },
+    { id:"goldenExecutive", type:"theme", price:1200, icon:"🏆", th:"Golden Executive", en:"Golden Executive", descTh:"Theme Finale สีดำทองหรู พร้อมแสงทองพาดผ่านและบรรยากาศ Legendary", descEn:"A luxurious finale black-and-gold theme with sweeping golden light", rarity:"legendary", finale:true }
   ];
   const EFFECTS = [
-    { id:"none", type:"effect", price:0, icon:"○", nameKey:"noneEffect", descKey:"noneEffect" },
-    { id:"sparkle", type:"effect", price:120, icon:"✦", nameKey:"effectSparkle", descKey:"effectSparkleDesc" },
-    { id:"halo", type:"effect", price:200, icon:"◉", nameKey:"effectHalo", descKey:"effectHaloDesc" },
-    { id:"celebration", type:"effect", price:350, icon:"🎉", nameKey:"effectCelebration", descKey:"effectCelebrationDesc" }
+    { id:"none", type:"effect", price:0, icon:"○", nameKey:"noneEffect", descKey:"noneEffect", rarity:"common" },
+    { id:"sparkle", type:"effect", price:120, icon:"✦", nameKey:"effectSparkle", descKey:"effectSparkleDesc", rarity:"common" },
+    { id:"halo", type:"effect", price:200, icon:"◉", nameKey:"effectHalo", descKey:"effectHaloDesc", rarity:"rare" },
+    { id:"celebration", type:"effect", price:350, icon:"🎉", nameKey:"effectCelebration", descKey:"effectCelebrationDesc", rarity:"rare" },
+    { id:"fallingStars", type:"effect", price:350, icon:"🌠", th:"Falling Stars", en:"Falling Stars", descTh:"ดาวตกพาดผ่านหน้าจอเป็นระยะ พร้อมประกายแสงบาง ๆ รอบ Journey", descEn:"Shooting stars sweep across the screen with a soft luminous trail", rarity:"rare" },
+    { id:"fireflies", type:"effect", price:500, icon:"✨", th:"Fireflies", en:"Fireflies", descTh:"หิ่งห้อยเรืองแสงลอยรอบหน้าจอแบบนุ่มนวล ดูสงบแต่โดดเด่น", descEn:"Soft glowing fireflies drift around the screen for a calm premium atmosphere", rarity:"epic" },
+    { id:"galaxyTrail", type:"effect", price:750, icon:"💫", th:"Galaxy Trail", en:"Galaxy Trail", descTh:"อนุภาคกาแล็กซีหมุนและไหลผ่านหน้าจอ พร้อมแสงสีม่วงน้ำเงิน", descEn:"Galaxy particles orbit and flow across the screen with violet-blue light", rarity:"epic" },
+    { id:"legendaryCelebration", type:"effect", price:1000, icon:"👑", th:"Legendary Celebration", en:"Legendary Celebration", descTh:"Finale Effect ระดับ Legendary: ดาว แสง วง Aura และ Confetti เต็มหน้าจอ", descEn:"Legendary finale effect with stars, aura rings, light bursts and full-screen confetti", rarity:"legendary", finale:true }
   ];
-  const ALL_REWARDS = [...MASCOTS, ...THEMES, ...EFFECTS];
+  const ACCESSORIES = [
+    { id:"none", type:"accessory", price:0, icon:"○", th:"No Accessory", en:"No Accessory", descTh:"ใช้ Accessory ตามสถานะ Workday แบบเดิม", descEn:"Use the default Workday-state accessory", rarity:"common" },
+    { id:"glasses", type:"accessory", price:120, icon:"👓", th:"Office Glasses", en:"Office Glasses", descTh:"แว่นออฟฟิศสำหรับ Mascot ที่อยากดูจริงจังขึ้นอีกนิด", descEn:"Office glasses for a smarter, focused Mascot look", rarity:"common" },
+    { id:"headphones", type:"accessory", price:180, icon:"🎧", th:"Focus Headphones", en:"Focus Headphones", descTh:"หูฟังโหมด Focus แสดงบน Mascot และ Avatar ที่ใช้ Mascot", descEn:"Focus headphones shown on your Mascot and Mascot avatar", rarity:"rare" },
+    { id:"laptop", type:"accessory", price:250, icon:"💻", th:"Work Laptop", en:"Work Laptop", descTh:"Laptop คู่ใจสำหรับโหมดทำงานจริงจังของ Mascot", descEn:"A work laptop companion for your productive Mascot", rarity:"rare" },
+    { id:"crown", type:"accessory", price:500, icon:"👑", th:"Journey Crown", en:"Journey Crown", descTh:"มงกุฎ Limited สำหรับช่วง Finale ของ Workday Journey", descEn:"A limited crown made for the Workday Journey finale", rarity:"legendary", finale:true }
+  ];
+  const FRAMES = [
+    { id:"none", type:"frame", price:0, icon:"○", th:"No Frame", en:"No Frame", descTh:"ใช้กรอบ Profile แบบมาตรฐาน", descEn:"Use the standard profile avatar frame", rarity:"common" },
+    { id:"neonBlue", type:"frame", price:200, icon:"🔵", th:"Neon Blue Frame", en:"Neon Blue Frame", descTh:"กรอบ Neon สีฟ้า แสดงที่ Avatar ใน Sidebar, Topbar และ Profile", descEn:"Blue neon frame shown on Sidebar, Topbar and Profile avatars", rarity:"common" },
+    { id:"sakuraFrame", type:"frame", price:300, icon:"🌸", th:"Sakura Frame", en:"Sakura Frame", descTh:"กรอบชมพูซากุระพร้อม Glow เบา ๆ รอบ Avatar", descEn:"Sakura-pink profile frame with a soft glow", rarity:"rare" },
+    { id:"auroraFrame", type:"frame", price:450, icon:"🌌", th:"Aurora Frame", en:"Aurora Frame", descTh:"กรอบ Aurora ไล่สีพร้อมแสงเคลื่อนไหวรอบ Profile", descEn:"Animated aurora gradient frame around your profile avatar", rarity:"epic" },
+    { id:"championGold", type:"frame", price:750, icon:"🏆", th:"Journey Champion Frame", en:"Journey Champion Frame", descTh:"กรอบทอง Legendary รุ่น Finale สำหรับโชว์ Journey ช่วงสุดท้าย", descEn:"Legendary gold finale frame for your completed Journey", rarity:"legendary", finale:true }
+  ];
+  const ALL_REWARDS = [...MASCOTS, ...ACCESSORIES, ...FRAMES, ...THEMES, ...EFFECTS];
 
   const MASCOT_PERSONAS = {
     chick: {
@@ -221,6 +271,26 @@
     }
   };
 
+
+  Object.assign(MASCOT_PERSONAS, {
+    hamster:{
+      th:{before:"กาแฟยังไม่มา ขอหมุนวงล้อรอก่อน ☕",start:"กาแฟพร้อม! เริ่มงานได้แล้ว",work:"จิบกาแฟหนึ่งที แล้วลุยต่อ!",half:"ครึ่งวันแล้ว เติมกาแฟได้หนึ่งแก้ว",almost:"เหลืออีกนิดเดียว เก็บแก้วเตรียมกลับ!",break:"พักก่อน แฮมสเตอร์ขอเติมคาเฟอีน",done:"งานครบวันแล้ว! กาแฟหมดพอดี 🎉",rest:"วันพัก = วันสะสมเมล็ดกาแฟ",holiday:"Holiday! ร้านกาแฟเปิดไหมนะ",leave:"วันนี้พักก่อน เดี๋ยวแฮมสเตอร์เฝ้าแก้วให้",journeyDone:"Journey จบแล้ว! แก้วสุดท้ายฉลองกัน ☕🏆"},
+      en:{before:"Coffee is not ready yet — wheel-spin while we wait",start:"Coffee ready. Work mode on!",work:"One sip, then keep going!",half:"Halfway — another coffee is justified",almost:"Almost done. Pack the mug!",break:"Break time. Hamster needs caffeine",done:"Full workday complete — perfect timing 🎉",rest:"Rest day = coffee bean collection day",holiday:"Holiday! Is the cafe open?",leave:"Rest today. The hamster will guard the mug",journeyDone:"Journey complete — one last victory coffee ☕🏆"}
+    },
+    fox:{
+      th:{before:"ยังไม่เปิด IDE... รอเวลาเริ่มก่อน",start:"Boot ระบบแล้ว เริ่มเขียนโค้ดได้",work:"โค้ดกำลังไหล อย่าลืม save!",half:"ผ่านครึ่งทางแล้ว ไม่มี bug ก็ถือว่าชนะ",almost:"อีกนิดเดียว commit แล้วกลับบ้าน!",break:"พักสายตาจากหน้าจอก่อน",done:"Build ผ่าน! วันนี้ deploy สำเร็จ 🎉",rest:"วันนี้ไม่ merge อะไรทั้งนั้น",holiday:"Holiday branch activated",leave:"พักก่อน เดี๋ยว bug รอได้",journeyDone:"Final build complete. Journey deployed! 🚀"},
+      en:{before:"IDE still closed — waiting for start time",start:"System booted. Time to code",work:"Code is flowing — remember to save",half:"Halfway. No bugs yet counts as a win",almost:"One last commit, then home",break:"Eyes off the screen for a bit",done:"Build passed. Today deployed successfully 🎉",rest:"No merges today",holiday:"Holiday branch activated",leave:"Rest first. Bugs can wait",journeyDone:"Final build complete. Journey deployed! 🚀"}
+    },
+    penguin:{
+      th:{before:"Executive ยังไม่เข้าห้องประชุม",start:"Agenda พร้อม เริ่มวันอย่างมืออาชีพ",work:"เดินตามแผนต่อ ทุกอย่างอยู่ในการควบคุม",half:"Midday review ผ่านเรียบร้อย",almost:"เหลือ Final Check ก่อนปิดวัน",break:"พักตามตาราง แล้วกลับมาคมกว่าเดิม",done:"Agenda วันนี้ Complete 100%",rest:"วันนี้ไม่มี Meeting ใน Calendar",holiday:"Board อนุมัติวันหยุดแล้ว",leave:"Leave Approved. พักได้เต็มที่",journeyDone:"Journey Closed Successfully. Excellent work."},
+      en:{before:"The executive has not entered the meeting room yet",start:"Agenda ready. Start the day professionally",work:"Stay on plan — everything is under control",half:"Midday review completed",almost:"One final check before closing the day",break:"Scheduled break, then return sharper",done:"Today's agenda is 100% complete",rest:"No meetings on the calendar today",holiday:"The board approved the holiday",leave:"Leave approved. Rest well",journeyDone:"Journey closed successfully. Excellent work."}
+    },
+    dragon:{
+      th:{before:"ตำนานยังหลับอยู่... รอเวลาแห่ง Journey",start:"เปลวไฟแรกของวันนี้ถูกจุดแล้ว",work:"พลัง Journey กำลังเพิ่มขึ้น ลุยต่อ!",half:"ครึ่งทางแล้ว เปลวไฟยิ่งสว่างขึ้น",almost:"ประตูสุดท้ายอยู่ตรงหน้า!",break:"แม้มังกรก็ต้องพักเพื่อสะสมพลัง",done:"วันนี้พิชิตแล้ว! Legendary Finish 🐉",rest:"มังกรเฝ้าสมบัติในวันพัก",holiday:"อาณาจักรประกาศวันหยุด",leave:"พักเพื่อกลับมาแข็งแกร่งกว่าเดิม",journeyDone:"ตำนานสมบูรณ์แล้ว — คุณคือ Journey Legend 👑"},
+      en:{before:"The legend still sleeps… waiting for Journey time",start:"Today's first flame has been lit",work:"Journey power is rising — keep going",half:"Halfway. The flame burns brighter",almost:"The final gate is right ahead",break:"Even dragons rest to rebuild power",done:"Today conquered — Legendary Finish 🐉",rest:"The dragon guards the treasure on rest days",holiday:"The kingdom declared a holiday",leave:"Rest and return stronger",journeyDone:"The legend is complete — you are a Journey Legend 👑"}
+    }
+  });
+
   function toast(icon, message, type="info") {
     const stack = $("toastStack");
     if (!stack) return;
@@ -238,7 +308,7 @@
   function ownedRewards() {
     const list = read(KEYS.owned, []);
     const set = new Set(Array.isArray(list) ? list : []);
-    set.add("mascot:chick"); set.add("theme:default"); set.add("effect:none");
+    set.add("mascot:chick"); set.add("theme:default"); set.add("effect:none"); set.add("accessory:none"); set.add("frame:none");
     return set;
   }
   function saveOwned(set) { write(KEYS.owned, [...set]); }
@@ -258,6 +328,14 @@
   function selectedEffectId() {
     const id = localStorage.getItem(KEYS.effect) || "none";
     return ownedRewards().has(`effect:${id}`) && rewardBy("effect", id) ? id : "none";
+  }
+  function selectedAccessoryId() {
+    const id = localStorage.getItem(KEYS.accessory) || "none";
+    return ownedRewards().has(`accessory:${id}`) && rewardBy("accessory", id) ? id : "none";
+  }
+  function selectedFrameId() {
+    const id = localStorage.getItem(KEYS.frame) || "none";
+    return ownedRewards().has(`frame:${id}`) && rewardBy("frame", id) ? id : "none";
   }
 
   function stableHash(text) {
@@ -372,27 +450,63 @@
     } finally { reconcileBusy = false; }
   }
 
-  function rewardName(reward) { return t(reward.nameKey); }
+  function rewardName(reward) {
+    if (!reward) return "";
+    const direct = lang()==="th" ? reward.th : reward.en;
+    return direct || t(reward.nameKey);
+  }
+  function rewardDescription(reward) {
+    if (!reward) return "";
+    const direct = lang()==="th" ? reward.descTh : reward.descEn;
+    return direct || (reward.descKey ? t(reward.descKey) : "");
+  }
+  function rarityName(reward){ return t(reward?.rarity || "common"); }
+  function journeyFinaleInfo(){
+    const cfg=API.getConfig(), end=dateFromKey(cfg.endDate), now=API.getNow();
+    end.setHours(23,59,59,999);
+    const ms=end.getTime()-now.getTime(), days=Math.max(0,Math.ceil(ms/86400000));
+    return {active:ms>=0,days,end};
+  }
+  function rewardAvailable(reward){ return !reward?.finale || journeyFinaleInfo().active || isOwned(reward); }
   function isOwned(reward) { return reward.price === 0 || ownedRewards().has(rewardKey(reward)); }
   function isEquipped(reward) {
     if (reward.type === "mascot") return selectedMascotId() === reward.id;
     if (reward.type === "theme") return selectedThemeId() === reward.id;
     if (reward.type === "effect") return selectedEffectId() === reward.id;
+    if (reward.type === "accessory") return selectedAccessoryId() === reward.id;
+    if (reward.type === "frame") return selectedFrameId() === reward.id;
     return false;
   }
-  function purchaseReward(reward) {
+  function purchaseReward(reward, source="shop") {
     if (!reward || reward.price <= 0 || isOwned(reward)) return;
+    if (!rewardAvailable(reward)) { toast("🎓", t("finaleEnded"), "error"); return; }
+    const deal = source === "weekly" ? weeklyDealFor(reward) : null;
+    const payPrice = deal ? deal.price : reward.price;
     const current = balance();
-    if (current < reward.price) { toast("🪙", t("insufficient"), "error"); return; }
-    if (!confirm(t("purchaseConfirm", {coins:reward.price,name:rewardName(reward)}))) return;
+    if (current < payPrice) { toast("🪙", t("insufficient"), "error"); return; }
+    const confirmText = deal
+      ? (lang()==="th"
+          ? `Weekly Deal ลด ${deal.discount}% · ใช้ ${payPrice.toLocaleString()} Coins (ปกติ ${reward.price.toLocaleString()}) เพื่อซื้อ ${rewardName(reward)}?`
+          : `Weekly Deal ${deal.discount}% off · Spend ${payPrice.toLocaleString()} Coins (normally ${reward.price.toLocaleString()}) for ${rewardName(reward)}?`)
+      : t("purchaseConfirm", {coins:payPrice,name:rewardName(reward)});
+    if (!confirm(confirmText)) return;
     const list = ledger();
     const id = `spend:${reward.type}:${reward.id}`;
     if (!list.some(item => item.id === id)) {
-      list.push({ id, amount:-reward.price, type:"purchase", labelTh:`ซื้อ ${rewardName(reward)}`, labelEn:`Purchased ${rewardName(reward)}`, createdAt:new Date().toISOString(), meta:{rewardType:reward.type,rewardId:reward.id,name:rewardName(reward)} });
+      const dealSuffix = deal ? ` · Weekly Deal -${deal.discount}%` : "";
+      list.push({
+        id,
+        amount:-payPrice,
+        type:"purchase",
+        labelTh:`ซื้อ ${rewardName(reward)}${dealSuffix}`,
+        labelEn:`Purchased ${rewardName(reward)}${dealSuffix}`,
+        createdAt:new Date().toISOString(),
+        meta:{rewardType:reward.type,rewardId:reward.id,name:rewardName(reward),source:deal?"weekly":"shop",week:deal?.week||null,discountPct:deal?.discount||0,originalPrice:reward.price,paidPrice:payPrice}
+      });
       write(KEYS.ledger, list);
     }
     const owned = ownedRewards(); owned.add(rewardKey(reward)); saveOwned(owned);
-    toast("🎁", `${t("purchased")}: ${rewardName(reward)}`, "success");
+    toast("🎁", deal ? `${t("purchased")}: ${rewardName(reward)} · -${deal.discount}%` : `${t("purchased")}: ${rewardName(reward)}`, "success");
     refreshAll();
   }
   function equipReward(reward) {
@@ -400,6 +514,8 @@
     if (reward.type === "mascot") localStorage.setItem(KEYS.mascot, reward.id);
     if (reward.type === "theme") { localStorage.setItem(KEYS.theme, reward.id); localStorage.removeItem(KEYS.themeTrial); }
     if (reward.type === "effect") localStorage.setItem(KEYS.effect, reward.id);
+    if (reward.type === "accessory") localStorage.setItem(KEYS.accessory, reward.id);
+    if (reward.type === "frame") localStorage.setItem(KEYS.frame, reward.id);
     applyEquippedRewards(reward.type === "effect");
     flashRewardChange(reward.type);
     toast("✓", `${t("equippedToast")}: ${rewardName(reward)}`, "success");
@@ -428,7 +544,9 @@
     if (baseKey.includes("Leave")) pKey = "leave";
     const copy = MASCOT_PERSONAS[id]?.[lang()] || MASCOT_PERSONAS[id]?.en || MASCOT_PERSONAS.chick[lang()];
     const accessories = {before:"💤",start:"💤",work:"💻",half:"☕",almost:"👀",break:"☕",done:"🎉",rest:"🌿",holiday:"🏡",leave:"🌿",journeyDone:"🏆"};
-    return { id, emoji:def.emoji, name:rewardName(def), message:copy[pKey] || copy.work, accessory:accessories[pKey] || snapshot.accessory || "", accent:def.accent };
+    const equippedAccessory=rewardBy("accessory",selectedAccessoryId());
+    const accessory=equippedAccessory && equippedAccessory.id!=="none" ? equippedAccessory.icon : (accessories[pKey] || snapshot.accessory || "");
+    return { id, emoji:def.emoji, name:rewardName(def), message:copy[pKey] || copy.work, accessory, accent:def.accent, accessoryId:selectedAccessoryId(), frameId:selectedFrameId() };
   }
 
   function ensureRewardVisualLayers() {
@@ -459,15 +577,25 @@
         return `<i class="v81-fx-spark" style="--x:${x}%;--y:${y}%;--size:${size}px;--delay:${delay}s;--dur:${duration}s">${glyph}</i>`;
       }).join("");
     }
-    if (effect === "halo") {
-      return `<i class="v81-fx-halo h1"></i><i class="v81-fx-halo h2"></i><i class="v81-fx-halo h3"></i><i class="v81-fx-halo-core"></i>`;
-    }
-    if (effect === "celebration") {
-      const shapes=["●","◆","✦","■","▲"];
-      return `<i class="v81-fx-celebrate-glow one"></i><i class="v81-fx-celebrate-glow two"></i>` + Array.from({length:34}, (_,i) => {
-        const x=(i*29+5)%98, size=6+(i%5)*2, delay=-((i*13)%85)/10, duration=5.2+(i%7)*.42, spin=(i%2?1:-1), drift=spin*35, rot=spin*720;
-        return `<i class="v81-fx-confetti c${i%6}" style="--x:${x}%;--size:${size}px;--delay:${delay}s;--dur:${duration}s;--drift:${drift}px;--rot:${rot}deg">${shapes[i%shapes.length]}</i>`;
+    if (effect === "halo") return `<i class="v81-fx-halo h1"></i><i class="v81-fx-halo h2"></i><i class="v81-fx-halo h3"></i><i class="v81-fx-halo-core"></i>`;
+    if (effect === "celebration" || effect === "legendaryCelebration") {
+      const legendary=effect==="legendaryCelebration", shapes=legendary?["✦","◆","●","★","■","▲"]:["●","◆","✦","■","▲"];
+      const count=legendary?58:34;
+      let markup=`<i class="v81-fx-celebrate-glow one"></i><i class="v81-fx-celebrate-glow two"></i>`;
+      if(legendary) markup+=`<i class="v831-fx-legend-ring r1"></i><i class="v831-fx-legend-ring r2"></i><i class="v831-fx-legend-burst"></i>`;
+      return markup + Array.from({length:count}, (_,i) => {
+        const x=(i*29+5)%98, size=6+(i%5)*2, delay=-((i*13)%85)/10, duration=(legendary?4.4:5.2)+(i%7)*.42, spin=(i%2?1:-1), drift=spin*(legendary?55:35), rot=spin*720;
+        return `<i class="v81-fx-confetti c${i%6} ${legendary?"legendary":""}" style="--x:${x}%;--size:${size}px;--delay:${delay}s;--dur:${duration}s;--drift:${drift}px;--rot:${rot}deg">${shapes[i%shapes.length]}</i>`;
       }).join("");
+    }
+    if(effect === "fallingStars"){
+      return Array.from({length:12},(_,i)=>`<i class="v831-fx-shooting" style="--x:${(i*23+7)%95}%;--y:${(i*31+4)%62}%;--delay:${-((i*19)%90)/10}s;--dur:${3.8+(i%4)*.8}s;--len:${90+(i%5)*28}px"></i>`).join("");
+    }
+    if(effect === "fireflies"){
+      return Array.from({length:38},(_,i)=>`<i class="v831-fx-firefly" style="--x:${(i*41+9)%98}%;--y:${(i*57+12)%94}%;--delay:${-((i*11)%75)/10}s;--dur:${5+(i%7)*.7}s;--size:${3+(i%4)*2}px"></i>`).join("");
+    }
+    if(effect === "galaxyTrail"){
+      return `<i class="v831-fx-galaxy-core"></i>`+Array.from({length:30},(_,i)=>`<i class="v831-fx-galaxy-orb o${i%4}" style="--x:${(i*47+6)%96}%;--y:${(i*29+10)%90}%;--delay:${-((i*17)%95)/10}s;--dur:${7+(i%6)*.9}s;--size:${5+(i%5)*3}px"></i>`).join("");
     }
     return "";
   }
@@ -496,6 +624,8 @@
     root.dataset.rewardTheme = effectiveThemeId();
     root.dataset.rewardEffect = selectedEffectId();
     root.dataset.rewardMascot = selectedMascotId();
+    root.dataset.rewardAccessory = selectedAccessoryId();
+    root.dataset.rewardFrame = selectedFrameId();
     renderRewardVisuals(forceVisual);
   }
 
@@ -523,16 +653,64 @@
     if (Number.isNaN(d.getTime())) return "";
     return new Intl.DateTimeFormat(lang()==="th"?"th-TH":"en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d);
   }
+  function visualForReward(reward){
+    if(reward.type==="mascot") return reward.emoji;
+    if(reward.type==="accessory") return `<span class="v831-accessory-preview"><b>🐣</b><i>${reward.icon}</i></span>`;
+    if(reward.type==="frame") return `<span class="v831-frame-preview" data-preview-frame="${esc(reward.id)}">🐣</span>`;
+    return reward.icon;
+  }
   function rewardCard(reward) {
-    const owned = isOwned(reward), equipped = isEquipped(reward), currentBalance = balance();
-    const visual = reward.type === "mascot" ? reward.emoji : reward.icon;
-    const bond = reward.type === "mascot" ? mascotBond(reward.id) : null;
-    const desc = reward.type === "mascot" ? `${lang()==="th" ? "เปลี่ยนบุคลิกและข้อความตาม Workday Progress" : "Changes personality and messages with Workday Progress"} · Bond Lv.${bond.level} (${bond.progress}/100 XP)` : t(reward.descKey);
+    const owned = isOwned(reward), equipped = isEquipped(reward), currentBalance = balance(), available=rewardAvailable(reward);
+    const visual = visualForReward(reward), bond = reward.type === "mascot" ? mascotBond(reward.id) : null;
+    const desc = reward.type === "mascot"
+      ? `${lang()==="th" ? "เปลี่ยนบุคลิกและข้อความตาม Workday Progress" : "Changes personality and messages with Workday Progress"} · Bond Lv.${bond.level} (${bond.progress}/100 XP)`
+      : rewardDescription(reward);
     let action = "";
     if (equipped) action = `<button type="button" class="v81-reward-btn equipped" disabled>✓ ${esc(t("equipped"))}</button>`;
     else if (owned) action = `<button type="button" class="v81-reward-btn" data-v81-equip="${esc(reward.type)}:${esc(reward.id)}">${esc(t("equip"))}</button>`;
-    else action = `<button type="button" class="v81-reward-btn buy" data-v81-buy="${esc(reward.type)}:${esc(reward.id)}" ${currentBalance<reward.price?"data-low=\"1\"":""}>🪙 ${reward.price.toLocaleString()} · ${esc(t("buy"))}</button>`;
-    return `<article class="v81-reward-card ${owned?"owned":"locked"} ${equipped?"active":""}" data-kind="${esc(reward.type)}" data-reward="${esc(reward.id)}"><div class="v81-reward-visual" style="--reward-accent:${esc(reward.accent||"#6d8cff")}">${visual}</div><div class="v81-reward-copy"><div class="v81-reward-title"><strong>${esc(rewardName(reward))}</strong>${owned?`<span>${esc(t("owned"))}</span>`:`<span>🪙 ${reward.price}</span>`}</div><p>${esc(desc)}</p></div>${action}</article>`;
+    else if(!available) action = `<button type="button" class="v81-reward-btn finale-ended" disabled>🎓 ${esc(t("finaleEnded"))}</button>`;
+    else action = `<button type="button" class="v81-reward-btn buy" data-v81-buy="${esc(reward.type)}:${esc(reward.id)}" ${currentBalance<reward.price?'data-low="1"':""}>🪙 ${reward.price.toLocaleString()} · ${esc(t("buy"))}</button>`;
+    return `<article class="v81-reward-card ${owned?"owned":"locked"} ${equipped?"active":""} rarity-${esc(reward.rarity||"common")} ${reward.finale?"finale":""}" data-kind="${esc(reward.type)}" data-reward="${esc(reward.id)}"><div class="v831-card-badges"><span class="v831-rarity ${esc(reward.rarity||"common")}">${esc(rarityName(reward))}</span>${reward.finale?`<span class="v831-limited">${esc(t("limited"))}</span>`:""}</div><div class="v81-reward-visual" style="--reward-accent:${esc(reward.accent||"#6d8cff")}">${visual}</div><div class="v81-reward-copy"><div class="v81-reward-title"><strong>${esc(rewardName(reward))}</strong>${owned?`<span>${esc(t("owned"))}</span>`:`<span>🪙 ${reward.price}</span>`}</div><p>${esc(desc)}</p></div>${action}</article>`;
+  }
+  function collectableRewards(){ return ALL_REWARDS.filter(r=>r.price>0); }
+  function categoryCollection(type){ const list=collectableRewards().filter(r=>r.type===type),owned=ownedRewards();return{owned:list.filter(r=>owned.has(rewardKey(r))).length,total:list.length}; }
+  function collectionMarkup(){
+    const owned=ownedRewards(), all=collectableRewards(), count=all.filter(r=>owned.has(rewardKey(r))).length, pct=all.length?Math.round(count/all.length*100):0;
+    const rows=[["mascot","🐣",t("mascots")],["accessory","🎩",t("accessories")],["frame","🖼",t("frames")],["theme","🎨",t("themes")],["effect","✨",t("effects")]];
+    return `<section class="v831-collection"><div class="v831-collection-main"><div><p class="eyebrow">YOUR COLLECTION</p><h3>${esc(t("collection"))}</h3><p>${lang()==="th"?"สะสมของใน Reward Shop ให้ครบก่อน Journey สิ้นสุด":"Build your Reward Shop collection before the Journey ends"}</p></div><div class="v831-collection-score"><strong>${count}/${all.length}</strong><span>${pct}%</span></div><div class="v831-collection-meter"><i style="width:${pct}%"></i></div></div><div class="v831-collection-cats">${rows.map(([type,icon,label])=>{const c=categoryCollection(type);return`<button type="button" data-v831-category="${type}"><span>${icon}</span><div><strong>${esc(label)}</strong><small>${c.owned}/${c.total} ${esc(t("collected"))}</small></div></button>`}).join("")}</div></section>`;
+  }
+  function weeklyFeaturedRewards(){
+    const seed=`rotation:${weekKey()}:${API.getConfig().startDate}`;
+    return collectableRewards().slice().sort((a,b)=>seedNumber(`${seed}:${a.type}:${a.id}`)-seedNumber(`${seed}:${b.type}:${b.id}`)).slice(0,6);
+  }
+  function weeklyDealFor(reward){
+    const week=weekKey(), discounts=[20,25,30];
+    const discount=discounts[seedNumber(`weekly-deal:${week}:${reward.type}:${reward.id}`)%discounts.length];
+    const price=Math.max(1,Math.round(Number(reward.price||0)*(100-discount)/100));
+    return {week,discount,price,originalPrice:Number(reward.price||0)};
+  }
+  function weeklyResetLabel(){
+    const now=API.getNow(), next=weekStartDate(addDays(now,7)); next.setHours(0,0,0,0); const ms=Math.max(0,next-now),d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/3600000);
+    return lang()==="th"?`ดีลใหม่ใน ${d} วัน ${h} ชม.`:`New deals in ${d}d ${h}h`;
+  }
+  function miniRewardCard(reward,kind){
+    const owned=isOwned(reward),equipped=isEquipped(reward),available=rewardAvailable(reward),deal=kind==="weekly"?weeklyDealFor(reward):null;
+    let action="";
+    if(equipped) action=`<button type="button" disabled>✓ ${esc(t("equipped"))}</button>`;
+    else if(owned) action=`<button type="button" data-v81-equip="${esc(reward.type)}:${esc(reward.id)}">${esc(t("equip"))}</button>`;
+    else if(!available) action=`<button type="button" disabled>${esc(t("finaleEnded"))}</button>`;
+    else if(deal) action=`<button type="button" class="v832-weekly-buy" data-v832-weekly-buy="${esc(reward.type)}:${esc(reward.id)}"><s>🪙 ${reward.price.toLocaleString()}</s><strong>🪙 ${deal.price.toLocaleString()}</strong></button>`;
+    else action=`<button type="button" data-v81-buy="${esc(reward.type)}:${esc(reward.id)}">🪙 ${reward.price}</button>`;
+    const label=kind==="finale"?esc(t("limited")):esc(t("featured"));
+    const typeLabels={mascot:lang()==="th"?"มาสคอต":"Mascot",accessory:lang()==="th"?"ของแต่ง":"Accessory",frame:lang()==="th"?"กรอบโปรไฟล์":"Profile Frame",theme:lang()==="th"?"ธีม":"Theme",effect:lang()==="th"?"เอฟเฟกต์":"Effect"};
+    const typeLabel=typeLabels[reward.type]||reward.type;
+    return `<article class="v831-mini-reward rarity-${esc(reward.rarity||"common")} ${deal?"v832-weekly-deal":""}">${deal?`<span class="v832-discount-badge">-${deal.discount}%</span>`:""}<div class="v831-mini-visual">${visualForReward(reward)}</div><div><span>${label}</span><strong>${esc(rewardName(reward))}</strong><small>${esc(rarityName(reward))} · ${esc(typeLabel)}</small></div>${action}</article>`;
+  }
+  function weeklyMarkup(){ const eyebrow=lang()==="th"?"โปรโมชั่นประจำสัปดาห์":"WEEKLY DEALS"; return `<section class="v831-featured v832-weekly-shop"><div class="v831-section-head"><div><p class="eyebrow">${eyebrow}</p><h3>🏷️ ${esc(t("weeklyFeatured"))}</h3><p>${esc(t("weeklyFeaturedHelp"))}</p></div><span>${esc(weeklyResetLabel())}</span></div><div class="v832-sale-note"><span>⚡</span><strong>${lang()==="th"?"ราคาพิเศษเฉพาะ Weekly Shop":"Special prices only in Weekly Shop"}</strong><small>${lang()==="th"?"ซื้อจากการ์ดดีลนี้เพื่อรับส่วนลด · หมวดปกติยังเป็นราคาเต็ม":"Buy from these deal cards to get the discount · regular categories stay full price"}</small></div><div class="v831-featured-track">${weeklyFeaturedRewards().map(r=>miniRewardCard(r,"weekly")).join("")}</div></section>`; }
+  function finaleMarkup(){
+    const info=journeyFinaleInfo(), items=ALL_REWARDS.filter(r=>r.finale);
+    const countdown=info.active?(lang()==="th"?`${info.days} วันก่อน Journey สิ้นสุด`:`${info.days} days until Journey end`):t("finaleEnded");
+    return `<section class="v831-finale ${info.active?"active":"ended"}"><div class="v831-finale-head"><div><span>🎓</span><div><p class="eyebrow">FINAL CHAPTER</p><h3>${esc(t("finaleCollection"))}</h3><p>${esc(t("finaleHelp"))}</p></div></div><b>${esc(countdown)}</b></div><div class="v831-finale-grid">${items.map(r=>miniRewardCard(r,"finale")).join("")}</div></section>`;
   }
 
   function renderShop() {
@@ -541,16 +719,24 @@
     const tab = localStorage.getItem(KEYS.tab) || "mascots";
     const list = ledger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const bal = balance(list), earned = lifetimeEarned(list), spent = lifetimeSpent(list);
-    const tabContent = tab === "mascots" ? MASCOTS.map(rewardCard).join("") : tab === "themes" ? THEMES.map(rewardCard).join("") : tab === "effects" ? EFFECTS.map(rewardCard).join("") : `<div class="v81-history-list">${list.length ? list.slice(0,120).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
+    const categoryMap={mascots:MASCOTS,accessories:ACCESSORIES,frames:FRAMES,themes:THEMES,effects:EFFECTS};
+    const tabContent = categoryMap[tab]
+      ? categoryMap[tab].map(rewardCard).join("")
+      : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3.3</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
-      <section class="v81-earn-card"><div><p class="eyebrow">${esc(t("howToEarn"))}</p><h3>${esc(t("retroTitle"))}</h3><p>${esc(t("retroHelp"))}</p></div><div class="v81-earn-grid"><span>🕒 <b>+15</b> ${esc(t("earnWorkday"))}</span><span>📓 <b>+10</b> ${esc(t("earnJournal"))}</span><span>🧩 <b>+50</b> ${esc(t("earnProject"))}</span><span>🏆 <b>+20 / +40 / +80 / +150</b> ${esc(t("earnAchievement"))}</span><span>🎯 <b>+5 – +20</b> ${lang()==="th"?"Daily Mission":"Daily Mission"}</span><span>🎁 <b>+5 – +100</b> ${lang()==="th"?"Daily / Weekly Chest":"Daily / Weekly Chest"}</span></div></section>
-      <div class="v81-shop-tabs">${[["mascots","🐣",t("mascots")],["themes","🎨",t("themes")],["effects","✨",t("effects")],["history","📜",t("history")]].map(([id,icon,label])=>`<button type="button" data-v81-tab="${id}" class="${tab===id?"active":""}">${icon}<span>${esc(label)}</span></button>`).join("")}</div>
+      ${collectionMarkup()}
+      ${weeklyMarkup()}
+      ${finaleMarkup()}
+      <section class="v81-earn-card"><div><p class="eyebrow">${esc(t("howToEarn"))}</p><h3>${esc(t("retroTitle"))}</h3><p>${esc(t("retroHelp"))}</p></div><div class="v81-earn-grid"><span>🕒 <b>+15</b> ${esc(t("earnWorkday"))}</span><span>📓 <b>+10</b> ${esc(t("earnJournal"))}</span><span>🧩 <b>+50</b> ${esc(t("earnProject"))}</span><span>🏆 <b>+20 / +40 / +80 / +150</b> ${esc(t("earnAchievement"))}</span><span>🎯 <b>+5 – +20</b> Daily Mission</span><span>🎁 <b>+5 – +100</b> Daily / Weekly Chest</span></div></section>
+      <div class="v81-shop-tabs">${[["mascots","🐣",t("mascots")],["accessories","🎩",t("accessories")],["frames","🖼",t("frames")],["themes","🎨",t("themes")],["effects","✨",t("effects")],["history","📜",t("history")]].map(([id,icon,label])=>`<button type="button" data-v81-tab="${id}" class="${tab===id?"active":""}">${icon}<span>${esc(label)}</span></button>`).join("")}</div>
       <section class="v81-shop-grid ${tab==="history"?"history":""}">${tabContent}</section>`;
 
+    qa("[data-v831-category]",root).forEach(btn=>btn.addEventListener("click",()=>{const map={mascot:"mascots",accessory:"accessories",frame:"frames",theme:"themes",effect:"effects"};localStorage.setItem(KEYS.tab,map[btn.dataset.v831Category]||"mascots");renderShop();}));
     qa("[data-v81-tab]", root).forEach(btn => btn.addEventListener("click", () => { localStorage.setItem(KEYS.tab, btn.dataset.v81Tab); renderShop(); }));
     qa("[data-v81-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Buy.split(":"); purchaseReward(rewardBy(type,id)); }));
+    qa("[data-v832-weekly-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v832WeeklyBuy.split(":"); purchaseReward(rewardBy(type,id),"weekly"); }));
     qa("[data-v81-equip]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Equip.split(":"); equipReward(rewardBy(type,id)); }));
   }
 
@@ -690,7 +876,7 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyOpen=dailyChestOpened(key), weeklyDone=completedDailyInWeek(), weeklyOpen=weeklyChestOpened(), trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3.3</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p></div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
@@ -784,7 +970,7 @@
     const tierIndex=BANK_TIERS.findIndex(x=>x.id===tier.id),next=BANK_TIERS[tierIndex+1]||null,nextGap=next?Math.max(0,roundBank(next.min-savings)):0;
     const tierCards=BANK_TIERS.map(item=>`<article class="v83-tier-card ${item.id===tier.id?"active":""}"><span>${item.icon}</span><div><strong>${esc(lang()==="th"?item.th:item.en)}</strong><small>${item.max===Infinity?`${item.min.toLocaleString()}+`:`${item.min.toLocaleString()}–${Math.floor(item.max).toLocaleString()}`} Coins</small></div><b>${(item.rate*100).toFixed(2)}%<small>/day</small></b></article>`).join("");
     const history=list.length?list.slice(0,60).map(item=>{const n=Number(item.amount||0),kind=item.type==="interest"?"interest":n>=0?"deposit":"withdraw";return `<div class="v83-bank-history-row ${kind}"><span>${item.type==="interest"?"✨":item.type==="deposit"?"↓":"↑"}</span><div><strong>${esc(bankHistoryLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${n>=0?"+":""}${formatBankCoin(n)} 🪙</b></div>`;}).join(""):`<div class="empty-state">🏦 ${lang()==="th"?"ยังไม่มีรายการฝากถอน":"No bank transactions yet"}</div>`;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.3.3</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
       <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(tier.rate*100).toFixed(2)}% / day</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
       <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet":"Saved Coins cannot be spent in the Reward Shop until withdrawn."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · เศษดอกเบี้ยจะคงอยู่ใน Savings`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · fractional interest stays in Savings.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
@@ -814,6 +1000,8 @@
     getMascotPresentation: snapshot => mascotPresentation(snapshot),
     getEquippedTheme: () => selectedThemeId(),
     getEquippedEffect: () => selectedEffectId(),
+    getEquippedAccessory: () => selectedAccessoryId(),
+    getEquippedFrame: () => selectedFrameId(),
     renderShop,
     renderMissions,
     renderBank,
@@ -846,7 +1034,7 @@
     setTimeout(() => initialReconcile(), 700);
     window.addEventListener("workday:v7-data-changed", () => setTimeout(() => reconcileRewards({notify:true}), 80));
     window.addEventListener("workday:v8-data-changed", () => setTimeout(() => { settleBankInterest({notify:false}); reconcileRewards({notify:false}); }, 80));
-    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-")) refreshAll(); });
+    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-") || String(event.key||"").startsWith("wp-v831-")) refreshAll(); });
     window.addEventListener("hashchange", () => { markRouteVisit(); setTimeout(refreshAll,40); });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) { settleBankInterest({notify:true}); reconcileRewards({notify:false}); } });
     window.addEventListener("online", () => reconcileRewards({notify:false}));
