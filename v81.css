@@ -444,3 +444,138 @@ html[data-theme="dark"] .v841-academy{border-color:#303a51;background:linear-gra
 @media(max-width:1100px){.v841-academy-summary{grid-template-columns:52px 1fr auto}.v841-beginner-toggle{grid-column:2}.v841-academy-open{grid-column:3;grid-row:1/3}.v841-academy-body{grid-template-columns:205px 1fr}.v841-answers{grid-template-columns:1fr}}
 @media(max-width:760px){.v841-academy-summary{grid-template-columns:44px 1fr}.v841-academy-icon{width:44px;height:44px}.v841-beginner-toggle,.v841-academy-open{grid-column:1/-1;grid-row:auto}.v841-beginner-toggle{justify-self:start}.v841-academy-open{width:100%}.v841-academy-body{grid-template-columns:1fr}.v841-lesson-nav{grid-template-columns:repeat(2,1fr);border-right:0;border-bottom:1px solid #e2e8f2}.v841-lesson{padding:14px}.v841-lesson-head{grid-template-columns:42px 1fr}.v841-done-chip{grid-column:2;justify-self:start}.v841-beginner-tip{grid-template-columns:36px 1fr}.v841-beginner-tip button{grid-column:1/-1;width:100%}.v841-academy-progress{grid-template-columns:1fr auto}.v841-academy-progress em{grid-column:2}.v841-certificate{grid-template-columns:44px 1fr}.v841-certificate>b{grid-column:2;justify-self:start}}
 @media(max-width:480px){.v841-lesson-nav{grid-template-columns:1fr}.v841-quiz-actions{display:grid;grid-template-columns:1fr}.v841-academy-progress{grid-template-columns:1fr}.v841-academy-progress span,.v841-academy-progress em{grid-column:auto}}
+
+/* ========================================================================== */
+/* V8.4.2 — Typography Consistency + Sidebar Information Architecture          */
+/* All text sizes below use rem units. app.js changes the root font size from  */
+/* the user's Small / Medium / Large preference, so these pages scale together. */
+/* ========================================================================== */
+:root{
+  --v842-text-caption:.70rem;
+  --v842-text-small:.76rem;
+  --v842-text-body:.82rem;
+  --v842-text-label:.86rem;
+  --v842-text-heading:1.05rem;
+}
+
+/* Sidebar: keep the classic two-line layout readable at every desktop height.
+   The route list already scrolls, so there is no need to shrink typography on
+   short notebook screens. */
+.v7-nav button strong{font-size:var(--v842-text-label)!important;line-height:1.25}
+.v7-nav button small{display:block!important;font-size:var(--v842-text-caption)!important;line-height:1.35;margin-top:2px}
+.v7-private-chip{font-size:var(--v842-text-caption)!important;line-height:1.35}
+@media(max-height:820px) and (min-width:981px){
+  .v7-sidebar{padding:14px!important;gap:8px!important}
+  .v7-sidebar-brand .brand-mark{width:38px!important;height:38px!important}
+  .v7-sidebar-brand strong{font-size:.96rem!important}
+  .v7-nav{gap:4px!important}
+  .v7-nav button{padding:8px 9px!important}
+  .v7-nav button strong{font-size:var(--v842-text-label)!important}
+  .v7-nav button small{font-size:var(--v842-text-caption)!important}
+  .v7-sidebar-profile{padding:9px!important}
+  .v7-private-chip{font-size:var(--v842-text-caption)!important}
+}
+
+/* Reward Shop / Weekly Deals: prevent promotion metadata from becoming smaller
+   than the rest of the app. */
+.v831-rarity,.v831-limited{font-size:.66rem}
+.v831-collection-cats small{font-size:var(--v842-text-caption)}
+.v831-mini-reward .v831-mini-copy>span{font-size:var(--v842-text-caption)}
+.v831-mini-reward .v831-mini-copy>strong{font-size:var(--v842-text-body)}
+.v831-mini-reward .v831-mini-copy>small{font-size:var(--v842-text-caption)}
+.v832-sale-note strong{font-size:var(--v842-text-small)}
+.v832-sale-note small{font-size:var(--v842-text-caption)}
+.v832-discount-badge{font-size:.65rem}
+.v831-mini-reward.v832-weekly-deal .v832-deal-copy>span{font-size:.66rem!important}
+.v831-mini-reward.v832-weekly-deal .v832-deal-copy>strong{font-size:var(--v842-text-body)}
+.v831-mini-reward.v832-weekly-deal .v832-deal-copy>small{font-size:var(--v842-text-caption)}
+.v832-weekly-buy s{font-size:.65rem}.v832-weekly-buy strong{font-size:var(--v842-text-small)}
+.v83-tier-card>b small{font-size:var(--v842-text-caption)}
+
+/* Work Exchange — align dense market UI with the typography used by the core
+   Journal / Project / Report pages while preserving hierarchy. */
+.v84-market-status strong{font-size:var(--v842-text-label)}
+.v84-market-status small{font-size:var(--v842-text-caption)}
+.v84-kpis small{font-size:var(--v842-text-caption)}
+.v84-kpis strong{font-size:1.18rem}
+.v84-kpis em{font-size:var(--v842-text-caption)}
+.v84-event-card h3{font-size:var(--v842-text-heading)}
+.v84-event-card p{font-size:var(--v842-text-body);line-height:1.45}
+.v84-event-card>span{font-size:var(--v842-text-caption)}
+.v84-movers button strong{font-size:var(--v842-text-small)}
+.v84-movers button b{font-size:var(--v842-text-caption)}
+.v84-watch-chip strong,.v84-watch-chip b{font-size:var(--v842-text-small)!important}
+.v84-watch-chip small{font-size:var(--v842-text-caption)!important}
+.v84-watch-empty{font-size:var(--v842-text-small)}
+.v84-section-head h3{font-size:var(--v842-text-heading)}
+.v84-section-head>span,.v84-section-head>small{font-size:var(--v842-text-caption)}
+.v84-stock-row>div strong{font-size:var(--v842-text-small)}
+.v84-stock-row>div small{font-size:var(--v842-text-caption)}
+.v84-stock-row>b{font-size:var(--v842-text-small)}
+.v84-stock-row>em{font-size:var(--v842-text-caption)}
+.v84-risk{font-size:.68rem}
+.v84-stock-detail-head>div:nth-child(2)>span{font-size:var(--v842-text-caption)}
+.v84-stock-detail-head h3{font-size:1.1rem}
+.v84-stock-detail-head p{font-size:var(--v842-text-body);line-height:1.5}
+.v84-price-line>b{font-size:var(--v842-text-caption)}
+.v84-ohlc small{font-size:var(--v842-text-caption)}
+.v84-ohlc b{font-size:var(--v842-text-small)}
+.v84-range-tabs button{font-size:var(--v842-text-caption)}
+.v84-chart-axis{font-size:var(--v842-text-caption)}
+.v84-ticket-head>span{font-size:var(--v842-text-caption)}
+.v84-ticket-input label{font-size:var(--v842-text-caption)}
+.v84-ticket-input input{font-size:var(--v842-text-body)}
+.v84-ticket-quick button{font-size:var(--v842-text-caption)}
+.v84-ticket-preview span{font-size:var(--v842-text-caption)}
+.v84-ticket-preview b{font-size:var(--v842-text-small)}
+.v84-ticket-actions button{font-size:var(--v842-text-small)}
+.v84-ticket-note{font-size:var(--v842-text-caption);line-height:1.4}
+.v84-portfolio-row strong{font-size:var(--v842-text-small)}
+.v84-portfolio-row small{font-size:var(--v842-text-caption)}
+.v84-portfolio-row>b{font-size:var(--v842-text-small)}
+.v84-portfolio-row>em{font-size:var(--v842-text-caption)}
+.v84-portfolio-foot span{font-size:var(--v842-text-caption)}
+.v84-ach strong{font-size:var(--v842-text-small)}
+.v84-ach small{font-size:var(--v842-text-caption)}
+.v84-history-row>span{font-size:.68rem}
+.v84-history-row strong{font-size:var(--v842-text-small)}
+.v84-history-row small{font-size:var(--v842-text-caption)}
+.v84-history-row>b{font-size:var(--v842-text-small)}
+.v84-finale h3{font-size:var(--v842-text-heading)}
+.v84-finale p{font-size:var(--v842-text-small);line-height:1.45}
+.v84-finale-stats small{font-size:var(--v842-text-caption)}
+.v84-finale-stats b{font-size:var(--v842-text-small)}
+
+/* Trading Academy / Beginner Mode — the previous version intentionally used a
+   dense miniature type scale. Bring it back to the app's normal reading scale. */
+.v841-academy-copy h3{font-size:var(--v842-text-heading)}
+.v841-academy-copy>p:not(.eyebrow){font-size:var(--v842-text-body);line-height:1.45}
+.v841-academy-progress span,.v841-academy-progress em{font-size:var(--v842-text-caption)}
+.v841-beginner-toggle strong{font-size:var(--v842-text-small)}
+.v841-beginner-toggle small{font-size:var(--v842-text-caption);line-height:1.35}
+.v841-academy-open{font-size:var(--v842-text-small)}
+.v841-academy-body{grid-template-columns:260px minmax(0,1fr)}
+.v841-lesson-nav button{padding:10px}
+.v841-lesson-nav small{font-size:.66rem}
+.v841-lesson-nav strong{font-size:var(--v842-text-small);line-height:1.3}
+.v841-lesson-head>div>small{font-size:var(--v842-text-caption)}
+.v841-lesson-head h3{font-size:1.12rem}
+.v841-lesson-head p{font-size:var(--v842-text-body);line-height:1.55}
+.v841-done-chip{font-size:var(--v842-text-caption)}
+.v841-lesson-points li{font-size:var(--v842-text-body);line-height:1.5;padding-top:9px;padding-bottom:9px}
+.v841-takeaway small{font-size:.66rem}
+.v841-takeaway strong{font-size:var(--v842-text-body);line-height:1.5}
+.v841-quiz h4{font-size:.92rem;line-height:1.4}
+.v841-answer{font-size:var(--v842-text-small);line-height:1.45;min-height:54px;padding:11px}
+.v841-quiz-actions button{font-size:var(--v842-text-small)}
+.v841-certificate small{font-size:.66rem}
+.v841-certificate strong{font-size:var(--v842-text-body)}
+.v841-certificate p{font-size:var(--v842-text-caption);line-height:1.4}
+.v841-certificate>b{font-size:var(--v842-text-label)}
+.v841-beginner-tip small{font-size:.66rem}
+.v841-beginner-tip strong{font-size:var(--v842-text-small);line-height:1.45}
+.v841-beginner-tip button{font-size:var(--v842-text-caption)}
+
+@media(max-width:1100px){.v841-academy-body{grid-template-columns:225px 1fr}}
+@media(max-width:760px){.v841-academy-body{grid-template-columns:1fr}.v841-lesson-nav strong{white-space:normal}}
+
