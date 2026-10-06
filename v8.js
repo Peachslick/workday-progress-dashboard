@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.6";
+  const VERSION = "8.4.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -261,7 +261,7 @@
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
       journal:["📓","บันทึกประจำวัน","บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้"],
       projects:["🧩","โปรเจกต์","ติดตามงานและความคืบหน้าของ Project"],
-      achievements:["🏆","ความสำเร็จ","Challenges, Milestones และฉายา"],
+      achievements:["🏆","ความสำเร็จ","Journey Challenges · Feature Achievements · ฉายา"],
       reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
       calendar:["🗓️","ปฏิทินและการเข้างาน","วันลา วันหยุดบริษัท และวันทำงานชดเชย"],
       missions:["🎯","ภารกิจรายวัน","Daily Missions, Daily Chest และ Weekly Chest"],
@@ -274,7 +274,7 @@
       dashboard:["🏠","Dashboard","Today and Journey overview"],
       journal:["📓","Daily Journal","Record your work and learning"],
       projects:["🧩","Projects","Track project status and progress"],
-      achievements:["🏆","Achievements","Challenges, milestones and titles"],
+      achievements:["🏆","Achievements","Journey Challenges · Feature Achievements · Titles"],
       reports:["📊","Reports & Analytics","Attendance, heatmap and journey reports"],
       calendar:["🗓️","Calendar & Attendance","Leave, company holidays and compensatory work"],
       missions:["🎯","Daily Missions","Daily Missions, Daily Chest and Weekly Chest"],
