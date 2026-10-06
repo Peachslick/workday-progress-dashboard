@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.5";
+  const VERSION = "8.4.6";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -38,7 +38,8 @@
     exchangeAchievements: "wp-v84-exchange-achievements",
     exchangeAcademy: "wp-v841-trading-academy",
     exchangeBeginner: "wp-v841-beginner-mode",
-    vaultProjects: "wp-v845-vault-projects"
+    vaultProjects: "wp-v845-vault-projects",
+    featureStats: "wp-v846-feature-achievement-stats"
   };
 
   const ECONOMY = { workday:15, journal:10, project:50 };
@@ -417,9 +418,9 @@
     const achievements = API.getAchievements(API.getStats(now));
     achievements.filter(a => a.unlocked).forEach(a => {
       const tier = String(a.tier || "common").toLowerCase();
-      const amount = TIER_COINS[tier] || 5;
+      const amount = Math.max(1,Math.round(Number(a.coinReward)||TIER_COINS[tier]||5));
       const name = API.translate(a.titleKey) || a.id;
-      events.push({ id:`earn:achievement:${a.id}`, amount, type:"achievement", labelTh:`${t("achievementReward")} · ${name}`, labelEn:`Achievement · ${name}`, createdAt:a.unlockedAt || new Date().toISOString(), meta:{achievementId:a.id,tier,name} });
+      events.push({ id:`earn:achievement:${a.id}`, amount, type:"achievement", labelTh:`${t("achievementReward")} · ${name}`, labelEn:`Achievement · ${name}`, createdAt:a.unlockedAt || new Date().toISOString(), meta:{achievementId:a.id,tier,name,rewardAmount:amount,category:a.category||""} });
     });
     return events;
   }
@@ -429,7 +430,7 @@
     if (item.type === "workday" || String(item.id||"").startsWith("earn:workday:")) return ECONOMY.workday;
     if (item.type === "journal" || String(item.id||"").startsWith("earn:journal:")) return ECONOMY.journal;
     if (item.type === "project" || String(item.id||"").startsWith("earn:project:")) return ECONOMY.project;
-    if (item.type === "achievement" || String(item.id||"").startsWith("earn:achievement:")) return TIER_COINS[String(item.meta?.tier||"common").toLowerCase()] || TIER_COINS.common;
+    if (item.type === "achievement" || String(item.id||"").startsWith("earn:achievement:")) return Math.max(1,Math.round(Number(item.meta?.rewardAmount)||TIER_COINS[String(item.meta?.tier||"common").toLowerCase()]||TIER_COINS.common));
     return 0;
   }
 
@@ -776,7 +777,7 @@
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.5</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.6</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
       ${collectionMarkup()}
       ${dailyMarkup()}
@@ -1004,13 +1005,31 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry, weeklyDone=completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry, trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.5</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.6</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
 
 
-  // ---------- V8.4.5 Work Bank + Finale Boost + Compound Interest ----------
+  // ---------- V8.4.6 Finance achievement state bridge ----------
+  function featureAchievementStats(){const value=read(KEYS.featureStats,{});return value&&typeof value==="object"&&!Array.isArray(value)?value:{};}
+  function saveFeatureAchievementStats(patch){
+    const prev=featureAchievementStats(),next={...prev,...patch,updatedAt:new Date().toISOString()};
+    const a={...prev},b={...next};delete a.updatedAt;delete b.updatedAt;
+    if(JSON.stringify(a)===JSON.stringify(b))return false;write(KEYS.featureStats,next);return true;
+  }
+  function featureAchievementItems(category){return API.getAchievements(API.getStats()).filter(a=>a.category===category);}
+  function featureAchievementProgressText(a){
+    const cur=Math.min(Number(a.current)||0,Number(a.target)||1),target=Number(a.target)||1,locale=lang()==="th"?"th-TH":"en-US";
+    const suffix={coins:" 🪙",days:lang()==="th"?" วัน":" days",companies:lang()==="th"?" บริษัท":" companies",lessons:lang()==="th"?" บท":" lessons",files:lang()==="th"?" ไฟล์":" files",versions:lang()==="th"?" เวอร์ชัน":" versions",trades:lang()==="th"?" ครั้ง":" trades",deposits:lang()==="th"?" ครั้ง":" deposits"}[a.unit]||"";
+    return `${cur.toLocaleString(locale,{maximumFractionDigits:a.unit==="coins"?2:0})}/${target.toLocaleString(locale,{maximumFractionDigits:a.unit==="coins"?2:0})}${suffix}`;
+  }
+  function featureAchievementCardMarkup(a,compact=false){
+    const reward=Math.max(0,Number(a.coinReward)||0),claimed=reward>0&&ledger().some(x=>x.id===`earn:achievement:${a.id}`),pct=Math.max(0,Math.min(100,Number(a.percent)||0));
+    return `<article class="v846-feature-ach ${a.unlocked?"unlocked":"locked"} ${compact?"compact":""}"><span>${a.unlocked?a.icon:"🔒"}</span><div><strong>${esc(API.translate(a.titleKey))}</strong><small>${esc(API.translate(a.descKey))}</small><i><b style="width:${pct}%"></b></i><em>${a.unlocked?(lang()==="th"?"สำเร็จแล้ว":"Completed"):esc(featureAchievementProgressText(a))}</em></div><mark>🪙 +${reward}${a.unlocked&&claimed?" ✓":""}</mark></article>`;
+  }
+
+  // ---------- V8.4.6 Work Bank + Finale Boost + Compound Interest ----------
   function bankLedger(){
     const value=read(KEYS.bankLedger,[]); return Array.isArray(value)?value:[];
   }
@@ -1101,6 +1120,7 @@
       state.lastInterestDate=key;
     }
     if(changed)write(KEYS.bankLedger,list); saveBankState(state);
+    if(changed)reconcileRewards({notify});
     if(notify&&total>0)toast("🏦",`${lang()==="th"?"รับดอกเบี้ยทบต้นแล้ว":"Compound interest credited"} +${formatBankCoin(total)} Coins`,`success`);
     return total;
   }
@@ -1115,7 +1135,7 @@
     if(!state.boostStartedDate)state.boostStartedDate=dayKeyNow();
     if(!state.openedAt)state.openedAt=now; if(wasEmpty){state.lastInterestDate=dayKeyNow();state.streakStartDate=dayKeyNow();} else if(!state.lastInterestDate)state.lastInterestDate=dayKeyNow();
     write(KEYS.ledger,walletList);write(KEYS.bankLedger,bankList);saveBankState(state);
-    toast("🏦",`${lang()==="th"?"ฝากสำเร็จ · เริ่มสะสม Savings Streak":"Deposited · Savings Streak active"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
+    reconcileRewards({notify:true});toast("🏦",`${lang()==="th"?"ฝากสำเร็จ · เริ่มสะสม Savings Streak":"Deposited · Savings Streak active"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
   }
   function bankWithdraw(rawAmount){
     settleBankInterest({notify:false});
@@ -1128,7 +1148,7 @@
     state.streakStartDate=remaining>0?dayKeyNow():null;
     if(remaining<=0)state.lastInterestDate=dayKeyNow();
     write(KEYS.ledger,walletList);write(KEYS.bankLedger,bankList);saveBankState(state);
-    toast("🏦",`${lang()==="th"?"ถอนสำเร็จ · Savings Streak เริ่มใหม่":"Withdrawn · Savings Streak reset"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
+    reconcileRewards({notify:true});toast("🏦",`${lang()==="th"?"ถอนสำเร็จ · Savings Streak เริ่มใหม่":"Withdrawn · Savings Streak reset"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
   }
   function bankProjection(days,starting=bankBalance(),state=bankState()){
     let value=Math.max(0,Number(starting)||0),interest=0,key=dayKeyNow();
@@ -1148,9 +1168,11 @@
     const history=list.length?list.slice(0,60).map(item=>{const n=Number(item.amount||0),kind=item.type==="interest"?"interest":n>=0?"deposit":"withdraw";return `<div class="v83-bank-history-row ${kind}"><span>${item.type==="interest"?"✨":item.type==="deposit"?"↓":"↑"}</span><div><strong>${esc(bankHistoryLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${n>=0?"+":""}${formatBankCoin(n)} 🪙</b></div>`;}).join(""):`<div class="empty-state">🏦 ${lang()==="th"?"ยังไม่มีรายการฝากถอน":"No bank transactions yet"}</div>`;
     const streakText=streakDays>0?(lang()==="th"?`${streakDays} วันต่อเนื่อง`:`${streakDays}-day streak`):(lang()==="th"?"เริ่มฝากเพื่อสร้าง Streak":"Deposit to start a streak");
     const nextStreakText=nextStreak?(lang()==="th"?`อีก ${nextStreak.remaining} วัน รับโบนัส +${(nextStreak.rate*100).toFixed(2)}%/วัน`:`${nextStreak.remaining} more day(s) to +${(nextStreak.rate*100).toFixed(2)}%/day bonus`):(lang()==="th"?"ปลดล็อก Streak Bonus สูงสุดแล้ว":"Maximum Streak Bonus unlocked");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.5</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"Finale Bank Boost · ฝาก Work Coins รับดอกเบี้ยทบต้นรายวัน พร้อม Savings Streak Bonus":"Finale Bank Boost · earn compounding daily interest plus Savings Streak bonuses."}</p></div></div></div>
+    const bankAchievements=featureAchievementItems("bank"),bankAchievementDone=bankAchievements.filter(a=>a.unlocked).length,bankAchievementMarkup=bankAchievements.map(a=>featureAchievementCardMarkup(a,true)).join("");
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.6</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"Finale Bank Boost · ฝาก Work Coins รับดอกเบี้ยทบต้นรายวัน พร้อม Savings Streak Bonus":"Finale Bank Boost · earn compounding daily interest plus Savings Streak bonuses."}</p></div></div></div>
       <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(rateInfo.effectiveRate*100).toFixed(2)}% / day${rateInfo.bonusRate>0?` (${(rateInfo.baseRate*100).toFixed(2)}% + 🔥 ${(rateInfo.bonusRate*100).toFixed(2)}%)`:""}</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
       <section class="v844-bank-boost"><div class="v844-boost-title"><span>🚀</span><div><p class="eyebrow">FINALE BANK BOOST</p><h3>${lang()==="th"?"ดอกเบี้ยแรงขึ้น + ทบต้นทุกวัน":"Higher rates + daily compounding"}</h3><p>${lang()==="th"?`Base Rate ${(rateInfo.baseRate*100).toFixed(2)}% + Streak Bonus ${(rateInfo.bonusRate*100).toFixed(2)}% · สูงสุด ${BANK_DAILY_CAP} Coins/วัน`:`Base ${(rateInfo.baseRate*100).toFixed(2)}% + Streak ${(rateInfo.bonusRate*100).toFixed(2)}% · capped at ${BANK_DAILY_CAP} Coins/day`}</p></div></div><div class="v844-streak-status"><span><small>🔥 SAVINGS STREAK</small><b>${esc(streakText)}</b><em>${esc(nextStreakText)}</em></span><div class="v844-streak-steps">${[[3,.001],[7,.0025],[14,.005]].map(([d,r])=>`<i class="${streakDays>=d?"done":""}"><b>${d}D</b><small>+${(r*100).toFixed(2)}%</small></i>`).join("")}</div></div></section>
+      <section class="v846-bank-achievements"><div class="v83-bank-section-head"><div><p class="eyebrow">SAVINGS ACHIEVEMENTS</p><h3>${lang()==="th"?"เป้าหมาย Work Bank":"Work Bank goals"}</h3></div><span>${bankAchievementDone}/${bankAchievements.length} · ${lang()==="th"?"มี Coin Reward":"Coin rewards"}</span></div><div class="v846-feature-ach-grid">${bankAchievementMarkup}</div></section>
       <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet · ฝากเพิ่มไม่รีเซ็ต Streak":"Saved Coins cannot be spent until withdrawn · extra deposits do not reset your Streak."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · การถอนทุกครั้งจะรีเซ็ต Savings Streak`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · any withdrawal resets the Savings Streak.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
       <section class="v83-bank-growth"><article><p class="eyebrow">SAVINGS TIER</p><h3>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)}</h3><div class="v83-tier-list">${tierCards}</div>${next?`<p class="v83-next-tier">${lang()==="th"?`อีก ${formatBankCoin(nextGap)} Coins ถึง ${next.icon} ${next.th}`:`${formatBankCoin(nextGap)} Coins to ${next.icon} ${next.en}`}</p>`:`<p class="v83-next-tier max">👑 ${lang()==="th"?"คุณอยู่ Tier สูงสุดแล้ว":"You are at the highest tier"}</p>`}</article><article class="v83-projection v844-projection"><p class="eyebrow">COMPOUND FORECAST</p><h3>${lang()==="th"?"ถ้าไม่ถอนเงิน Savings จะโตเท่าไหร่":"How Savings can grow if left untouched"}</h3><div><span><small>TOMORROW</small><b>+${formatBankCoin(p1.interest)} 🪙</b><em>${formatBankCoin(p1.balance)} total</em></span><span><small>7 DAYS</small><b>+${formatBankCoin(p7.interest)} 🪙</b><em>${formatBankCoin(p7.balance)} total</em></span><span><small>14 DAYS</small><b>+${formatBankCoin(p14.interest)} 🪙</b><em>${formatBankCoin(p14.balance)} total</em></span><span class="journey-end"><small>🎓 JOURNEY END</small><b>+${formatBankCoin(pEnd.interest)} 🪙</b><em>${formatBankCoin(pEnd.balance)} total · ${finale.days} days</em></span></div><p>${lang()==="th"?`ดอกเบี้ยเข้าบัญชี Savings และถูกนำไปคิดดอกวันถัดไปอัตโนมัติ · Cap ${BANK_DAILY_CAP} Coins/วัน`:`Interest is credited into Savings and automatically compounds the next day · ${BANK_DAILY_CAP} Coin/day cap.`}</p></article></section>
@@ -1162,7 +1184,7 @@
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
   }
 
-  // ---------- V8.4.5 Work Exchange ----------
+  // ---------- V8.4.6 Work Exchange ----------
   const EXCHANGE_EPOCH_KEY = "2026-05-05";
   const EXCHANGE_FEE_RATE = 0.01;
   const EXCHANGE_SLOTS = [9,11,13,15];
@@ -1193,16 +1215,16 @@
     {icon:"📣",titleTh:"Productivity Expo",titleEn:"Productivity Expo",bodyTh:"งาน Productivity Expo สร้างกระแสให้กลุ่ม Tech และ Focus",bodyEn:"A productivity expo lifts simulated sentiment for tech and focus names.",effects:{TECH:.020,FOCS:.020,DATA:.010}}
   ];
   const EXCHANGE_ACHIEVEMENTS = [
-    {id:"first-trade",icon:"📈",th:"First Trade",en:"First Trade",descTh:"ซื้อหรือขายหุ้นครั้งแรก",descEn:"Complete your first trade"},
-    {id:"academy-graduate",icon:"🎓",th:"Academy Graduate",en:"Academy Graduate",descTh:"เรียน Trading Academy ครบทั้ง 7 บท",descEn:"Complete all 7 Trading Academy lessons"},
-    {id:"investor",icon:"💼",th:"Investor",en:"Investor",descTh:"ถือหุ้นพร้อมกันอย่างน้อย 3 บริษัท",descEn:"Hold at least 3 companies at once"},
-    {id:"green-portfolio",icon:"💚",th:"Green Portfolio",en:"Green Portfolio",descTh:"Portfolio มีกำไรรวมเป็นบวก",descEn:"Reach a positive total portfolio P/L"},
-    {id:"market-winner",icon:"🔥",th:"Market Winner",en:"Market Winner",descTh:"กำไรรวมแตะ 100 Coins",descEn:"Reach 100 Coins of total P/L"},
-    {id:"diamond-hands",icon:"💎",th:"Diamond Hands",en:"Diamond Hands",descTh:"ถือหุ้นตัวเดิมต่อเนื่องอย่างน้อย 5 วัน",descEn:"Hold the same stock for at least 5 days"},
-    {id:"exchange-master",icon:"🏆",th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
+    {id:"first-trade",icon:"📈",reward:20,th:"First Trade",en:"First Trade",descTh:"ซื้อหรือขายหุ้นครั้งแรก",descEn:"Complete your first trade"},
+    {id:"academy-graduate",icon:"🎓",reward:40,th:"Academy Graduate",en:"Academy Graduate",descTh:"เรียน Trading Academy ครบทั้ง 7 บท",descEn:"Complete all 7 Trading Academy lessons"},
+    {id:"investor",icon:"💼",reward:30,th:"Investor",en:"Investor",descTh:"ถือหุ้นพร้อมกันอย่างน้อย 3 บริษัท",descEn:"Hold at least 3 companies at once"},
+    {id:"green-portfolio",icon:"💚",reward:25,th:"Green Portfolio",en:"Green Portfolio",descTh:"Portfolio มีกำไรรวมเป็นบวก",descEn:"Reach a positive total portfolio P/L"},
+    {id:"market-winner",icon:"🔥",reward:50,th:"Market Winner",en:"Market Winner",descTh:"กำไรรวมแตะ 100 Coins",descEn:"Reach 100 Coins of total P/L"},
+    {id:"diamond-hands",icon:"💎",reward:50,th:"Diamond Hands",en:"Diamond Hands",descTh:"ถือหุ้นตัวเดิมต่อเนื่องอย่างน้อย 5 วัน",descEn:"Hold the same stock for at least 5 days"},
+    {id:"exchange-master",icon:"🏆",reward:100,th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
   ];
 
-  // ---------- V8.4.5 Trading Academy / Beginner Mode ----------
+  // ---------- V8.4.6 Trading Academy / Beginner Mode ----------
   const ACADEMY_LESSON_REWARD = 5;
   const EXCHANGE_ACADEMY = [
     {
@@ -1432,16 +1454,26 @@
   }
   function exchangeAchievementState(){const value=read(KEYS.exchangeAchievements,{});return value&&typeof value==="object"&&!Array.isArray(value)?value:{};}
   function reconcileExchangeAchievements({notify=false}={}){
-    const trades=exchangeTrades(),ctx=exchangeMarketContext(),portfolio=exchangePortfolio(trades,exchangeSnapshots(ctx)),now=Date.now(),conditions={
+    const trades=exchangeTrades(),ctx=exchangeMarketContext(),portfolio=exchangePortfolio(trades,exchangeSnapshots(ctx)),now=Date.now(),holdDays=Math.max(0,...portfolio.positions.map(p=>p.firstBuyAt?Math.floor((now-new Date(p.firstBuyAt).getTime())/86400000)+1:0)),conditions={
       "first-trade":trades.length>=1,
       "academy-graduate":academyCompletedCount()>=EXCHANGE_ACADEMY.length,
       investor:portfolio.positions.length>=3,
       "green-portfolio":trades.length>0&&portfolio.totalPnl>0,
       "market-winner":portfolio.totalPnl>=100,
-      "diamond-hands":portfolio.positions.some(p=>p.firstBuyAt&&(now-new Date(p.firstBuyAt).getTime())>=5*86400000),
+      "diamond-hands":holdDays>=5,
       "exchange-master":portfolio.value>=2500
     },state=exchangeAchievementState();let added=[];
-    EXCHANGE_ACHIEVEMENTS.forEach(a=>{if(conditions[a.id]&&!state[a.id]){state[a.id]=new Date().toISOString();added.push(a);}});if(added.length){write(KEYS.exchangeAchievements,state);if(notify)toast("🏆",lang()==="th"?`ปลดล็อก Trading Achievement: ${added.map(a=>a.th).join(", ")}`:`Trading achievement unlocked: ${added.map(a=>a.en).join(", ")}`,"success");}return{state,conditions};
+    const prev=featureAchievementStats();saveFeatureAchievementStats({
+      exchangePortfolioValue:portfolio.value,exchangeTotalPnl:portfolio.totalPnl,exchangeHoldDays:holdDays,
+      exchangeMaxPortfolioValue:Math.max(Number(prev.exchangeMaxPortfolioValue)||0,portfolio.value),
+      exchangeMaxTotalPnl:Math.max(Number(prev.exchangeMaxTotalPnl)||0,portfolio.totalPnl),
+      exchangeMaxHoldDays:Math.max(Number(prev.exchangeMaxHoldDays)||0,holdDays)
+    });
+    EXCHANGE_ACHIEVEMENTS.forEach(a=>{if(conditions[a.id]&&!state[a.id]){state[a.id]=new Date().toISOString();added.push(a);}});
+    if(added.length)write(KEYS.exchangeAchievements,state);
+    reconcileRewards({notify:notify&&added.length>0});
+    if(added.length&&notify)toast("🏆",lang()==="th"?`ปลดล็อก Trading Achievement: ${added.map(a=>`${a.th} +${a.reward}🪙`).join(", ")}`:`Trading achievement unlocked: ${added.map(a=>`${a.en} +${a.reward}🪙`).join(", ")}`,"success");
+    return{state,conditions,portfolio,holdDays};
   }
   function exchangeTraderRank(portfolio,trades){const score=(portfolio.totalPnl>=300?3:portfolio.totalPnl>=100?2:portfolio.totalPnl>0?1:0)+(portfolio.value>=2500?3:portfolio.value>=1200?2:portfolio.value>=400?1:0)+(trades.length>=10?2:trades.length>=3?1:0);return score>=7?{icon:"👑",th:"ตำนานตลาด",en:"Market Legend"}:score>=5?{icon:"💎",th:"โปรเทรดเดอร์",en:"Pro Trader"}:score>=3?{icon:"📈",th:"นักลงทุน",en:"Investor"}:score>=1?{icon:"🌱",th:"เทรดเดอร์มือใหม่",en:"Rookie Trader"}:{icon:"🧭",th:"นักสำรวจตลาด",en:"Explorer"};}
   function exchangeFinaleInfo(ctx,portfolio,trades){const cfg=API.getConfig(),end=dateFromKey(cfg.endDate),days=Math.max(0,Math.ceil((end.getTime()-ctx.now.getTime())/86400000)),rank=exchangeTraderRank(portfolio,trades),best=[...portfolio.positions].sort((a,b)=>b.pnl-a.pnl)[0],worst=[...portfolio.positions].sort((a,b)=>a.pnl-b.pnl)[0],bestTrade=[...trades].filter(t=>t.side==="sell").sort((a,b)=>(b.realizedPnl||0)-(a.realizedPnl||0))[0];return{days,rank,best,worst,bestTrade};}
@@ -1454,8 +1486,8 @@
     const watchRows=[...watch].map(symbol=>snaps.find(s=>s.symbol===symbol)).filter(Boolean);const watchMarkup=watchRows.length?watchRows.map(s=>`<button type="button" class="v84-watch-chip ${s.changePct>=0?"up":"down"}" data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.price.toFixed(2)}</b><small>${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</small></button>`).join(""):`<span class="v84-watch-empty">⭐ ${lang()==="th"?"กดดาวหุ้นที่สนใจเพื่อเพิ่ม Watchlist":"Star a stock to add it to your watchlist"}</span>`;
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
-    const ach=EXCHANGE_ACHIEVEMENTS.map(a=>`<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small></div>${earned[a.id]?`<b>✓</b>`:""}</article>`).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.5</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
+    const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.6</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
       ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
@@ -1483,7 +1515,7 @@
   }
 
 
-  // ---------- V8.4.5 Project File Vault ----------
+  // ---------- V8.4.6 Project File Vault ----------
   const VAULT_BUCKET = "project-files";
   const VAULT_TABLE = "project_file_versions";
   const VAULT_MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -1503,6 +1535,14 @@
   function vaultProject(){ const list=read("wp-v6-projects",[]); return Array.isArray(list)?list.find(p=>p.id===vaultUi.projectId):null; }
   function vaultKnownProjects(){ const raw=read(KEYS.vaultProjects,[]);return new Set(Array.isArray(raw)?raw.map(String):[]); }
   function vaultRememberProject(projectId,hasFiles=true){ const set=vaultKnownProjects(),id=String(projectId||"");if(!id)return;if(hasFiles)set.add(id);else set.delete(id);write(KEYS.vaultProjects,[...set]); }
+  function vaultUpdateAchievementStats(rows){
+    const list=Array.isArray(rows)?rows:[],perProject=new Map(),logical=new Set();let maxVersion=0;
+    list.forEach(row=>{const project=String(row?.project_id||""),name=String(row?.logical_name||"");if(!project||!name)return;logical.add(`${project}|${name}`);if(!perProject.has(project))perProject.set(project,new Set());perProject.get(project).add(name);maxVersion=Math.max(maxVersion,Number(row?.version)||0);});
+    const maxProjectFiles=Math.max(0,...[...perProject.values()].map(set=>set.size)),prev=featureAchievementStats();
+    const changed=saveFeatureAchievementStats({vaultTotalFiles:logical.size,vaultMaxTotalFiles:Math.max(Number(prev.vaultMaxTotalFiles)||0,logical.size),vaultMaxProjectFiles:Math.max(Number(prev.vaultMaxProjectFiles)||0,maxProjectFiles),vaultMaxVersion:Math.max(Number(prev.vaultMaxVersion)||0,maxVersion)});
+    if(changed)reconcileRewards({notify:false}); return changed;
+  }
+  function vaultAchievementMarkup(){const items=featureAchievementItems("vault");return items.length?`<section class="v846-vault-ach"><div><p class="eyebrow">FILE VAULT ACHIEVEMENTS</p><h3>${vaultCopy("Achievement จากการจัดเก็บ Project","Project storage achievements")}</h3></div><div class="v846-feature-ach-grid">${items.map(a=>featureAchievementCardMarkup(a,true)).join("")}</div></section>`:"";}
 
   function ensureVaultModal(){
     if($("v845VaultBackdrop"))return;
@@ -1516,7 +1556,7 @@
 
   function vaultHeaderMarkup(){
     const groups=vaultLogicalGroups(),projectBytes=vaultUi.rows.reduce((sum,x)=>sum+Number(x.file_size||0),0),quotaPct=Math.min(100,(vaultUi.userUsage/VAULT_USER_QUOTA_BYTES)*100);
-    return `<div class="v845-vault-head"><div class="v845-vault-icon">📁</div><div><p class="eyebrow">PROJECT FILE VAULT · V8.4.5</p><h2 id="v845VaultTitle">${esc(vaultUi.projectName||vaultCopy("ไฟล์ Project","Project Files"))}</h2><p>${esc(vaultCopy("พื้นที่ Cloud ส่วนตัว · เฉพาะบัญชีของคุณเท่านั้น","Private cloud storage · only your account can access these files"))}</p></div></div><div class="v845-vault-stats"><article><span>${esc(vaultCopy("ไฟล์ใน Project","Project files"))}</span><strong>${groups.length}/${VAULT_MAX_PROJECT_FILES}</strong><small>${vaultUi.rows.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ Project","Project storage"))}</span><strong>${vaultFormatBytes(projectBytes)}</strong><small>${esc(vaultCopy("รวมทุก Version","including all versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ของฉัน","My storage"))}</span><strong>${vaultFormatBytes(vaultUi.userUsage)} / 100 MB</strong><div class="v845-quota"><i style="width:${quotaPct}%"></i></div></article></div>`;
+    return `<div class="v845-vault-head"><div class="v845-vault-icon">📁</div><div><p class="eyebrow">PROJECT FILE VAULT · V8.4.6</p><h2 id="v845VaultTitle">${esc(vaultUi.projectName||vaultCopy("ไฟล์ Project","Project Files"))}</h2><p>${esc(vaultCopy("พื้นที่ Cloud ส่วนตัว · เฉพาะบัญชีของคุณเท่านั้น","Private cloud storage · only your account can access these files"))}</p></div></div><div class="v845-vault-stats"><article><span>${esc(vaultCopy("ไฟล์ใน Project","Project files"))}</span><strong>${groups.length}/${VAULT_MAX_PROJECT_FILES}</strong><small>${vaultUi.rows.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ Project","Project storage"))}</span><strong>${vaultFormatBytes(projectBytes)}</strong><small>${esc(vaultCopy("รวมทุก Version","including all versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ของฉัน","My storage"))}</span><strong>${vaultFormatBytes(vaultUi.userUsage)} / 100 MB</strong><div class="v845-quota"><i style="width:${quotaPct}%"></i></div></article></div>`;
   }
 
   function vaultRender(){
@@ -1526,7 +1566,7 @@
     if(vaultUi.error){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-error"><span>⚠️</span><h3>${esc(vaultCopy("ยังเปิด Project File Vault ไม่ได้","Project File Vault is not ready"))}</h3><p>${esc(vaultUi.error)}</p><small>${esc(vaultCopy("ถ้ายังไม่ได้ตั้งค่า Supabase ให้รันไฟล์ SUPABASE_FILE_VAULT_SETUP.sql หนึ่งครั้ง","If Supabase has not been configured yet, run SUPABASE_FILE_VAULT_SETUP.sql once."))}</small><button data-v845-vault-retry class="outline-btn" type="button">↻ ${esc(vaultCopy("ลองใหม่","Retry"))}</button></div>`;q("[data-v845-vault-retry]",body)?.addEventListener("click",()=>vaultLoad(true));return;}
     const groups=vaultLogicalGroups();
     const list=groups.length?groups.map(group=>{const latest=group.latest,expanded=vaultUi.expanded.has(group.name),versions=expanded?`<div class="v845-version-list">${group.versions.map(row=>`<div class="v845-version-row"><div><b>v${Number(row.version)||1}</b><span>${vaultFormatBytes(row.file_size)} · ${esc(vaultDate(row.created_at))}</span></div><div><button type="button" data-v845-download-version="${esc(row.id)}">↓</button><button type="button" class="danger" data-v845-delete-version="${esc(row.id)}">🗑</button></div></div>`).join("")}</div>`:"";return `<article class="v845-file-card"><div class="v845-file-main"><span class="v845-file-icon">${vaultFileIcon(group.name)}</span><div><strong title="${esc(group.name)}">${esc(group.name)}</strong><small>v${Number(latest.version)||1} · ${vaultFormatBytes(latest.file_size)} · ${esc(vaultDate(latest.created_at))}</small></div></div><div class="v845-file-actions"><button type="button" data-v845-download="${esc(latest.id)}">↓ ${esc(vaultCopy("ดาวน์โหลด","Download"))}</button><button type="button" data-v845-new-version="${esc(group.name)}">＋ ${esc(vaultCopy("Version ใหม่","New Version"))}</button><button type="button" data-v845-versions="${esc(group.name)}">${expanded?"▴":"▾"} ${group.versions.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</button><button type="button" data-v845-rename="${esc(group.name)}">✎</button><button type="button" class="danger" data-v845-delete-file="${esc(group.name)}">🗑</button></div>${versions}</article>`;}).join(""):`<div class="v845-vault-empty"><span>📂</span><h3>${esc(vaultCopy("Project นี้ยังไม่มีไฟล์","No files in this project yet"))}</h3><p>${esc(vaultCopy("อัปโหลด ZIP, PDF, Word, Excel, PowerPoint, รูปภาพ หรือไฟล์ข้อความได้สูงสุด 20 MB ต่อไฟล์","Upload ZIP, PDF, Office documents, images or text files up to 20 MB each."))}</p></div>`;
-    body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-toolbar"><div><strong>🔐 ${esc(vaultCopy("Private Storage","Private Storage"))}</strong><small>${esc(vaultCopy("สูงสุด 20 MB/ไฟล์ · 8 ไฟล์หลัก/Project · 100 MB/User","20 MB/file · 8 logical files/project · 100 MB/user"))}</small></div><button data-v845-upload-new class="primary-btn" type="button" ${groups.length>=VAULT_MAX_PROJECT_FILES?"disabled":""}>＋ ${esc(vaultCopy("อัปโหลดไฟล์","Upload File"))}</button></div><div class="v845-file-list">${list}</div><p class="v845-vault-note">💡 ${esc(vaultCopy("อัปโหลดไฟล์ชื่อเดิมจะสร้าง Version ใหม่โดยอัตโนมัติ · อย่าอัปโหลด .env, Password, API Secret หรือ Database Dump","Uploading the same logical filename creates a new version automatically · never upload .env files, passwords, API secrets or database dumps."))}</p>`;
+    body.innerHTML=`${vaultHeaderMarkup()}${vaultAchievementMarkup()}<div class="v845-vault-toolbar"><div><strong>🔐 ${esc(vaultCopy("Private Storage","Private Storage"))}</strong><small>${esc(vaultCopy("สูงสุด 20 MB/ไฟล์ · 8 ไฟล์หลัก/Project · 100 MB/User","20 MB/file · 8 logical files/project · 100 MB/user"))}</small></div><button data-v845-upload-new class="primary-btn" type="button" ${groups.length>=VAULT_MAX_PROJECT_FILES?"disabled":""}>＋ ${esc(vaultCopy("อัปโหลดไฟล์","Upload File"))}</button></div><div class="v845-file-list">${list}</div><p class="v845-vault-note">💡 ${esc(vaultCopy("อัปโหลดไฟล์ชื่อเดิมจะสร้าง Version ใหม่โดยอัตโนมัติ · อย่าอัปโหลด .env, Password, API Secret หรือ Database Dump","Uploading the same logical filename creates a new version automatically · never upload .env files, passwords, API secrets or database dumps."))}</p>`;
     q("[data-v845-upload-new]",body)?.addEventListener("click",()=>vaultPickFile(""));
     qa("[data-v845-download]",body).forEach(btn=>btn.addEventListener("click",()=>vaultDownload(btn.dataset.v845Download)));
     qa("[data-v845-download-version]",body).forEach(btn=>btn.addEventListener("click",()=>vaultDownload(btn.dataset.v845DownloadVersion)));
@@ -1538,9 +1578,9 @@
   }
 
   async function vaultFetchProjectRows(projectId){ const {client,user}=vaultCloud();if(!client||!user?.id)return[];const {data,error}=await client.from(VAULT_TABLE).select("id,user_id,project_id,logical_name,version,storage_path,file_size,mime_type,created_at").eq("user_id",user.id).eq("project_id",projectId).order("created_at",{ascending:false});if(error)throw error;return Array.isArray(data)?data:[]; }
-  async function vaultFetchUserUsageRows(){ const {client,user}=vaultCloud();if(!client||!user?.id)return[];const {data,error}=await client.from(VAULT_TABLE).select("project_id,logical_name,file_size").eq("user_id",user.id);if(error)throw error;return Array.isArray(data)?data:[]; }
+  async function vaultFetchUserUsageRows(){ const {client,user}=vaultCloud();if(!client||!user?.id)return[];const {data,error}=await client.from(VAULT_TABLE).select("project_id,logical_name,file_size,version,created_at").eq("user_id",user.id);if(error)throw error;return Array.isArray(data)?data:[]; }
   function vaultFriendlyError(err){ const msg=String(err?.message||err||"");if(/project_file_versions|relation .* does not exist|schema cache/i.test(msg))return vaultCopy("ไม่พบ Table project_file_versions · กรุณารัน SQL Setup ของ V8.4.5 ใน Supabase ก่อน","Table project_file_versions was not found. Run the V8.4.5 Supabase setup SQL first.");if(/bucket|not found|storage/i.test(msg)&&/project-files/i.test(msg))return vaultCopy("ไม่พบ Storage Bucket project-files · กรุณารัน SQL Setup ของ V8.4.5","Storage bucket project-files was not found. Run the V8.4.5 setup SQL.");if(/row-level security|permission|policy|unauthorized/i.test(msg))return vaultCopy("Supabase Policy ยังไม่อนุญาตให้เข้าถึงไฟล์ของบัญชีนี้ · ตรวจสอบ RLS/Storage Policy","Supabase policies are blocking access. Check the RLS and Storage policies.");return msg||vaultCopy("เกิดข้อผิดพลาดในการเชื่อมต่อ File Vault","Could not connect to File Vault"); }
-  async function vaultLoad(showLoading=true){ if(!vaultUi.projectId)return;if(showLoading){vaultUi.loading=true;vaultUi.error="";vaultRender();}try{const [rows,usageRows]=await Promise.all([vaultFetchProjectRows(vaultUi.projectId),vaultFetchUserUsageRows()]);vaultUi.rows=rows;vaultUi.userUsage=usageRows.reduce((sum,x)=>sum+Number(x.file_size||0),0);vaultRememberProject(vaultUi.projectId,rows.length>0);vaultUi.error="";}catch(err){vaultUi.rows=[];vaultUi.userUsage=0;vaultUi.error=vaultFriendlyError(err);}finally{vaultUi.loading=false;vaultRender();refreshProjectFileSummaries();} }
+  async function vaultLoad(showLoading=true){ if(!vaultUi.projectId)return;if(showLoading){vaultUi.loading=true;vaultUi.error="";vaultRender();}try{const [rows,usageRows]=await Promise.all([vaultFetchProjectRows(vaultUi.projectId),vaultFetchUserUsageRows()]);vaultUi.rows=rows;vaultUi.userUsage=usageRows.reduce((sum,x)=>sum+Number(x.file_size||0),0);vaultUpdateAchievementStats(usageRows);vaultRememberProject(vaultUi.projectId,rows.length>0);vaultUi.error="";}catch(err){vaultUi.rows=[];vaultUi.userUsage=0;vaultUi.error=vaultFriendlyError(err);}finally{vaultUi.loading=false;vaultRender();refreshProjectFileSummaries();} }
   async function openProjectVault(projectId){ ensureVaultModal();const list=read("wp-v6-projects",[]),project=Array.isArray(list)?list.find(p=>p.id===projectId):null;vaultUi.projectId=projectId;vaultUi.projectName=project?.name||vaultCopy("Project Files","Project Files");vaultUi.rows=[];vaultUi.userUsage=0;vaultUi.error="";vaultUi.expanded=new Set();const wrap=$("v845VaultBackdrop");wrap.hidden=false;requestAnimationFrame(()=>wrap.classList.add("open"));vaultRender();if(vaultSignedIn())await vaultLoad(true); }
   function vaultPickFile(logicalName=""){ if(!vaultSignedIn()){vaultOpenAccount();return;}vaultUi.replaceName=logicalName||"";const input=$("v845VaultInput");if(input){input.value="";input.click();} }
   function vaultValidateFile(file){ const ext=String(file?.name||"").split(".").pop().toLowerCase();if(!VAULT_ALLOWED_EXT.has(ext))return vaultCopy("ไฟล์ประเภทนี้ยังไม่รองรับ กรุณาใช้ ZIP, PDF, Office, รูปภาพ หรือไฟล์ข้อความ","This file type is not supported. Use ZIP, PDF, Office documents, images or text files.");if(Number(file?.size||0)<=0)return vaultCopy("ไฟล์นี้ว่างเปล่า","This file is empty.");if(Number(file.size)>VAULT_MAX_FILE_BYTES)return vaultCopy("ไฟล์ใหญ่เกิน 20 MB","The file exceeds the 20 MB limit.");return""; }
@@ -1553,7 +1593,7 @@
     vaultUi.loading=true;vaultRender();let uploaded=false;
     try{const up=await client.storage.from(VAULT_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type||undefined});if(up.error)throw up.error;uploaded=true;const {error}=await client.from(VAULT_TABLE).insert({user_id:user.id,project_id:vaultUi.projectId,logical_name:logicalName,version,storage_path:path,file_size:file.size,mime_type:file.type||"application/octet-stream"});if(error)throw error;vaultRememberProject(vaultUi.projectId,true);toast("✓",vaultCopy(`อัปโหลด ${logicalName} v${version} แล้ว`,`Uploaded ${logicalName} v${version}`),"success");}
     catch(err){if(uploaded)try{await client.storage.from(VAULT_BUCKET).remove([path]);}catch{}toast("!",vaultFriendlyError(err),"error");}
-    finally{vaultUi.loading=false;await vaultLoad(false);}
+    finally{vaultUi.loading=false;await vaultLoad(false);await reconcileRewards({notify:true});}
   }
   function vaultRowById(id){return vaultUi.rows.find(r=>String(r.id)===String(id));}
   async function vaultDownload(id){const row=vaultRowById(id),{client}=vaultCloud();if(!row||!client)return;try{const {data,error}=await client.storage.from(VAULT_BUCKET).createSignedUrl(row.storage_path,120,{download:row.logical_name});if(error)throw error;const a=document.createElement("a");a.href=data.signedUrl;a.download=row.logical_name;a.rel="noopener";document.body.appendChild(a);a.click();a.remove();}catch(err){toast("!",vaultFriendlyError(err),"error");}}
@@ -1561,9 +1601,14 @@
   async function vaultDeleteLogicalFile(name){if(!confirm(vaultCopy(`ลบ ${name} และทุก Version?`,`Delete ${name} and every version?`)))return;const rows=vaultUi.rows.filter(r=>r.logical_name===name),{client,user}=vaultCloud();if(!client||!user?.id)return;vaultUi.loading=true;vaultRender();try{const paths=rows.map(r=>r.storage_path).filter(Boolean);if(paths.length){const rm=await client.storage.from(VAULT_BUCKET).remove(paths);if(rm.error)throw rm.error;}const {error}=await client.from(VAULT_TABLE).delete().eq("user_id",user.id).eq("project_id",vaultUi.projectId).eq("logical_name",name);if(error)throw error;toast("🗑",vaultCopy("ลบไฟล์และ Version ทั้งหมดแล้ว","File and all versions deleted"),"warning");}catch(err){toast("!",vaultFriendlyError(err),"error");}finally{vaultUi.loading=false;await vaultLoad(false);} }
   async function vaultDeleteVersion(id){const row=vaultRowById(id);if(!row||!confirm(vaultCopy(`ลบ ${row.logical_name} v${row.version}?`,`Delete ${row.logical_name} v${row.version}?`)))return;const {client,user}=vaultCloud();if(!client||!user?.id)return;const siblings=vaultUi.rows.filter(r=>r.logical_name===row.logical_name);if(siblings.length===1){await vaultDeleteLogicalFile(row.logical_name);return;}vaultUi.loading=true;vaultRender();try{const rm=await client.storage.from(VAULT_BUCKET).remove([row.storage_path]);if(rm.error)throw rm.error;const {error}=await client.from(VAULT_TABLE).delete().eq("user_id",user.id).eq("id",row.id);if(error)throw error;toast("🗑",vaultCopy("ลบ Version แล้ว","Version deleted"),"warning");}catch(err){toast("!",vaultFriendlyError(err),"error");}finally{vaultUi.loading=false;await vaultLoad(false);} }
 
+  async function syncVaultAchievementStats(){
+    if(!navigator.onLine||!vaultSignedIn())return false;
+    try{const rows=await vaultFetchUserUsageRows();vaultUpdateAchievementStats(rows);return true;}catch{return false;}
+  }
+
   async function refreshProjectFileSummaries(){
     if(!location.hash.includes("/projects"))return;const nodes=qa("[data-v845-file-summary]");if(!nodes.length)return;const {client,user}=vaultCloud();if(!client||!user?.id){nodes.forEach(el=>el.textContent=`☁ ${vaultCopy("Login เพื่อใช้ File Vault","Sign in for File Vault")}`);return;}
-    try{const rows=await vaultFetchUserUsageRows(),map=new Map();rows.forEach(r=>{const id=String(r.project_id||"");if(!map.has(id))map.set(id,{names:new Set(),bytes:0});const item=map.get(id);item.names.add(String(r.logical_name||""));item.bytes+=Number(r.file_size||0);});write(KEYS.vaultProjects,[...map.keys()]);nodes.forEach(el=>{const item=map.get(el.dataset.v845FileSummary);el.textContent=item?`☁ ${item.names.size} ${vaultCopy("ไฟล์","files")} · ${vaultFormatBytes(item.bytes)}`:`☁ ${vaultCopy("ยังไม่มีไฟล์","No files")}`;});}
+    try{const rows=await vaultFetchUserUsageRows(),map=new Map();vaultUpdateAchievementStats(rows);rows.forEach(r=>{const id=String(r.project_id||"");if(!map.has(id))map.set(id,{names:new Set(),bytes:0});const item=map.get(id);item.names.add(String(r.logical_name||""));item.bytes+=Number(r.file_size||0);});write(KEYS.vaultProjects,[...map.keys()]);nodes.forEach(el=>{const item=map.get(el.dataset.v845FileSummary);el.textContent=item?`☁ ${item.names.size} ${vaultCopy("ไฟล์","files")} · ${vaultFormatBytes(item.bytes)}`:`☁ ${vaultCopy("ยังไม่มีไฟล์","No files")}`;});}
     catch(err){nodes.forEach(el=>el.textContent=`⚠ ${vaultCopy("ตั้งค่า File Vault","Set up File Vault")}`);}
   }
 
@@ -1625,7 +1670,7 @@
     reconcile: reconcileRewards
   };
 
-  function initialReconcile(attempt=0) {
+  async function initialReconcile(attempt=0) {
     const cloudApi = window.WorkdayV8Cloud;
     const status = cloudApi?.getStatus?.() || {status:"local",signedIn:false};
     const rememberedUser = !!localStorage.getItem("wp-v8-cloud-user-id");
@@ -1633,7 +1678,9 @@
     const waitingForCloud = status.signedIn && (status.status === "syncing" || status.status === "error") && attempt < 20;
     if (waitingForSession || waitingForCloud) { setTimeout(() => initialReconcile(attempt + 1), 500); return; }
     settleBankInterest({notify:false});
-    reconcileRewards({notify:true});
+    reconcileExchangeAchievements({notify:false});
+    await syncVaultAchievementStats();
+    await reconcileRewards({notify:true});
   }
 
   function init() {
@@ -1643,11 +1690,11 @@
     settleBankInterest({notify:false});
     setTimeout(() => initialReconcile(), 700);
     window.addEventListener("workday:v7-data-changed", () => setTimeout(() => { reconcileRewards({notify:true}); refreshProjectFileSummaries(); }, 80));
-    window.addEventListener("workday:v8-data-changed", () => setTimeout(() => { settleBankInterest({notify:false}); reconcileRewards({notify:false}); }, 80));
-    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-") || String(event.key||"").startsWith("wp-v831-") || String(event.key||"").startsWith("wp-v84-") || String(event.key||"").startsWith("wp-v841-") || String(event.key||"").startsWith("wp-v845-")) refreshAll(); });
+    window.addEventListener("workday:v8-data-changed", () => setTimeout(() => { settleBankInterest({notify:false}); reconcileExchangeAchievements({notify:false}); syncVaultAchievementStats().finally(()=>reconcileRewards({notify:false})); }, 80));
+    window.addEventListener("storage", event => { if (String(event.key||"").startsWith("wp-v81-") || String(event.key||"").startsWith("wp-v82-") || String(event.key||"").startsWith("wp-v83-") || String(event.key||"").startsWith("wp-v831-") || String(event.key||"").startsWith("wp-v84-") || String(event.key||"").startsWith("wp-v841-") || String(event.key||"").startsWith("wp-v845-") || String(event.key||"").startsWith("wp-v846-")) refreshAll(); });
     window.addEventListener("hashchange", () => { markRouteVisit(); setTimeout(refreshAll,40); });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) { settleBankInterest({notify:true}); reconcileRewards({notify:false}); } });
-    window.addEventListener("online", () => reconcileRewards({notify:false}));
+    window.addEventListener("online", () => { reconcileExchangeAchievements({notify:false}); syncVaultAchievementStats().finally(()=>reconcileRewards({notify:false})); });
     setInterval(() => reconcileRewards({notify:true}), 15000);
     setInterval(() => settleBankInterest({notify:true}), 60000);
     setInterval(() => ensureCoinChip(), 3000);

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.4.5";
+  const APP_VERSION = "8.4.6";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -389,7 +389,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น และแยกจากผู้ใช้อื่น หาก Login สามารถ Sync ข้อมูลของบัญชีข้ามอุปกรณ์ได้", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V8.4.5 · Project File Vault · Work Exchange · Daily Deals · Finale Bank · Local-first",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V8.4.6 · Finance Achievements · File Vault · Work Exchange · Finale Bank · Local-first",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -417,7 +417,7 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Data stays local by default and separate from other users. Sign in if you want to sync your account across devices.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V8.4.5 · Project File Vault · Work Exchange · Daily Deals · Finale Bank · Local-first",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V8.4.6 · Finance Achievements · File Vault · Work Exchange · Finale Bank · Local-first",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
@@ -446,6 +446,24 @@
     backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "ส่งออก Backup ของ Journey ครั้งแรก",
     calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "บันทึกหรือนำเข้า Calendar Preset ครั้งแรก",
     snapshotCreatorTitle: "Snapshot Creator", snapshotCreatorDesc: "สร้าง Journey Snapshot ครั้งแรก",
+    bankFirstDepositTitle: "First Deposit", bankFirstDepositDesc: "ฝาก Work Coins เข้า Work Bank เป็นครั้งแรก",
+    bankSmartSaverTitle: "Smart Saver", bankSmartSaverDesc: "มียอด Savings แตะ 500 Coins",
+    bankProSaverTitle: "Pro Saver", bankProSaverDesc: "มียอด Savings แตะ 1,500 Coins",
+    bankEliteSaverTitle: "Elite Saver", bankEliteSaverDesc: "มียอด Savings แตะ 5,000 Coins",
+    bankSavingHabitTitle: "Saving Habit", bankSavingHabitDesc: "รักษา Savings Streak ครบ 3 วัน",
+    bankSavingMasterTitle: "Saving Master", bankSavingMasterDesc: "รักษา Savings Streak ครบ 7 วัน",
+    bankDiamondSaverTitle: "Diamond Saver", bankDiamondSaverDesc: "รักษา Savings Streak ครบ 14 วัน",
+    bankCompoundInvestorTitle: "Compound Investor", bankCompoundInvestorDesc: "รับดอกเบี้ยจาก Work Bank สะสมครบ 100 Coins",
+    exchangeFirstTradeTitle: "First Trade", exchangeFirstTradeDesc: "ซื้อหรือขายหุ้นจำลองใน Work Exchange ครั้งแรก",
+    exchangeAcademyGraduateTitle: "Academy Graduate", exchangeAcademyGraduateDesc: "เรียน Trading Academy ครบทั้ง 7 บท",
+    exchangeInvestorTitle: "Investor", exchangeInvestorDesc: "ถือหุ้นพร้อมกันอย่างน้อย 3 บริษัท",
+    exchangeGreenPortfolioTitle: "Green Portfolio", exchangeGreenPortfolioDesc: "ทำให้ Portfolio มีกำไรรวมเป็นบวก",
+    exchangeMarketWinnerTitle: "Market Winner", exchangeMarketWinnerDesc: "ทำกำไรรวมใน Work Exchange แตะ 100 Coins",
+    exchangeDiamondHandsTitle: "Diamond Hands", exchangeDiamondHandsDesc: "ถือหุ้นตัวเดิมต่อเนื่องอย่างน้อย 5 วัน",
+    exchangeMasterTitle: "Exchange Master", exchangeMasterDesc: "ทำ Portfolio Value แตะ 2,500 Coins",
+    vaultFirstUploadTitle: "First Upload", vaultFirstUploadDesc: "อัปโหลดไฟล์ Project เข้า File Vault ครั้งแรก",
+    vaultArchivistTitle: "Project Archivist", vaultArchivistDesc: "เก็บไฟล์หลักอย่างน้อย 5 ไฟล์ไว้ใน Project เดียว",
+    vaultVersionKeeperTitle: "Version Keeper", vaultVersionKeeperDesc: "อัปโหลด Version ใหม่ของไฟล์ Project ครั้งแรก",
     projectsShort: "โปรเจกต์", entriesShort: "บันทึก", actionsShort: "ครั้ง", monthsShort: "เดือน",
     challengeUnlockedMeta: "Challenge ใหม่สำเร็จแล้ว และรางวัลถูกเพิ่มเข้า Trophy Room"
   });
@@ -470,6 +488,24 @@
     backupGuardianTitle: "Backup Guardian", backupGuardianDesc: "Exported your first Journey backup",
     calendarArchitectTitle: "Calendar Architect", calendarArchitectDesc: "Saved or imported your first Calendar Preset",
     snapshotCreatorTitle: "Snapshot Creator", snapshotCreatorDesc: "Created your first Journey Snapshot",
+    bankFirstDepositTitle: "First Deposit", bankFirstDepositDesc: "Made your first Work Bank deposit",
+    bankSmartSaverTitle: "Smart Saver", bankSmartSaverDesc: "Reached 500 Coins in Savings",
+    bankProSaverTitle: "Pro Saver", bankProSaverDesc: "Reached 1,500 Coins in Savings",
+    bankEliteSaverTitle: "Elite Saver", bankEliteSaverDesc: "Reached 5,000 Coins in Savings",
+    bankSavingHabitTitle: "Saving Habit", bankSavingHabitDesc: "Maintained a 3-day Savings Streak",
+    bankSavingMasterTitle: "Saving Master", bankSavingMasterDesc: "Maintained a 7-day Savings Streak",
+    bankDiamondSaverTitle: "Diamond Saver", bankDiamondSaverDesc: "Maintained a 14-day Savings Streak",
+    bankCompoundInvestorTitle: "Compound Investor", bankCompoundInvestorDesc: "Earned 100 cumulative Coins from Work Bank interest",
+    exchangeFirstTradeTitle: "First Trade", exchangeFirstTradeDesc: "Completed your first simulated Work Exchange trade",
+    exchangeAcademyGraduateTitle: "Academy Graduate", exchangeAcademyGraduateDesc: "Completed all 7 Trading Academy lessons",
+    exchangeInvestorTitle: "Investor", exchangeInvestorDesc: "Held at least 3 companies at the same time",
+    exchangeGreenPortfolioTitle: "Green Portfolio", exchangeGreenPortfolioDesc: "Reached a positive total portfolio P/L",
+    exchangeMarketWinnerTitle: "Market Winner", exchangeMarketWinnerDesc: "Reached 100 Coins of total Work Exchange P/L",
+    exchangeDiamondHandsTitle: "Diamond Hands", exchangeDiamondHandsDesc: "Held the same stock for at least 5 days",
+    exchangeMasterTitle: "Exchange Master", exchangeMasterDesc: "Reached a 2,500 Coin portfolio value",
+    vaultFirstUploadTitle: "First Upload", vaultFirstUploadDesc: "Uploaded your first Project File Vault file",
+    vaultArchivistTitle: "Project Archivist", vaultArchivistDesc: "Stored at least 5 logical files in one project",
+    vaultVersionKeeperTitle: "Version Keeper", vaultVersionKeeperDesc: "Uploaded a new version of a project file",
     projectsShort: "projects", entriesShort: "entries", actionsShort: "times", monthsShort: "months",
     challengeUnlockedMeta: "A new challenge is complete and its reward has been added to your Trophy Room"
   });
@@ -871,10 +907,54 @@
     const streak = getStreakStats(getConfiguredNow());
     const flags = safeParse(localStorage.getItem("wp-v7-achievement-flags"), {});
     const perfectMonth = getPerfectWorkMonthInfo(getConfiguredNow());
+
+    // V8.4.6 finance / feature achievement inputs. Keep these calculations in the
+    // core achievement API so every surface (Achievement Center, Coin rewards,
+    // public summary and Cloud Sync) sees the same unlock state.
+    const bankRowsRaw = safeParse(localStorage.getItem("wp-v83-bank-ledger"), []);
+    const bankRows = Array.isArray(bankRowsRaw) ? bankRowsRaw.slice().sort((a,b)=>new Date(a?.createdAt||0)-new Date(b?.createdAt||0)) : [];
+    let bankRunning = 0, bankMaxBalance = 0, bankInterestTotal = 0, bankMaxStreak = 0, bankStreakStart = "";
+    const keyFromStamp = stamp => { const d=new Date(stamp||0); return Number.isNaN(d.getTime()) ? "" : dateKey(d); };
+    const keyDistance = (a,b) => {
+      const ma=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(a||"")), mb=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(b||""));
+      if(!ma||!mb)return 0; const da=new Date(+ma[1],+ma[2]-1,+ma[3]),db=new Date(+mb[1],+mb[2]-1,+mb[3]);
+      return Math.max(0,Math.round((db-da)/86400000));
+    };
+    bankRows.forEach(item=>{
+      const before=bankRunning, amount=Number(item?.amount||0);
+      bankRunning=Math.round((bankRunning+amount)*100)/100; bankMaxBalance=Math.max(bankMaxBalance,bankRunning);
+      if(item?.type==="interest")bankInterestTotal+=Math.max(0,amount);
+      const key=keyFromStamp(item?.createdAt);
+      if(item?.type==="deposit"&&before<=0&&bankRunning>0&&!bankStreakStart)bankStreakStart=key;
+      if(item?.type==="withdraw"){
+        if(bankStreakStart&&key)bankMaxStreak=Math.max(bankMaxStreak,keyDistance(bankStreakStart,key)+1);
+        bankStreakStart=bankRunning>0?key:"";
+      }
+    });
+    if(bankRunning>0&&bankStreakStart)bankMaxStreak=Math.max(bankMaxStreak,keyDistance(bankStreakStart,dateKey(getConfiguredNow()))+1);
+    bankInterestTotal=Math.round(bankInterestTotal*100)/100;
+    const bankDepositCount=bankRows.filter(x=>x?.type==="deposit"&&Number(x?.amount||0)>0).length;
+
+    const exchangeTradesRaw=safeParse(localStorage.getItem("wp-v84-exchange-trades"), []);
+    const exchangeTrades=Array.isArray(exchangeTradesRaw)?exchangeTradesRaw:[];
+    const exchangeState=safeParse(localStorage.getItem("wp-v84-exchange-achievements"), {})||{};
+    const academyState=safeParse(localStorage.getItem("wp-v841-trading-academy"), {})||{};
+    const academyCompleted=academyState?.completed&&typeof academyState.completed==="object"?Object.keys(academyState.completed).length:0;
+    const qtyBySymbol={}; exchangeTrades.forEach(tr=>{const sym=String(tr?.symbol||"");if(!sym)return;qtyBySymbol[sym]=(qtyBySymbol[sym]||0)+(tr?.side==="sell"?-1:1)*Math.max(0,Number(tr?.qty)||0);});
+    const exchangeHoldings=Object.values(qtyBySymbol).filter(qty=>qty>0).length;
+    const featureStats=safeParse(localStorage.getItem("wp-v846-feature-achievement-stats"), {})||{};
+    const exchangePnl=Math.max(Number(featureStats.exchangeMaxTotalPnl)||0,Number(featureStats.exchangeTotalPnl)||0,exchangeState?.["market-winner"]?100:0);
+    const exchangePortfolioValue=Math.max(Number(featureStats.exchangeMaxPortfolioValue)||0,Number(featureStats.exchangePortfolioValue)||0,exchangeState?.["exchange-master"]?2500:0);
+    const exchangeHoldDays=Math.max(Number(featureStats.exchangeMaxHoldDays)||0,Number(featureStats.exchangeHoldDays)||0,exchangeState?.["diamond-hands"]?5:0);
+    const exchangeGreen=(exchangeState?.["green-portfolio"]||Number(featureStats.exchangeMaxTotalPnl)>0||Number(featureStats.exchangeTotalPnl)>0)?1:0;
+    const vaultTotalFiles=Number(featureStats.vaultMaxTotalFiles||featureStats.vaultTotalFiles)||0;
+    const vaultMaxProjectFiles=Number(featureStats.vaultMaxProjectFiles)||0;
+    const vaultMaxVersion=Number(featureStats.vaultMaxVersion)||0;
+
     const defs = [];
-    const add = (id, icon, titleKey, descKey, tier, category, current, target, unit) => defs.push({
+    const add = (id, icon, titleKey, descKey, tier, category, current, target, unit, extra={}) => defs.push({
       id, icon, titleKey, descKey, tier, category, current: Number(current) || 0, target: Number(target) || 1, unit,
-      unlockedNow: (Number(current) || 0) >= (Number(target) || 1) - .001
+      unlockedNow: (Number(current) || 0) >= (Number(target) || 1) - .001, ...extra
     });
 
     // Time & journey milestones
@@ -935,6 +1015,29 @@
     add("backup-guardian","💾","backupGuardianTitle","backupGuardianDesc","rare","exploration",flags?.["backup-exported"]?1:0,1,"actions");
     add("calendar-architect","🗓️","calendarArchitectTitle","calendarArchitectDesc","rare","exploration",flags?.["calendar-preset"]?1:0,1,"actions");
     add("snapshot-creator","📸","snapshotCreatorTitle","snapshotCreatorDesc","epic","exploration",flags?.["snapshot-created"]?1:0,1,"actions");
+
+    // V8.4.6 — Finance & Feature Achievements. These have explicit Coin rewards
+    // and do not change the legacy Tier Mastery requirements.
+    add("bank-first-deposit","🏦","bankFirstDepositTitle","bankFirstDepositDesc","common","bank",bankDepositCount,1,"deposits",{coinReward:20,masteryEligible:false});
+    add("bank-smart-saver","💼","bankSmartSaverTitle","bankSmartSaverDesc","common","bank",bankMaxBalance,500,"coins",{coinReward:30,masteryEligible:false});
+    add("bank-pro-saver","💎","bankProSaverTitle","bankProSaverDesc","rare","bank",bankMaxBalance,1500,"coins",{coinReward:50,masteryEligible:false});
+    add("bank-elite-saver","👑","bankEliteSaverTitle","bankEliteSaverDesc","legendary","bank",bankMaxBalance,5000,"coins",{coinReward:100,masteryEligible:false});
+    add("bank-saving-habit","🔥","bankSavingHabitTitle","bankSavingHabitDesc","common","bank",bankMaxStreak,3,"days",{coinReward:25,masteryEligible:false});
+    add("bank-saving-master","⚡","bankSavingMasterTitle","bankSavingMasterDesc","rare","bank",bankMaxStreak,7,"days",{coinReward:50,masteryEligible:false});
+    add("bank-diamond-saver","💠","bankDiamondSaverTitle","bankDiamondSaverDesc","epic","bank",bankMaxStreak,14,"days",{coinReward:100,masteryEligible:false});
+    add("bank-compound-investor","✨","bankCompoundInvestorTitle","bankCompoundInvestorDesc","rare","bank",bankInterestTotal,100,"coins",{coinReward:60,masteryEligible:false});
+
+    add("first-trade","📈","exchangeFirstTradeTitle","exchangeFirstTradeDesc","common","exchange",Math.max(exchangeTrades.length,exchangeState?.["first-trade"]?1:0),1,"trades",{coinReward:20,masteryEligible:false});
+    add("academy-graduate","🎓","exchangeAcademyGraduateTitle","exchangeAcademyGraduateDesc","rare","exchange",Math.max(academyCompleted,exchangeState?.["academy-graduate"]?7:0),7,"lessons",{coinReward:40,masteryEligible:false});
+    add("investor","💼","exchangeInvestorTitle","exchangeInvestorDesc","common","exchange",Math.max(exchangeHoldings,exchangeState?.investor?3:0),3,"companies",{coinReward:30,masteryEligible:false});
+    add("green-portfolio","💚","exchangeGreenPortfolioTitle","exchangeGreenPortfolioDesc","common","exchange",exchangeGreen,1,"count",{coinReward:25,masteryEligible:false});
+    add("market-winner","🔥","exchangeMarketWinnerTitle","exchangeMarketWinnerDesc","rare","exchange",exchangePnl,100,"coins",{coinReward:50,masteryEligible:false});
+    add("diamond-hands","💎","exchangeDiamondHandsTitle","exchangeDiamondHandsDesc","rare","exchange",exchangeHoldDays,5,"days",{coinReward:50,masteryEligible:false});
+    add("exchange-master","🏆","exchangeMasterTitle","exchangeMasterDesc","epic","exchange",exchangePortfolioValue,2500,"coins",{coinReward:100,masteryEligible:false});
+
+    add("vault-first-upload","📁","vaultFirstUploadTitle","vaultFirstUploadDesc","common","vault",vaultTotalFiles,1,"files",{coinReward:20,masteryEligible:false});
+    add("vault-archivist","🗂️","vaultArchivistTitle","vaultArchivistDesc","common","vault",vaultMaxProjectFiles,5,"files",{coinReward:30,masteryEligible:false});
+    add("vault-version-keeper","🔄","vaultVersionKeeperTitle","vaultVersionKeeperDesc","rare","vault",vaultMaxVersion,2,"versions",{coinReward:25,masteryEligible:false});
 
     const attainableHours = stats.totalAttainableMinutes / 60;
     const visible = defs.filter(item => item.category !== "time" || item.target <= attainableHours + .001);

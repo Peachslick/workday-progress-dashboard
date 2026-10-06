@@ -632,7 +632,7 @@ html[data-theme="dark"] .v844-bank-boost{background:linear-gradient(135deg,#1118
 @media(max-width:520px){.v844-bank-boost{padding:15px}.v844-boost-title{align-items:flex-start}.v844-streak-steps{grid-template-columns:1fr 1fr 1fr}.v83-projection.v844-projection>div{grid-template-columns:1fr}}
 
 
-/* V8.4.5 - Project File Vault */
+/* V8.4.6 - Project File Vault */
 .v845-project-files-row{display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-top:.78rem;padding-top:.72rem;border-top:1px solid color-mix(in srgb,var(--border,#dfe6f0) 82%,transparent);font-size:.82rem;color:var(--muted,#728099)}
 .v845-project-files-row>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .v845-project-files-btn{flex:0 0 auto!important;padding:.4rem .65rem!important;border:1px solid color-mix(in srgb,var(--accent,#356ae6) 22%,var(--border,#dfe6f0))!important;border-radius:.65rem!important;background:color-mix(in srgb,var(--accent-soft,#edf3ff) 72%,transparent)!important;color:var(--accent,#356ae6)!important;font-weight:700!important}
@@ -649,3 +649,30 @@ html[data-theme="dark"] .v844-bank-boost{background:linear-gradient(135deg,#1118
 html[data-theme="dark"] .v845-vault-modal,html[data-theme="dark"] .v845-file-card{background:#0d0e10;border-color:#292c31}html[data-theme="dark"] .v845-vault-stats article,html[data-theme="dark"] .v845-file-icon,html[data-theme="dark"] .v845-version-row,html[data-theme="dark"] .v845-vault-empty,html[data-theme="dark"] .v845-vault-loading,html[data-theme="dark"] .v845-vault-error,html[data-theme="dark"] .v845-vault-gate{background:#151619;border-color:#292c31}html[data-theme="dark"] .v845-vault-toolbar{background:#11151f;border-color:#2b3342}html[data-theme="dark"] .v845-file-actions button,html[data-theme="dark"] .v845-version-row button,html[data-theme="dark"] .v845-vault-close{background:#17191d;border-color:#2d3036}
 @media(max-width:720px){.v845-vault-backdrop{padding:.55rem}.v845-vault-modal{max-height:calc(100vh - 1.1rem);border-radius:1.2rem;padding:1rem}.v845-vault-head{align-items:flex-start}.v845-vault-head .v845-vault-icon{width:3rem;height:3rem;flex-basis:3rem}.v845-vault-head h2{font-size:1.25rem}.v845-vault-stats{grid-template-columns:1fr}.v845-vault-toolbar{align-items:stretch;flex-direction:column}.v845-vault-toolbar button{width:100%}.v845-file-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.v845-file-actions button{width:100%}.v845-version-row{align-items:flex-start}.v845-version-row>div:first-child{display:grid;gap:.1rem}.v845-project-files-row{align-items:flex-start;flex-direction:column}.v845-project-files-btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.v845-vault-backdrop{transition:none!important}}
+
+
+/* =========================================================
+   V8.4.6 - Finance & Feature Achievements Expansion
+   ========================================================= */
+.v846-ach-filters{display:flex;gap:.55rem;align-items:center;overflow-x:auto;padding:.15rem .05rem .85rem;scrollbar-width:thin}
+.v846-ach-filters button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:.55rem .8rem;display:inline-flex;align-items:center;gap:.42rem;white-space:nowrap;cursor:pointer;font:inherit}
+.v846-ach-filters button span{font-size:1.05em}.v846-ach-filters button b{font-size:.82rem}.v846-ach-filters button small{min-width:1.35rem;height:1.35rem;border-radius:999px;background:var(--surface-soft);display:grid;place-items:center;font-size:.68rem;color:var(--muted)}
+.v846-ach-filters button.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}
+.v846-ach-filter-summary{display:flex;align-items:center;gap:.7rem;margin:0 0 .9rem;padding:.7rem .9rem;border:1px solid var(--border);border-radius:14px;background:var(--surface-soft)}
+.v846-ach-filter-summary>span{font-size:1.25rem}.v846-ach-filter-summary strong{flex:1}.v846-ach-filter-summary small{color:var(--muted)}
+.v846-ach-coin{display:flex;align-items:center;gap:.38rem;width:max-content;max-width:100%;margin-top:.6rem;padding:.34rem .58rem;border-radius:999px;background:rgba(241,191,75,.12);border:1px solid rgba(241,191,75,.28);font-size:.72rem;font-weight:800;color:var(--text)}
+.v846-ach-coin.earned{background:rgba(47,175,116,.10);border-color:rgba(47,175,116,.28)}.v846-ach-coin b{color:var(--work)}
+.v846-coin-reward{border-style:dashed!important}
+.v846-bank-achievements,.v846-vault-ach{border:1px solid var(--border);border-radius:20px;background:var(--surface);padding:1rem;margin-bottom:1rem}
+.v846-feature-ach-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;margin-top:.8rem}
+.v846-feature-ach{min-width:0;border:1px solid var(--border);border-radius:15px;background:var(--surface-soft);padding:.75rem;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.65rem;position:relative;overflow:hidden}
+.v846-feature-ach>span{width:2rem;height:2rem;border-radius:10px;display:grid;place-items:center;background:var(--surface);font-size:1.08rem}
+.v846-feature-ach>div{min-width:0}.v846-feature-ach strong{display:block;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v846-feature-ach small{display:block;color:var(--muted);font-size:.68rem;line-height:1.35;margin:.15rem 0 .4rem;min-height:1.8em}
+.v846-feature-ach i{height:5px;border-radius:999px;background:var(--border);display:block;overflow:hidden}.v846-feature-ach i b{height:100%;display:block;background:var(--accent);border-radius:inherit}
+.v846-feature-ach em{display:block;margin-top:.3rem;color:var(--muted);font-size:.66rem;font-style:normal}.v846-feature-ach mark{grid-column:1/-1;justify-self:start;border-radius:999px;padding:.25rem .48rem;background:rgba(241,191,75,.13);color:var(--text);font-size:.68rem;font-weight:800}
+.v846-feature-ach.unlocked{border-color:rgba(47,175,116,.36);background:linear-gradient(145deg,rgba(47,175,116,.08),var(--surface-soft))}.v846-feature-ach.unlocked>span{background:rgba(47,175,116,.12)}
+.v846-vault-ach{margin:.85rem 0}.v846-vault-ach>div:first-child h3{margin:.12rem 0 0}.v846-vault-ach .v846-feature-ach-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.v84-ach div em{display:block;margin-top:.28rem;color:var(--gold);font-style:normal;font-size:.72rem;font-weight:800}
+@media(max-width:1100px){.v846-feature-ach-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.v846-feature-ach-grid,.v846-vault-ach .v846-feature-ach-grid{grid-template-columns:1fr}.v846-ach-filters{padding-bottom:.65rem}.v846-feature-ach small{min-height:0}}
+html[data-theme="dark"] .v846-ach-coin,html[data-theme="dark"] .v846-feature-ach mark{background:rgba(241,191,75,.10)}
