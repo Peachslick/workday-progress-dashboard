@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.4";
+  const VERSION = "8.4.5";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -252,7 +252,7 @@
     if(!cloud.client||!cloud.user)return true;
     try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
-  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
+  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
   // ---------- V8.0.7 Cloud Reconciliation + Interaction Stability ----------
