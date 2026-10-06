@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.4.3";
+  const V6_VERSION = "8.4.4";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -449,8 +449,8 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.4.3 · Work Exchange · Trading Academy · Reward Shop · Work Bank · ข้อมูลเก็บใน Browser":"Workday Journey V8.4.3 · Work Exchange · Trading Academy · Reward Shop · Work Bank · Local browser data";
-    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V8.4.3";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.4.4 · Work Exchange · Trading Academy · Daily Deals · Reward Shop · Finale Bank · ข้อมูลเก็บใน Browser":"Workday Journey V8.4.4 · Work Exchange · Trading Academy · Daily Deals · Reward Shop · Finale Bank · Local browser data";
+    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V8.4.4";
   }
 
   function init() {

@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.3";
+  const VERSION = "8.4.4";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -42,12 +42,24 @@
 
   const ECONOMY = { workday:15, journal:10, project:50 };
   const TIER_COINS = { common: 20, rare: 40, epic: 80, legendary: 150 };
-  const BANK_DAILY_CAP = 15;
-  const BANK_TIERS = [
+  const LEGACY_BANK_DAILY_CAP = 15;
+  const LEGACY_BANK_TIERS = [
     { id:"starter", min:0, max:499.999, rate:.001, icon:"🌱", th:"Starter Saver", en:"Starter Saver" },
     { id:"smart", min:500, max:1499.999, rate:.002, icon:"💼", th:"Smart Saver", en:"Smart Saver" },
     { id:"pro", min:1500, max:4999.999, rate:.003, icon:"💎", th:"Pro Saver", en:"Pro Saver" },
     { id:"elite", min:5000, max:Infinity, rate:.004, icon:"👑", th:"Elite Saver", en:"Elite Saver" }
+  ];
+  const BANK_DAILY_CAP = 150;
+  const BANK_TIERS = [
+    { id:"starter", min:0, max:499.999, rate:.0100, icon:"🌱", th:"Starter Saver", en:"Starter Saver" },
+    { id:"smart", min:500, max:1499.999, rate:.0125, icon:"💼", th:"Smart Saver", en:"Smart Saver" },
+    { id:"pro", min:1500, max:4999.999, rate:.0150, icon:"💎", th:"Pro Saver", en:"Pro Saver" },
+    { id:"elite", min:5000, max:Infinity, rate:.0200, icon:"👑", th:"Elite Saver", en:"Elite Saver" }
+  ];
+  const BANK_STREAK_BONUSES = [
+    { days:14, rate:.0050, icon:"🔥", th:"14 วัน", en:"14 days" },
+    { days:7, rate:.0025, icon:"🔥", th:"7 วัน", en:"7 days" },
+    { days:3, rate:.0010, icon:"🔥", th:"3 วัน", en:"3 days" }
   ];
 
   const TEXT = {
@@ -77,6 +89,8 @@
       frames: "Profile Frames",
       history: "Coin History",
       collection: "Collection",
+      dailyFeatured: "ดีลประจำวัน",
+      dailyFeaturedHelp: "สินค้า 3 ชิ้นลดพิเศษ 15–40% วันนี้เท่านั้น · เปลี่ยนใหม่ทุกวันเวลา 00:00",
       weeklyFeatured: "ดีลประจำสัปดาห์",
       weeklyFeaturedHelp: "สินค้าเด่นลดพิเศษ 20–50% เฉพาะ Weekly Shop · มีโอกาสเจอดีลใหญ่ 50% · เปลี่ยนดีลใหม่ทุกวันจันทร์",
       finaleCollection: "Internship Finale Collection",
@@ -152,6 +166,8 @@
       frames: "Profile Frames",
       history: "Coin History",
       collection: "Collection",
+      dailyFeatured: "Daily Deals",
+      dailyFeaturedHelp: "Three rewards are 15–40% off today only · refreshes every day at 00:00",
       weeklyFeatured: "Weekly Deals Rotation",
       weeklyFeaturedHelp: "Weekly deals are 20–50% off here · rare 50% mega deals can appear · rotates every Monday",
       finaleCollection: "Internship Finale Collection",
@@ -487,20 +503,21 @@
   function purchaseReward(reward, source="shop") {
     if (!reward || reward.price <= 0 || isOwned(reward)) return;
     if (!rewardAvailable(reward)) { toast("🎓", t("finaleEnded"), "error"); return; }
-    const deal = source === "weekly" ? weeklyDealFor(reward) : null;
+    const deal = source === "weekly" ? weeklyDealFor(reward) : source === "daily" ? dailyDealFor(reward) : null;
     const payPrice = deal ? deal.price : reward.price;
     const current = balance();
     if (current < payPrice) { toast("🪙", t("insufficient"), "error"); return; }
+    const sourceName = source === "daily" ? (lang()==="th"?"ดีลประจำวัน":"Daily Deal") : (lang()==="th"?"ดีลประจำสัปดาห์":"Weekly Deal");
     const confirmText = deal
       ? (lang()==="th"
-          ? `Weekly Deal ลด ${deal.discount}% · ใช้ ${payPrice.toLocaleString()} Coins (ปกติ ${reward.price.toLocaleString()}) เพื่อซื้อ ${rewardName(reward)}?`
-          : `Weekly Deal ${deal.discount}% off · Spend ${payPrice.toLocaleString()} Coins (normally ${reward.price.toLocaleString()}) for ${rewardName(reward)}?`)
+          ? `${sourceName} ลด ${deal.discount}% · ใช้ ${payPrice.toLocaleString()} Coins (ปกติ ${reward.price.toLocaleString()}) เพื่อซื้อ ${rewardName(reward)}?`
+          : `${sourceName} ${deal.discount}% off · Spend ${payPrice.toLocaleString()} Coins (normally ${reward.price.toLocaleString()}) for ${rewardName(reward)}?`)
       : t("purchaseConfirm", {coins:payPrice,name:rewardName(reward)});
     if (!confirm(confirmText)) return;
     const list = ledger();
     const id = `spend:${reward.type}:${reward.id}`;
     if (!list.some(item => item.id === id)) {
-      const dealSuffix = deal ? ` · Weekly Deal -${deal.discount}%` : "";
+      const dealSuffix = deal ? ` · ${source === "daily" ? (lang()==="th"?"ดีลประจำวัน":"Daily Deal") : (lang()==="th"?"ดีลประจำสัปดาห์":"Weekly Deal")} -${deal.discount}%` : "";
       list.push({
         id,
         amount:-payPrice,
@@ -508,7 +525,7 @@
         labelTh:`ซื้อ ${rewardName(reward)}${dealSuffix}`,
         labelEn:`Purchased ${rewardName(reward)}${dealSuffix}`,
         createdAt:new Date().toISOString(),
-        meta:{rewardType:reward.type,rewardId:reward.id,name:rewardName(reward),source:deal?"weekly":"shop",week:deal?.week||null,discountPct:deal?.discount||0,originalPrice:reward.price,paidPrice:payPrice}
+        meta:{rewardType:reward.type,rewardId:reward.id,name:rewardName(reward),source:deal?source:"shop",rotation:deal?.key||null,discountPct:deal?.discount||0,originalPrice:reward.price,paidPrice:payPrice}
       });
       write(KEYS.ledger, list);
     }
@@ -516,6 +533,7 @@
     toast("🎁", deal ? `${t("purchased")}: ${rewardName(reward)} · -${deal.discount}%` : `${t("purchased")}: ${rewardName(reward)}`, "success");
     refreshAll();
   }
+
   function equipReward(reward) {
     if (!reward || !isOwned(reward)) return;
     if (reward.type === "mascot") localStorage.setItem(KEYS.mascot, reward.id);
@@ -690,34 +708,56 @@
     const seed=`rotation:${weekKey()}:${API.getConfig().startDate}`;
     return collectableRewards().slice().sort((a,b)=>seedNumber(`${seed}:${a.type}:${a.id}`)-seedNumber(`${seed}:${b.type}:${b.id}`)).slice(0,6);
   }
+  function dailyFeaturedRewards(){
+    const weeklyKeys=new Set(weeklyFeaturedRewards().map(rewardKey));
+    const seed=`daily-rotation:${dayKeyNow()}`;
+    return collectableRewards().filter(r=>!weeklyKeys.has(rewardKey(r))).slice().sort((a,b)=>seedNumber(`${seed}:${a.type}:${a.id}`)-seedNumber(`${seed}:${b.type}:${b.id}`)).slice(0,3);
+  }
   function weeklyDealFor(reward){
     const week=weekKey();
-    // Weighted weekly discount pool: normal deals are common, while 50% is a rare mega deal.
-    // Deterministic seed keeps the exact same price for the whole weekly rotation.
     const discounts=[20,20,25,25,30,30,35,35,40,40,50];
     const discount=discounts[seedNumber(`weekly-deal:${week}:${reward.type}:${reward.id}`)%discounts.length];
     const price=Math.max(1,Math.round(Number(reward.price||0)*(100-discount)/100));
-    return {week,discount,price,originalPrice:Number(reward.price||0)};
+    return {key:week,week,discount,price,originalPrice:Number(reward.price||0)};
+  }
+  function dailyDealFor(reward){
+    const day=dayKeyNow();
+    const discounts=[15,15,20,20,20,25,25,30,30,35,40];
+    const discount=discounts[seedNumber(`daily-deal:${day}:${reward.type}:${reward.id}`)%discounts.length];
+    const price=Math.max(1,Math.round(Number(reward.price||0)*(100-discount)/100));
+    return {key:day,day,discount,price,originalPrice:Number(reward.price||0)};
   }
   function weeklyResetLabel(){
     const now=API.getNow(), next=weekStartDate(addDays(now,7)); next.setHours(0,0,0,0); const ms=Math.max(0,next-now),d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/3600000);
     return lang()==="th"?`ดีลใหม่ใน ${d} วัน ${h} ชม.`:`New deals in ${d}d ${h}h`;
   }
+  function dailyResetLabel(){
+    const now=API.getNow(),next=new Date(now);next.setDate(next.getDate()+1);next.setHours(0,0,0,0);const ms=Math.max(0,next-now),h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
+    return lang()==="th"?`ดีลใหม่ใน ${h} ชม. ${m} นาที`:`New deals in ${h}h ${m}m`;
+  }
   function miniRewardCard(reward,kind){
-    const owned=isOwned(reward),equipped=isEquipped(reward),available=rewardAvailable(reward),deal=kind==="weekly"?weeklyDealFor(reward):null;
+    const owned=isOwned(reward),equipped=isEquipped(reward),available=rewardAvailable(reward),deal=kind==="weekly"?weeklyDealFor(reward):kind==="daily"?dailyDealFor(reward):null;
     let action="";
     if(equipped) action=`<button type="button" disabled>✓ ${esc(t("equipped"))}</button>`;
     else if(owned) action=`<button type="button" data-v81-equip="${esc(reward.type)}:${esc(reward.id)}">${esc(t("equip"))}</button>`;
     else if(!available) action=`<button type="button" disabled>${esc(t("finaleEnded"))}</button>`;
+    else if(deal&&kind==="daily") action=`<button type="button" class="v844-daily-buy" data-v844-daily-buy="${esc(reward.type)}:${esc(reward.id)}"><s>🪙 ${reward.price.toLocaleString()}</s><strong>🪙 ${deal.price.toLocaleString()}</strong></button>`;
     else if(deal) action=`<button type="button" class="v832-weekly-buy" data-v832-weekly-buy="${esc(reward.type)}:${esc(reward.id)}"><s>🪙 ${reward.price.toLocaleString()}</s><strong>🪙 ${deal.price.toLocaleString()}</strong></button>`;
     else action=`<button type="button" data-v81-buy="${esc(reward.type)}:${esc(reward.id)}">🪙 ${reward.price}</button>`;
-    const isMega=!!deal&&deal.discount===50;
-    const label=kind==="finale"?esc(t("limited")):(isMega?(lang()==="th"?"🔥 ดีลใหญ่":"🔥 MEGA DEAL"):esc(t("featured")));
+    const isMega=kind==="weekly"&&!!deal&&deal.discount===50;
+    const isDailyHot=kind==="daily"&&!!deal&&deal.discount>=35;
+    const label=kind==="finale"?esc(t("limited")):kind==="daily"?(isDailyHot?(lang()==="th"?"🔥 ดีลร้อน":"🔥 HOT DEAL"):(lang()==="th"?"⚡ ดีลวันนี้":"⚡ DAILY DEAL")):(isMega?(lang()==="th"?"🔥 ดีลใหญ่":"🔥 MEGA DEAL"):esc(t("featured")));
     const typeLabels={mascot:lang()==="th"?"มาสคอต":"Mascot",accessory:lang()==="th"?"ของแต่ง":"Accessory",frame:lang()==="th"?"กรอบโปรไฟล์":"Profile Frame",theme:lang()==="th"?"ธีม":"Theme",effect:lang()==="th"?"เอฟเฟกต์":"Effect"};
     const typeLabel=typeLabels[reward.type]||reward.type;
-    return `<article class="v831-mini-reward rarity-${esc(reward.rarity||"common")} ${deal?"v832-weekly-deal":""} ${isMega?"v834-mega-deal":""}">${deal?`<span class="v832-discount-badge ${isMega?"v834-mega-badge":""}">-${deal.discount}%</span>`:""}<div class="v831-mini-visual">${visualForReward(reward)}</div><div class="v831-mini-copy ${deal?"v832-deal-copy":""}"><span>${label}</span><strong>${esc(rewardName(reward))}</strong><small>${esc(rarityName(reward))} · ${esc(typeLabel)}</small></div>${action}</article>`;
+    const dealClass=kind==="daily"?"v844-daily-deal":deal?"v832-weekly-deal":"";
+    return `<article class="v831-mini-reward rarity-${esc(reward.rarity||"common")} ${dealClass} ${isMega?"v834-mega-deal":""} ${isDailyHot?"v844-hot-deal":""}">${deal?`<span class="v832-discount-badge ${kind==="daily"?"v844-daily-badge":""} ${isMega?"v834-mega-badge":""}">-${deal.discount}%</span>`:""}<div class="v831-mini-visual">${visualForReward(reward)}</div><div class="v831-mini-copy ${deal?"v832-deal-copy":""}"><span>${label}</span><strong>${esc(rewardName(reward))}</strong><small>${esc(rarityName(reward))} · ${esc(typeLabel)}</small></div>${action}</article>`;
+  }
+  function dailyMarkup(){
+    const eyebrow=lang()==="th"?"ข้อเสนอวันนี้":"TODAY ONLY";
+    return `<section class="v831-featured v844-daily-shop"><div class="v831-section-head"><div><p class="eyebrow">${eyebrow}</p><h3>⚡ ${esc(t("dailyFeatured"))}</h3><p>${esc(t("dailyFeaturedHelp"))}</p></div><span>${esc(dailyResetLabel())}</span></div><div class="v844-daily-note"><span>🛍️</span><div><strong>${lang()==="th"?"3 ดีลใหม่ทุกวัน · ลด 15–40%":"3 fresh deals every day · 15–40% off"}</strong><small>${lang()==="th"?"ไม่ซ้ำกับ Weekly Deals ของสัปดาห์นี้ · ราคาพิเศษเฉพาะการซื้อจากการ์ด Daily Deal":"Does not overlap this week's Weekly Deals · special price applies only from the Daily Deal card"}</small></div></div><div class="v831-featured-track v844-daily-track">${dailyFeaturedRewards().map(r=>miniRewardCard(r,"daily")).join("")}</div></section>`;
   }
   function weeklyMarkup(){ const eyebrow=lang()==="th"?"โปรโมชั่นประจำสัปดาห์":"WEEKLY DEALS"; return `<section class="v831-featured v832-weekly-shop"><div class="v831-section-head"><div><p class="eyebrow">${eyebrow}</p><h3>🏷️ ${esc(t("weeklyFeatured"))}</h3><p>${esc(t("weeklyFeaturedHelp"))}</p></div><span>${esc(weeklyResetLabel())}</span></div><div class="v832-sale-note"><span>⚡</span><strong>${lang()==="th"?"ส่วนลดประจำสัปดาห์ 20–50%":"Weekly discounts from 20–50%"}</strong><small>${lang()==="th"?"ดีล 50% เป็น Mega Deal ที่พบได้น้อย · ซื้อจากการ์ดนี้เท่านั้น ส่วนหมวดปกติยังเป็นราคาเต็ม":"50% is a rare Mega Deal · discounts apply only when buying from these cards; regular categories stay full price"}</small></div><div class="v831-featured-track">${weeklyFeaturedRewards().map(r=>miniRewardCard(r,"weekly")).join("")}</div></section>`; }
+
   function finaleMarkup(){
     const info=journeyFinaleInfo(), items=ALL_REWARDS.filter(r=>r.finale);
     const countdown=info.active?(lang()==="th"?`${info.days} วันก่อน Journey สิ้นสุด`:`${info.days} days until Journey end`):t("finaleEnded");
@@ -735,9 +775,10 @@
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.4</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
       ${collectionMarkup()}
+      ${dailyMarkup()}
       ${weeklyMarkup()}
       ${finaleMarkup()}
       <section class="v81-earn-card"><div><p class="eyebrow">${esc(t("howToEarn"))}</p><h3>${esc(t("retroTitle"))}</h3><p>${esc(t("retroHelp"))}</p></div><div class="v81-earn-grid"><span>🕒 <b>+15</b> ${esc(t("earnWorkday"))}</span><span>📓 <b>+10</b> ${esc(t("earnJournal"))}</span><span>🧩 <b>+50</b> ${esc(t("earnProject"))}</span><span>🏆 <b>+20 / +40 / +80 / +150</b> ${esc(t("earnAchievement"))}</span><span>🎯 <b>+5 – +20</b> Daily Mission</span><span>🎁 <b>+5 – +100</b> Daily / Weekly Chest</span></div></section>
@@ -747,6 +788,7 @@
     qa("[data-v831-category]",root).forEach(btn=>btn.addEventListener("click",()=>{const map={mascot:"mascots",accessory:"accessories",frame:"frames",theme:"themes",effect:"effects"};localStorage.setItem(KEYS.tab,map[btn.dataset.v831Category]||"mascots");renderShop();}));
     qa("[data-v81-tab]", root).forEach(btn => btn.addEventListener("click", () => { localStorage.setItem(KEYS.tab, btn.dataset.v81Tab); renderShop(); }));
     qa("[data-v81-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Buy.split(":"); purchaseReward(rewardBy(type,id)); }));
+    qa("[data-v844-daily-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v844DailyBuy.split(":"); purchaseReward(rewardBy(type,id),"daily"); }));
     qa("[data-v832-weekly-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v832WeeklyBuy.split(":"); purchaseReward(rewardBy(type,id),"weekly"); }));
     qa("[data-v81-equip]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Equip.split(":"); equipReward(rewardBy(type,id)); }));
   }
@@ -961,13 +1003,13 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry, weeklyDone=completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry, trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.4</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
 
 
-  // ---------- V8.3 Work Bank + Savings + Daily Interest ----------
+  // ---------- V8.4.4 Work Bank + Finale Boost + Compound Interest ----------
   function bankLedger(){
     const value=read(KEYS.bankLedger,[]); return Array.isArray(value)?value:[];
   }
@@ -978,12 +1020,10 @@
   function roundBank(value){ return Math.round((Number(value)||0)*100)/100; }
   function bankBalance(list=bankLedger()){ return roundBank(list.reduce((sum,item)=>sum+Number(item?.amount||0),0)); }
   function bankInterestEarned(list=bankLedger()){ return roundBank(list.filter(x=>x?.type==="interest").reduce((sum,item)=>sum+Math.max(0,Number(item?.amount||0)),0)); }
-  function bankTier(amount=bankBalance()){
-    const value=Math.max(0,Number(amount)||0); return BANK_TIERS.find(t=>value>=t.min&&value<=t.max)||BANK_TIERS[BANK_TIERS.length-1];
+  function bankTierFrom(amount,tiers=BANK_TIERS){
+    const value=Math.max(0,Number(amount)||0); return tiers.find(t=>value>=t.min&&value<=t.max)||tiers[tiers.length-1];
   }
-  function bankDailyInterest(amount=bankBalance()){
-    const value=Math.max(0,Number(amount)||0),tier=bankTier(value); return roundBank(Math.min(BANK_DAILY_CAP,value*tier.rate));
-  }
+  function bankTier(amount=bankBalance()){ return bankTierFrom(amount,BANK_TIERS); }
   function bankLocale(){return lang()==="th"?"th-TH":"en-US";}
   function formatBankCoin(value){
     const n=roundBank(value),fraction=Math.abs(n-Math.round(n))>.0001;
@@ -995,8 +1035,53 @@
   function bankDateLabel(key){
     const d=dateFromKey(key); return new Intl.DateTimeFormat(bankLocale(),{day:"2-digit",month:"short",year:"numeric"}).format(d);
   }
+  function bankStampDateKey(stamp){
+    const d=new Date(stamp||0); return Number.isNaN(d.getTime())?dayKeyNow():dateKey(d);
+  }
+  function bankDaysBetween(startKey,endKey){
+    if(!startKey||!endKey)return 0; const a=dateFromKey(startKey),b=dateFromKey(endKey); return Math.max(0,Math.round((b-a)/86400000));
+  }
+  function deriveBankStreakStart(list=bankLedger()){
+    const sorted=list.slice().sort((a,b)=>new Date(a.createdAt||0)-new Date(b.createdAt||0));
+    let amount=0,start=null;
+    for(const item of sorted){
+      const before=amount,n=Number(item?.amount||0); amount=roundBank(amount+n);
+      if(item?.type==="deposit"&&before<=0&&amount>0)start=bankStampDateKey(item.createdAt);
+      if(item?.type==="withdraw"){ if(amount>0)start=bankStampDateKey(item.createdAt); else start=null; }
+    }
+    return amount>0?start:null;
+  }
+  function ensureBankV844State(state=bankState(),list=bankLedger()){
+    let changed=false; const savings=bankBalance(list),hasBankData=list.length>0||!!state.openedAt||!!state.lastInterestDate||savings>0;
+    // Do not create empty Bank state before Cloud data has a chance to load.
+    if(!hasBankData)return state;
+    if(!state.boostStartedDate){state.boostStartedDate=dayKeyNow();changed=true;}
+    if(savings>0&&!state.streakStartDate){state.streakStartDate=deriveBankStreakStart(list)||dayKeyNow();changed=true;}
+    if(savings<=0&&state.streakStartDate){state.streakStartDate=null;changed=true;}
+    if(changed)saveBankState(state); return state;
+  }
+  function bankStreakDays(state=bankState(),targetKey=dayKeyNow(),amount=bankBalance()){
+    if(Math.max(0,Number(amount)||0)<=0||!state?.streakStartDate||String(targetKey)<String(state.streakStartDate))return 0;
+    return bankDaysBetween(state.streakStartDate,targetKey)+1;
+  }
+  function bankStreakBonusRate(days){
+    const hit=BANK_STREAK_BONUSES.find(x=>Number(days)>=x.days); return hit?.rate||0;
+  }
+  function bankRateInfo(amount=bankBalance(),targetKey=dayKeyNow(),state=bankState()){
+    const value=Math.max(0,Number(amount)||0),boostStart=state?.boostStartedDate||dayKeyNow(),boosted=String(targetKey)>=String(boostStart);
+    if(!boosted){const tier=bankTierFrom(value,LEGACY_BANK_TIERS);return{tier,baseRate:tier.rate,bonusRate:0,effectiveRate:tier.rate,streakDays:0,cap:LEGACY_BANK_DAILY_CAP,boosted:false};}
+    const tier=bankTier(value),streakDays=bankStreakDays(state,targetKey,value),bonusRate=bankStreakBonusRate(streakDays);
+    return {tier,baseRate:tier.rate,bonusRate,effectiveRate:tier.rate+bonusRate,streakDays,cap:BANK_DAILY_CAP,boosted:true};
+  }
+  function bankDailyInterest(amount=bankBalance(),targetKey=dayKeyNow(),state=bankState()){
+    const value=Math.max(0,Number(amount)||0),info=bankRateInfo(value,targetKey,state); return roundBank(Math.min(info.cap,value*info.effectiveRate));
+  }
+  function bankNextStreakMilestone(days){
+    const ordered=[3,7,14],next=ordered.find(x=>x>Number(days||0));
+    if(!next)return null; const rate=BANK_STREAK_BONUSES.find(x=>x.days===next)?.rate||0;return{days:next,remaining:Math.max(0,next-Number(days||0)),rate};
+  }
   function settleBankInterest({notify=false}={}){
-    const today=dayKeyNow(),state=bankState(),list=bankLedger(); let amount=bankBalance(list);
+    const today=dayKeyNow(),list=bankLedger(),state=ensureBankV844State(bankState(),list); let amount=bankBalance(list);
     if(amount<=0){
       if((state.openedAt||list.length)&&state.lastInterestDate!==today){state.lastInterestDate=today;saveBankState(state);} return 0;
     }
@@ -1007,15 +1092,15 @@
       cursor=addDays(cursor,1); guard++;
       const key=dateKey(cursor),id=`bank:interest:${key}`;
       if(list.some(x=>x.id===id)){state.lastInterestDate=key;continue;}
-      const tier=bankTier(amount),interest=roundBank(Math.min(BANK_DAILY_CAP,amount*tier.rate));
+      const info=bankRateInfo(amount,key,state),interest=roundBank(Math.min(info.cap,amount*info.effectiveRate));
       if(interest>0){
-        list.push({id,amount:interest,type:"interest",labelTh:`ดอกเบี้ยรายวัน · ${bankDateLabel(key)}`,labelEn:`Daily Interest · ${bankDateLabel(key)}`,createdAt:isoFromDateKey(key),meta:{date:key,rate:tier.rate,tier:tier.id,balanceBefore:amount,cap:BANK_DAILY_CAP}});
+        list.push({id,amount:interest,type:"interest",labelTh:`ดอกเบี้ยรายวัน · ${bankDateLabel(key)}`,labelEn:`Daily Interest · ${bankDateLabel(key)}`,createdAt:isoFromDateKey(key),meta:{date:key,rate:info.effectiveRate,baseRate:info.baseRate,streakBonusRate:info.bonusRate,streakDays:info.streakDays,tier:info.tier.id,balanceBefore:amount,cap:info.cap,finaleBoost:info.boosted}});
         amount=roundBank(amount+interest); total=roundBank(total+interest); changed=true;
       }
       state.lastInterestDate=key;
     }
     if(changed)write(KEYS.bankLedger,list); saveBankState(state);
-    if(notify&&total>0)toast("🏦",`${lang()==="th"?"รับดอกเบี้ยแล้ว":"Interest credited"} +${formatBankCoin(total)} Coins`,`success`);
+    if(notify&&total>0)toast("🏦",`${lang()==="th"?"รับดอกเบี้ยทบต้นแล้ว":"Compound interest credited"} +${formatBankCoin(total)} Coins`,`success`);
     return total;
   }
   function bankDeposit(rawAmount){
@@ -1023,43 +1108,51 @@
     const amount=Math.floor(Number(rawAmount)||0),wallet=balance();
     if(amount<1){toast("🏦",lang()==="th"?"กรุณาระบุจำนวน Coin ที่ต้องการฝาก":"Enter the amount of Coins to deposit","error");return;}
     if(amount>wallet){toast("🪙",t("insufficient"),"error");return;}
-    const now=new Date().toISOString(),tx=bankTxId("deposit"),walletList=ledger(),bankList=bankLedger(),state=bankState(),wasEmpty=bankBalance(bankList)<=0;
+    const now=new Date().toISOString(),tx=bankTxId("deposit"),walletList=ledger(),bankList=bankLedger(),state=ensureBankV844State(bankState(),bankList),wasEmpty=bankBalance(bankList)<=0;
     walletList.push({id:`${tx}:wallet`,amount:-amount,type:"bank_deposit",labelTh:`ฝากเข้า Work Bank · ${amount} Coins`,labelEn:`Work Bank Deposit · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
     bankList.push({id:`${tx}:savings`,amount,type:"deposit",labelTh:`ฝากจาก Wallet · ${amount} Coins`,labelEn:`Deposit from Wallet · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
-    if(!state.openedAt)state.openedAt=now; if(wasEmpty||!state.lastInterestDate)state.lastInterestDate=dayKeyNow();
+    if(!state.boostStartedDate)state.boostStartedDate=dayKeyNow();
+    if(!state.openedAt)state.openedAt=now; if(wasEmpty){state.lastInterestDate=dayKeyNow();state.streakStartDate=dayKeyNow();} else if(!state.lastInterestDate)state.lastInterestDate=dayKeyNow();
     write(KEYS.ledger,walletList);write(KEYS.bankLedger,bankList);saveBankState(state);
-    toast("🏦",`${lang()==="th"?"ฝากสำเร็จ":"Deposited"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
+    toast("🏦",`${lang()==="th"?"ฝากสำเร็จ · เริ่มสะสม Savings Streak":"Deposited · Savings Streak active"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
   }
   function bankWithdraw(rawAmount){
     settleBankInterest({notify:false});
     const savings=bankBalance(),amount=Math.floor(Number(rawAmount)||0);
     if(amount<1){toast("🏦",lang()==="th"?"กรุณาระบุจำนวน Coin ที่ต้องการถอน":"Enter the amount of Coins to withdraw","error");return;}
     if(amount>Math.floor(savings)){toast("🏦",lang()==="th"?"ยอด Savings ไม่เพียงพอ":"Not enough Savings","error");return;}
-    const now=new Date().toISOString(),tx=bankTxId("withdraw"),walletList=ledger(),bankList=bankLedger(),state=bankState();
+    const now=new Date().toISOString(),tx=bankTxId("withdraw"),walletList=ledger(),bankList=bankLedger(),state=ensureBankV844State(bankState(),bankList),remaining=roundBank(savings-amount);
     walletList.push({id:`${tx}:wallet`,amount,type:"bank_withdraw",labelTh:`ถอนจาก Work Bank · ${amount} Coins`,labelEn:`Work Bank Withdrawal · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
     bankList.push({id:`${tx}:savings`,amount:-amount,type:"withdraw",labelTh:`ถอนกลับ Wallet · ${amount} Coins`,labelEn:`Withdraw to Wallet · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
-    if(roundBank(savings-amount)<=0)state.lastInterestDate=dayKeyNow();
+    state.streakStartDate=remaining>0?dayKeyNow():null;
+    if(remaining<=0)state.lastInterestDate=dayKeyNow();
     write(KEYS.ledger,walletList);write(KEYS.bankLedger,bankList);saveBankState(state);
-    toast("🏦",`${lang()==="th"?"ถอนสำเร็จ":"Withdrawn"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
+    toast("🏦",`${lang()==="th"?"ถอนสำเร็จ · Savings Streak เริ่มใหม่":"Withdrawn · Savings Streak reset"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
   }
-  function bankProjection(days,starting=bankBalance()){
-    let value=Math.max(0,Number(starting)||0),interest=0;
-    for(let i=0;i<days;i++){const gain=roundBank(Math.min(BANK_DAILY_CAP,value*bankTier(value).rate));value=roundBank(value+gain);interest=roundBank(interest+gain);}
+  function bankProjection(days,starting=bankBalance(),state=bankState()){
+    let value=Math.max(0,Number(starting)||0),interest=0,key=dayKeyNow();
+    for(let i=1;i<=Math.max(0,Math.floor(Number(days)||0));i++){
+      const d=addDays(dateFromKey(key),i),futureKey=dateKey(d),info=bankRateInfo(value,futureKey,state),gain=roundBank(Math.min(info.cap,value*info.effectiveRate));
+      value=roundBank(value+gain);interest=roundBank(interest+gain);
+    }
     return {balance:value,interest};
   }
   function bankHistoryLabel(item){return lang()==="th"?(item.labelTh||item.labelEn||item.type):(item.labelEn||item.labelTh||item.type);}
   function renderBank(){
     const root=$("v83BankPage");if(!root)return;
     settleBankInterest({notify:true});
-    const wallet=balance(),list=bankLedger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)),savings=bankBalance(list),tier=bankTier(savings),daily=bankDailyInterest(savings),earned=bankInterestEarned(list),p7=bankProjection(7,savings),p30=bankProjection(30,savings),state=bankState();
+    const wallet=balance(),list=bankLedger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)),savings=bankBalance(list),state=ensureBankV844State(bankState(),list),rateInfo=bankRateInfo(savings,dayKeyNow(),state),tier=rateInfo.tier,daily=bankDailyInterest(savings,dayKeyNow(),state),earned=bankInterestEarned(list),streakDays=rateInfo.streakDays,nextStreak=bankNextStreakMilestone(streakDays),finale=journeyFinaleInfo(),p1=bankProjection(1,savings,state),p7=bankProjection(7,savings,state),p14=bankProjection(14,savings,state),pEnd=bankProjection(Math.max(0,finale.days),savings,state);
     const tierIndex=BANK_TIERS.findIndex(x=>x.id===tier.id),next=BANK_TIERS[tierIndex+1]||null,nextGap=next?Math.max(0,roundBank(next.min-savings)):0;
     const tierCards=BANK_TIERS.map(item=>`<article class="v83-tier-card ${item.id===tier.id?"active":""}"><span>${item.icon}</span><div><strong>${esc(lang()==="th"?item.th:item.en)}</strong><small>${item.max===Infinity?`${item.min.toLocaleString()}+`:`${item.min.toLocaleString()}–${Math.floor(item.max).toLocaleString()}`} Coins</small></div><b>${(item.rate*100).toFixed(2)}%<small>/day</small></b></article>`).join("");
     const history=list.length?list.slice(0,60).map(item=>{const n=Number(item.amount||0),kind=item.type==="interest"?"interest":n>=0?"deposit":"withdraw";return `<div class="v83-bank-history-row ${kind}"><span>${item.type==="interest"?"✨":item.type==="deposit"?"↓":"↑"}</span><div><strong>${esc(bankHistoryLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${n>=0?"+":""}${formatBankCoin(n)} 🪙</b></div>`;}).join(""):`<div class="empty-state">🏦 ${lang()==="th"?"ยังไม่มีรายการฝากถอน":"No bank transactions yet"}</div>`;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"ฝาก Work Coins เพื่อรับดอกเบี้ยรายวันแบบทบต้น และถอนกลับ Wallet ได้ทุกเวลา":"Save Work Coins for compounding daily interest and withdraw to your Wallet anytime."}</p></div></div></div>
-      <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(tier.rate*100).toFixed(2)}% / day</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
-      <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet":"Saved Coins cannot be spent in the Reward Shop until withdrawn."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
-      <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · เศษดอกเบี้ยจะคงอยู่ใน Savings`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · fractional interest stays in Savings.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
-      <section class="v83-bank-growth"><article><p class="eyebrow">SAVINGS TIER</p><h3>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)}</h3><div class="v83-tier-list">${tierCards}</div>${next?`<p class="v83-next-tier">${lang()==="th"?`อีก ${formatBankCoin(nextGap)} Coins ถึง ${next.icon} ${next.th}`:`${formatBankCoin(nextGap)} Coins to ${next.icon} ${next.en}`}</p>`:`<p class="v83-next-tier max">👑 ${lang()==="th"?"คุณอยู่ Tier สูงสุดแล้ว":"You are at the highest tier"}</p>`}</article><article class="v83-projection"><p class="eyebrow">INTEREST FORECAST</p><h3>${lang()==="th"?"ประมาณการเติบโต":"Growth projection"}</h3><div><span><small>7 DAYS</small><b>+${formatBankCoin(p7.interest)} 🪙</b><em>${formatBankCoin(p7.balance)} total</em></span><span><small>30 DAYS</small><b>+${formatBankCoin(p30.interest)} 🪙</b><em>${formatBankCoin(p30.balance)} total</em></span></div><p>${lang()==="th"?`ดอกเบี้ยทบต้นทุกวัน สูงสุด ${BANK_DAILY_CAP} Coins/วัน · ระบบเครดิตเมื่อเปิดเว็บหลังขึ้นวันใหม่`:`Interest compounds daily, capped at ${BANK_DAILY_CAP} Coins/day · credited on the first app visit after a new day starts.`}</p></article></section>
+    const streakText=streakDays>0?(lang()==="th"?`${streakDays} วันต่อเนื่อง`:`${streakDays}-day streak`):(lang()==="th"?"เริ่มฝากเพื่อสร้าง Streak":"Deposit to start a streak");
+    const nextStreakText=nextStreak?(lang()==="th"?`อีก ${nextStreak.remaining} วัน รับโบนัส +${(nextStreak.rate*100).toFixed(2)}%/วัน`:`${nextStreak.remaining} more day(s) to +${(nextStreak.rate*100).toFixed(2)}%/day bonus`):(lang()==="th"?"ปลดล็อก Streak Bonus สูงสุดแล้ว":"Maximum Streak Bonus unlocked");
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.4</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"Finale Bank Boost · ฝาก Work Coins รับดอกเบี้ยทบต้นรายวัน พร้อม Savings Streak Bonus":"Finale Bank Boost · earn compounding daily interest plus Savings Streak bonuses."}</p></div></div></div>
+      <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(rateInfo.effectiveRate*100).toFixed(2)}% / day${rateInfo.bonusRate>0?` (${(rateInfo.baseRate*100).toFixed(2)}% + 🔥 ${(rateInfo.bonusRate*100).toFixed(2)}%)`:""}</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
+      <section class="v844-bank-boost"><div class="v844-boost-title"><span>🚀</span><div><p class="eyebrow">FINALE BANK BOOST</p><h3>${lang()==="th"?"ดอกเบี้ยแรงขึ้น + ทบต้นทุกวัน":"Higher rates + daily compounding"}</h3><p>${lang()==="th"?`Base Rate ${(rateInfo.baseRate*100).toFixed(2)}% + Streak Bonus ${(rateInfo.bonusRate*100).toFixed(2)}% · สูงสุด ${BANK_DAILY_CAP} Coins/วัน`:`Base ${(rateInfo.baseRate*100).toFixed(2)}% + Streak ${(rateInfo.bonusRate*100).toFixed(2)}% · capped at ${BANK_DAILY_CAP} Coins/day`}</p></div></div><div class="v844-streak-status"><span><small>🔥 SAVINGS STREAK</small><b>${esc(streakText)}</b><em>${esc(nextStreakText)}</em></span><div class="v844-streak-steps">${[[3,.001],[7,.0025],[14,.005]].map(([d,r])=>`<i class="${streakDays>=d?"done":""}"><b>${d}D</b><small>+${(r*100).toFixed(2)}%</small></i>`).join("")}</div></div></section>
+      <section class="v83-bank-actions"><article class="v83-bank-action-card deposit"><div><span>↓</span><div><p class="eyebrow">DEPOSIT</p><h3>${lang()==="th"?"ฝากเข้า Savings":"Move to Savings"}</h3><p>${lang()==="th"?"Coin ที่ฝากจะไม่สามารถซื้อ Reward ได้จนกว่าจะถอนกลับ Wallet · ฝากเพิ่มไม่รีเซ็ต Streak":"Saved Coins cannot be spent until withdrawn · extra deposits do not reset your Streak."}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83DepositAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-deposit>DEPOSIT</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-deposit-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article>
+      <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · การถอนทุกครั้งจะรีเซ็ต Savings Streak`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · any withdrawal resets the Savings Streak.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
+      <section class="v83-bank-growth"><article><p class="eyebrow">SAVINGS TIER</p><h3>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)}</h3><div class="v83-tier-list">${tierCards}</div>${next?`<p class="v83-next-tier">${lang()==="th"?`อีก ${formatBankCoin(nextGap)} Coins ถึง ${next.icon} ${next.th}`:`${formatBankCoin(nextGap)} Coins to ${next.icon} ${next.en}`}</p>`:`<p class="v83-next-tier max">👑 ${lang()==="th"?"คุณอยู่ Tier สูงสุดแล้ว":"You are at the highest tier"}</p>`}</article><article class="v83-projection v844-projection"><p class="eyebrow">COMPOUND FORECAST</p><h3>${lang()==="th"?"ถ้าไม่ถอนเงิน Savings จะโตเท่าไหร่":"How Savings can grow if left untouched"}</h3><div><span><small>TOMORROW</small><b>+${formatBankCoin(p1.interest)} 🪙</b><em>${formatBankCoin(p1.balance)} total</em></span><span><small>7 DAYS</small><b>+${formatBankCoin(p7.interest)} 🪙</b><em>${formatBankCoin(p7.balance)} total</em></span><span><small>14 DAYS</small><b>+${formatBankCoin(p14.interest)} 🪙</b><em>${formatBankCoin(p14.balance)} total</em></span><span class="journey-end"><small>🎓 JOURNEY END</small><b>+${formatBankCoin(pEnd.interest)} 🪙</b><em>${formatBankCoin(pEnd.balance)} total · ${finale.days} days</em></span></div><p>${lang()==="th"?`ดอกเบี้ยเข้าบัญชี Savings และถูกนำไปคิดดอกวันถัดไปอัตโนมัติ · Cap ${BANK_DAILY_CAP} Coins/วัน`:`Interest is credited into Savings and automatically compounds the next day · ${BANK_DAILY_CAP} Coin/day cap.`}</p></article></section>
       <section class="v83-bank-history"><div class="v83-bank-section-head"><div><p class="eyebrow">BANK LEDGER</p><h3>${lang()==="th"?"ประวัติ Savings":"Savings history"}</h3></div><span>${state.openedAt?`${lang()==="th"?"เปิดบัญชี":"Opened"} ${esc(formatHistoryDate(state.openedAt))}`:(lang()==="th"?"ยังไม่ได้ฝาก Coin":"No deposit yet")}</span></div><div class="v83-bank-history-list">${history}</div></section>`;
     const dep=$("v83DepositAmount"),wd=$("v83WithdrawAmount");
     q("[data-v83-deposit]",root)?.addEventListener("click",()=>bankDeposit(dep?.value));q("[data-v83-withdraw]",root)?.addEventListener("click",()=>bankWithdraw(wd?.value));
@@ -1068,7 +1161,7 @@
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
   }
 
-  // ---------- V8.4.3 Work Exchange ----------
+  // ---------- V8.4.4 Work Exchange ----------
   const EXCHANGE_EPOCH_KEY = "2026-05-05";
   const EXCHANGE_FEE_RATE = 0.01;
   const EXCHANGE_SLOTS = [9,11,13,15];
@@ -1108,7 +1201,7 @@
     {id:"exchange-master",icon:"🏆",th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
   ];
 
-  // ---------- V8.4.3 Trading Academy / Beginner Mode ----------
+  // ---------- V8.4.4 Trading Academy / Beginner Mode ----------
   const ACADEMY_LESSON_REWARD = 5;
   const EXCHANGE_ACADEMY = [
     {
@@ -1361,7 +1454,7 @@
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>`<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small></div>${earned[a.id]?`<b>✓</b>`:""}</article>`).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.3</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.4</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองที่ใช้ Work Coins เท่านั้น · ราคาอัปเดตตามรอบตลาดและเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic price rounds. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small>${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
       ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
@@ -1412,6 +1505,9 @@
     renderShop,
     renderMissions,
     renderBank,
+    getDailyDeals: () => dailyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...dailyDealFor(r)})),
+    getWeeklyDeals: () => weeklyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...weeklyDealFor(r)})),
+    getBankStatus: () => { const list=bankLedger(),state=ensureBankV844State(bankState(),list),savings=bankBalance(list),info=bankRateInfo(savings,dayKeyNow(),state); return {savings,state:{...state},tier:info.tier.id,baseRate:info.baseRate,streakBonusRate:info.bonusRate,effectiveRate:info.effectiveRate,streakDays:info.streakDays,nextInterest:bankDailyInterest(savings,dayKeyNow(),state),cap:info.cap}; },
     renderExchange,
     getExchangePortfolio: () => exchangePortfolio(),
     getExchangeTrades: () => exchangeTrades().map(x=>({...x})),
