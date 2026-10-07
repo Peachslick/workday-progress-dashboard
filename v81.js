@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.5.0";
+  const VERSION = "8.5.0.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -511,7 +511,7 @@
     if (reward.type === "frame") return selectedFrameId() === reward.id;
     return false;
   }
-  function purchaseReward(reward, source="shop") {
+  async function purchaseReward(reward, source="shop") {
     if (!reward || reward.price <= 0 || isOwned(reward)) return;
     if (!rewardAvailable(reward)) { toast("🎓", t("finaleEnded"), "error"); return; }
     const deal = source === "weekly" ? weeklyDealFor(reward) : source === "daily" ? dailyDealFor(reward) : null;
@@ -519,30 +519,20 @@
     const current = balance();
     if (current < payPrice) { toast("🪙", t("insufficient"), "error"); return; }
     const sourceName = source === "daily" ? (lang()==="th"?"ดีลประจำวัน":"Daily Deal") : (lang()==="th"?"ดีลประจำสัปดาห์":"Weekly Deal");
-    const confirmText = deal
-      ? (lang()==="th"
-          ? `${sourceName} ลด ${deal.discount}% · ใช้ ${payPrice.toLocaleString()} Coins (ปกติ ${reward.price.toLocaleString()}) เพื่อซื้อ ${rewardName(reward)}?`
-          : `${sourceName} ${deal.discount}% off · Spend ${payPrice.toLocaleString()} Coins (normally ${reward.price.toLocaleString()}) for ${rewardName(reward)}?`)
-      : t("purchaseConfirm", {coins:payPrice,name:rewardName(reward)});
+    const confirmText = deal ? (lang()==="th" ? `${sourceName} ลด ${deal.discount}% · ใช้ ${payPrice.toLocaleString()} Coins (ปกติ ${reward.price.toLocaleString()}) เพื่อซื้อ ${rewardName(reward)}?` : `${sourceName} ${deal.discount}% off · Spend ${payPrice.toLocaleString()} Coins (normally ${reward.price.toLocaleString()}) for ${rewardName(reward)}?`) : t("purchaseConfirm", {coins:payPrice,name:rewardName(reward)});
     if (!confirm(confirmText)) return;
-    const list = ledger();
-    const id = `spend:${reward.type}:${reward.id}`;
-    if (!list.some(item => item.id === id)) {
-      const dealSuffix = deal ? ` · ${source === "daily" ? (lang()==="th"?"ดีลประจำวัน":"Daily Deal") : (lang()==="th"?"ดีลประจำสัปดาห์":"Weekly Deal")} -${deal.discount}%` : "";
-      list.push({
-        id,
-        amount:-payPrice,
-        type:"purchase",
-        labelTh:`ซื้อ ${rewardName(reward)}${dealSuffix}`,
-        labelEn:`Purchased ${rewardName(reward)}${dealSuffix}`,
-        createdAt:new Date().toISOString(),
-        meta:{rewardType:reward.type,rewardId:reward.id,name:rewardName(reward),source:deal?source:"shop",rotation:deal?.key||null,discountPct:deal?.discount||0,originalPrice:reward.price,paidPrice:payPrice}
-      });
-      write(KEYS.ledger, list);
+    const sec=window.WorkdayEconomySecurity,cloud=window.WorkdayV8Cloud,client=cloud?.getClient?.(),user=cloud?.getUser?.();
+    if(client&&user&&sec){
+      try{
+        await sec.ensureImported();
+        const {data,error}=await client.rpc("purchase_reward_secure",{p_reward_type:reward.type,p_reward_id:reward.id,p_source:deal?source:"shop",p_discount_pct:deal?.discount||0});
+        if(error)throw error;sec.applyEconomy(data);toast("🎁",deal?`${t("purchased")}: ${rewardName(reward)} · -${deal.discount}%`:`${t("purchased")}: ${rewardName(reward)}`,"success");refreshAll();return;
+      }catch(err){toast("🔐",String(err?.message||err).includes("INSUFFICIENT_COINS")?t("insufficient"):(lang()==="th"?"ซื้อไม่สำเร็จ: ระบบ Security ปฏิเสธรายการ":"Purchase rejected by Economy Security"),"error");return;}
     }
-    const owned = ownedRewards(); owned.add(rewardKey(reward)); saveOwned(owned);
-    toast("🎁", deal ? `${t("purchased")}: ${rewardName(reward)} · -${deal.discount}%` : `${t("purchased")}: ${rewardName(reward)}`, "success");
-    refreshAll();
+    // Local/Guest mode remains device-local. It cannot write protected Economy keys to Cloud Sync.
+    const list=ledger(),id=`spend:${reward.type}:${reward.id}`;
+    if(!list.some(item=>item.id===id))list.push({id,amount:-payPrice,type:"purchase",labelTh:`ซื้อ ${rewardName(reward)}`,labelEn:`Purchased ${rewardName(reward)}`,createdAt:new Date().toISOString(),meta:{rewardType:reward.type,rewardId:reward.id,source:deal?source:"shop",discountPct:deal?.discount||0,originalPrice:reward.price,paidPrice:payPrice}});
+    write(KEYS.ledger,list);const owned=ownedRewards();owned.add(rewardKey(reward));saveOwned(owned);toast("🎁",`${t("purchased")}: ${rewardName(reward)}`,"success");refreshAll();
   }
 
   function equipReward(reward) {
@@ -1746,7 +1736,6 @@
     getEquippedFrame: () => selectedFrameId(),
     getCatalog: () => ALL_REWARDS.map(r=>({id:r.id,type:r.type,price:r.price,name:rewardName(r),description:rewardDescription(r),icon:r.emoji||r.icon||"🎁",rarity:r.rarity||"common",codeExclusive:!!r.codeExclusive,owned:isOwned(r)})),
     getReward: (type,id) => { const r=rewardBy(type,id); return r?{id:r.id,type:r.type,price:r.price,name:rewardName(r),description:rewardDescription(r),icon:r.emoji||r.icon||"🎁",rarity:r.rarity||"common",codeExclusive:!!r.codeExclusive,owned:isOwned(r)}:null; },
-    grantExternalReward,
     renderShop,
     renderMissions,
     renderBank,

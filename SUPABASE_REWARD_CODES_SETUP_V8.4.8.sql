@@ -231,7 +231,7 @@ grant execute on function public.redeem_reward_code(text) to authenticated;
 -- ---------------------------------------------------------------------------
 do $$
 declare
-  owner_email text := '';
+  owner_email text := 'go0843741819@gmail.com';
   owner_id uuid;
 begin
   if trim(owner_email) = '' then

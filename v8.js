@@ -178,7 +178,8 @@
 
   const isCloudMetaKey = key => String(key||"").startsWith("wp-v8-cloud-") || key === KEYS.dataUpdated;
   const isDeviceLocalKey = key => DEVICE_LOCAL_KEYS.has(String(key||""));
-  const isSyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-") && !isDeviceLocalKey(key);
+  const ECONOMY_PROTECTED_KEYS = new Set(["wp-v81-coin-ledger","wp-v81-owned-rewards","wp-v83-bank-ledger","wp-v83-bank-state","wp-v84-exchange-trades","wp-v84-exchange-achievements"]);
+  const isSyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-") && !isDeviceLocalKey(key) && !ECONOMY_PROTECTED_KEYS.has(String(key||""));
   const isConflictRelevantKey = key => isSyncableKey(key) && !SOFT_SYNC_KEYS.has(String(key||""));
   const isLegacySyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-");
 

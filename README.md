@@ -207,3 +207,18 @@ The main application still works without signing in. Reward Code redemption is i
 Release focus: **Grouped navigation / cleaner app shell / standardized page headers / mobile navigation**
 
 Previous V8.4.8.1 focus: **Reward Code RPC ambiguity hotfix / data-safe Supabase patch**
+
+## V8.5.0.1 - Economy Security Hardening
+
+Run `SUPABASE_ECONOMY_SECURITY_V8.5.0.1.sql` once after the existing V8.4.8.1 Reward Code SQL.
+
+Security changes:
+- Coin account and owned reward inventory now have server-side tables protected by RLS.
+- Existing users receive a one-time legacy Economy import; it cannot be repeated.
+- Reward Code coins/items are committed by the database in the same transaction as redemption.
+- Signed-in Reward Shop purchases use a server RPC and server catalog pricing.
+- Economy localStorage keys are excluded from generic `workday_user_state` Cloud Sync.
+- `grantExternalReward` is no longer exposed through `window.WorkdayRewards`.
+- Guest/Local Mode remains local-only and is not a trusted Economy account.
+
+Scope note: Work Bank, Work Exchange, Daily Missions/Chest calculations still use the legacy client engine in V8.5.0.1. Their protected keys no longer sync through the generic Cloud state, but full server-authoritative Bank/Exchange actions are planned for the Finance security migration.

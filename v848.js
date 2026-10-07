@@ -115,11 +115,13 @@
     };
   }
   function applyRedemption(row,{show=false}={}){
-    const r=normalizedRedemption(row);if(!r?.id||!rewards()?.grantExternalReward)return null;
-    const result=rewards().grantExternalReward({sourceId:r.id,sourceLabel:`Reward Code · ${r.code||r.title}`,coins:r.reward.coins,items:r.reward.items,chests:r.reward.chests});
+    const r=normalizedRedemption(row);if(!r?.id)return null;
+    const economy=row?.economy||null;if(economy)window.WorkdayEconomySecurity?.applyEconomy?.(economy);
+    const result={coins:Number(r.reward?.coins||0),items:Array.isArray(r.reward?.items)?r.reward.items:[],chests:[]};
     if(show)showRewardSuccess(r,result);
     return result;
   }
+
   function showRewardSuccess(redemption,result={}){
     ensureUi();closeRedeem();
     const back=$("v848RewardBackdrop"),r=normalizedRedemption(redemption);
@@ -268,10 +270,14 @@
     }catch(err){toast("!",`${copy("บันทึก Code ไม่สำเร็จ","Failed to save code")}: ${err?.message||err}`,"error");if(btn)btn.disabled=false;}
   }
   async function toggleCode(id,active){const c=client();if(!c||!state.owner)return;const {error}=await c.from("reward_codes").update({active,updated_at:new Date().toISOString()}).eq("id",id);if(error){toast("!",error.message,"error");return;}await refreshOwnerDashboard(false);renderDeveloper();}
-  function ownerGrant(payload,label){
-    const sourceId=`owner-tool-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,result=rewards()?.grantExternalReward?.({sourceId,sourceLabel:label,...payload});
-    if(result){showRewardSuccess({redemption_id:sourceId,code:"OWNER",title:label,reward:payload,redeemed_at:new Date().toISOString()},result);cloud()?.syncNow?.();}
+  async function ownerGrant(payload,label){
+    const c=client();if(!c||!state.owner)return;
+    try{
+      const {data,error}=await c.rpc("owner_grant_secure",{p_coins:Math.max(0,Math.round(Number(payload?.coins||0))),p_items:Array.isArray(payload?.items)?payload.items:[],p_label:label});
+      if(error)throw error;window.WorkdayEconomySecurity?.applyEconomy?.(data);toast("✓",copy("บันทึกรางวัลผ่าน Server แล้ว","Reward granted by server"),"success");
+    }catch(err){toast("!",`${copy("Grant ไม่สำเร็จ","Grant failed")}: ${err?.message||err}`,"error");}
   }
+
   function bindDeveloper(){
     $("v848CodeForm")?.addEventListener("submit",e=>{e.preventDefault();saveCode();});
     $("v848CancelEdit")?.addEventListener("click",()=>{state.editingId=null;renderDeveloper();});
