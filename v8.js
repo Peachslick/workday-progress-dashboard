@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.6";
+  const VERSION = "8.4.7.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -35,7 +35,7 @@
 
   const TEXT = {
     th: {
-      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"Deployment นี้ยังไม่ได้ตั้งค่า Supabase", cloudNotConfiguredHelp:"ตั้งค่า supabase-config.js และรัน supabase-setup.sql ก่อนเปิด Cloud Sync", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีแล้ว กรุณาตรวจอีเมลเพื่อยืนยันก่อนเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบการแก้ไขข้อมูลเดียวกันจากหลายอุปกรณ์", cloudConflictHelp:"Smart Sync รวมข้อมูลที่ไม่ชนกันให้อัตโนมัติแล้ว เหลือเฉพาะข้อมูลเดียวกันที่ถูกแก้ทั้งสองฝั่ง กรุณาเลือกชุดที่จะใช้", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
+      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"Deployment นี้ยังไม่ได้ตั้งค่า Supabase", cloudNotConfiguredHelp:"ตั้งค่า supabase-config.js และรัน supabase-setup.sql ก่อนเปิด Cloud Sync", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีสำเร็จและพร้อมเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบการแก้ไขข้อมูลเดียวกันจากหลายอุปกรณ์", cloudConflictHelp:"Smart Sync รวมข้อมูลที่ไม่ชนกันให้อัตโนมัติแล้ว เหลือเฉพาะข้อมูลเดียวกันที่ถูกแก้ทั้งสองฝั่ง กรุณาเลือกชุดที่จะใช้", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
       notifications:"การแจ้งเตือน", markAllRead:"อ่านทั้งหมด", noNotifications:"ยังไม่มีการแจ้งเตือน", journalMissing:"Journal ยังไม่ได้บันทึก", journalMissingBody:"วันที่ {date} เป็นวันทำงานที่ผ่านแล้ว แต่ยังไม่มี Daily Journal", backupOld:"ควรสำรองข้อมูล", backupNever:"ยังไม่เคย Export Backup", backupOldBody:"Backup ล่าสุดผ่านมา {days} วันแล้ว", milestoneClose:"ใกล้ถึง {hours} ชั่วโมง", milestoneBody:"เหลืออีกประมาณ {left} ชั่วโมงทำงาน", achievementUnlocked:"Achievement ใหม่", cloudNeedsSync:"ข้อมูลในเครื่องรอซิงก์", cloudNeedsSyncBody:"กลับมาออนไลน์หรือกด Sync Now เพื่ออัปเดต Cloud",
       draftSaved:"บันทึกร่างล่าสุด {time}", draftRestored:"กู้ร่างที่ยังไม่ได้บันทึกกลับมาแล้ว", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"เลือกตารางทำงานสำเร็จรูป หรือบันทึกตารางปัจจุบันเพื่อใช้และแชร์กับเพื่อน", templateIntern:"Internship · จ–ศ · 07:00–16:10", templateOffice8:"Office · จ–ศ · 08:00–17:00", templateOffice9:"Office · จ–ศ · 09:00–18:00", applyTemplate:"ใช้ Template", saveCurrentTemplate:"บันทึกตารางปัจจุบัน", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"ชื่อ Template", templateSaved:"บันทึก Template แล้ว", templateApplied:"ใช้ตารางใหม่แล้ว ระบบจะ Reload", templateImported:"Import Template สำเร็จ", templateInvalid:"ไฟล์ Template ไม่ถูกต้อง", templateApplyConfirm:"เปลี่ยนตารางทำงานปัจจุบันตาม Template นี้หรือไม่?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"ตรวจสุขภาพข้อมูล Local, Backup, Cloud Sync และเวอร์ชัน PWA", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"ปกติ", statusWarning:"ควรตรวจสอบ", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"ล้าง App Cache แล้ว", updateChecked:"ตรวจสอบอัปเดตแล้ว", storageIssue:"พบข้อมูล Local ที่อ่านไม่ได้ {n} รายการ", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -44,7 +44,7 @@
       profileMenu:"เมนูโปรไฟล์", editProfile:"แก้ไขโปรไฟล์ / Journey", languageLabel:"ภาษา", themeLabel:"ธีม", installLabel:"ติดตั้งแอป", settingsLabel:"ตั้งค่า", lightLabel:"สว่าง", darkLabel:"มืด", accountMenu:"บัญชีและ Cloud Sync"
     },
     en: {
-      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created. Check your email to confirm it, then sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"The same data was edited on multiple devices", cloudConflictHelp:"Smart Sync already merged non-conflicting changes. Only the same data was changed on both sides; choose which copy should win.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
+      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created and ready to sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"The same data was edited on multiple devices", cloudConflictHelp:"Smart Sync already merged non-conflicting changes. Only the same data was changed on both sides; choose which copy should win.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
       notifications:"Notifications", markAllRead:"Mark all read", noNotifications:"No notifications yet", journalMissing:"Journal is missing", journalMissingBody:"{date} was a completed workday but still has no Daily Journal", backupOld:"Backup recommended", backupNever:"No backup has been exported yet", backupOldBody:"Your latest backup is {days} days old", milestoneClose:"Approaching {hours} hours", milestoneBody:"About {left} working hours remaining", achievementUnlocked:"Achievement unlocked", cloudNeedsSync:"Local changes are waiting to sync", cloudNeedsSyncBody:"Reconnect or press Sync Now to update Cloud",
       draftSaved:"Draft saved {time}", draftRestored:"Unsaved draft restored", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"Choose a ready-made schedule or save your current schedule to reuse and share", templateIntern:"Internship · Mon–Fri · 07:00–16:10", templateOffice8:"Office · Mon–Fri · 08:00–17:00", templateOffice9:"Office · Mon–Fri · 09:00–18:00", applyTemplate:"Apply Template", saveCurrentTemplate:"Save current schedule", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"Template name", templateSaved:"Template saved", templateApplied:"Schedule updated. The app will reload.", templateImported:"Template imported", templateInvalid:"Invalid template file", templateApplyConfirm:"Replace the current work schedule with this template?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"Check Local data, backups, Cloud Sync and PWA version health", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"Healthy", statusWarning:"Needs attention", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"App cache cleared", updateChecked:"Update check completed", storageIssue:"{n} Local data items could not be parsed", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -55,11 +55,54 @@
   };
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
 
+  const AUTH_TEXT = {
+    th:{
+      accountTitle:"Workday Journey Account",
+      accountIntro:"เก็บ Journey ของคุณไว้บน Cloud และใช้งานต่อได้จากหลายอุปกรณ์",
+      chooseSignInHelp:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อดึงข้อมูลและซิงก์ Journey",
+      chooseSignUpHelp:"สร้างบัญชีใหม่สำหรับ Cloud Sync และฟีเจอร์ที่ผูกกับบัญชี",
+      signInTitle:"เข้าสู่ระบบ", signInHelp:"ใช้บัญชีเดิมของคุณเพื่อซิงก์ Journey ข้ามอุปกรณ์",
+      signUpTitle:"สร้างบัญชีใหม่", signUpHelp:"สมัครครั้งเดียว แล้ว Journey ของคุณจะพร้อมใช้กับ Cloud Sync",
+      confirmPassword:"ยืนยันรหัสผ่าน", passwordHint:"อย่างน้อย 6 ตัวอักษร",
+      showPassword:"แสดงรหัสผ่าน", hidePassword:"ซ่อนรหัสผ่าน",
+      noAccount:"ยังไม่มีบัญชี?", haveAccount:"มีบัญชีอยู่แล้ว?",
+      back:"ย้อนกลับ", continue:"ดำเนินการต่อ", startUsing:"เริ่มใช้งาน",
+      localStillWorks:"ยังใช้งานแบบ Local ได้ตามปกติ โดยไม่ต้องเข้าสู่ระบบ",
+      signingIn:"กำลังเข้าสู่ระบบ...", creatingAccount:"กำลังสร้างบัญชี...",
+      loginSuccessTitle:"เข้าสู่ระบบสำเร็จ", loginSuccessBody:"ยินดีต้อนรับกลับมา ระบบกำลังตรวจสอบข้อมูล Cloud ของคุณ",
+      signupSuccessTitle:"สร้างบัญชีสำเร็จ!", signupSuccessBody:"บัญชีของคุณพร้อมใช้งานแล้ว และสามารถซิงก์ Journey ข้ามอุปกรณ์ได้ทันที",
+      accountConnected:"เชื่อมต่อบัญชีแล้ว", cloudChecking:"กำลังตรวจสอบข้อมูล Cloud...",
+      invalidEmail:"กรุณากรอกอีเมลให้ถูกต้อง", passwordTooShort:"รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร", passwordMismatch:"รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน",
+      invalidCredentials:"อีเมลหรือรหัสผ่านไม่ถูกต้อง", emailExists:"อีเมลนี้มีบัญชีอยู่แล้ว", emailNotConfirmed:"บัญชีนี้ยังไม่ได้ยืนยันอีเมล", signupDisabled:"ระบบสมัครบัญชีถูกปิดอยู่", rateLimited:"มีการลองหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง", authUnknown:"เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"
+    },
+    en:{
+      accountTitle:"Workday Journey Account",
+      accountIntro:"Keep your Journey in the Cloud and continue across your devices",
+      chooseSignInHelp:"Already have an account? Sign in to restore and sync your Journey",
+      chooseSignUpHelp:"Create an account for Cloud Sync and account-based features",
+      signInTitle:"Sign in", signInHelp:"Use your existing account to sync your Journey across devices",
+      signUpTitle:"Create account", signUpHelp:"Create it once and your Journey is ready for Cloud Sync",
+      confirmPassword:"Confirm password", passwordHint:"At least 6 characters",
+      showPassword:"Show password", hidePassword:"Hide password",
+      noAccount:"No account yet?", haveAccount:"Already have an account?",
+      back:"Back", continue:"Continue", startUsing:"Start using",
+      localStillWorks:"Local Mode still works normally without signing in",
+      signingIn:"Signing in...", creatingAccount:"Creating account...",
+      loginSuccessTitle:"Signed in successfully", loginSuccessBody:"Welcome back. We are checking your Cloud data now",
+      signupSuccessTitle:"Account created!", signupSuccessBody:"Your account is ready and your Journey can sync across devices immediately",
+      accountConnected:"Account connected", cloudChecking:"Checking Cloud data...",
+      invalidEmail:"Enter a valid email address", passwordTooShort:"Password must be at least 6 characters", passwordMismatch:"Passwords do not match",
+      invalidCredentials:"Email or password is incorrect", emailExists:"An account already exists for this email", emailNotConfirmed:"This account has not confirmed its email yet", signupDisabled:"Account creation is disabled", rateLimited:"Too many attempts. Please wait a moment and try again", authUnknown:"Something went wrong. Please try again"
+    }
+  };
+  const authT = key => AUTH_TEXT[lang()][key] || AUTH_TEXT.en[key] || key;
 
-  // ---------- V8.4.7.6 What's New / Version History ----------
+
+  // ---------- V8.4.7.7 What's New / Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.7.7",icon:"👤",th:"Account & Authentication UX Refresh",en:"Account & Authentication UX Refresh",notesTh:["แยก Flow เข้าสู่ระบบและสร้างบัญชีให้ชัดเจน","เพิ่ม Success Popup กลางจอ พร้อม Error ที่อ่านเข้าใจง่าย","รองรับ Show Password, Confirm Password และ Hook สำหรับกลับไปทำ Action เดิมหลัง Login"],notesEn:["Separated sign-in and account-creation flows","Added centered success states with clearer inline errors","Added password visibility, password confirmation and a post-login return-action hook"]},
     {version:"8.4.7.6",icon:"☁",th:"Cloud Reload Loop Hotfix",en:"Cloud Reload Loop Hotfix",notesTh:["แก้ปัญหาเว็บ Reload ซ้ำหลังอัป Version ขณะเปิด Cloud Sync","แยก App / Cache version markers ออกจากข้อมูล Cloud","เพิ่มตัวกัน Auto Reload Loop เพื่อให้หน้าเว็บยังใช้งานได้"],notesEn:["Fixed repeated page reloads after deploying a new version with Cloud Sync enabled","Made app/cache version markers device-local instead of Cloud data","Added an automatic reload-loop guard so the UI remains usable"]},
     {version:"8.4.7.5",icon:"🎨",th:"Tier Mastery Card Polish",en:"Tier Mastery Card Polish",notesTh:["รวม Tier Header และ Mastery Reward เป็น Card เดียวกัน","ใช้สีประจำ Tier ให้สอดคล้องกับเอฟเฟกต์ที่ปลดล็อก","แยกฉายาและเอฟเฟกต์ธีม พร้อมจัดช่องไฟให้อ่านง่ายขึ้น"],notesEn:["Unified Tier headers and Mastery rewards into one card","Applied tier colors that match the unlocked effect","Separated title and theme-effect rewards with cleaner spacing"]},
     {version:"8.4.7.4",icon:"📈",th:"Hourly Market Update",en:"Hourly Market Update",notesTh:["Work Exchange อัปเดตราคาทุก 1 ชั่วโมงช่วง 07:00–16:00","เพิ่ม Countdown และเปลี่ยนรอบอัตโนมัติโดยไม่ต้อง Refresh","กราฟ Today มีจุดราคารายชั่วโมงมากขึ้น โดยคุมความผันผวนใกล้เคียงเดิม"],notesEn:["Work Exchange now updates prices hourly from 07:00–16:00","Added a live countdown and automatic round changes without refresh","Today charts have richer hourly data while keeping similar daily volatility"]},
@@ -91,6 +134,7 @@
     client:null, configured:false, session:null, user:null, status:"local", localDirty:false,
     applying:false, syncTimer:null, conflictRow:null, authSubscription:null, reconciling:false, initialReady:false
   };
+  const authUi = {mode:"choose", error:"", success:null, busy:false, returnAction:""};
 
   const DEVICE_LOCAL_KEYS = new Set([
     "wp-v7-sidebar-collapsed",
@@ -428,23 +472,76 @@
     if(!silent&&cloud.status==="synced"&&!cloud.conflictRow)toast("✓",t("cloudSynced"),"success");
   }
 
+  function validAuthEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||"").trim());}
+  function friendlyAuthError(error,mode="signin"){
+    const code=String(error?.code||"").toLowerCase(),message=String(error?.message||error||"").toLowerCase();
+    if(code.includes("invalid_credentials")||message.includes("invalid login credentials"))return authT("invalidCredentials");
+    if(code.includes("email_not_confirmed")||message.includes("email not confirmed"))return authT("emailNotConfirmed");
+    if(code.includes("user_already_exists")||message.includes("already registered")||message.includes("already been registered"))return authT("emailExists");
+    if(code.includes("signup_disabled")||message.includes("signups not allowed")||message.includes("signup is disabled"))return authT("signupDisabled");
+    if(code.includes("rate")||message.includes("rate limit")||message.includes("too many requests"))return authT("rateLimited");
+    if(message.includes("valid email")||message.includes("invalid email"))return authT("invalidEmail");
+    if(message.includes("password")&&(message.includes("least")||message.includes("short")))return authT("passwordTooShort");
+    return mode==="signup"?`${t("signupFailed")}: ${error?.message||authT("authUnknown")}`:`${t("authFailed")}: ${error?.message||authT("authUnknown")}`;
+  }
+  function setAuthError(message=""){
+    authUi.error=message||"";
+    const box=$("v8477AuthError");if(box){box.textContent=authUi.error;box.hidden=!authUi.error;}
+  }
+  function setAuthMode(mode){authUi.mode=mode;authUi.error="";authUi.success=null;renderAccountModal();}
+  function toggleAuthPassword(inputId,button){
+    const input=$(inputId);if(!input)return;const show=input.type==="password";input.type=show?"text":"password";button?.setAttribute("aria-label",authT(show?"hidePassword":"showPassword"));if(button)button.textContent=show?"🙈":"👁";input.focus();
+  }
+  function finishAuthSuccess(){
+    const action=authUi.returnAction,email=cloud.user?.email||authUi.success?.email||"";
+    authUi.success=null;authUi.error="";authUi.mode="choose";authUi.returnAction="";closeAccountModal();
+    if(action){try{window.dispatchEvent(new CustomEvent("workday:v8-auth-complete",{detail:{action,email,userId:cloud.user?.id||""}}));}catch{}}
+  }
   async function authSignIn(){
-    if(!cloud.configured||!cloud.client)return;const email=$("v8AuthEmail")?.value.trim(),password=$("v8AuthPassword")?.value||"";if(!email||password.length<6){toast("!",t("authFailed"),"error");return;}
-    setAuthBusy(true);const {error}=await cloud.client.auth.signInWithPassword({email,password});setAuthBusy(false);if(error){toast("!",`${t("authFailed")}: ${error.message}`,"error");return;}renderAccountModal();
+    if(!cloud.configured||!cloud.client)return;
+    const email=$("v8AuthEmail")?.value.trim()||"",password=$("v8AuthPassword")?.value||"";
+    if(!validAuthEmail(email)){setAuthError(authT("invalidEmail"));$("v8AuthEmail")?.focus();return;}
+    if(password.length<6){setAuthError(authT("passwordTooShort"));$("v8AuthPassword")?.focus();return;}
+    setAuthError("");setAuthBusy(true,"signin");
+    try{
+      const {data,error}=await cloud.client.auth.signInWithPassword({email,password});
+      if(error){setAuthError(friendlyAuthError(error,"signin"));return;}
+      cloud.session=data?.session||cloud.session;cloud.user=data?.user||data?.session?.user||cloud.user;
+      authUi.success={type:"signin",email:cloud.user?.email||email};renderAccountModal();
+    }catch(error){setAuthError(friendlyAuthError(error,"signin"));}
+    finally{setAuthBusy(false,"signin");}
   }
   async function authSignUp(){
-    if(!cloud.configured||!cloud.client)return;const email=$("v8AuthEmail")?.value.trim(),password=$("v8AuthPassword")?.value||"";if(!email||password.length<6){toast("!",t("signupFailed"),"error");return;}
-    setAuthBusy(true);const redirectTo=`${location.origin}${location.pathname}`;const {data,error}=await cloud.client.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});setAuthBusy(false);if(error){toast("!",`${t("signupFailed")}: ${error.message}`,"error");return;}toast("✉",data?.session?t("cloudReady"):t("checkEmail"),"success");renderAccountModal();
+    if(!cloud.configured||!cloud.client)return;
+    const email=$("v8AuthEmail")?.value.trim()||"",password=$("v8AuthPassword")?.value||"",confirm=$("v8AuthConfirmPassword")?.value||"";
+    if(!validAuthEmail(email)){setAuthError(authT("invalidEmail"));$("v8AuthEmail")?.focus();return;}
+    if(password.length<6){setAuthError(authT("passwordTooShort"));$("v8AuthPassword")?.focus();return;}
+    if(password!==confirm){setAuthError(authT("passwordMismatch"));$("v8AuthConfirmPassword")?.focus();return;}
+    setAuthError("");setAuthBusy(true,"signup");
+    try{
+      // Confirm Email is disabled for this project, so a successful signup should
+      // return a session immediately. No emailRedirectTo is needed in this flow.
+      const {data,error}=await cloud.client.auth.signUp({email,password});
+      if(error){setAuthError(friendlyAuthError(error,"signup"));return;}
+      if(data?.user && Array.isArray(data.user.identities) && data.user.identities.length===0 && !data?.session){setAuthError(authT("emailExists"));return;}
+      if(!data?.session){setAuthError(lang()==="th"?"สร้างบัญชีแล้วแต่ยังไม่ได้ Session กรุณาตรวจสอบว่า Supabase ปิด Confirm Email อยู่":"Account created but no session was returned. Confirm that Supabase Confirm Email is disabled.");return;}
+      cloud.session=data.session;cloud.user=data.session.user||data.user||cloud.user;
+      authUi.success={type:"signup",email:cloud.user?.email||data?.user?.email||email};renderAccountModal();
+    }catch(error){setAuthError(friendlyAuthError(error,"signup"));}
+    finally{setAuthBusy(false,"signup");}
   }
-  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";cloud.initialReady=false;cloud.conflictRow=null;updateCloudIndicators();renderAccountModal();}
+  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";cloud.initialReady=false;cloud.conflictRow=null;authUi.mode="choose";authUi.error="";authUi.success=null;authUi.returnAction="";updateCloudIndicators();renderAccountModal();}
   async function deleteCloudState(){
     if(!cloud.client||!cloud.user)return true;
     try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
-  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user,reconciling:cloud.reconciling,conflict:!!cloud.conflictRow,ready:cloud.initialReady})};
-  function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
+  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:(options={})=>{const cfg=typeof options==="string"?{mode:options}:options||{};openAccountModal(cfg.mode||"choose",cfg);},signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user,reconciling:cloud.reconciling,conflict:!!cloud.conflictRow,ready:cloud.initialReady})};
+  function setAuthBusy(busy,action=""){
+    authUi.busy=busy;["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud","v8477AuthBack","v8477AuthSwitch"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});
+    const signIn=$("v8SignIn"),signUp=$("v8SignUp");if(signIn)signIn.textContent=busy&&action==="signin"?authT("signingIn"):t("signIn");if(signUp)signUp.textContent=busy&&action==="signup"?authT("creatingAccount"):t("createAccount");
+  }
 
-  // ---------- V8.4.7.6 Cloud Reconciliation + Reload-loop Stability ----------
+  // ---------- V8.4.7.7 Account UX + Cloud Reconciliation Stability ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],
@@ -571,7 +668,7 @@
       const panel=document.createElement("aside");panel.id="v8NotifPanel";panel.className="v8-notif-panel";panel.hidden=true;panel.innerHTML=`<div class="v8-panel-head"><div><p class="eyebrow">NOTIFICATION CENTER</p><h3>${esc(t("notifications"))}</h3></div><button id="v8NotifClose" class="icon-btn" type="button">×</button></div><div id="v8NotifList" class="v8-notif-list"></div><div class="v8-panel-foot"><button id="v8NotifReadAll" class="text-btn" type="button">${esc(t("markAllRead"))}</button></div>`;document.body.appendChild(panel);$("v8NotifClose").onclick=()=>setNotificationPanel(false);$("v8NotifReadAll").onclick=markAllNotificationsRead;
     }
     if(!$("v8AuthBackdrop")){
-      const wrap=document.createElement("div");wrap.id="v8AuthBackdrop";wrap.className="v8-modal-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-auth-modal" role="dialog" aria-modal="true" aria-labelledby="v8AuthTitle"><button id="v8AuthClose" class="v8-modal-close" type="button">×</button><div class="v8-auth-hero"><span>☁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8</p><h2 id="v8AuthTitle">${esc(t("account"))}</h2><p>${esc(t("accountHelp"))}</p></div></div><div id="v8AuthBody"></div></section>`;document.body.appendChild(wrap);$("v8AuthClose").onclick=closeAccountModal;wrap.addEventListener("click",e=>{if(e.target===wrap)closeAccountModal();});
+      const wrap=document.createElement("div");wrap.id="v8AuthBackdrop";wrap.className="v8-modal-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-auth-modal v8477-auth-modal" role="dialog" aria-modal="true" aria-labelledby="v8AuthTitle"><button id="v8AuthClose" class="v8-modal-close" type="button" aria-label="${esc(t("close"))}">×</button><div class="v8-auth-hero v8477-auth-hero"><span id="v8477AuthHeroIcon">☁</span><div><p id="v8477AuthEyebrow" class="eyebrow">WORKDAY JOURNEY ACCOUNT</p><h2 id="v8AuthTitle">${esc(authT("accountTitle"))}</h2><p id="v8477AuthIntro">${esc(authT("accountIntro"))}</p></div></div><div id="v8AuthBody"></div></section>`;document.body.appendChild(wrap);$("v8AuthClose").onclick=closeAccountModal;wrap.addEventListener("click",e=>{if(e.target===wrap)closeAccountModal();});
     }
     if(!$("v8ConflictBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8ConflictBackdrop";wrap.className="v8-modal-backdrop v8-conflict-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-conflict-modal" role="dialog" aria-modal="true"><div class="v8-conflict-icon">↔</div><h2>${esc(t("cloudConflict"))}</h2><p>${esc(t("cloudConflictHelp"))}</p><div id="v8ConflictMeta" class="v8-conflict-meta"></div><div class="v8-conflict-actions"><button id="v8ConflictLocal" class="primary-btn" type="button">💻 ${esc(t("thisDevice"))}</button><button id="v8ConflictCloud" class="outline-btn" type="button">☁ ${esc(t("cloudCopy"))}</button></div><small>${esc(t("cloudAutoHelp"))}</small></section>`;document.body.appendChild(wrap);
@@ -583,17 +680,43 @@
     ensureSetupCloudPrompt();ensureSetupTemplates();ensureWhatsNewUi();
   }
 
-  function openAccountModal(){ensureUi();const el=$("v8AuthBackdrop");el.hidden=false;requestAnimationFrame(()=>el.classList.add("open"));renderAccountModal();}
+  function setAuthHero(icon,title,help){const heroIcon=$("v8477AuthHeroIcon"),titleEl=$("v8AuthTitle"),intro=$("v8477AuthIntro");if(heroIcon)heroIcon.textContent=icon;if(titleEl)titleEl.textContent=title;if(intro)intro.textContent=help;}
+  function openAccountModal(mode="choose",options={}){
+    if(mode && typeof mode==="object"){options=mode;mode=options.mode||"choose";}
+    ensureUi();if(!cloud.user&&!authUi.success){authUi.mode=["signin","signup","choose"].includes(mode)?mode:"choose";authUi.error="";}if(options?.returnAction)authUi.returnAction=String(options.returnAction);
+    const el=$("v8AuthBackdrop");el.hidden=false;requestAnimationFrame(()=>el.classList.add("open"));renderAccountModal();
+  }
   function closeAccountModal(){const el=$("v8AuthBackdrop");if(!el)return;el.classList.remove("open");setTimeout(()=>el.hidden=true,160);}
+  function authPasswordField(id,label,autocomplete="current-password"){
+    return `<label class="v8477-field"><span>${esc(label)}</span><div class="v8477-password-wrap"><input id="${id}" type="password" autocomplete="${autocomplete}" minlength="6" placeholder="••••••••"><button class="v8477-password-toggle" type="button" data-password-for="${id}" aria-label="${esc(authT("showPassword"))}">👁</button></div></label>`;
+  }
+  function bindAuthForm(mode){
+    $("v8477AuthBack")?.addEventListener("click",()=>setAuthMode("choose"));
+    $("v8477AuthSwitch")?.addEventListener("click",()=>setAuthMode(mode==="signin"?"signup":"signin"));
+    qa("[data-password-for]",$("v8AuthBody")).forEach(btn=>btn.addEventListener("click",()=>toggleAuthPassword(btn.dataset.passwordFor,btn)));
+    const form=$("v8477AuthForm");if(form)form.addEventListener("submit",e=>{e.preventDefault();mode==="signin"?authSignIn():authSignUp();});
+    setTimeout(()=>$("v8AuthEmail")?.focus(),30);
+  }
   function renderAccountModal(){
     const body=$("v8AuthBody");if(!body)return;
-    if(!cloud.configured){body.innerHTML=`<div class="v8-cloud-unconfigured"><span>🧩</span><h3>${esc(t("cloudNotConfigured"))}</h3><p>${esc(t("cloudNotConfiguredHelp"))}</p><code>supabase-config.js + supabase-setup.sql</code></div>`;return;}
+    if(!cloud.configured){setAuthHero("🧩",t("cloudNotConfigured"),t("cloudNotConfiguredHelp"));body.innerHTML=`<div class="v8-cloud-unconfigured"><span>🧩</span><h3>${esc(t("cloudNotConfigured"))}</h3><p>${esc(t("cloudNotConfiguredHelp"))}</p><code>supabase-config.js + supabase-setup.sql</code></div>`;return;}
+    if(authUi.success){
+      const signup=authUi.success.type==="signup",status=cloud.status==="synced"?t("cloudSynced"):(cloud.reconciling||cloud.status==="syncing"?authT("cloudChecking"):cloudStatusLabel());
+      setAuthHero(signup?"✨":"☁",signup?authT("signupSuccessTitle"):authT("loginSuccessTitle"),signup?authT("signupSuccessBody"):authT("loginSuccessBody"));
+      body.innerHTML=`<div class="v8477-auth-success"><div class="v8477-success-mark">✓</div><h3>${esc(signup?authT("signupSuccessTitle"):authT("loginSuccessTitle"))}</h3><p>${esc(signup?authT("signupSuccessBody"):authT("loginSuccessBody"))}</p><div class="v8477-success-email">${esc(authUi.success.email||cloud.user?.email||"")}</div><div class="v8477-success-status"><i id="v8477AuthSuccessDot" data-state="${esc(cloud.status)}"></i><div><strong>${esc(authT("accountConnected"))}</strong><small id="v8477AuthSuccessState">${esc(status)}</small></div></div><button id="v8477AuthContinue" class="primary-btn v8477-auth-primary" type="button">${esc(signup?authT("startUsing"):authT("continue"))}</button></div>`;
+      $("v8477AuthContinue").onclick=finishAuthSuccess;return;
+    }
     if(!cloud.user){
-      // Dashboard time/progress is refreshed every second. V8 also observes those DOM
-      // changes to enhance the current route. Do not rebuild the auth form while the
-      // user is typing, otherwise the inputs are replaced and appear to refresh/reset.
-      if($("v8AuthEmail") && $("v8AuthPassword") && $("v8SignIn") && $("v8SignUp")) return;
-      body.innerHTML=`<div class="v8-auth-form"><label><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label><span>${esc(t("password"))}</span><input id="v8AuthPassword" type="password" autocomplete="current-password" minlength="6" placeholder="••••••••"></label><div class="v8-auth-actions"><button id="v8SignIn" class="primary-btn" type="button">${esc(t("signIn"))}</button><button id="v8SignUp" class="outline-btn" type="button">${esc(t("createAccount"))}</button></div><p class="v8-auth-note">🔐 ${esc(t("localDefault"))}</p></div>`;$("v8SignIn").onclick=authSignIn;$("v8SignUp").onclick=authSignUp;return;}
+      if(authUi.mode==="signin"||authUi.mode==="signup"){
+        const signup=authUi.mode==="signup";setAuthHero(signup?"✨":"👤",signup?authT("signUpTitle"):authT("signInTitle"),signup?authT("signUpHelp"):authT("signInHelp"));
+        body.innerHTML=`<div class="v8477-auth-form-shell"><button id="v8477AuthBack" class="v8477-auth-back" type="button">← ${esc(authT("back"))}</button><form id="v8477AuthForm" class="v8-auth-form v8477-auth-form" novalidate><label class="v8477-field"><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>${authPasswordField("v8AuthPassword",t("password"),signup?"new-password":"current-password")}${signup?authPasswordField("v8AuthConfirmPassword",authT("confirmPassword"),"new-password"):""}<small class="v8477-password-hint">${esc(authT("passwordHint"))}</small><div id="v8477AuthError" class="v8477-auth-error" role="alert" ${authUi.error?"":"hidden"}>${esc(authUi.error)}</div><button id="${signup?"v8SignUp":"v8SignIn"}" class="primary-btn v8477-auth-primary" type="submit">${esc(signup?t("createAccount"):t("signIn"))}</button></form><div class="v8477-auth-switch"><span>${esc(signup?authT("haveAccount"):authT("noAccount"))}</span><button id="v8477AuthSwitch" type="button">${esc(signup?t("signIn"):t("createAccount"))} →</button></div></div>`;
+        bindAuthForm(authUi.mode);return;
+      }
+      setAuthHero("☁",authT("accountTitle"),authT("accountIntro"));
+      body.innerHTML=`<div class="v8477-auth-choice"><button id="v8477ChooseSignIn" class="v8477-auth-choice-card primary" type="button"><span class="v8477-choice-icon">👤</span><span class="v8477-choice-copy"><strong>${esc(t("signIn"))}</strong><small>${esc(authT("chooseSignInHelp"))}</small></span><b>→</b></button><button id="v8477ChooseSignUp" class="v8477-auth-choice-card" type="button"><span class="v8477-choice-icon">✨</span><span class="v8477-choice-copy"><strong>${esc(t("createAccount"))}</strong><small>${esc(authT("chooseSignUpHelp"))}</small></span><b>→</b></button></div><p class="v8-auth-note v8477-auth-note">🔐 ${esc(authT("localStillWorks"))}</p>`;
+      $("v8477ChooseSignIn").onclick=()=>setAuthMode("signin");$("v8477ChooseSignUp").onclick=()=>setAuthMode("signup");return;
+    }
+    setAuthHero("☁",t("account"),t("accountHelp"));
     const last=localStorage.getItem(KEYS.cloudLastSync);body.innerHTML=`<div class="v8-account-card"><div class="v8-account-avatar">☁</div><div><span>${esc(t("signedInAs"))}</span><strong>${esc(cloud.user.email||cloud.user.id)}</strong><small>${esc(t("lastSync"))}: ${esc(safeDateLabel(last))}</small></div></div><div class="v8-cloud-state"><i data-state="${esc(cloud.status)}"></i><strong>${esc(cloudStatusLabel())}</strong></div><div class="v8-auth-actions grid"><button id="v8SyncNow" class="primary-btn" type="button">↻ ${esc(t("syncNow"))}</button><button id="v8UploadDevice" class="outline-btn" type="button">💻↑ ${esc(t("uploadDevice"))}</button><button id="v8LoadCloud" class="outline-btn" type="button">☁↓ ${esc(t("loadCloud"))}</button><button id="v8SignOut" class="secondary-btn" type="button">${esc(t("signOut"))}</button></div>`;
     $("v8SyncNow").onclick=syncNow;$("v8UploadDevice").onclick=()=>uploadCloudState();$("v8LoadCloud").onclick=()=>loadCloudState();$("v8SignOut").onclick=authSignOut;
   }
@@ -608,6 +731,11 @@
       const state=auth.querySelector(".v8-cloud-state strong"); if(state)state.textContent=cloudStatusLabel();
       const dot=auth.querySelector(".v8-cloud-state i"); if(dot)dot.dataset.state=cloud.user?(navigator.onLine?cloud.status:"offline"):"local";
       const last=auth.querySelector(".v8-account-card small"); if(last)last.textContent=`${t("lastSync")}: ${safeDateLabel(localStorage.getItem(KEYS.cloudLastSync))}`;
+    }
+    if(auth && !auth.hidden && authUi.success){
+      const successState=$("v8477AuthSuccessState"),successDot=$("v8477AuthSuccessDot");
+      if(successState)successState.textContent=cloud.status==="synced"?t("cloudSynced"):(cloud.reconciling||cloud.status==="syncing"?authT("cloudChecking"):cloudStatusLabel());
+      if(successDot)successDot.dataset.state=cloud.user?(navigator.onLine?cloud.status:"offline"):"local";
     }
     const menu=$("v802ProfileMenu");
     if(menu && !menu.hidden){
@@ -687,7 +815,7 @@
   function currentScheduleTemplate(name="Current") {const cfg=API.getConfig();return{id:`custom-${Date.now().toString(36)}`,name,workdayStart:cfg.workdayStart,workdayEnd:cfg.workdayEnd,workdays:[...(cfg.workdays||[1,2,3,4,5])],breaks:(cfg.breaks||[]).map(b=>({start:b.start,end:b.end}))};}
   function applyTemplateToSetup(tpl){if(!tpl)return;const start=$("setupWorkStart"),end=$("setupWorkEnd");if(start){start.value=tpl.workdayStart;start.dispatchEvent(new Event("input",{bubbles:true}));}if(end){end.value=tpl.workdayEnd;end.dispatchEvent(new Event("input",{bubbles:true}));}qa(".setup-workday").forEach(x=>x.checked=tpl.workdays.includes(Number(x.value)));for(let i=1;i<=3;i++){const br=tpl.breaks[i-1],en=$("setupBreakEnabled"+i),s=$("setupBreakStart"+i),e=$("setupBreakEnd"+i);if(en)en.checked=!!br;if(s)s.value=br?.start||"12:00";if(e)e.value=br?.end||"13:00";[en,s,e].forEach(x=>x?.dispatchEvent(new Event("change",{bubbles:true})));}}
   function ensureSetupTemplates(){const step=q('[data-setup-step="3"]');if(!step||$("v8SetupTemplates"))return;const box=document.createElement("div");box.id="v8SetupTemplates";box.className="v8-setup-templates";box.innerHTML=`<div><strong>🗓 ${esc(t("scheduleTemplates"))}</strong><small>${esc(t("scheduleTemplateHelp"))}</small></div><div class="v8-template-chips">${BUILTIN_TEMPLATES.map(x=>`<button type="button" data-v8-setup-template="${x.id}">${esc(templateName(x))}</button>`).join("")}</div>`;q(".setup-form-grid",step)?.insertAdjacentElement("beforebegin",box);qa("[data-v8-setup-template]",box).forEach(btn=>btn.onclick=()=>applyTemplateToSetup(BUILTIN_TEMPLATES.find(x=>x.id===btn.dataset.v8SetupTemplate)));}
-  function ensureSetupCloudPrompt(){const step=q('[data-setup-step="1"]');if(!step||$("v8SetupCloud"))return;const box=document.createElement("div");box.id="v8SetupCloud";box.className="v8-setup-cloud";box.innerHTML=`<span>☁</span><div><strong>${esc(t("restoreCloud"))}</strong><small>${esc(t("localDefault"))}</small></div><button type="button" class="outline-btn">${esc(t("signIn"))}</button>`;q(".setup-form-grid",step)?.insertAdjacentElement("beforebegin",box);box.querySelector("button").onclick=openAccountModal;}
+  function ensureSetupCloudPrompt(){const step=q('[data-setup-step="1"]');if(!step||$("v8SetupCloud"))return;const box=document.createElement("div");box.id="v8SetupCloud";box.className="v8-setup-cloud";box.innerHTML=`<span>☁</span><div><strong>${esc(t("restoreCloud"))}</strong><small>${esc(t("localDefault"))}</small></div><button type="button" class="outline-btn">${esc(t("signIn"))}</button>`;q(".setup-form-grid",step)?.insertAdjacentElement("beforebegin",box);box.querySelector("button").onclick=()=>openAccountModal("signin");}
   function applyTemplateToJourney(tpl){if(!tpl||!confirm(t("templateApplyConfirm")))return;const raw=readJson("wp-journey-config",{});writeJson("wp-journey-config",{...raw,workdayStart:tpl.workdayStart,workdayEnd:tpl.workdayEnd,workdays:[...tpl.workdays],breaks:tpl.breaks.map(b=>({...b}))});toast("✓",t("templateApplied"),"success");setTimeout(()=>location.reload(),350);}
   function downloadJson(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);}
   function ensureCalendarTemplates(){const root=$("v7CalendarIntro");if(!root||$("v8ScheduleTemplatesCard"))return;const card=document.createElement("section");card.id="v8ScheduleTemplatesCard";card.className="card v8-template-card";root.appendChild(card);renderTemplateCard();}
