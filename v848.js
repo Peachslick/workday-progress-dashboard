@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.4.8";
+  const VERSION = "8.4.8.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -100,7 +100,8 @@
     if(m.includes("REWARD_CODE_MAX_USES"))return copy("Reward Code นี้ถูกใช้ครบจำนวนแล้ว","This Reward Code has reached its maximum uses.");
     if(m.includes("REWARD_CODE_USER_LIMIT")||m.includes("REWARD_CODE_ALREADY_USED"))return copy("คุณใช้ Reward Code นี้ครบจำนวนแล้ว","You have already used this Reward Code the allowed number of times.");
     if(m.includes("REWARD_CODE_LOGIN_REQUIRED"))return copy("กรุณาเข้าสู่ระบบก่อนใช้ Reward Code","Please sign in before redeeming a Reward Code.");
-    if(/function .*redeem_reward_code|does not exist|schema cache/i.test(m))return copy("ระบบ Reward Code ยังไม่ได้ติดตั้งใน Supabase กรุณา Run SQL Setup V8.4.8 ก่อน","Reward Codes are not installed in Supabase yet. Run the V8.4.8 SQL setup first.");
+    if(/column reference ["\']?code["\']? is ambiguous/i.test(m))return copy("\u0E10\u0E32\u0E19\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 Reward Code \u0E22\u0E31\u0E07\u0E43\u0E0A\u0E49 RPC \u0E23\u0E38\u0E48\u0E19\u0E40\u0E01\u0E48\u0E32 \u0E01\u0E23\u0E38\u0E13\u0E32 Run SQL Hotfix V8.4.8.1 \u0E01\u0E48\u0E2D\u0E19","Reward Code RPC is an older version. Run the V8.4.8.1 SQL hotfix first.");
+    if(/function .*redeem_reward_code|does not exist|schema cache/i.test(m))return copy("ระบบ Reward Code ยังไม่ได้ติดตั้งใน Supabase กรุณา Run SQL Setup V8.4.8.1 ก่อน","Reward Codes are not installed in Supabase yet. Run the V8.4.8.1 SQL setup first.");
     return `${copy("ไม่สามารถใช้ Code ได้","Unable to redeem code")}: ${m}`;
   }
   function normalizedRedemption(row){
@@ -166,7 +167,7 @@
     const root=$("v81RewardsPage");if(!root||$("v848RedeemCard"))return;
     const wallet=q(".v81-wallet-hero",root),card=document.createElement("section");
     card.id="v848RedeemCard";card.className="v848-redeem-card";
-    card.innerHTML=`<div class="v848-redeem-art">🎟</div><div><p class="eyebrow">REWARD CODES · V8.4.8</p><h3>${esc(copy("มี Code ลับอยู่ไหม?","Have a secret code?"))}</h3><p>${esc(copy("Login แล้วใช้ Reward Code เพื่อรับ Coins, Code Exclusive Items หรือ Mystery Chest","Sign in and redeem codes for Coins, code-exclusive items or Mystery Chests"))}</p></div><button id="v848OpenRedeem" class="primary-btn" type="button">🎟 ${esc(copy("กรอก Reward Code","Redeem Code"))}</button>`;
+    card.innerHTML=`<div class="v848-redeem-art">🎟</div><div><p class="eyebrow">REWARD CODES · V8.4.8.1</p><h3>${esc(copy("มี Code ลับอยู่ไหม?","Have a secret code?"))}</h3><p>${esc(copy("Login แล้วใช้ Reward Code เพื่อรับ Coins, Code Exclusive Items หรือ Mystery Chest","Sign in and redeem codes for Coins, code-exclusive items or Mystery Chests"))}</p></div><button id="v848OpenRedeem" class="primary-btn" type="button">🎟 ${esc(copy("กรอก Reward Code","Redeem Code"))}</button>`;
     if(wallet)wallet.insertAdjacentElement("afterend",card);else root.prepend(card);
     $("v848OpenRedeem").onclick=openRedeem;
   }
@@ -192,7 +193,7 @@
   }
   function ownerGuardHtml(){
     if(!signedIn())return `<section class="v848-access-card"><span>🔐</span><h3>${esc(copy("เข้าสู่ระบบ Owner ก่อน","Owner sign-in required"))}</h3><p>${esc(copy("Developer Control Center ใช้ได้เฉพาะบัญชี Owner ที่กำหนดใน Supabase","Developer Control Center is available only to the Owner account configured in Supabase"))}</p><button id="v848OwnerLogin" class="primary-btn" type="button">👤 ${esc(copy("เข้าสู่ระบบ","Sign in"))}</button></section>`;
-    if(state.setupMissing)return `<section class="v848-access-card warning"><span>🧩</span><h3>${esc(copy("ยังไม่ได้ติดตั้ง Reward Code Database","Reward Code database is not installed"))}</h3><p>${esc(copy("Run ไฟล์ SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql แล้วกำหนด Owner Email ก่อน","Run SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql and set the Owner Email first"))}</p></section>`;
+    if(state.setupMissing)return `<section class="v848-access-card warning"><span>🧩</span><h3>${esc(copy("ยังไม่ได้ติดตั้ง Reward Code Database","Reward Code database is not installed"))}</h3><p>${esc(copy("Run ไฟล์ SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql แล้วกำหนด Owner Email ก่อน","Run SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql and set the Owner Email first"))}</p></section>`;
     return `<section class="v848-access-card"><span>🛡️</span><h3>${esc(copy("บัญชีนี้ไม่มีสิทธิ์ Owner","This account is not an Owner"))}</h3><p>${esc(copy("Developer Tools ถูกป้องกันด้วย Supabase Owner check ไม่ใช่แค่ซ่อนปุ่มในหน้าเว็บ","Developer Tools are protected by the Supabase Owner check, not only by hiding the UI"))}</p></section>`;
   }
   async function refreshOwnerDashboard(render=true){
@@ -241,7 +242,7 @@
   }
   function renderDeveloper(){
     const root=$("v848DeveloperPage");if(!root)return;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🛠</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8</p><h2>Developer Control Center</h2><p class="muted">${esc(copy("จัดการ Reward Codes, ดูการ Redeem และใช้ Owner Economy Tools","Manage Reward Codes, review redemptions and use Owner Economy Tools"))}</p></div></div></div>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🛠</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8.1</p><h2>Developer Control Center</h2><p class="muted">${esc(copy("จัดการ Reward Codes, ดูการ Redeem และใช้ Owner Economy Tools","Manage Reward Codes, review redemptions and use Owner Economy Tools"))}</p></div></div></div>`;
     if(state.owner===null||state.ownerChecking){root.insertAdjacentHTML("beforeend",`<section class="v848-access-card"><span class="v848-spinner">◌</span><h3>${esc(copy("กำลังตรวจสอบสิทธิ์ Owner...","Checking Owner access..."))}</h3></section>`);checkOwner({force:true}).then(ok=>{if(ok)refreshOwnerDashboard();else renderDeveloper();});return;}
     if(!state.owner){root.insertAdjacentHTML("beforeend",ownerGuardHtml());$("v848OwnerLogin")?.addEventListener("click",()=>cloud()?.openAccount?.({mode:"signin",returnAction:"developer-tools"}));return;}
     const stats=adminStats(),email=user()?.email||"Owner";

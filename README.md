@@ -1,8 +1,32 @@
 # Workday Journey
 
-**Current version: V8.4.8 – Reward Codes + Developer Control Center**
+**Current version: V8.4.8.1 – Reward Code Redemption Hotfix**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
+
+## V8.4.8.1 – Reward Code Redemption Hotfix
+
+This patch fixes the Supabase RPC error `column reference "code" is ambiguous` when redeeming an existing Reward Code.
+
+### What changed
+
+- Qualified the `reward_codes.code` column inside `redeem_reward_code(p_code)` so PostgreSQL no longer confuses it with the RPC output column named `code`.
+- Added `SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql` for existing V8.4.8 installations.
+- The hotfix replaces only the RPC function. It does **not** drop tables or delete existing Reward Codes, usage counts, Owner settings, or redemption history.
+- Added a clearer in-app diagnostic when a browser is connected to the old V8.4.8 RPC.
+- Updated the app/PWA cache version to `8.4.8.1`.
+
+### Existing V8.4.8 users
+
+Run only:
+
+`SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql`
+
+Your existing codes such as `MURATA` remain in `reward_codes` and can be used immediately after the RPC is replaced.
+
+### Fresh setup
+
+Use `SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql`, set the Owner email in the bootstrap block, and run the full file once.
 
 ## V8.4.8 – Reward Codes + Developer Control Center
 
@@ -87,6 +111,7 @@ Do **not** put a Supabase `service_role` key in frontend files. Continue using t
 
 | Version | Highlight |
 | --- | --- |
+| V8.4.8.1 | Reward Code Redemption Hotfix |
 | V8.4.8 | 🎟 Reward Codes + Developer Control Center |
 | V8.4.7.7 | 👤 Account & Authentication UX Refresh |
 | V8.4.7.6 | ☁ Cloud Reload Loop Hotfix |
@@ -126,14 +151,14 @@ Do **not** put a Supabase `service_role` key in frontend files. Continue using t
 - Owner-only Developer Control Center
 - In-app What's New / Version History
 
-## Updating from V8.4.7.7
+## Updating from V8.4.8
 
-1. Replace the files included in the V8.4.8 changed-files ZIP.
-2. Run `SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql` once after setting `owner_email`.
-3. Redeploy the site.
-4. If an old cached version appears, use **Clear App Cache / Reload Latest Version** or refresh the PWA cache once.
+1. Replace the changed frontend files from the V8.4.8.1 ZIP.
+2. Run `SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql` once in Supabase SQL Editor.
+3. Do **not** delete or recreate `reward_codes` / `reward_code_redemptions`.
+4. Reload the app. If an old cached version appears, use **Clear App Cache / Reload Latest Version** once.
 
-The Service Worker cache and asset query version are `8.4.8`.
+The Service Worker cache and asset query version are `8.4.8.1`.
 
 ## Existing Supabase features retained
 
@@ -151,6 +176,8 @@ The main application still works without signing in. Reward Code redemption is i
 
 ## Version
 
-`Workday Journey V8.4.8`
+`Workday Journey V8.4.8.1`
 
-Release focus: **Reward Codes / code-exclusive rewards / Owner-only Developer Control Center / Supabase redemption limits and history**
+Release focus: **Reward Code RPC ambiguity hotfix / data-safe Supabase patch**
+
+Previous V8.4.8 focus: **Reward Codes / code-exclusive rewards / Owner-only Developer Control Center / Supabase redemption limits and history**

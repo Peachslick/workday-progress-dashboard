@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.8";
+  const VERSION = "8.4.8.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -98,10 +98,11 @@
   const authT = key => AUTH_TEXT[lang()][key] || AUTH_TEXT.en[key] || key;
 
 
-  // ---------- V8.4.8 What's New / Version History ----------
+  // ---------- V8.4.8.1 What's New / Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.8.1",icon:"\uD83D\uDEE0\uFE0F",th:"Reward Code Redemption Hotfix",en:"Reward Code Redemption Hotfix",notesTh:["\u0E41\u0E01\u0E49 RPC redeem_reward_code \u0E17\u0E35\u0E48\u0E0A\u0E37\u0E48\u0E2D column code \u0E0A\u0E19\u0E01\u0E31\u0E1A output parameter","Reward Code \u0E17\u0E35\u0E48\u0E2A\u0E23\u0E49\u0E32\u0E07\u0E44\u0E27\u0E49\u0E41\u0E25\u0E49\u0E27\u0E43\u0E19 Supabase \u0E43\u0E0A\u0E49\u0E15\u0E48\u0E2D\u0E44\u0E14\u0E49\u0E42\u0E14\u0E22\u0E44\u0E21\u0E48\u0E15\u0E49\u0E2D\u0E07\u0E2A\u0E23\u0E49\u0E32\u0E07\u0E43\u0E2B\u0E21\u0E48","\u0E40\u0E1E\u0E34\u0E48\u0E21 SQL Hotfix \u0E17\u0E35\u0E48\u0E44\u0E21\u0E48\u0E25\u0E1A Code, Usage \u0E2B\u0E23\u0E37\u0E2D Redemption History"],notesEn:["Fixed redeem_reward_code RPC where the code column conflicted with an output parameter","Existing Supabase Reward Codes can be redeemed without recreating them","Added a data-safe SQL hotfix that preserves codes, usage counts and redemption history"]},
     {version:"8.4.8",icon:"🎟",th:"Reward Codes & Developer Control Center",en:"Reward Codes & Developer Control Center",notesTh:["เพิ่ม Reward Code ใน Reward Shop พร้อม Coins, Items, Chest และ Bundle","เพิ่ม Code Exclusive Items และบันทึกสิทธิ์ Redeem ผ่าน Supabase","เพิ่ม Developer Control Center สำหรับ Owner เพื่อจัดการ Code และ Economy Tools"],notesEn:["Added Reward Codes in the Reward Shop with Coins, items, chests and bundles","Added code-exclusive items with Supabase-backed redemption tracking","Added an Owner-only Developer Control Center for code management and economy tools"]},
     {version:"8.4.7.7",icon:"👤",th:"Account & Authentication UX Refresh",en:"Account & Authentication UX Refresh",notesTh:["แยก Flow เข้าสู่ระบบและสร้างบัญชีให้ชัดเจน","เพิ่ม Success Popup กลางจอ พร้อม Error ที่อ่านเข้าใจง่าย","รองรับ Show Password, Confirm Password และ Hook สำหรับกลับไปทำ Action เดิมหลัง Login"],notesEn:["Separated sign-in and account-creation flows","Added centered success states with clearer inline errors","Added password visibility, password confirmation and a post-login return-action hook"]},
     {version:"8.4.7.6",icon:"☁",th:"Cloud Reload Loop Hotfix",en:"Cloud Reload Loop Hotfix",notesTh:["แก้ปัญหาเว็บ Reload ซ้ำหลังอัป Version ขณะเปิด Cloud Sync","แยก App / Cache version markers ออกจากข้อมูล Cloud","เพิ่มตัวกัน Auto Reload Loop เพื่อให้หน้าเว็บยังใช้งานได้"],notesEn:["Fixed repeated page reloads after deploying a new version with Cloud Sync enabled","Made app/cache version markers device-local instead of Cloud data","Added an automatic reload-loop guard so the UI remains usable"]},
