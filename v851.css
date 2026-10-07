@@ -1,0 +1,496 @@
+/* Workday Journey V8.5.1 - Global Design System
+   Foundation-only refresh: tokens, typography, spacing, controls, cards and modals.
+   Page-specific redesigns remain in V8.5.2+.
+*/
+
+:root {
+  /* Typography */
+  --ds-font-sans: var(--app-font, "Sarabun Local", "Sarabun", "Noto Sans Thai", "Segoe UI", sans-serif);
+  --ds-font-xs: .6875rem;
+  --ds-font-sm: .75rem;
+  --ds-font-md: .875rem;
+  --ds-font-base: 1rem;
+  --ds-font-lg: 1.125rem;
+  --ds-font-xl: 1.375rem;
+  --ds-font-2xl: 1.75rem;
+  --ds-font-3xl: clamp(2rem, 3vw, 2.75rem);
+  --ds-line-tight: 1.22;
+  --ds-line-base: 1.5;
+  --ds-line-relaxed: 1.65;
+
+  /* Spacing */
+  --ds-space-1: .25rem;
+  --ds-space-2: .5rem;
+  --ds-space-3: .75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-7: 2rem;
+  --ds-space-8: 2.5rem;
+  --ds-space-9: 3rem;
+
+  /* Shape */
+  --ds-radius-xs: .5rem;
+  --ds-radius-sm: .625rem;
+  --ds-radius-md: .75rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-xl: 1.25rem;
+  --ds-radius-2xl: 1.5rem;
+  --ds-radius-pill: 999px;
+
+  /* Elevation */
+  --ds-shadow-none: none;
+  --ds-shadow-sm: 0 1px 2px rgba(18, 31, 52, .04), 0 4px 12px rgba(18, 31, 52, .035);
+  --ds-shadow-md: 0 10px 30px rgba(18, 31, 52, .075);
+  --ds-shadow-lg: 0 22px 60px rgba(18, 31, 52, .13);
+  --ds-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+
+  /* Motion */
+  --ds-ease: cubic-bezier(.2, .8, .2, 1);
+  --ds-duration-fast: 140ms;
+  --ds-duration: 190ms;
+
+  /* Controls */
+  --ds-control-sm: 2.125rem;
+  --ds-control-md: 2.625rem;
+  --ds-control-lg: 3rem;
+  --ds-control-pad-x: .875rem;
+
+  /* Surfaces */
+  --ds-page: var(--bg);
+  --ds-surface: var(--surface-solid);
+  --ds-surface-muted: var(--surface-soft);
+  --ds-border: var(--border);
+  --ds-text: var(--text);
+  --ds-muted: var(--muted);
+  --ds-accent: var(--accent);
+  --ds-accent-soft: var(--accent-soft);
+
+  /* Bridge legacy tokens into the shared system. */
+  --card: var(--surface-solid);
+  --soft: var(--surface-soft);
+  --radius-md: var(--ds-radius-md);
+  --radius-lg: var(--ds-radius-lg);
+  --radius-xl: var(--ds-radius-xl);
+  --page-gap: var(--ds-space-5);
+  --card-pad: var(--ds-space-6);
+  --shadow: var(--ds-shadow-sm);
+  --shadow-lg: var(--ds-shadow-lg);
+}
+
+:root[data-theme="dark"] {
+  --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, .16), 0 5px 16px rgba(0, 0, 0, .12);
+  --ds-shadow-md: 0 12px 34px rgba(0, 0, 0, .22);
+  --ds-shadow-lg: 0 24px 68px rgba(0, 0, 0, .36);
+}
+
+/* ---------- Base typography ---------- */
+body.v851-design-system {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-base);
+  line-height: var(--ds-line-base);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.v851-design-system :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--ds-text);
+  font-family: var(--ds-font-sans);
+  line-height: var(--ds-line-tight);
+  text-wrap: balance;
+}
+body.v851-design-system :where(h1) { font-size: var(--ds-font-2xl); }
+body.v851-design-system :where(h2) { font-size: var(--ds-font-xl); }
+body.v851-design-system :where(h3) { font-size: var(--ds-font-lg); }
+body.v851-design-system :where(h4, h5, h6) { font-size: var(--ds-font-base); }
+body.v851-design-system :where(p) { line-height: var(--ds-line-relaxed); }
+
+body.v851-design-system .eyebrow {
+  font-size: var(--ds-font-xs);
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+body.v851-design-system .muted,
+body.v851-design-system .setting-help,
+body.v851-design-system .section-subtitle {
+  color: var(--ds-muted);
+}
+body.v851-design-system .section-subtitle,
+body.v851-design-system .setting-help {
+  font-size: var(--ds-font-sm);
+  line-height: var(--ds-line-relaxed);
+}
+body.v851-design-system :where(small) {
+  line-height: 1.45;
+}
+
+/* ---------- Shared page rhythm ---------- */
+body.v851-design-system .dashboard {
+  gap: var(--ds-space-5);
+}
+body.v851-design-system .section-heading,
+body.v851-design-system .modal-section-title,
+body.v851-design-system .v7-card-title,
+body.v851-design-system .v8-card-head,
+body.v851-design-system .v84-section-head,
+body.v851-design-system .v831-section-head,
+body.v851-design-system .v83-bank-section-head,
+body.v851-design-system .v848-card-head {
+  gap: var(--ds-space-3);
+}
+body.v851-design-system .section-heading h3,
+body.v851-design-system .modal-section-title h3,
+body.v851-design-system .v7-card-title h3,
+body.v851-design-system .v8-card-head h3,
+body.v851-design-system .v84-section-head h3,
+body.v851-design-system .v831-section-head h3,
+body.v851-design-system .v83-bank-section-head h3,
+body.v851-design-system .v848-card-head h3 {
+  margin-top: var(--ds-space-1);
+  font-size: var(--ds-font-lg);
+}
+
+/* ---------- Surface / card standard ---------- */
+body.v851-design-system :where(
+  .card,
+  .v7-settings-card,
+  .v7-form-card,
+  .v848-admin-card,
+  .v848-access-card,
+  .v83-bank-action-card,
+  .v81-wallet-main,
+  .v81-wallet-stat,
+  .v81-earn-card,
+  .v81-history-list,
+  .v81-reward-card,
+  .v82-mission-card,
+  .v82-chest-card
+) {
+  border-color: var(--ds-border);
+  border-radius: var(--ds-radius-xl);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+body.v851-design-system :where(.card, .v7-settings-card, .v7-form-card) {
+  background: var(--ds-surface);
+}
+
+body.v851-design-system :where(.v7-settings-card, .v7-form-card, .v848-admin-card, .v848-access-card) {
+  padding: var(--ds-space-5);
+}
+
+body.v851-design-system :where(.card, .v7-settings-card, .v7-form-card, .v848-admin-card, .v848-access-card) {
+  transition: border-color var(--ds-duration) var(--ds-ease), box-shadow var(--ds-duration) var(--ds-ease), transform var(--ds-duration) var(--ds-ease);
+}
+
+/* Keep interactive cards calm and consistent without redesigning page layouts. */
+body.v851-design-system :where(.project-card, .v7-achievement-card, .v7-challenge-card, .v81-reward-card, .v82-mission-card):hover {
+  border-color: color-mix(in srgb, var(--ds-accent) 24%, var(--ds-border));
+}
+
+/* ---------- Buttons ---------- */
+body.v851-design-system :where(
+  .primary-btn,
+  .secondary-btn,
+  .outline-btn,
+  .danger-btn,
+  .small-text-btn,
+  .text-btn,
+  .v81-reward-btn,
+  .v82-mission-card > button,
+  .v82-chest-card > button
+) {
+  min-height: var(--ds-control-md);
+  padding: .625rem var(--ds-control-pad-x);
+  border-radius: var(--ds-radius-md);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-md);
+  font-weight: 750;
+  line-height: 1.2;
+  transition: transform var(--ds-duration-fast) var(--ds-ease), box-shadow var(--ds-duration-fast) var(--ds-ease), border-color var(--ds-duration-fast) var(--ds-ease), background-color var(--ds-duration-fast) var(--ds-ease), color var(--ds-duration-fast) var(--ds-ease);
+}
+
+body.v851-design-system .primary-btn {
+  border: 1px solid var(--ds-accent);
+  background: var(--ds-accent);
+  color: #fff;
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--ds-accent) 18%, transparent);
+}
+body.v851-design-system .primary-btn:hover:not(:disabled) {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--ds-accent) 24%, transparent);
+  transform: translateY(-1px);
+}
+body.v851-design-system :where(.secondary-btn, .outline-btn) {
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  box-shadow: none;
+}
+body.v851-design-system :where(.secondary-btn, .outline-btn):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ds-accent) 32%, var(--ds-border));
+  background: color-mix(in srgb, var(--ds-accent-soft) 46%, var(--ds-surface));
+  color: var(--ds-accent);
+}
+body.v851-design-system .danger-btn {
+  border-radius: var(--ds-radius-md);
+}
+body.v851-design-system :where(.primary-btn, .secondary-btn, .outline-btn, .danger-btn, .v81-reward-btn):active:not(:disabled) {
+  transform: translateY(0) scale(.985);
+}
+body.v851-design-system :where(button, [role="button"]):disabled {
+  cursor: not-allowed;
+}
+
+/* Icon buttons use a single 42px control box. */
+body.v851-design-system :where(.icon-btn, .small-icon-btn) {
+  border-radius: var(--ds-radius-md);
+  transition: background-color var(--ds-duration-fast) var(--ds-ease), border-color var(--ds-duration-fast) var(--ds-ease), color var(--ds-duration-fast) var(--ds-ease), transform var(--ds-duration-fast) var(--ds-ease);
+}
+body.v851-design-system .icon-btn {
+  width: var(--ds-control-md);
+  height: var(--ds-control-md);
+  min-width: var(--ds-control-md);
+  min-height: var(--ds-control-md);
+  box-shadow: none;
+}
+
+/* ---------- Form controls ---------- */
+body.v851-design-system :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="hidden"]),
+  select,
+  textarea
+) {
+  width: 100%;
+  min-height: var(--ds-control-md);
+  padding: .625rem .75rem;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-md);
+  line-height: 1.35;
+  box-shadow: none;
+  outline: 0;
+  transition: border-color var(--ds-duration-fast) var(--ds-ease), box-shadow var(--ds-duration-fast) var(--ds-ease), background-color var(--ds-duration-fast) var(--ds-ease);
+}
+body.v851-design-system textarea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: var(--ds-line-base);
+}
+body.v851-design-system :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="hidden"]),
+  select,
+  textarea
+):focus {
+  border-color: color-mix(in srgb, var(--ds-accent) 68%, var(--ds-border));
+  box-shadow: var(--ds-shadow-focus);
+}
+body.v851-design-system :where(input, textarea)::placeholder {
+  color: color-mix(in srgb, var(--ds-muted) 78%, transparent);
+  opacity: 1;
+}
+body.v851-design-system :where(label, .setup-field-label) {
+  color: var(--ds-text);
+  font-size: var(--ds-font-sm);
+  font-weight: 700;
+}
+body.v851-design-system :where(input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: .66;
+  background: var(--ds-surface-muted);
+}
+
+/* Search/date/number controls sometimes have browser-native affordances. */
+body.v851-design-system input[type="date"],
+body.v851-design-system input[type="time"],
+body.v851-design-system input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Tabs / chips / badges ---------- */
+body.v851-design-system :where(.mini-chip, .percentage-chip, .status-badge, .v7-tier-badge) {
+  border-radius: var(--ds-radius-pill);
+  font-size: var(--ds-font-sm);
+  line-height: 1.15;
+}
+body.v851-design-system .mini-chip {
+  min-height: 1.625rem;
+  padding: .25rem .625rem;
+}
+body.v851-design-system .percentage-chip {
+  min-height: 2rem;
+  padding: .375rem .75rem;
+}
+body.v851-design-system :where(.v81-shop-tabs, .v7-view-tabs, .v84-tabs) {
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-1);
+  border-radius: var(--ds-radius-md);
+  box-shadow: none;
+}
+body.v851-design-system :where(.v81-shop-tabs button, .v7-view-tabs button, .v84-tabs button) {
+  min-height: var(--ds-control-sm);
+  border-radius: var(--ds-radius-sm);
+  font-size: var(--ds-font-sm);
+  font-weight: 750;
+}
+
+/* ---------- Tables and list rows ---------- */
+body.v851-design-system :where(table) {
+  font-size: var(--ds-font-md);
+}
+body.v851-design-system :where(th) {
+  color: var(--ds-muted);
+  font-size: var(--ds-font-sm);
+  font-weight: 800;
+  letter-spacing: .015em;
+}
+body.v851-design-system :where(th, td) {
+  line-height: 1.45;
+}
+body.v851-design-system :where(.v81-history-row) {
+  padding: var(--ds-space-3) var(--ds-space-4);
+}
+
+/* ---------- Modal standard ---------- */
+body.v851-design-system .modal-backdrop {
+  background: rgba(9, 16, 28, .48);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+body.v851-design-system :where(
+  .day-modal,
+  .stats-modal,
+  .achievement-modal,
+  .completion-modal,
+  .v8-modal,
+  .v848-modal,
+  .v8477-auth-modal
+) {
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-2xl);
+  box-shadow: var(--ds-shadow-lg);
+}
+body.v851-design-system :where(.modal-header, .sticky-modal-header) {
+  gap: var(--ds-space-4);
+}
+body.v851-design-system :where(.modal-header h2, .stats-modal h2, .achievement-modal h2, .completion-modal h2) {
+  font-size: var(--ds-font-xl);
+}
+body.v851-design-system .modal-actions {
+  gap: var(--ds-space-2);
+}
+body.v851-design-system .modal-actions :where(.primary-btn, .secondary-btn, .outline-btn) {
+  min-width: 6rem;
+}
+
+/* ---------- Setup / settings consistency ---------- */
+body.v851-design-system :where(.setting-group, .two-column-setting, .v7-settings-fields, .setup-form-grid) {
+  column-gap: var(--ds-space-4);
+  row-gap: var(--ds-space-4);
+}
+body.v851-design-system :where(.font-picker-option, .leave-mode-btn, .day-type-btn, .setup-day-type-btn) {
+  border-radius: var(--ds-radius-md);
+  transition: border-color var(--ds-duration-fast) var(--ds-ease), background-color var(--ds-duration-fast) var(--ds-ease), box-shadow var(--ds-duration-fast) var(--ds-ease), transform var(--ds-duration-fast) var(--ds-ease);
+}
+body.v851-design-system :where(.font-picker-option, .leave-mode-btn, .day-type-btn, .setup-day-type-btn):hover {
+  border-color: color-mix(in srgb, var(--ds-accent) 30%, var(--ds-border));
+}
+
+/* ---------- Shell alignment with the new system ---------- */
+body.v850-shell-refresh.v851-design-system .v7-workspace > .topbar,
+body.v850-shell-refresh.v851-design-system.v802-clean-topbar .v7-workspace .topbar {
+  min-height: 4rem;
+  padding-block: var(--ds-space-2);
+}
+body.v850-shell-refresh.v851-design-system .v7-workspace main.dashboard {
+  padding-top: var(--ds-space-6);
+  padding-bottom: var(--ds-space-9);
+}
+body.v850-shell-refresh.v851-design-system .v7-page-heading {
+  gap: var(--ds-space-4);
+  padding-bottom: var(--ds-space-4);
+  margin-bottom: var(--ds-space-5);
+}
+body.v850-shell-refresh.v851-design-system .v7-page-title h2 {
+  font-size: var(--ds-font-xl);
+  line-height: var(--ds-line-tight);
+}
+body.v850-shell-refresh.v851-design-system .v7-page-title .muted {
+  font-size: var(--ds-font-sm);
+  line-height: var(--ds-line-base);
+}
+body.v850-shell-refresh.v851-design-system .v802-context-copy h1 {
+  font-size: var(--ds-font-base);
+}
+body.v850-shell-refresh.v851-design-system .v802-context-copy .v850-context-subtitle {
+  font-size: var(--ds-font-xs);
+}
+body.v850-shell-refresh.v851-design-system .v7-nav button strong {
+  font-size: var(--ds-font-md);
+}
+body.v850-shell-refresh.v851-design-system .v850-nav-group-label {
+  font-size: .625rem;
+}
+
+/* ---------- Accessible interaction ---------- */
+body.v851-design-system :where(
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  a[href]
+):focus-visible {
+  outline: 0;
+  box-shadow: var(--ds-shadow-focus);
+}
+body.v851-design-system a {
+  text-underline-offset: .18em;
+}
+
+/* ---------- Density / large-text resilience ---------- */
+@media (max-width: 900px) {
+  :root {
+    --card-pad: var(--ds-space-5);
+    --page-gap: var(--ds-space-4);
+  }
+  body.v851-design-system :where(.card, .v7-settings-card, .v7-form-card) {
+    border-radius: var(--ds-radius-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --card-pad: var(--ds-space-4);
+    --page-gap: var(--ds-space-3);
+  }
+  body.v851-design-system :where(
+    .primary-btn,
+    .secondary-btn,
+    .outline-btn,
+    .danger-btn,
+    .v81-reward-btn
+  ) {
+    min-height: 2.75rem;
+  }
+  body.v850-shell-refresh.v851-design-system .v7-workspace main.dashboard {
+    padding-top: var(--ds-space-4);
+  }
+  body.v850-shell-refresh.v851-design-system .v7-page-heading {
+    margin-bottom: var(--ds-space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.v851-design-system *,
+  body.v851-design-system *::before,
+  body.v851-design-system *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
