@@ -1,47 +1,41 @@
 # Workday Journey
 
-**Current version: V8.4.7.1 – Smart Cloud Sync**
+**Current version: V8.4.7.2 – What’s New & Version History**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
 
-## V8.4.7.1 – Smart Cloud Sync
+## V8.4.7.2 – What’s New & Version History
 
-This hotfix focuses on reducing unnecessary Cloud conflict prompts while keeping Local-first behavior.
+This patch adds a lightweight in-app update history so users can quickly see what changed without reading developer documentation.
 
 ### What changed
 
-- Added **Smart Cloud Sync** reconciliation.
-- UI-only state no longer causes a Cloud conflict, including:
-  - Sidebar collapsed state
-  - Journal/Project view filters
-  - Reward Shop selected tab
-  - Work Exchange selected stock and chart range
-  - Achievement filters/views
-  - Temporary notification/open-page state
-- Local and Cloud changes on **different data keys** are merged automatically.
-- The conflict dialog is shown only when the **same important data** was changed on both sides from the same sync baseline.
-- Soft preferences such as theme, font, language, dashboard layout, equipped cosmetics, and watchlist are resolved automatically instead of creating a blocking conflict.
-- Added a per-key Cloud baseline so later syncs can identify which side actually changed.
-- Added stable hashing for JSON values to avoid false conflicts caused only by JSON property order.
-- Existing V8.4.7 Cloud metadata is migrated automatically where possible.
-- Time-based Economy processing waits for the first Cloud reconciliation when a signed-in session is being restored, reducing false conflicts from Daily/Bank/Reward state being generated too early.
-- Manual controls remain available:
-  - **Sync Now**
-  - **Use this device data**
-  - **Use Cloud data**
+- Added a small **📰 What’s New** button beside the app version in the Sidebar.
+- Added **What’s New** to the Profile menu for mobile/collapsed Sidebar access.
+- The current version shows a **NEW** badge until the user opens the update history once.
+- Added a compact Version History covering the main V8.1–V8.4.7.2 updates.
+- Each version is intentionally limited to a few short highlights so the history stays easy to scan.
+- The read state is **device-local** and is excluded from Cloud conflict detection.
+- Clicking the version number in the footer also opens the Version History.
+- Supports Thai/English, Light/Dark themes, responsive layouts, and the existing font-size setting.
 
-### Expected sync behavior
+## Recent Version History
 
-| Situation | V8.4.7.1 behavior |
+| Version | Highlight |
 | --- | --- |
-| Local and Cloud are the same | Sync silently |
-| Only Local changed | Upload automatically |
-| Only Cloud changed | Download automatically |
-| Different data changed on each device | Merge automatically |
-| Only UI/preferences differ | Resolve automatically |
-| Same important data changed on both devices | Ask the user which copy to keep |
-
-> A genuinely new device that already contains meaningful Local data may still ask once which copy should become the initial source of truth. After that, Smart Cloud Sync stores a common baseline for future reconciliation.
+| V8.4.7.2 | 📰 What’s New & Version History |
+| V8.4.7.1 | ☁ Smart Cloud Sync |
+| V8.4.7 | 🏆 Achievement Center UI Cleanup |
+| V8.4.6 | 🏅 Finance & Feature Achievements |
+| V8.4.5 | 📁 Project File Vault |
+| V8.4.4 | 🏦 Daily Deals + Finale Bank Boost |
+| V8.4.3 | 🎁 Chest Opening Experience |
+| V8.4.2 | 🎨 Typography + Sidebar Reorder |
+| V8.4.1 | 🎓 Trading Academy / Beginner Mode |
+| V8.4 | 📈 Work Exchange |
+| V8.3 | 💰 Work Bank |
+| V8.2 | 🎯 Daily Missions & Chests |
+| V8.1 | 🪙 Work Coins & Reward Shop |
 
 ## Main Features
 
@@ -59,16 +53,17 @@ This hotfix focuses on reducing unnecessary Cloud conflict prompts while keeping
 - Work Exchange simulated market and Trading Academy
 - Project File Vault using private Supabase Storage
 - Local-first operation with optional Supabase Cloud Sync
+- In-app What’s New / Version History
 
-## Updating from V8.4.7
+## Updating from V8.4.7.1
 
 Replace the changed files from this release in your existing project, then redeploy the site.
 
-Because the Service Worker cache name and asset query version were updated to `8.4.7.1`, users should receive the new files after the updated Service Worker activates. If a browser still shows an older version, use the app's **Clear App Cache / Reload Latest Version** option.
+The Service Worker cache name and asset query version were updated to `8.4.7.2`. If a browser still shows an older version, use the app’s **Clear App Cache / Reload Latest Version** option.
 
 ## Supabase
 
-V8.4.7.1 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
+V8.4.7.2 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
 
 Continue using the same Supabase setup from the previous versions:
 
@@ -82,10 +77,10 @@ Do not place a Supabase `service_role` key in frontend code. The browser should 
 
 The application still works without signing in. Local data remains stored in the browser. Cloud Sync is optional and becomes active after a user signs in.
 
-Device-specific UI state is intentionally kept local in V8.4.7.1 so opening a different tab, collapsing the Sidebar, changing a temporary filter, or selecting another stock does not create a Cloud conflict.
+The key `wp-v8472-last-seen-version` is intentionally device-local. Reading What’s New on one device does not create a Cloud conflict or force another device to mark the update as read.
 
 ## Version
 
-`Workday Journey V8.4.7.1`
+`Workday Journey V8.4.7.2`
 
-Hotfix focus: **Smart Cloud Sync / conflict reduction / cloud-first reconciliation**
+Patch focus: **What’s New / Version History / lightweight release communication**

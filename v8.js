@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.1";
+  const VERSION = "8.4.7.2";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -29,7 +29,8 @@
     journalDrafts: "wp-v8-journal-drafts",
     projectDraft: "wp-v8-project-draft",
     scheduleTemplates: "wp-v8-schedule-templates",
-    pendingJournalDate: "wp-v8-open-journal-date"
+    pendingJournalDate: "wp-v8-open-journal-date",
+    whatsNewSeen: "wp-v8472-last-seen-version"
   };
 
   const TEXT = {
@@ -54,6 +55,26 @@
   };
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
 
+
+  // ---------- V8.4.7.2 What's New / Version History ----------
+  // Keep this intentionally concise: it is the user-facing history, not the
+  // developer README. New releases should normally have only 2–4 bullets.
+  const WHATS_NEW_RELEASES = [
+    {version:"8.4.7.2",icon:"✨",th:"What's New & Version History",en:"What's New & Version History",notesTh:["เพิ่มปุ่มดู Patch / Version จากในเว็บ","มีป้าย NEW จนกว่าจะเปิดอ่าน","สรุปแต่ละเวอร์ชันแบบสั้น อ่านจบไว"],notesEn:["Added an in-app Patch / Version history","NEW badge stays until the update is opened","Each release is summarized in a few quick bullets"]},
+    {version:"8.4.7.1",icon:"☁",th:"Smart Cloud Sync",en:"Smart Cloud Sync",notesTh:["ลด Popup เลือกเครื่องนี้หรือ Cloud ที่ไม่จำเป็น","Merge การเปลี่ยนแปลงคนละข้อมูลให้อัตโนมัติ","UI state ไม่ถูกนับเป็น Cloud conflict"],notesEn:["Reduced unnecessary device/cloud conflict prompts","Automatically merges changes to different data","UI-only state no longer creates Cloud conflicts"]},
+    {version:"8.4.7",icon:"🏆",th:"Achievement Center UI Cleanup",en:"Achievement Center UI Cleanup",notesTh:["แยก Journey Challenges ออกจาก Feature Achievements","ปรับ Category และ Scrollbar ให้อ่านง่ายขึ้น"],notesEn:["Separated Journey Challenges from Feature Achievements","Improved category navigation and scrollbar styling"]},
+    {version:"8.4.6",icon:"🏅",th:"Finance & Feature Achievements",en:"Finance & Feature Achievements",notesTh:["เพิ่ม Achievement สำหรับ Work Bank / Work Exchange / File Vault","เพิ่ม Coin Reward และรองรับรางวัลย้อนหลัง"],notesEn:["Added achievements for Work Bank, Work Exchange and File Vault","Added Coin rewards with retroactive reward support"]},
+    {version:"8.4.5",icon:"📁",th:"Project File Vault",en:"Project File Vault",notesTh:["เก็บไฟล์ Project แบบ Private บน Supabase Storage","รองรับ Upload, Download, Version และ Delete"],notesEn:["Private project files with Supabase Storage","Upload, download, version history and delete"]},
+    {version:"8.4.4",icon:"🏦",th:"Daily Deals & Finale Bank Boost",en:"Daily Deals & Finale Bank Boost",notesTh:["Daily Deals 3 ชิ้นต่อวัน","เพิ่มดอกเบี้ยทบต้น, Savings Streak และ Journey End Forecast"],notesEn:["Three Daily Deals every day","Boosted compound interest, Savings Streak and Journey End forecast"]},
+    {version:"8.4.3",icon:"🎁",th:"Chest Opening Experience",en:"Chest Opening Experience",notesTh:["เพิ่ม Animation เปิด Daily / Weekly Chest","Reveal รางวัลตาม Coin, Theme Trial และ Mascot XP"],notesEn:["Added Daily / Weekly Chest opening animations","Reward reveals for Coins, Theme Trials and Mascot XP"]},
+    {version:"8.4.2",icon:"🎨",th:"Typography & Sidebar",en:"Typography & Sidebar",notesTh:["ปรับขนาดตัวอักษรให้สอดคล้องทั้งเว็บ","จัดลำดับ Sidebar ตาม Flow การใช้งาน"],notesEn:["Unified typography across the app","Reordered the Sidebar around the user workflow"]},
+    {version:"8.4.1",icon:"🎓",th:"Trading Academy",en:"Trading Academy",notesTh:["เพิ่ม Trading Academy 7 บทและ Beginner Mode","Mini Quiz และรางวัล Coin ต่อบท"],notesEn:["Added a 7-lesson Trading Academy and Beginner Mode","Mini quizzes with Coin rewards"]},
+    {version:"8.4",icon:"📈",th:"Work Exchange",en:"Work Exchange",notesTh:["เพิ่มตลาดหุ้นจำลองด้วย Work Coins","Portfolio, Buy/Sell, Watchlist และ Trading Achievements"],notesEn:["Added a simulated Work Coin market","Portfolio, buy/sell, watchlist and trading achievements"]},
+    {version:"8.3",icon:"💰",th:"Work Bank",en:"Work Bank",notesTh:["เพิ่ม Wallet / Savings และดอกเบี้ยรายวัน","เริ่มระบบออม Work Coins"],notesEn:["Added Wallet / Savings and daily interest","Introduced Work Coin savings"]},
+    {version:"8.2",icon:"🎯",th:"Daily Missions & Chests",en:"Daily Missions & Chests",notesTh:["เพิ่ม Daily Missions และระบบกล่องรางวัล","เพิ่ม Weekly Chest และ Theme Trial / Mascot XP"],notesEn:["Added Daily Missions and reward chests","Added Weekly Chest, Theme Trials and Mascot XP"]},
+    {version:"8.1",icon:"🪙",th:"Work Coins & Reward Shop",en:"Work Coins & Reward Shop",notesTh:["เริ่มระบบ Work Coins และ Coin History","เพิ่ม Reward Shop, Mascots, Themes และ Effects"],notesEn:["Introduced Work Coins and Coin History","Added Reward Shop, Mascots, Themes and Effects"]}
+  ];
+
   const ORIG_SET = Storage.prototype.setItem;
   const ORIG_REMOVE = Storage.prototype.removeItem;
   const rawSet = (key, value) => ORIG_SET.call(localStorage, key, String(value));
@@ -74,6 +95,7 @@
     "wp-v846-achievement-category",
     "wp-v847-achievement-view",
     "wp-v847-feature-achievement-category",
+    "wp-v8472-last-seen-version",
     "wp-v8-open-journal-date",
     "wp-v8-notification-read",
     "wp-v8-notifications-initialized",
@@ -427,6 +449,37 @@
   function closeProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;menu.hidden=true;menu.classList.remove("open");$("profileQuickBtn")?.setAttribute("aria-expanded","false");}
   function toggleProfileMenu(){const menu=$("v802ProfileMenu");if(!menu)return;const next=menu.hidden;menu.hidden=!next;menu.classList.toggle("open",next);$("profileQuickBtn")?.setAttribute("aria-expanded",String(next));if(next)renderProfileMenu();}
   function triggerLegacy(id){const el=$(id);if(el)el.click();}
+  function whatsNewUnread(){return localStorage.getItem(KEYS.whatsNewSeen)!==VERSION;}
+  function whatsNewCopy(th,en){return lang()==="th"?th:en;}
+  function updateWhatsNewBadges(){
+    const unread=whatsNewUnread();
+    qa("[data-v8472-new]").forEach(el=>el.hidden=!unread);
+    const btn=$("v8472WhatsNewBtn");if(btn){btn.title=whatsNewCopy("มีอะไรใหม่ใน Workday Journey","What's new in Workday Journey");btn.setAttribute("aria-label",btn.title);}
+  }
+  function renderWhatsNew(){
+    const host=$("v8472ChangelogList");if(!host)return;
+    host.innerHTML=WHATS_NEW_RELEASES.map((r,index)=>{
+      const notes=lang()==="th"?r.notesTh:r.notesEn;
+      return `<article class="v8472-release ${index===0?"latest":""}"><div class="v8472-release-rail"><span>${esc(r.icon)}</span><i></i></div><div class="v8472-release-card"><div class="v8472-release-head"><div><b>V${esc(r.version)}</b><strong>${esc(whatsNewCopy(r.th,r.en))}</strong></div>${index===0?`<em>${esc(whatsNewCopy("ล่าสุด","LATEST"))}</em>`:""}</div><ul>${notes.slice(0,4).map(note=>`<li>${esc(note)}</li>`).join("")}</ul></div></article>`;
+    }).join("");
+    const title=$("v8472ChangelogTitle"),help=$("v8472ChangelogHelp"),foot=$("v8472ChangelogFoot");
+    if(title)title.textContent=whatsNewCopy("มีอะไรใหม่","What's New");
+    if(help)help.textContent=whatsNewCopy("สรุป Patch และ Version แบบสั้น ๆ เพื่อดูว่าเราเพิ่มอะไรไปบ้าง","A quick history of the updates that shaped your Journey.");
+    if(foot)foot.textContent=whatsNewCopy("สรุปเฉพาะสิ่งสำคัญ · รายละเอียดสำหรับ Developer อยู่ใน README.md","Highlights only · developer details remain in README.md");
+  }
+  function ensureWhatsNewUi(){
+    const sideBtn=$("v8472WhatsNewBtn");
+    if(sideBtn&&!sideBtn.dataset.v8472Bound){sideBtn.dataset.v8472Bound="1";sideBtn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openWhatsNew();});}
+    const footerVersion=$("footerVersion");
+    if(footerVersion&&!footerVersion.dataset.v8472Bound){footerVersion.dataset.v8472Bound="1";footerVersion.classList.add("v8472-footer-version");footerVersion.setAttribute("role","button");footerVersion.setAttribute("tabindex","0");footerVersion.title="What's New";footerVersion.addEventListener("click",openWhatsNew);footerVersion.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openWhatsNew();}});}
+    if(!$("v8472ChangelogBackdrop")){
+      const wrap=document.createElement("div");wrap.id="v8472ChangelogBackdrop";wrap.className="v8472-changelog-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8472-changelog-modal" role="dialog" aria-modal="true" aria-labelledby="v8472ChangelogTitle"><button id="v8472ChangelogClose" class="v8472-changelog-close" type="button" aria-label="Close">×</button><div class="v8472-changelog-hero"><span>📰</span><div><p class="eyebrow">WORKDAY JOURNEY · V${esc(VERSION)}</p><h2 id="v8472ChangelogTitle"></h2><p id="v8472ChangelogHelp"></p></div></div><div id="v8472ChangelogList" class="v8472-changelog-list"></div><p id="v8472ChangelogFoot" class="v8472-changelog-foot"></p></section>`;document.body.appendChild(wrap);$("v8472ChangelogClose").onclick=closeWhatsNew;wrap.addEventListener("click",e=>{if(e.target===wrap)closeWhatsNew();});
+    }
+    renderWhatsNew();updateWhatsNewBadges();
+  }
+  function openWhatsNew(){ensureWhatsNewUi();rawSet(KEYS.whatsNewSeen,VERSION);updateWhatsNewBadges();renderWhatsNew();const el=$("v8472ChangelogBackdrop");if(!el)return;el.hidden=false;requestAnimationFrame(()=>el.classList.add("open"));}
+  function closeWhatsNew(){const el=$("v8472ChangelogBackdrop");if(!el)return;el.classList.remove("open");setTimeout(()=>{el.hidden=true;},150);}
+
   function renderProfileMenu(){
     const menu=$("v802ProfileMenu");if(!menu)return;
     const cfg=API.getConfig(),st=API.getState(),resolved=document.documentElement.dataset.theme||"light",signed=!!cloud.user;
@@ -441,12 +494,13 @@
       <div class="v802-menu-section">
         <button type="button" data-v802-action="theme"><span>${resolved==="dark"?"☀":"☾"}</span><div><strong>${esc(t("themeLabel"))}</strong><small>${esc(resolved==="dark"?t("darkLabel"):t("lightLabel"))}</small></div></button>
         ${installVisible?`<button type="button" data-v802-action="install"><span>＋</span><div><strong>${esc(t("installLabel"))}</strong><small>PWA</small></div></button>`:""}
+        <button type="button" data-v802-action="whatsnew"><span>📰</span><div><strong>${esc(whatsNewCopy("มีอะไรใหม่","What's New"))}</strong><small>V${esc(VERSION)}${whatsNewUnread()?` · ${esc(whatsNewCopy("ใหม่","NEW"))}`:""}</small></div></button>
         <button type="button" data-v802-action="settings"><span>⚙</span><div><strong>${esc(t("settingsLabel"))}</strong><small>Workday Journey</small></div></button>
       </div>
       ${signed?`<div class="v802-menu-section"><button class="danger" type="button" data-v802-action="signout"><span>↪</span><div><strong>${esc(t("signOut"))}</strong><small>${esc(cloud.user.email||"")}</small></div></button></div>`:""}`;
     // Reuse the exact avatar renderer from V7.7.1 for the menu preview.
     const src=$("profileQuickAvatar"); const dst=$("v802MenuAvatar"); if(src&&dst) dst.innerHTML=src.innerHTML;
-    qa("[data-v802-action]",menu).forEach(btn=>btn.onclick=async()=>{const action=btn.dataset.v802Action;closeProfileMenu();if(action==="profile")triggerLegacy("editJourneyBtn");if(action==="cloud")openAccountModal();if(action==="theme")triggerLegacy("themeToggle");if(action==="install")triggerLegacy("installAppBtn");if(action==="settings")location.hash="#/settings";if(action==="signout")await authSignOut();setTimeout(()=>{refreshTopContext();renderProfileMenu();},50);});
+    qa("[data-v802-action]",menu).forEach(btn=>btn.onclick=async()=>{const action=btn.dataset.v802Action;closeProfileMenu();if(action==="profile")triggerLegacy("editJourneyBtn");if(action==="cloud")openAccountModal();if(action==="theme")triggerLegacy("themeToggle");if(action==="install")triggerLegacy("installAppBtn");if(action==="whatsnew")openWhatsNew();if(action==="settings")location.hash="#/settings";if(action==="signout")await authSignOut();setTimeout(()=>{refreshTopContext();renderProfileMenu();},50);});
     qa("[data-v802-lang]",menu).forEach(btn=>btn.onclick=()=>{q(`.lang-btn[data-lang="${btn.dataset.v802Lang}"]`)?.click();setTimeout(()=>{refreshTopContext();renderProfileMenu();},80);});
   }
   function ensureCleanTopbar(){
@@ -492,7 +546,7 @@
     if(!$("v8PublicBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8PublicBackdrop";wrap.className="v8-public-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-public-view"><button id="v8PublicClose" class="v8-modal-close" type="button">×</button><div id="v8PublicViewBody"></div></section>`;document.body.appendChild(wrap);$("v8PublicClose").onclick=closePublicView;
     }
-    ensureSetupCloudPrompt();ensureSetupTemplates();
+    ensureSetupCloudPrompt();ensureSetupTemplates();ensureWhatsNewUi();
   }
 
   function openAccountModal(){ensureUi();const el=$("v8AuthBackdrop");el.hidden=false;requestAnimationFrame(()=>el.classList.add("open"));renderAccountModal();}
@@ -640,7 +694,7 @@
     if(location.hash.includes("settings"))ensureDataHealth();
     if(location.hash.includes("reports"))ensurePublicShareCard();
     const pending=localStorage.getItem(KEYS.pendingJournalDate);if(pending&&location.hash.includes("journal")&&$("v7JournalDate")){localStorage.removeItem(KEYS.pendingJournalDate);const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(pending);if(m){$("v7JournalDate").value=`${m[3]}/${m[2]}/${m[1]}`;$("v7JournalDate").dispatchEvent(new Event("change",{bubbles:true}));}}
-    updateCloudIndicators();refreshNotificationCenter();
+    updateCloudIndicators();refreshNotificationCenter();ensureWhatsNewUi();
   }
 
   document.addEventListener("input",e=>{
@@ -694,7 +748,7 @@
     },350);
   });
   document.addEventListener("click",e=>{if(!e.target.closest?.("#v8NotifPanel,#v8NotifBtn")&&$("v8NotifPanel")?.hidden===false)setNotificationPanel(false);if(!e.target.closest?.("#v802ProfileMenu,#profileQuickBtn"))closeProfileMenu();});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();closeProfileMenu();}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();closeProfileMenu();closeWhatsNew();}});
 
   // ---------- Boot ----------
   function boot(){
