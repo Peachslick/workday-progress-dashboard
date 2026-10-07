@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.3";
+  const VERSION = "8.4.7.4";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -56,10 +56,11 @@
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
 
 
-  // ---------- V8.4.7.3 Extended Version History ----------
+  // ---------- V8.4.7.4 What's New / Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.7.4",icon:"📈",th:"Hourly Market Update",en:"Hourly Market Update",notesTh:["Work Exchange อัปเดตราคาทุก 1 ชั่วโมงช่วง 07:00–16:00","เพิ่ม Countdown และเปลี่ยนรอบอัตโนมัติโดยไม่ต้อง Refresh","กราฟ Today มีจุดราคารายชั่วโมงมากขึ้น โดยคุมความผันผวนใกล้เคียงเดิม"],notesEn:["Work Exchange now updates prices hourly from 07:00–16:00","Added a live countdown and automatic round changes without refresh","Today charts have richer hourly data while keeping similar daily volatility"]},
     {version:"8.4.7.3",icon:"🕘",th:"Extended Version History",en:"Extended Version History",notesTh:["เพิ่มประวัติย้อนหลัง V8.0, V7 และ V6","เห็น Timeline การพัฒนา Workday Journey ได้ต่อเนื่องขึ้น","ยังคงสรุปแต่ละ Version แบบสั้น อ่านง่าย"],notesEn:["Extended history with V8.0, V7 and V6","Shows a more complete Workday Journey development timeline","Keeps every release short and easy to scan"]},
     {version:"8.4.7.2",icon:"✨",th:"What's New & Version History",en:"What's New & Version History",notesTh:["เพิ่มปุ่มดู Patch / Version จากในเว็บ","มีป้าย NEW จนกว่าจะเปิดอ่าน","สรุปแต่ละเวอร์ชันแบบสั้น อ่านจบไว"],notesEn:["Added an in-app Patch / Version history","NEW badge stays until the update is opened","Each release is summarized in a few quick bullets"]},
     {version:"8.4.7.1",icon:"☁",th:"Smart Cloud Sync",en:"Smart Cloud Sync",notesTh:["ลด Popup เลือกเครื่องนี้หรือ Cloud ที่ไม่จำเป็น","Merge การเปลี่ยนแปลงคนละข้อมูลให้อัตโนมัติ","UI state ไม่ถูกนับเป็น Cloud conflict"],notesEn:["Reduced unnecessary device/cloud conflict prompts","Automatically merges changes to different data","UI-only state no longer creates Cloud conflicts"]},

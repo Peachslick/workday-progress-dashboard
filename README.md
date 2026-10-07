@@ -1,31 +1,33 @@
 # Workday Journey
 
-**Current version: V8.4.7.3 – Extended Version History**
+**Current version: V8.4.7.4 – Hourly Market Update**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
 
-## V8.4.7.3 – Extended Version History
+## V8.4.7.4 – Hourly Market Update
 
-This patch expands the in-app update history so users can follow the Workday Journey timeline back through V8.0, V7, and V6 without reading developer documentation.
+This patch makes Work Exchange move more frequently during the workday while preserving the deterministic simulated-market design.
 
 ### What changed
 
-- Added a small **📰 What’s New** button beside the app version in the Sidebar.
-- Added **What’s New** to the Profile menu for mobile/collapsed Sidebar access.
-- The current version shows a **NEW** badge until the user opens the update history once.
-- Expanded Version History to cover the main **V6 → V8.4.7.3** milestones.
-- Added concise V8.0, V7, and V6 summaries so older foundations of the app are easier to understand.
-- Each version is intentionally limited to a few short highlights so the history stays easy to scan.
-- The read state is **device-local** and is excluded from Cloud conflict detection.
-- Clicking the version number in the footer also opens the Version History.
-- Supports Thai/English, Light/Dark themes, responsive layouts, and the existing font-size setting.
+- Work Exchange now has **10 hourly price points** per business day: `07:00` through `16:00`.
+- Trading is available Monday–Friday from **07:00 until 16:00**. The `16:00` point is the daily closing price.
+- Added a live **countdown to the next market round/open** in the market status card.
+- The Work Exchange page automatically moves to the next hourly round when the clock crosses an hour; users no longer need to refresh the page.
+- `Today` charts now show a richer hourly intraday path. `5D` and `All` continue to use each business day's current/closing value.
+- Hourly prices remain deterministic from date + slot + symbol + daily market event, so refreshing the same round does not reroll a different price.
+- Per-slot movement is scaled so changing from 4 rounds to 10 rounds does not simply multiply the overall daily volatility.
+- Trading Academy chart guidance now describes the hourly Today path.
+- Added this patch to the in-app **What's New / Version History**.
+- Updated the Service Worker cache and app version to `8.4.7.4`.
 
 ## Recent Version History
 
 | Version | Highlight |
 | --- | --- |
+| V8.4.7.4 | 📈 Hourly Market Update |
 | V8.4.7.3 | 🕘 Extended Version History |
-| V8.4.7.2 | 📰 What’s New & Version History |
+| V8.4.7.2 | 📰 What's New & Version History |
 | V8.4.7.1 | ☁ Smart Cloud Sync |
 | V8.4.7 | 🏆 Achievement Center UI Cleanup |
 | V8.4.6 | 🏅 Finance & Feature Achievements |
@@ -58,17 +60,17 @@ This patch expands the in-app update history so users can follow the Workday Jou
 - Work Exchange simulated market and Trading Academy
 - Project File Vault using private Supabase Storage
 - Local-first operation with optional Supabase Cloud Sync
-- In-app What’s New / Version History
+- In-app What's New / Version History
 
-## Updating from V8.4.7.2
+## Updating from V8.4.7.3
 
 Replace the changed files from this release in your existing project, then redeploy the site.
 
-The Service Worker cache name and asset query version were updated to `8.4.7.3`. If a browser still shows an older version, use the app’s **Clear App Cache / Reload Latest Version** option.
+The Service Worker cache name and asset query version were updated to `8.4.7.4`. If a browser still shows an older version, use the app's **Clear App Cache / Reload Latest Version** option.
 
 ## Supabase
 
-V8.4.7.3 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
+V8.4.7.4 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
 
 Continue using the same Supabase setup from the previous versions:
 
@@ -78,14 +80,18 @@ Continue using the same Supabase setup from the previous versions:
 
 Do not place a Supabase `service_role` key in frontend code. The browser should use the existing publishable/anon key configuration.
 
+## Work Exchange timing
+
+The market schedule is based on the browser's local clock and uses deterministic hourly rounds. A different system clock/timezone can therefore display a different current round. The simulated market still contains no real money or real securities.
+
 ## Local-first behavior
 
 The application still works without signing in. Local data remains stored in the browser. Cloud Sync is optional and becomes active after a user signs in.
 
-The key `wp-v8472-last-seen-version` is intentionally device-local. Reading What’s New on one device does not create a Cloud conflict or force another device to mark the update as read.
+The key `wp-v8472-last-seen-version` remains intentionally device-local. Reading What's New on one device does not create a Cloud conflict or force another device to mark the update as read.
 
 ## Version
 
-`Workday Journey V8.4.7.3`
+`Workday Journey V8.4.7.4`
 
-Patch focus: **Extended Version History / V6–V8 timeline / lightweight release communication**
+Patch focus: **Hourly Work Exchange prices / live market countdown / automatic round refresh**
