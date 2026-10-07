@@ -1,16 +1,16 @@
-const CACHE_NAME = "workday-journey-v8.4.7.5";
+const CACHE_NAME = "workday-journey-v8.4.7.6";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=8.4.7.5",
-  "./app.js?v=8.4.7.5",
-  "./v6.js?v=8.4.7.5",
-  "./v7.css?v=8.4.7.5",
-  "./v7.js?v=8.4.7.5",
-  "./v8.css?v=8.4.7.5",
-  "./v81.css?v=8.4.7.5",
-  "./v8.js?v=8.4.7.5",
-  "./v81.js?v=8.4.7.5",
+  "./styles.css?v=8.4.7.6",
+  "./app.js?v=8.4.7.6",
+  "./v6.js?v=8.4.7.6",
+  "./v7.css?v=8.4.7.6",
+  "./v7.js?v=8.4.7.6",
+  "./v8.css?v=8.4.7.6",
+  "./v81.css?v=8.4.7.6",
+  "./v8.js?v=8.4.7.6",
+  "./v81.js?v=8.4.7.6",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png"

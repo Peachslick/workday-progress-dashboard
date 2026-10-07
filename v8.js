@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.5";
+  const VERSION = "8.4.7.6";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -56,10 +56,11 @@
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
 
 
-  // ---------- V8.4.7.4 What's New / Version History ----------
+  // ---------- V8.4.7.6 What's New / Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.7.6",icon:"☁",th:"Cloud Reload Loop Hotfix",en:"Cloud Reload Loop Hotfix",notesTh:["แก้ปัญหาเว็บ Reload ซ้ำหลังอัป Version ขณะเปิด Cloud Sync","แยก App / Cache version markers ออกจากข้อมูล Cloud","เพิ่มตัวกัน Auto Reload Loop เพื่อให้หน้าเว็บยังใช้งานได้"],notesEn:["Fixed repeated page reloads after deploying a new version with Cloud Sync enabled","Made app/cache version markers device-local instead of Cloud data","Added an automatic reload-loop guard so the UI remains usable"]},
     {version:"8.4.7.5",icon:"🎨",th:"Tier Mastery Card Polish",en:"Tier Mastery Card Polish",notesTh:["รวม Tier Header และ Mastery Reward เป็น Card เดียวกัน","ใช้สีประจำ Tier ให้สอดคล้องกับเอฟเฟกต์ที่ปลดล็อก","แยกฉายาและเอฟเฟกต์ธีม พร้อมจัดช่องไฟให้อ่านง่ายขึ้น"],notesEn:["Unified Tier headers and Mastery rewards into one card","Applied tier colors that match the unlocked effect","Separated title and theme-effect rewards with cleaner spacing"]},
     {version:"8.4.7.4",icon:"📈",th:"Hourly Market Update",en:"Hourly Market Update",notesTh:["Work Exchange อัปเดตราคาทุก 1 ชั่วโมงช่วง 07:00–16:00","เพิ่ม Countdown และเปลี่ยนรอบอัตโนมัติโดยไม่ต้อง Refresh","กราฟ Today มีจุดราคารายชั่วโมงมากขึ้น โดยคุมความผันผวนใกล้เคียงเดิม"],notesEn:["Work Exchange now updates prices hourly from 07:00–16:00","Added a live countdown and automatic round changes without refresh","Today charts have richer hourly data while keeping similar daily volatility"]},
     {version:"8.4.7.3",icon:"🕘",th:"Extended Version History",en:"Extended Version History",notesTh:["เพิ่มประวัติย้อนหลัง V8.0, V7 และ V6","เห็น Timeline การพัฒนา Workday Journey ได้ต่อเนื่องขึ้น","ยังคงสรุปแต่ละ Version แบบสั้น อ่านง่าย"],notesEn:["Extended history with V8.0, V7 and V6","Shows a more complete Workday Journey development timeline","Keeps every release short and easy to scan"]},
@@ -107,7 +108,13 @@
     "wp-v8-notifications-initialized",
     "wp-v6-backup-toast",
     "wp-v6-recap-dismissed",
-    "wp-v6-last-backup-at"
+    "wp-v6-last-backup-at",
+    // V8.4.7.6: build/cache/reset markers belong to this browser deployment.
+    // Syncing them can make a newly deployed app fight an older Cloud snapshot
+    // and repeatedly reload while each side restores a different version marker.
+    "wp-app-version",
+    "wp-theme-default-version",
+    "wp-data-reset-version"
   ]);
   const SOFT_SYNC_KEYS = new Set([
     "wp-language","wp-locale","wp-theme","wp-font-family","wp-font-size","wp-density",
@@ -119,7 +126,7 @@
     "wp-seen-achievements","wp-completion-seen","wp-achievements-initialized",
     "wp-v7-achievement-flags","wp-v7-achievement-unlocked-at","wp-v7-ever-achievements",
     "wp-v74-achievements-migrated","wp-v81-retro-rewards-v1","wp-v82-coin-rebalance-v1",
-    "wp-theme-default-version","wp-data-reset-version","wp-app-version","wp-setup-completed"
+    "wp-setup-completed"
   ]);
 
   const isCloudMetaKey = key => String(key||"").startsWith("wp-v8-cloud-") || key === KEYS.dataUpdated;
@@ -231,6 +238,27 @@
   }
 
   function dispatchDataChanged(){ window.dispatchEvent(new CustomEvent("workday:v7-data-changed")); window.dispatchEvent(new CustomEvent("workday:v8-data-changed")); }
+
+  // V8.4.7.6 — never allow automatic Cloud reconciliation to create a reload loop.
+  // sessionStorage survives a reload but is isolated to this browser tab. If the
+  // exact same reconciled payload asks for another reload, refresh the UI in-place
+  // instead of reloading the document again.
+  const AUTO_RELOAD_GUARD_KEY = "wp-v8476-cloud-auto-reload";
+  function safeCloudAutoReload(data,delay=140){
+    const signature=payloadHash(data||collectLocalData());
+    try{
+      if(sessionStorage.getItem(AUTO_RELOAD_GUARD_KEY)===signature){
+        dispatchDataChanged();
+        requestEnhance(40);
+        return false;
+      }
+      sessionStorage.setItem(AUTO_RELOAD_GUARD_KEY,signature);
+    }catch{}
+    setTimeout(()=>location.reload(),delay);
+    return true;
+  }
+  function clearCloudAutoReloadGuard(){try{sessionStorage.removeItem(AUTO_RELOAD_GUARD_KEY);}catch{}}
+
   function toast(icon,message,type="info"){
     const stack=$("toastStack"); if(!stack)return;
     const node=document.createElement("div");node.className=`app-toast v7-toast toast-${type}`;node.setAttribute("role",type==="error"?"alert":"status");node.innerHTML=`<span>${icon}</span><div><strong>${esc(message)}</strong></div>`;stack.appendChild(node);
@@ -353,14 +381,14 @@
 
       // Exact logical match: refresh sync metadata only. Device-local UI state is
       // intentionally excluded, so tab/filter/sidebar changes never reopen a dialog.
-      if(localPayloadHash===cloudPayloadHash){markSynced(localData,remoteUpdatedAt);renderAccountModal();return;}
-      if(!meaningfulLocalData()){const changed=applyCloudPayload({...row.payload,data:cloudData},remoteUpdatedAt);if(changed)setTimeout(()=>location.reload(),120);return;}
+      if(localPayloadHash===cloudPayloadHash){markSynced(localData,remoteUpdatedAt);clearCloudAutoReloadGuard();renderAccountModal();return;}
+      if(!meaningfulLocalData()){const changed=applyCloudPayload({...row.payload,data:cloudData},remoteUpdatedAt);if(changed)safeCloudAutoReload(cloudData);return;}
 
       // If only soft preferences differ, resolve them by the most recently updated
       // side and quietly converge both copies without showing a conflict dialog.
       if(localConflictHash===cloudConflictHash){
         const merged=mergeSoftOnly(localData,cloudData,{preferLocal:preferLocalSoft}),changed=replaceSyncableLocalData(merged);
-        await uploadCloudState({silent:true});renderAccountModal();if(changed)setTimeout(()=>location.reload(),120);return;
+        await uploadCloudState({silent:true});renderAccountModal();if(changed)safeCloudAutoReload(merged);return;
       }
 
       let baseMap=readBaseMap();
@@ -376,7 +404,7 @@
         const merged=mergeFromBase(localData,cloudData,baseMap,{preferLocalSoft});
         if(!merged.conflicts.length){
           const changed=replaceSyncableLocalData(merged.localChoice);
-          await uploadCloudState({silent:true});renderAccountModal();if(changed)setTimeout(()=>location.reload(),120);return;
+          await uploadCloudState({silent:true});renderAccountModal();if(changed)safeCloudAutoReload(merged.localChoice);return;
         }
         cloud.conflictRow={...row,conflictKeys:merged.conflicts,localChoiceData:merged.localChoice,cloudChoiceData:merged.cloudChoice};
         cloud.status="error";updateCloudIndicators();openConflictModal(cloud.conflictRow);return;
@@ -416,7 +444,7 @@
   window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user,reconciling:cloud.reconciling,conflict:!!cloud.conflictRow,ready:cloud.initialReady})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
-  // ---------- V8.0.7 Cloud Reconciliation + Interaction Stability ----------
+  // ---------- V8.4.7.6 Cloud Reconciliation + Reload-loop Stability ----------
   const TOPBAR_ROUTES = {
     th:{
       dashboard:["🏠","แดชบอร์ด","ภาพรวมวันนี้และ Journey"],

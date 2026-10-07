@@ -1,8 +1,21 @@
 # Workday Journey
 
-**Current version: V8.4.7.5 – Tier Mastery Card Polish**
+**Current version: V8.4.7.6 – Cloud Reload Loop Hotfix**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
+
+## V8.4.7.6 – Cloud Reload Loop Hotfix
+
+This hotfix fixes a Cloud Sync reload loop that could make the app appear to refresh every second after deploying a new version.
+
+### What changed
+
+- `wp-app-version`, `wp-theme-default-version`, and `wp-data-reset-version` are now device-local markers and are no longer included in Cloud Sync payloads or conflict detection.
+- Prevents an older Cloud snapshot from restoring an older app version marker and fighting the newly deployed version on every page load.
+- Added a per-tab automatic reload guard: the same reconciled Cloud payload cannot trigger document reloads repeatedly.
+- Normal Cloud data, Smart Merge, manual **Use this device / Use Cloud**, and existing user data remain unchanged.
+- No Supabase SQL migration is required.
+- Updated the Service Worker cache and app version to `8.4.7.6`.
 
 ## V8.4.7.5 – Tier Mastery Card Polish
 
@@ -39,6 +52,7 @@ This patch makes Work Exchange move more frequently during the workday while pre
 
 | Version | Highlight |
 | --- | --- |
+| V8.4.7.6 | ☁ Cloud Reload Loop Hotfix |
 | V8.4.7.5 | 🎨 Tier Mastery Card Polish |
 | V8.4.7.4 | 📈 Hourly Market Update |
 | V8.4.7.3 | 🕘 Extended Version History |
@@ -77,15 +91,15 @@ This patch makes Work Exchange move more frequently during the workday while pre
 - Local-first operation with optional Supabase Cloud Sync
 - In-app What's New / Version History
 
-## Updating from V8.4.7.4
+## Updating from V8.4.7.5
 
 Replace the changed files from this release in your existing project, then redeploy the site.
 
-The Service Worker cache name and asset query version were updated to `8.4.7.5`. If a browser still shows an older version, use the app's **Clear App Cache / Reload Latest Version** option.
+The Service Worker cache name and asset query version were updated to `8.4.7.6`. If a browser still shows an older version, use the app's **Clear App Cache / Reload Latest Version** option.
 
 ## Supabase
 
-V8.4.7.5 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
+V8.4.7.6 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
 
 Continue using the same Supabase setup from the previous versions:
 
@@ -107,6 +121,6 @@ The key `wp-v8472-last-seen-version` remains intentionally device-local. Reading
 
 ## Version
 
-`Workday Journey V8.4.7.5`
+`Workday Journey V8.4.7.6`
 
-Patch focus: **Unified Tier Mastery cards / tier theme colors / improved reward typography**
+Patch focus: **Cloud reload-loop prevention / device-local version markers / safer auto reconciliation**
