@@ -1,0 +1,681 @@
+/* Workday Journey V8.5.2 - Core Work Pages Refresh
+   Scope: Dashboard / Daily Journal / Projects / Calendar / Reports
+   Visual-only layer. Existing work, security and data logic stay untouched. */
+
+:root {
+  --v852-section-gap: clamp(1rem, 1.8vw, 1.55rem);
+  --v852-panel-pad: clamp(1rem, 1.8vw, 1.5rem);
+  --v852-panel-radius: var(--ds-radius-xl, 1.25rem);
+  --v852-soft-radius: var(--ds-radius-lg, 1rem);
+  --v852-soft-border: color-mix(in srgb, var(--ds-border, var(--border)) 78%, transparent);
+  --v852-accent-border: color-mix(in srgb, var(--ds-accent, var(--accent)) 22%, var(--ds-border, var(--border)));
+  --v852-soft-accent: color-mix(in srgb, var(--ds-accent-soft, var(--accent-soft)) 64%, var(--surface));
+}
+
+body.v852-core-refresh main.dashboard {
+  gap: var(--v852-section-gap);
+}
+
+body.v852-core-refresh .v852-core-page {
+  gap: var(--v852-section-gap);
+}
+
+/* --------------------------------------------------------------------------
+   Shared core page hierarchy
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh .v852-core-page > .v7-page-heading {
+  padding: .2rem 0 .1rem;
+  margin-bottom: .15rem;
+  border-bottom: 0;
+}
+
+body.v852-core-refresh .v852-core-page > .v7-page-heading .v7-page-title > span {
+  width: 3.15rem;
+  height: 3.15rem;
+  border-radius: var(--ds-radius-lg);
+  border: 1px solid var(--v852-accent-border);
+  background: var(--v852-soft-accent);
+  box-shadow: none;
+}
+
+body.v852-core-refresh .v852-core-page > .v7-page-heading h2 {
+  margin-top: .2rem;
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  letter-spacing: -.02em;
+}
+
+body.v852-core-refresh .v852-core-page > .v7-page-heading .muted {
+  max-width: 58rem;
+  font-size: var(--ds-font-sm);
+}
+
+body.v852-core-refresh .v852-editor-surface {
+  position: relative;
+  overflow: hidden;
+  padding: var(--v852-panel-pad);
+  border: 1px solid var(--v852-soft-border);
+  border-radius: var(--v852-panel-radius);
+  box-shadow: var(--ds-shadow-sm);
+  background: var(--surface);
+}
+
+body.v852-core-refresh .v852-editor-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--work) 55%, var(--accent)));
+  opacity: .82;
+}
+
+body.v852-core-refresh .v852-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: .15rem;
+  border-bottom: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh .v852-editor-heading h3 {
+  margin: .2rem 0 .2rem;
+  font-size: var(--ds-font-lg);
+  line-height: var(--ds-line-tight);
+}
+
+body.v852-core-refresh .v852-editor-heading .muted {
+  margin: 0;
+  max-width: 42rem;
+  font-size: var(--ds-font-xs);
+  line-height: 1.55;
+}
+
+body.v852-core-refresh .v852-editor-dot {
+  width: .62rem;
+  height: .62rem;
+  flex: 0 0 auto;
+  margin-top: .45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 .36rem var(--accent-soft);
+}
+
+body.v852-core-refresh .v852-secondary-panel,
+body.v852-core-refresh .v852-detail-surface {
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+}
+
+body.v852-core-refresh .v852-kpi-strip {
+  gap: .75rem;
+}
+
+body.v852-core-refresh .v852-kpi-strip > .card {
+  position: relative;
+  min-height: 6.8rem;
+  padding: 1rem 1.1rem;
+  overflow: hidden;
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+  background: color-mix(in srgb, var(--surface-soft) 68%, var(--surface));
+}
+
+body.v852-core-refresh .v852-kpi-strip > .card::after {
+  content: "";
+  position: absolute;
+  right: -.9rem;
+  bottom: -.9rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  opacity: .65;
+}
+
+body.v852-core-refresh .v852-kpi-strip > .card span {
+  position: relative;
+  z-index: 1;
+  font-size: var(--ds-font-xs);
+}
+
+body.v852-core-refresh .v852-kpi-strip > .card strong {
+  position: relative;
+  z-index: 1;
+  margin-top: .4rem;
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  letter-spacing: -.03em;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard - work first, secondary information second
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-hero {
+  min-height: 7.3rem;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--v852-soft-border);
+  border-radius: var(--v852-panel-radius);
+  box-shadow: none;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--surface) 96%, transparent),
+    color-mix(in srgb, var(--accent-soft) 52%, var(--surface))
+  );
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-hero::after {
+  right: 12rem;
+  top: -6rem;
+  font-size: 12rem;
+  opacity: .55;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-hero h2 {
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  letter-spacing: -.025em;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-hero .clock-time {
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  letter-spacing: -.035em;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-mascot {
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--v852-soft-border);
+  box-shadow: none;
+  background: color-mix(in srgb, var(--surface-soft) 62%, var(--surface));
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-mascot .v77-mascot-stage {
+  transform: scale(.88);
+  transform-origin: center;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-focus-grid {
+  grid-template-columns: minmax(0, 1.7fr) minmax(18rem, .62fr);
+  gap: var(--v852-section-gap);
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-today-focus {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--v852-accent-border);
+  box-shadow: var(--ds-shadow-md);
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-today-focus::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--work));
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-today-focus .progress-ring {
+  width: clamp(9rem, 14vw, 11.5rem);
+  height: clamp(9rem, 14vw, 11.5rem);
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-today-focus .stat-box {
+  min-height: 4.3rem;
+  padding: .85rem .95rem;
+  border: 1px solid var(--v852-soft-border);
+  border-radius: var(--ds-radius-lg);
+  background: color-mix(in srgb, var(--surface-soft) 75%, transparent);
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-countdown-focus {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+  background: color-mix(in srgb, var(--surface-soft) 64%, var(--surface));
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-countdown-focus .digital-countdown {
+  margin-block: .65rem;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  letter-spacing: -.04em;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-timeline-focus {
+  padding-block: 1.15rem;
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-overview-grid {
+  grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(15rem, .65fr));
+  gap: .8rem;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-overview-grid > .card {
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-quick,
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-insights {
+  padding: 1rem 1.1rem;
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+  background: transparent;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-quick .section-heading,
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-insights .v7-card-title {
+  margin-bottom: .25rem;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-quick .v7-quick-grid,
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-insights .v76-insight-grid {
+  margin-top: .65rem;
+  gap: .65rem;
+}
+
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-quick .v7-quick-grid button,
+body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-insights .v76-insight-grid button {
+  min-height: 4.25rem;
+  padding: .75rem .85rem;
+  border-color: var(--v852-soft-border);
+  background: color-mix(in srgb, var(--surface-soft) 64%, var(--surface));
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Daily Journal - larger writing workspace + quieter history
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh[data-v7-route="journal"] .v7-journal-grid {
+  grid-template-columns: minmax(0, 1.55fr) minmax(21rem, .65fr);
+  gap: var(--v852-section-gap);
+}
+
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalForm {
+  gap: 1rem;
+  padding: var(--v852-panel-pad);
+}
+
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalForm > label > span,
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalForm .v7-field-label {
+  color: var(--text);
+  font-size: var(--ds-font-xs);
+  font-weight: 800;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalForm textarea {
+  min-height: 10rem;
+  padding: 1rem;
+  line-height: 1.65;
+  border-radius: var(--ds-radius-lg);
+  background: color-mix(in srgb, var(--surface-soft) 58%, var(--surface));
+}
+
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalWork {
+  min-height: 12rem;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] #v7JournalForm .v7-journal-meta {
+  gap: 1rem;
+  padding: 1rem;
+  border-color: var(--v852-soft-border);
+  background: color-mix(in srgb, var(--surface-soft) 58%, transparent);
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-secondary-panel {
+  position: sticky;
+  top: 5rem;
+  align-self: start;
+  max-height: calc(100vh - 6.2rem);
+  overflow: hidden auto;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--surface-soft) 52%, var(--surface));
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-journal-calendar {
+  padding: .2rem 0 1rem;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar {
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+  padding: .75rem 0;
+  margin: .75rem 0 .3rem;
+  border-top: 1px solid var(--v852-soft-border);
+  border-bottom: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar > :first-child {
+  grid-column: 1 / -1;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar .small-text-btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-history-list {
+  max-height: 27rem;
+  gap: .5rem;
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-history-list button {
+  padding: .75rem .8rem;
+  border-color: transparent;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+}
+
+body.v852-core-refresh[data-v7-route="journal"] .v852-history-list button:hover {
+  border-color: var(--v852-accent-border);
+  background: var(--surface);
+}
+
+/* --------------------------------------------------------------------------
+   Projects - editor first, library second
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh[data-v7-route="projects"] .v7-project-layout {
+  gap: var(--v852-section-gap);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-editor {
+  width: 100%;
+  padding: var(--v852-panel-pad);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-editor .v7-two-col {
+  gap: .9rem;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-editor textarea {
+  min-height: 8rem;
+  padding: 1rem;
+  line-height: 1.6;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-library {
+  padding-top: .3rem;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v7-project-list-heading {
+  align-items: flex-end;
+  padding: .15rem .1rem .75rem;
+  border-bottom: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v76-project-tabs {
+  padding: .22rem;
+  gap: .2rem;
+  border: 1px solid var(--v852-soft-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-soft) 78%, var(--surface));
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v76-project-tabs button {
+  min-height: 2.15rem;
+  padding: .4rem .75rem;
+  border-color: transparent;
+  background: transparent;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v76-project-tabs button.active {
+  border-color: var(--v852-accent-border);
+  background: var(--surface);
+  box-shadow: var(--ds-shadow-xs);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v7-project-cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+  margin-top: .9rem;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 14rem;
+  padding: 1rem;
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+  background: var(--surface);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card:hover {
+  border-color: var(--v852-accent-border);
+  box-shadow: var(--ds-shadow-sm);
+  transform: translateY(-1px);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card .v7-project-head strong {
+  font-size: var(--ds-font-sm);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card .v7-project-progress {
+  height: .48rem;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card > p {
+  flex: 1;
+  min-height: 3.2rem;
+  font-size: var(--ds-font-xs);
+  line-height: 1.55;
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card .v845-project-files-row {
+  margin-top: .75rem;
+  padding-top: .7rem;
+  border-top: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="projects"] .v852-project-card .v7-card-actions {
+  margin-top: .6rem;
+  padding-top: .55rem;
+  border-top: 1px solid var(--v852-soft-border);
+}
+
+/* --------------------------------------------------------------------------
+   Reports - KPI -> analysis -> detail
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh[data-v7-route="reports"] .v852-reports-page {
+  gap: 1rem;
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-detail-surface {
+  padding: var(--v852-panel-pad);
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-detail-surface .v7-card-title {
+  align-items: center;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-detail-surface .v7-table-wrap {
+  margin-top: .4rem;
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-detail-surface th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-report-primary,
+body.v852-core-refresh[data-v7-route="reports"] .v852-report-heatmap {
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-report-primary::after {
+  opacity: .45;
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-report-analytics {
+  gap: .8rem;
+}
+
+body.v852-core-refresh[data-v7-route="reports"] .v852-report-analytics > .card {
+  border-color: var(--v852-soft-border);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Calendar - calendar is the primary object, KPIs are context only
+   -------------------------------------------------------------------------- */
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-intro {
+  gap: 1rem;
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--v852-accent-border);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-heading {
+  align-items: flex-end;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-weekdays {
+  margin-top: 1rem;
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-grid {
+  gap: .42rem;
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-day {
+  min-height: 6rem;
+  border-radius: var(--ds-radius-lg);
+  border-color: var(--v852-soft-border);
+}
+
+body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-footnote {
+  margin-top: 1rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--v852-soft-border);
+}
+
+/* --------------------------------------------------------------------------
+   Dark mode + responsive tuning
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] body.v852-core-refresh .v852-editor-surface,
+html[data-theme="dark"] body.v852-core-refresh[data-v7-route="dashboard"] .v852-today-focus,
+html[data-theme="dark"] body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+}
+
+@media (max-width: 1320px) {
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-overview-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-end-overview {
+    grid-column: 1 / -1;
+  }
+  body.v852-core-refresh[data-v7-route="projects"] .v7-project-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-focus-grid,
+  body.v852-core-refresh[data-v7-route="journal"] .v7-journal-grid {
+    grid-template-columns: 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="journal"] .v852-secondary-panel {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-journey-overview {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  body.v852-core-refresh .v852-kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-overview-grid,
+  body.v852-core-refresh[data-v7-route="projects"] .v7-project-cards {
+    grid-template-columns: 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-journey-overview,
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-end-overview {
+    grid-column: auto;
+  }
+  body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar {
+    grid-template-columns: 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar > :first-child,
+  body.v852-core-refresh[data-v7-route="journal"] .v852-filter-bar .small-text-btn {
+    grid-column: auto;
+  }
+  body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-day {
+    min-height: 4.8rem;
+  }
+}
+
+@media (max-width: 560px) {
+  body.v852-core-refresh .v852-kpi-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+  body.v852-core-refresh .v852-editor-heading {
+    gap: .6rem;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-hero {
+    padding: 1rem;
+  }
+  body.v852-core-refresh[data-v7-route="dashboard"] .v852-dashboard-mascot {
+    grid-template-columns: 1fr;
+  }
+  body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary {
+    padding: .85rem;
+  }
+  body.v852-core-refresh[data-v7-route="calendar"] .v852-calendar-primary .calendar-day {
+    min-height: 4.1rem;
+    border-radius: var(--ds-radius-md);
+  }
+}
+
+/* V8.5.2 information order: core work first */
+body.v852-core-refresh[data-v7-route="dashboard"] .hero-card { order: 10; }
+body.v852-core-refresh[data-v7-route="dashboard"] #completionBanner { order: 20; }
+body.v852-core-refresh[data-v7-route="dashboard"] .main-grid { order: 30; }
+body.v852-core-refresh[data-v7-route="dashboard"] .timeline-card { order: 40; }
+body.v852-core-refresh[data-v7-route="dashboard"] #v77MascotCard { order: 50; }
+body.v852-core-refresh[data-v7-route="dashboard"] .three-grid { order: 60; }
+body.v852-core-refresh[data-v7-route="dashboard"] #v7DashboardQuick { order: 70; }
+body.v852-core-refresh[data-v7-route="dashboard"] #v76DashboardInsights { order: 80; }
+body.v852-core-refresh[data-v7-route="dashboard"] #v6DailyRecap { order: 90; }
+
+/* Let report intro children participate in the main page grid so analytics can
+   sit before the detailed monthly table without touching report logic. */
+body.v852-core-refresh[data-v7-route="reports"] #v7ReportsPage {
+  display: contents;
+}
+body.v852-core-refresh[data-v7-route="reports"] #v7ReportsPage > .v7-page-heading { order: 10; }
+body.v852-core-refresh[data-v7-route="reports"] #v7ReportsPage > .v7-report-kpis { order: 20; }
+body.v852-core-refresh[data-v7-route="reports"] .attendance-card { order: 30; }
+body.v852-core-refresh[data-v7-route="reports"] .smart-journey-grid { order: 40; }
+body.v852-core-refresh[data-v7-route="reports"] .heatmap-card { order: 50; }
+body.v852-core-refresh[data-v7-route="reports"] #v7ReportsPage > .v7-monthly-table-card { order: 60; }
+body.v852-core-refresh[data-v7-route="reports"] #v8PublicShareCard { order: 70; }
+
+/* Calendar is the primary workspace; KPI context follows it. */
+body.v852-core-refresh[data-v7-route="calendar"] #v7CalendarIntro {
+  display: contents;
+}
+body.v852-core-refresh[data-v7-route="calendar"] #v7CalendarIntro > .v7-page-heading { order: 10; }
+body.v852-core-refresh[data-v7-route="calendar"] .calendar-card { order: 20; }
+body.v852-core-refresh[data-v7-route="calendar"] #v7CalendarIntro > .v7-calendar-kpis { order: 30; }
+body.v852-core-refresh[data-v7-route="calendar"] #v8ScheduleTemplatesCard { order: 40; }

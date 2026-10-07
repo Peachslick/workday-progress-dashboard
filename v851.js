@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.5.1";
+  const VERSION = "8.5.2";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -25,8 +25,8 @@
     const footerText = q('.footer [data-i18n="footerText"]');
     if (footerText) {
       footerText.textContent = localStorage.getItem("wp-language") === "en"
-        ? `Workday Journey V${VERSION} · Global Design System · Security Hardening · Smart Cloud Sync · Local-first`
-        : `Workday Journey V${VERSION} · Global Design System · Security Hardening · Smart Cloud Sync · Local-first`;
+        ? `Workday Journey V${VERSION} · Core Work Pages Refresh · Global Design System · Security Hardening`
+        : `Workday Journey V${VERSION} · Core Work Pages Refresh · Global Design System · Security Hardening`;
     }
 
     document.body?.setAttribute("data-app-version", VERSION);
