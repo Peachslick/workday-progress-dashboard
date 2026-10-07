@@ -1,19 +1,20 @@
 # Workday Journey
 
-**Current version: V8.4.7.2 – What’s New & Version History**
+**Current version: V8.4.7.3 – Extended Version History**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
 
-## V8.4.7.2 – What’s New & Version History
+## V8.4.7.3 – Extended Version History
 
-This patch adds a lightweight in-app update history so users can quickly see what changed without reading developer documentation.
+This patch expands the in-app update history so users can follow the Workday Journey timeline back through V8.0, V7, and V6 without reading developer documentation.
 
 ### What changed
 
 - Added a small **📰 What’s New** button beside the app version in the Sidebar.
 - Added **What’s New** to the Profile menu for mobile/collapsed Sidebar access.
 - The current version shows a **NEW** badge until the user opens the update history once.
-- Added a compact Version History covering the main V8.1–V8.4.7.2 updates.
+- Expanded Version History to cover the main **V6 → V8.4.7.3** milestones.
+- Added concise V8.0, V7, and V6 summaries so older foundations of the app are easier to understand.
 - Each version is intentionally limited to a few short highlights so the history stays easy to scan.
 - The read state is **device-local** and is excluded from Cloud conflict detection.
 - Clicking the version number in the footer also opens the Version History.
@@ -23,6 +24,7 @@ This patch adds a lightweight in-app update history so users can quickly see wha
 
 | Version | Highlight |
 | --- | --- |
+| V8.4.7.3 | 🕘 Extended Version History |
 | V8.4.7.2 | 📰 What’s New & Version History |
 | V8.4.7.1 | ☁ Smart Cloud Sync |
 | V8.4.7 | 🏆 Achievement Center UI Cleanup |
@@ -36,6 +38,9 @@ This patch adds a lightweight in-app update history so users can quickly see wha
 | V8.3 | 💰 Work Bank |
 | V8.2 | 🎯 Daily Missions & Chests |
 | V8.1 | 🪙 Work Coins & Reward Shop |
+| V8.0 | ☁ Cloud Sync & Productivity Tools |
+| V7 | 🧭 Multi-page Workspace & Achievement Center |
+| V6 | 📓 Daily Journal, Project Tracker & Reports |
 
 ## Main Features
 
@@ -55,15 +60,15 @@ This patch adds a lightweight in-app update history so users can quickly see wha
 - Local-first operation with optional Supabase Cloud Sync
 - In-app What’s New / Version History
 
-## Updating from V8.4.7.1
+## Updating from V8.4.7.2
 
 Replace the changed files from this release in your existing project, then redeploy the site.
 
-The Service Worker cache name and asset query version were updated to `8.4.7.2`. If a browser still shows an older version, use the app’s **Clear App Cache / Reload Latest Version** option.
+The Service Worker cache name and asset query version were updated to `8.4.7.3`. If a browser still shows an older version, use the app’s **Clear App Cache / Reload Latest Version** option.
 
 ## Supabase
 
-V8.4.7.2 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
+V8.4.7.3 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
 
 Continue using the same Supabase setup from the previous versions:
 
@@ -81,6 +86,6 @@ The key `wp-v8472-last-seen-version` is intentionally device-local. Reading What
 
 ## Version
 
-`Workday Journey V8.4.7.2`
+`Workday Journey V8.4.7.3`
 
-Patch focus: **What’s New / Version History / lightweight release communication**
+Patch focus: **Extended Version History / V6–V8 timeline / lightweight release communication**

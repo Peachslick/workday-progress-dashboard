@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.2";
+  const VERSION = "8.4.7.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -56,10 +56,11 @@
   const t = (key, vars={}) => { let out = TEXT[lang()][key] || TEXT.en[key] || key; Object.entries(vars).forEach(([k,v]) => out = out.replaceAll(`{${k}}`, String(v))); return out; };
 
 
-  // ---------- V8.4.7.2 What's New / Version History ----------
+  // ---------- V8.4.7.3 Extended Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.7.3",icon:"🕘",th:"Extended Version History",en:"Extended Version History",notesTh:["เพิ่มประวัติย้อนหลัง V8.0, V7 และ V6","เห็น Timeline การพัฒนา Workday Journey ได้ต่อเนื่องขึ้น","ยังคงสรุปแต่ละ Version แบบสั้น อ่านง่าย"],notesEn:["Extended history with V8.0, V7 and V6","Shows a more complete Workday Journey development timeline","Keeps every release short and easy to scan"]},
     {version:"8.4.7.2",icon:"✨",th:"What's New & Version History",en:"What's New & Version History",notesTh:["เพิ่มปุ่มดู Patch / Version จากในเว็บ","มีป้าย NEW จนกว่าจะเปิดอ่าน","สรุปแต่ละเวอร์ชันแบบสั้น อ่านจบไว"],notesEn:["Added an in-app Patch / Version history","NEW badge stays until the update is opened","Each release is summarized in a few quick bullets"]},
     {version:"8.4.7.1",icon:"☁",th:"Smart Cloud Sync",en:"Smart Cloud Sync",notesTh:["ลด Popup เลือกเครื่องนี้หรือ Cloud ที่ไม่จำเป็น","Merge การเปลี่ยนแปลงคนละข้อมูลให้อัตโนมัติ","UI state ไม่ถูกนับเป็น Cloud conflict"],notesEn:["Reduced unnecessary device/cloud conflict prompts","Automatically merges changes to different data","UI-only state no longer creates Cloud conflicts"]},
     {version:"8.4.7",icon:"🏆",th:"Achievement Center UI Cleanup",en:"Achievement Center UI Cleanup",notesTh:["แยก Journey Challenges ออกจาก Feature Achievements","ปรับ Category และ Scrollbar ให้อ่านง่ายขึ้น"],notesEn:["Separated Journey Challenges from Feature Achievements","Improved category navigation and scrollbar styling"]},
@@ -72,7 +73,10 @@
     {version:"8.4",icon:"📈",th:"Work Exchange",en:"Work Exchange",notesTh:["เพิ่มตลาดหุ้นจำลองด้วย Work Coins","Portfolio, Buy/Sell, Watchlist และ Trading Achievements"],notesEn:["Added a simulated Work Coin market","Portfolio, buy/sell, watchlist and trading achievements"]},
     {version:"8.3",icon:"💰",th:"Work Bank",en:"Work Bank",notesTh:["เพิ่ม Wallet / Savings และดอกเบี้ยรายวัน","เริ่มระบบออม Work Coins"],notesEn:["Added Wallet / Savings and daily interest","Introduced Work Coin savings"]},
     {version:"8.2",icon:"🎯",th:"Daily Missions & Chests",en:"Daily Missions & Chests",notesTh:["เพิ่ม Daily Missions และระบบกล่องรางวัล","เพิ่ม Weekly Chest และ Theme Trial / Mascot XP"],notesEn:["Added Daily Missions and reward chests","Added Weekly Chest, Theme Trials and Mascot XP"]},
-    {version:"8.1",icon:"🪙",th:"Work Coins & Reward Shop",en:"Work Coins & Reward Shop",notesTh:["เริ่มระบบ Work Coins และ Coin History","เพิ่ม Reward Shop, Mascots, Themes และ Effects"],notesEn:["Introduced Work Coins and Coin History","Added Reward Shop, Mascots, Themes and Effects"]}
+    {version:"8.1",icon:"🪙",th:"Work Coins & Reward Shop",en:"Work Coins & Reward Shop",notesTh:["เริ่มระบบ Work Coins และ Coin History","เพิ่ม Reward Shop, Mascots, Themes และ Effects"],notesEn:["Introduced Work Coins and Coin History","Added Reward Shop, Mascots, Themes and Effects"]},
+    {version:"8.0",icon:"☁",th:"Cloud Sync & Productivity Tools",en:"Cloud Sync & Productivity Tools",notesTh:["เพิ่มบัญชี Supabase และ Cloud Sync แบบเลือกใช้","เพิ่ม Auto Save Draft, Notification Center และ Data Health"],notesEn:["Added optional Supabase accounts and Cloud Sync","Added Auto Save Draft, Notification Center and Data Health"]},
+    {version:"7",icon:"🧭",th:"Multi-page Workspace",en:"Multi-page Workspace",notesTh:["ปรับเว็บเป็นหลายหน้า พร้อม Sidebar และ Navigation ที่ชัดเจน","ขยาย Achievement Center, Titles, Profile และ Settings"],notesEn:["Moved the app into a multi-page workspace with Sidebar navigation","Expanded the Achievement Center, titles, profile and settings"]},
+    {version:"6",icon:"📓",th:"Journal, Projects & Reports",en:"Journal, Projects & Reports",notesTh:["เพิ่ม Daily Work Journal และ Project Tracker เป็นแกนหลักของ Journey","เพิ่ม Monthly / Final Report, Calendar Presets และระบบ Backup"],notesEn:["Introduced Daily Work Journal and Project Tracker as core Journey tools","Added Monthly / Final Reports, Calendar Presets and backup tools"]}
   ];
 
   const ORIG_SET = Storage.prototype.setItem;
