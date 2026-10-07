@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.7";
+  const VERSION = "8.4.8";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -98,10 +98,11 @@
   const authT = key => AUTH_TEXT[lang()][key] || AUTH_TEXT.en[key] || key;
 
 
-  // ---------- V8.4.7.7 What's New / Version History ----------
+  // ---------- V8.4.8 What's New / Version History ----------
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.4.8",icon:"🎟",th:"Reward Codes & Developer Control Center",en:"Reward Codes & Developer Control Center",notesTh:["เพิ่ม Reward Code ใน Reward Shop พร้อม Coins, Items, Chest และ Bundle","เพิ่ม Code Exclusive Items และบันทึกสิทธิ์ Redeem ผ่าน Supabase","เพิ่ม Developer Control Center สำหรับ Owner เพื่อจัดการ Code และ Economy Tools"],notesEn:["Added Reward Codes in the Reward Shop with Coins, items, chests and bundles","Added code-exclusive items with Supabase-backed redemption tracking","Added an Owner-only Developer Control Center for code management and economy tools"]},
     {version:"8.4.7.7",icon:"👤",th:"Account & Authentication UX Refresh",en:"Account & Authentication UX Refresh",notesTh:["แยก Flow เข้าสู่ระบบและสร้างบัญชีให้ชัดเจน","เพิ่ม Success Popup กลางจอ พร้อม Error ที่อ่านเข้าใจง่าย","รองรับ Show Password, Confirm Password และ Hook สำหรับกลับไปทำ Action เดิมหลัง Login"],notesEn:["Separated sign-in and account-creation flows","Added centered success states with clearer inline errors","Added password visibility, password confirmation and a post-login return-action hook"]},
     {version:"8.4.7.6",icon:"☁",th:"Cloud Reload Loop Hotfix",en:"Cloud Reload Loop Hotfix",notesTh:["แก้ปัญหาเว็บ Reload ซ้ำหลังอัป Version ขณะเปิด Cloud Sync","แยก App / Cache version markers ออกจากข้อมูล Cloud","เพิ่มตัวกัน Auto Reload Loop เพื่อให้หน้าเว็บยังใช้งานได้"],notesEn:["Fixed repeated page reloads after deploying a new version with Cloud Sync enabled","Made app/cache version markers device-local instead of Cloud data","Added an automatic reload-loop guard so the UI remains usable"]},
     {version:"8.4.7.5",icon:"🎨",th:"Tier Mastery Card Polish",en:"Tier Mastery Card Polish",notesTh:["รวม Tier Header และ Mastery Reward เป็น Card เดียวกัน","ใช้สีประจำ Tier ให้สอดคล้องกับเอฟเฟกต์ที่ปลดล็อก","แยกฉายาและเอฟเฟกต์ธีม พร้อมจัดช่องไฟให้อ่านง่ายขึ้น"],notesEn:["Unified Tier headers and Mastery rewards into one card","Applied tier colors that match the unlocked effect","Separated title and theme-effect rewards with cleaner spacing"]},
@@ -322,12 +323,12 @@
       cloud.client=window.supabase.createClient(cfg.url.replace(/\/$/,""),cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       cloud.client.auth.onAuthStateChange((event,session)=>{
         cloud.session=session||null; cloud.user=session?.user||null;
-        if(event==="SIGNED_OUT"){cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;cloud.initialReady=false;updateCloudIndicators();renderAccountModal();return;}
+        if(event==="SIGNED_OUT"){cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;cloud.initialReady=false;updateCloudIndicators();renderAccountModal();try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:false}}));}catch{}return;}
         if(session?.user){
           const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";
           if(previousUser&&previousUser!==session.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;}
           setCloudMeta(KEYS.cloudUserId,session.user.id);
-          cloud.status=navigator.onLine?"syncing":"offline";updateCloudIndicators();if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(()=>reconcileCloudOnLogin(),50);
+          cloud.status=navigator.onLine?"syncing":"offline";updateCloudIndicators();try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:true,userId:session.user.id,email:session.user.email||""}}));}catch{}if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(()=>reconcileCloudOnLogin(),50);
         }
       });
       cloud.client.auth.getSession().then(({data})=>{
@@ -530,7 +531,7 @@
     }catch(error){setAuthError(friendlyAuthError(error,"signup"));}
     finally{setAuthBusy(false,"signup");}
   }
-  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";cloud.initialReady=false;cloud.conflictRow=null;authUi.mode="choose";authUi.error="";authUi.success=null;authUi.returnAction="";updateCloudIndicators();renderAccountModal();}
+  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";cloud.initialReady=false;cloud.conflictRow=null;authUi.mode="choose";authUi.error="";authUi.success=null;authUi.returnAction="";updateCloudIndicators();renderAccountModal();try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event:"SIGNED_OUT",signedIn:false}}));}catch{}}
   async function deleteCloudState(){
     if(!cloud.client||!cloud.user)return true;
     try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
@@ -553,7 +554,8 @@
       missions:["🎯","ภารกิจรายวัน","Daily Missions, Daily Chest และ Weekly Chest"],
       bank:["🏦","Work Bank","Savings, Daily Interest และ Work Coins"],
       exchange:["📈","Work Exchange","ตลาดหุ้นจำลอง Portfolio และ Trading ด้วย Work Coins"],
-      rewards:["🎁","รางวัล","Mascot, Accessories, Frames, Theme และ Effect"],
+      rewards:["🎁","รางวัล","Reward Shop, Reward Codes และของสะสม"],
+      developer:["🛠","Developer Control Center","Reward Codes, Redeem History และ Owner Economy Tools"],
       settings:["⚙️","ตั้งค่า","โปรไฟล์ การแสดงผล Cloud และข้อมูล"]
     },
     en:{
@@ -566,7 +568,8 @@
       missions:["🎯","Daily Missions","Daily Missions, Daily Chest and Weekly Chest"],
       bank:["🏦","Work Bank","Savings, daily interest and Work Coins"],
       exchange:["📈","Work Exchange","Simulated market, portfolio and Work Coin trading"],
-      rewards:["🎁","Rewards","Mascots, accessories, frames, themes and effects"],
+      rewards:["🎁","Rewards","Reward Shop, Reward Codes and collections"],
+      developer:["🛠","Developer Control Center","Reward Codes, redemption history and Owner Economy Tools"],
       settings:["⚙️","Settings","Profile, appearance, cloud and data"]
     }
   };

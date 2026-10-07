@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7.7";
+  const VERSION = "8.4.8";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -235,7 +235,8 @@
     { id:"hamster", type:"mascot", price:450, emoji:"🐹", th:"Coffee Hamster", en:"Coffee Hamster", accent:"#bf7b4a", rarity:"rare" },
     { id:"fox", type:"mascot", price:650, emoji:"🦊", th:"Coding Fox", en:"Coding Fox", accent:"#f28a38", rarity:"epic" },
     { id:"penguin", type:"mascot", price:900, emoji:"🐧", th:"Executive Penguin", en:"Executive Penguin", accent:"#4678b8", rarity:"epic" },
-    { id:"dragon", type:"mascot", price:1500, emoji:"🐉", th:"Journey Dragon", en:"Journey Dragon", accent:"#8b64ef", rarity:"legendary", finale:true }
+    { id:"dragon", type:"mascot", price:1500, emoji:"🐉", th:"Journey Dragon", en:"Journey Dragon", accent:"#8b64ef", rarity:"legendary", finale:true },
+    { id:"developerChick", type:"mascot", price:-1, emoji:"🐥", th:"Developer Chick", en:"Developer Chick", accent:"#3b82f6", rarity:"legendary", codeExclusive:true, descTh:"Mascot ลับสำหรับ Reward Code และ Owner Event เท่านั้น", descEn:"A secret Mascot available only through Reward Codes and Owner events" }
   ];
   const THEMES = [
     { id:"default", type:"theme", price:0, icon:"◐", nameKey:"defaultTheme", descKey:"defaultTheme", rarity:"common" },
@@ -245,7 +246,8 @@
     { id:"midnight", type:"theme", price:400, icon:"🌙", th:"Midnight Office", en:"Midnight Office", descTh:"โทนน้ำเงินเที่ยงคืนเต็มหน้า พร้อมแสงเมืองและประกาย Office Night", descEn:"A full-page midnight-blue office atmosphere with city glow and subtle night lights", rarity:"rare" },
     { id:"sakuraNight", type:"theme", price:600, icon:"🌸", th:"Sakura Night", en:"Sakura Night", descTh:"ซากุระยามค่ำคืน โทนม่วงชมพูเข้มพร้อมกลีบดอกไม้เรืองแสง", descEn:"Night sakura in deep violet and pink with glowing drifting petals", rarity:"epic" },
     { id:"auroraGalaxy", type:"theme", price:900, icon:"🪐", th:"Aurora Galaxy", en:"Aurora Galaxy", descTh:"ออโรราผสมกาแล็กซีเต็มจอ มีดาวและเนบิวลาเคลื่อนไหวแบบ Premium", descEn:"Premium full-screen aurora galaxy with stars, nebula light and animated depth", rarity:"legendary" },
-    { id:"goldenExecutive", type:"theme", price:1200, icon:"🏆", th:"Golden Executive", en:"Golden Executive", descTh:"Theme Finale สีดำทองหรู พร้อมแสงทองพาดผ่านและบรรยากาศ Legendary", descEn:"A luxurious finale black-and-gold theme with sweeping golden light", rarity:"legendary", finale:true }
+    { id:"goldenExecutive", type:"theme", price:1200, icon:"🏆", th:"Golden Executive", en:"Golden Executive", descTh:"Theme Finale สีดำทองหรู พร้อมแสงทองพาดผ่านและบรรยากาศ Legendary", descEn:"A luxurious finale black-and-gold theme with sweeping golden light", rarity:"legendary", finale:true },
+    { id:"secretGalaxy", type:"theme", price:-1, icon:"🌠", th:"Secret Galaxy", en:"Secret Galaxy", descTh:"Theme ลับโทน Cosmic Blue / Violet สำหรับผู้ได้รับ Reward Code", descEn:"A code-exclusive cosmic blue and violet theme", rarity:"legendary", codeExclusive:true }
   ];
   const EFFECTS = [
     { id:"none", type:"effect", price:0, icon:"○", nameKey:"noneEffect", descKey:"noneEffect", rarity:"common" },
@@ -255,21 +257,24 @@
     { id:"fallingStars", type:"effect", price:350, icon:"🌠", th:"Falling Stars", en:"Falling Stars", descTh:"ดาวตกพาดผ่านหน้าจอเป็นระยะ พร้อมประกายแสงบาง ๆ รอบ Journey", descEn:"Shooting stars sweep across the screen with a soft luminous trail", rarity:"rare" },
     { id:"fireflies", type:"effect", price:500, icon:"✨", th:"Fireflies", en:"Fireflies", descTh:"หิ่งห้อยเรืองแสงลอยรอบหน้าจอแบบนุ่มนวล ดูสงบแต่โดดเด่น", descEn:"Soft glowing fireflies drift around the screen for a calm premium atmosphere", rarity:"epic" },
     { id:"galaxyTrail", type:"effect", price:750, icon:"💫", th:"Galaxy Trail", en:"Galaxy Trail", descTh:"อนุภาคกาแล็กซีหมุนและไหลผ่านหน้าจอ พร้อมแสงสีม่วงน้ำเงิน", descEn:"Galaxy particles orbit and flow across the screen with violet-blue light", rarity:"epic" },
-    { id:"legendaryCelebration", type:"effect", price:1000, icon:"👑", th:"Legendary Celebration", en:"Legendary Celebration", descTh:"Finale Effect ระดับ Legendary: ดาว แสง วง Aura และ Confetti เต็มหน้าจอ", descEn:"Legendary finale effect with stars, aura rings, light bursts and full-screen confetti", rarity:"legendary", finale:true }
+    { id:"legendaryCelebration", type:"effect", price:1000, icon:"👑", th:"Legendary Celebration", en:"Legendary Celebration", descTh:"Finale Effect ระดับ Legendary: ดาว แสง วง Aura และ Confetti เต็มหน้าจอ", descEn:"Legendary finale effect with stars, aura rings, light bursts and full-screen confetti", rarity:"legendary", finale:true },
+    { id:"coinRain", type:"effect", price:-1, icon:"🪙", th:"Coin Rain", en:"Coin Rain", descTh:"ฝน Work Coins ลอยลงทั่วหน้าจอแบบ Code Exclusive", descEn:"A code-exclusive shower of animated Work Coins", rarity:"legendary", codeExclusive:true }
   ];
   const ACCESSORIES = [
     { id:"none", type:"accessory", price:0, icon:"○", th:"No Accessory", en:"No Accessory", descTh:"ใช้ Accessory ตามสถานะ Workday แบบเดิม", descEn:"Use the default Workday-state accessory", rarity:"common" },
     { id:"glasses", type:"accessory", price:120, icon:"👓", th:"Office Glasses", en:"Office Glasses", descTh:"แว่นออฟฟิศสำหรับ Mascot ที่อยากดูจริงจังขึ้นอีกนิด", descEn:"Office glasses for a smarter, focused Mascot look", rarity:"common" },
     { id:"headphones", type:"accessory", price:180, icon:"🎧", th:"Focus Headphones", en:"Focus Headphones", descTh:"หูฟังโหมด Focus แสดงบน Mascot และ Avatar ที่ใช้ Mascot", descEn:"Focus headphones shown on your Mascot and Mascot avatar", rarity:"rare" },
     { id:"laptop", type:"accessory", price:250, icon:"💻", th:"Work Laptop", en:"Work Laptop", descTh:"Laptop คู่ใจสำหรับโหมดทำงานจริงจังของ Mascot", descEn:"A work laptop companion for your productive Mascot", rarity:"rare" },
-    { id:"crown", type:"accessory", price:500, icon:"👑", th:"Journey Crown", en:"Journey Crown", descTh:"มงกุฎ Limited สำหรับช่วง Finale ของ Workday Journey", descEn:"A limited crown made for the Workday Journey finale", rarity:"legendary", finale:true }
+    { id:"crown", type:"accessory", price:500, icon:"👑", th:"Journey Crown", en:"Journey Crown", descTh:"มงกุฎ Limited สำหรับช่วง Finale ของ Workday Journey", descEn:"A limited crown made for the Workday Journey finale", rarity:"legendary", finale:true },
+    { id:"developerCrown", type:"accessory", price:-1, icon:"🛠️", th:"Developer Crown", en:"Developer Crown", descTh:"Accessory ลับสำหรับ Owner Pack และ Reward Code", descEn:"A secret accessory for Owner Packs and Reward Codes", rarity:"legendary", codeExclusive:true }
   ];
   const FRAMES = [
     { id:"none", type:"frame", price:0, icon:"○", th:"No Frame", en:"No Frame", descTh:"ใช้กรอบ Profile แบบมาตรฐาน", descEn:"Use the standard profile avatar frame", rarity:"common" },
     { id:"neonBlue", type:"frame", price:200, icon:"🔵", th:"Neon Blue Frame", en:"Neon Blue Frame", descTh:"กรอบ Neon สีฟ้า แสดงที่ Avatar ใน Sidebar, Topbar และ Profile", descEn:"Blue neon frame shown on Sidebar, Topbar and Profile avatars", rarity:"common" },
     { id:"sakuraFrame", type:"frame", price:300, icon:"🌸", th:"Sakura Frame", en:"Sakura Frame", descTh:"กรอบชมพูซากุระพร้อม Glow เบา ๆ รอบ Avatar", descEn:"Sakura-pink profile frame with a soft glow", rarity:"rare" },
     { id:"auroraFrame", type:"frame", price:450, icon:"🌌", th:"Aurora Frame", en:"Aurora Frame", descTh:"กรอบ Aurora ไล่สีพร้อมแสงเคลื่อนไหวรอบ Profile", descEn:"Animated aurora gradient frame around your profile avatar", rarity:"epic" },
-    { id:"championGold", type:"frame", price:750, icon:"🏆", th:"Journey Champion Frame", en:"Journey Champion Frame", descTh:"กรอบทอง Legendary รุ่น Finale สำหรับโชว์ Journey ช่วงสุดท้าย", descEn:"Legendary gold finale frame for your completed Journey", rarity:"legendary", finale:true }
+    { id:"championGold", type:"frame", price:750, icon:"🏆", th:"Journey Champion Frame", en:"Journey Champion Frame", descTh:"กรอบทอง Legendary รุ่น Finale สำหรับโชว์ Journey ช่วงสุดท้าย", descEn:"Legendary gold finale frame for your completed Journey", rarity:"legendary", finale:true },
+    { id:"founderFrame", type:"frame", price:-1, icon:"🔷", th:"Founder Frame", en:"Founder Frame", descTh:"กรอบ Profile Code Exclusive สำหรับกิจกรรมพิเศษและผู้ร่วม Journey รุ่นแรก", descEn:"A code-exclusive profile frame for special events and early Journey users", rarity:"legendary", codeExclusive:true }
   ];
   const ALL_REWARDS = [...MASCOTS, ...ACCESSORIES, ...FRAMES, ...THEMES, ...EFFECTS];
 
@@ -313,6 +318,10 @@
     dragon:{
       th:{before:"ตำนานยังหลับอยู่... รอเวลาแห่ง Journey",start:"เปลวไฟแรกของวันนี้ถูกจุดแล้ว",work:"พลัง Journey กำลังเพิ่มขึ้น ลุยต่อ!",half:"ครึ่งทางแล้ว เปลวไฟยิ่งสว่างขึ้น",almost:"ประตูสุดท้ายอยู่ตรงหน้า!",break:"แม้มังกรก็ต้องพักเพื่อสะสมพลัง",done:"วันนี้พิชิตแล้ว! Legendary Finish 🐉",rest:"มังกรเฝ้าสมบัติในวันพัก",holiday:"อาณาจักรประกาศวันหยุด",leave:"พักเพื่อกลับมาแข็งแกร่งกว่าเดิม",journeyDone:"ตำนานสมบูรณ์แล้ว — คุณคือ Journey Legend 👑"},
       en:{before:"The legend still sleeps… waiting for Journey time",start:"Today's first flame has been lit",work:"Journey power is rising — keep going",half:"Halfway. The flame burns brighter",almost:"The final gate is right ahead",break:"Even dragons rest to rebuild power",done:"Today conquered — Legendary Finish 🐉",rest:"The dragon guards the treasure on rest days",holiday:"The kingdom declared a holiday",leave:"Rest and return stronger",journeyDone:"The legend is complete — you are a Journey Legend 👑"}
+    },
+    developerChick:{
+      th:{before:"ระบบพร้อมแล้ว รอเวลาเริ่ม Journey 🧑‍💻",start:"Boot complete! เริ่มสร้างวันนี้กัน",work:"เขียน Journey ต่อทีละ Commit",half:"ครึ่งวันแล้ว Build ยังเขียวอยู่!",almost:"อีกนิดเดียว เตรียม Deploy วันนี้",break:"พักก่อน เดี๋ยว Chick เฝ้า Console ให้",done:"Deploy วันนี้สำเร็จ 100% 🚀",rest:"Maintenance day — พักระบบบ้าง",holiday:"Production ปิดวันนี้ พักได้เต็มที่",leave:"พักก่อน เดี๋ยวงานค่อยกลับมาแก้",journeyDone:"Final release shipped. Journey complete! 🐥🚀"},
+      en:{before:"System ready — waiting for Journey start",start:"Boot complete. Let's build today",work:"Keep committing progress one step at a time",half:"Halfway and the build is still green",almost:"Almost there — prepare today's deploy",break:"Take a break. Chick will watch the console",done:"Today's deploy completed 100% 🚀",rest:"Maintenance day — systems need rest too",holiday:"Production is closed today. Enjoy the break",leave:"Rest first. The work can wait",journeyDone:"Final release shipped. Journey complete! 🐥🚀"}
     }
   });
 
@@ -624,6 +633,9 @@
     if(effect === "galaxyTrail"){
       return `<i class="v831-fx-galaxy-core"></i>`+Array.from({length:30},(_,i)=>`<i class="v831-fx-galaxy-orb o${i%4}" style="--x:${(i*47+6)%96}%;--y:${(i*29+10)%90}%;--delay:${-((i*17)%95)/10}s;--dur:${7+(i%6)*.9}s;--size:${5+(i%5)*3}px"></i>`).join("");
     }
+    if(effect === "coinRain"){
+      return Array.from({length:38},(_,i)=>`<i class="v848-coin-rain" style="--x:${(i*37+4)%98}%;--delay:${-((i*13)%85)/10}s;--dur:${4.5+(i%7)*.55}s;--size:${15+(i%4)*3}px">🪙</i>`).join("");
+    }
     return "";
   }
 
@@ -695,9 +707,11 @@
     let action = "";
     if (equipped) action = `<button type="button" class="v81-reward-btn equipped" disabled>✓ ${esc(t("equipped"))}</button>`;
     else if (owned) action = `<button type="button" class="v81-reward-btn" data-v81-equip="${esc(reward.type)}:${esc(reward.id)}">${esc(t("equip"))}</button>`;
+    else if(reward.codeExclusive) action = `<button type="button" class="v81-reward-btn v848-code-locked" disabled>🔒 CODE EXCLUSIVE</button>`;
     else if(!available) action = `<button type="button" class="v81-reward-btn finale-ended" disabled>🎓 ${esc(t("finaleEnded"))}</button>`;
     else action = `<button type="button" class="v81-reward-btn buy" data-v81-buy="${esc(reward.type)}:${esc(reward.id)}" ${currentBalance<reward.price?'data-low="1"':""}>🪙 ${reward.price.toLocaleString()} · ${esc(t("buy"))}</button>`;
-    return `<article class="v81-reward-card ${owned?"owned":"locked"} ${equipped?"active":""} rarity-${esc(reward.rarity||"common")} ${reward.finale?"finale":""}" data-kind="${esc(reward.type)}" data-reward="${esc(reward.id)}"><div class="v831-card-badges"><span class="v831-rarity ${esc(reward.rarity||"common")}">${esc(rarityName(reward))}</span>${reward.finale?`<span class="v831-limited">${esc(t("limited"))}</span>`:""}</div><div class="v81-reward-visual" style="--reward-accent:${esc(reward.accent||"#6d8cff")}">${visual}</div><div class="v81-reward-copy"><div class="v81-reward-title"><strong>${esc(rewardName(reward))}</strong>${owned?`<span>${esc(t("owned"))}</span>`:`<span>🪙 ${reward.price}</span>`}</div><p>${esc(desc)}</p></div>${action}</article>`;
+    const ownershipLabel=owned?`<span>${esc(t("owned"))}</span>`:(reward.codeExclusive?`<span>🎟 CODE</span>`:`<span>🪙 ${reward.price}</span>`);
+    return `<article class="v81-reward-card ${owned?"owned":"locked"} ${equipped?"active":""} rarity-${esc(reward.rarity||"common")} ${reward.finale?"finale":""} ${reward.codeExclusive?"v848-code-exclusive":""}" data-kind="${esc(reward.type)}" data-reward="${esc(reward.id)}"><div class="v831-card-badges"><span class="v831-rarity ${esc(reward.rarity||"common")}">${esc(rarityName(reward))}</span>${reward.codeExclusive?`<span class="v848-code-badge">🎟 CODE EXCLUSIVE</span>`:""}${reward.finale?`<span class="v831-limited">${esc(t("limited"))}</span>`:""}</div><div class="v81-reward-visual" style="--reward-accent:${esc(reward.accent||"#6d8cff")}">${visual}</div><div class="v81-reward-copy"><div class="v81-reward-title"><strong>${esc(rewardName(reward))}</strong>${ownershipLabel}</div><p>${esc(desc)}</p></div>${action}</article>`;
   }
   function collectableRewards(){ return ALL_REWARDS.filter(r=>r.price>0); }
   function categoryCollection(type){ const list=collectableRewards().filter(r=>r.type===type),owned=ownedRewards();return{owned:list.filter(r=>owned.has(rewardKey(r))).length,total:list.length}; }
@@ -777,7 +791,7 @@
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
-    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.7.7</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
+    root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
       ${collectionMarkup()}
       ${dailyMarkup()}
@@ -793,6 +807,7 @@
     qa("[data-v844-daily-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v844DailyBuy.split(":"); purchaseReward(rewardBy(type,id),"daily"); }));
     qa("[data-v832-weekly-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v832WeeklyBuy.split(":"); purchaseReward(rewardBy(type,id),"weekly"); }));
     qa("[data-v81-equip]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Equip.split(":"); equipReward(rewardBy(type,id)); }));
+    setTimeout(()=>window.WorkdayV848?.enhanceRewards?.(),0);
   }
 
 
@@ -999,19 +1014,70 @@
     // Save first, animate second: refresh/reload during the popup can never reroll this chest.
     applyEquippedRewards(true);refreshAll();showChestRewardModal(kind,resolved);
   }
+  function externalChestReward(kind,seed){
+    const mode=["daily","weekly","mystery"].includes(kind)?kind:"mystery",roll=seedNumber(`external:${mode}:${seed}`)%100;
+    if(mode==="daily"){
+      if(roll<72){const coins=[10,15,20,25,30][seedNumber(`${seed}:coins`)%5];return{type:"coins",coins,text:`+${coins} Coins`};}
+      if(roll<86)return{type:"trial",hours:24,text:lang()==="th"?"Theme Trial 24 ชั่วโมง":"24h Theme Trial"};
+      return{type:"xp",xp:[20,25,30,40][seedNumber(`${seed}:xp`)%4],text:"Mascot XP"};
+    }
+    if(mode==="weekly"){
+      if(roll<62){const coins=[50,60,70,80,100][seedNumber(`${seed}:coins`)%5];return{type:"coins",coins,text:`+${coins} Coins`};}
+      if(roll<80)return{type:"trial",hours:48,text:lang()==="th"?"Theme Trial 48 ชั่วโมง":"48h Theme Trial"};
+      return{type:"xp",xp:[60,80,100,120][seedNumber(`${seed}:xp`)%4],text:"Mascot XP"};
+    }
+    if(roll<68){const coins=[20,40,60,80,120,150][seedNumber(`${seed}:coins`)%6];return{type:"coins",coins,text:`+${coins} Coins`};}
+    if(roll<84)return{type:"trial",hours:36,text:lang()==="th"?"Mystery Theme Trial 36 ชั่วโมง":"36h Mystery Theme Trial"};
+    return{type:"xp",xp:[30,50,75,100][seedNumber(`${seed}:xp`)%4],text:"Mascot XP"};
+  }
+  function applyExternalChest(kind,sourceId,index,list,ids){
+    const id=`reward-code:${sourceId}:chest:${kind}:${index}`;
+    const existing=list.find(x=>x.id===id);if(existing)return chestEntryInfo(existing);
+    const reward=externalChestReward(kind,`${sourceId}:${index}`);let amount=0,rewardText=reward.text,resolved={type:reward.type,icon:"🎁",title:reward.text,subtitle:"",rewardText:reward.text,jackpot:false};
+    if(reward.type==="coins"){
+      amount=reward.coins;resolved={type:"coins",icon:"🪙",title:`+${amount} Work Coins`,subtitle:kind==="mystery"?(lang()==="th"?"Mystery Chest จาก Reward Code":"Mystery Chest from Reward Code"):(lang()==="th"?"Chest จาก Reward Code":"Chest from Reward Code"),rewardText:`+${amount} Coins`,coins:amount,jackpot:amount>=100};
+    }else if(reward.type==="trial"){
+      const trial=grantThemeTrial(reward.hours,`${sourceId}:${kind}:${index}`);
+      if(trial){const theme=rewardBy("theme",trial.themeId);rewardText=`${rewardName(theme)} · ${reward.hours}h Trial`;resolved={type:"trial",icon:theme?.icon||"🎨",title:rewardName(theme),subtitle:lang()==="th"?`Theme Trial ${reward.hours} ชั่วโมง`:`${reward.hours}h Theme Trial`,rewardText,hours:reward.hours,rewardId:trial.themeId,jackpot:false};}
+      else{amount=kind==="weekly"?80:kind==="mystery"?60:25;rewardText=`+${amount} Coins`;resolved={type:"coins",icon:"🪙",title:`+${amount} Work Coins`,subtitle:lang()==="th"?"Theme ปลดล็อกครบแล้ว จึงเปลี่ยนเป็น Coins":"All eligible themes are unlocked, so this became Coins",rewardText,coins:amount,jackpot:false};}
+    }else{
+      const mascotId=selectedMascotId(),mascot=rewardBy("mascot",mascotId);addMascotXp(mascotId,reward.xp);const bond=mascotBond(mascotId);rewardText=`+${reward.xp} XP · ${rewardName(mascot)}`;resolved={type:"xp",icon:mascot?.emoji||"🐣",title:`+${reward.xp} Mascot XP`,subtitle:rewardName(mascot),rewardText,xp:reward.xp,mascotId,level:bond.level,progress:bond.progress,jackpot:false};
+    }
+    list.push({id,amount,type:"reward_code_chest",labelTh:`Reward Code ${kind} Chest · ${rewardText}`,labelEn:`Reward Code ${kind} Chest · ${rewardText}`,createdAt:new Date().toISOString(),meta:{kind,sourceId,rewardType:resolved.type,rewardText,rewardIcon:resolved.icon,coins:resolved.coins||0,hours:resolved.hours||0,rewardId:resolved.rewardId||"",xp:resolved.xp||0,mascotId:resolved.mascotId||"",bondLevel:resolved.level||0,bondProgress:resolved.progress||0,jackpot:!!resolved.jackpot}});ids.add(id);return resolved;
+  }
+  function normalizeExternalItem(item){
+    if(typeof item==="string"){const [type,id]=item.split(":");return{type,id};}
+    return item&&typeof item==="object"?{type:String(item.type||""),id:String(item.id||"")}:null;
+  }
+  function grantExternalReward(payload={}){
+    const sourceId=String(payload.sourceId||`external-${Date.now()}`).replace(/[^a-zA-Z0-9:_-]/g,"-").slice(0,160),sourceLabel=String(payload.sourceLabel||"Reward Code");
+    const list=ledger(),ids=new Set(list.map(x=>x.id)),owned=ownedRewards(),summary={coins:0,items:[],chests:[]};
+    const coins=Math.max(0,Math.round(Number(payload.coins||0))),coinId=`reward-code:${sourceId}:coins`;
+    if(coins>0&&!ids.has(coinId)){list.push({id:coinId,amount:coins,type:"reward_code",labelTh:`${sourceLabel} · +${coins} Coins`,labelEn:`${sourceLabel} · +${coins} Coins`,createdAt:new Date().toISOString(),meta:{sourceId,rewardCode:true}});ids.add(coinId);summary.coins=coins;}
+    (Array.isArray(payload.items)?payload.items:[]).map(normalizeExternalItem).filter(Boolean).forEach(item=>{
+      const reward=rewardBy(item.type,item.id);if(!reward)return;const key=rewardKey(reward),entryId=`reward-code:${sourceId}:item:${key}`;
+      if(!owned.has(key)){owned.add(key);summary.items.push({type:reward.type,id:reward.id,name:rewardName(reward),icon:reward.emoji||reward.icon||"🎁",codeExclusive:!!reward.codeExclusive});}
+      if(!ids.has(entryId)){list.push({id:entryId,amount:0,type:"reward_code_item",labelTh:`${sourceLabel} · ${rewardName(reward)}`,labelEn:`${sourceLabel} · ${rewardName(reward)}`,createdAt:new Date().toISOString(),meta:{sourceId,rewardText:rewardName(reward),rewardType:reward.type,rewardId:reward.id,rewardCode:true}});ids.add(entryId);}
+    });
+    (Array.isArray(payload.chests)?payload.chests:[]).forEach(ch=>{const kind=["daily","weekly","mystery"].includes(ch?.kind)?ch.kind:"mystery",count=Math.max(0,Math.min(10,Math.round(Number(ch?.count||0))));for(let i=0;i<count;i++){const before=list.length,res=applyExternalChest(kind,sourceId,i,list,ids);if(list.length>before&&res)summary.chests.push({kind,...res});}});
+    write(KEYS.ledger,list);saveOwned(owned);applyEquippedRewards(true);refreshAll();
+    try{window.dispatchEvent(new CustomEvent("workday:v8-data-changed",{detail:{source:"reward-code",sourceId}}));window.dispatchEvent(new CustomEvent("workday:v7-data-changed"));}catch{}
+    return summary;
+  }
+
   function progressText(value,target){ if(target<=1)return value>=target?(lang()==="th"?"สำเร็จแล้ว":"Completed"):`${Math.round(value)}/${Math.round(target)}`; return `${Math.round(value)}/${Math.round(target)} min`; }
   function renderMissions(){
     const root=$("v82MissionsPage"); if(!root)return; markRouteVisit();
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry, weeklyDone=completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry, trial=activeThemeTrial();
     const cards=set.ids.map(id=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.7.7</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
   }
 
 
-  // ---------- V8.4.7.7 Finance achievement state bridge ----------
+  // ---------- V8.4.8 Finance achievement state bridge ----------
   function featureAchievementStats(){const value=read(KEYS.featureStats,{});return value&&typeof value==="object"&&!Array.isArray(value)?value:{};}
   function saveFeatureAchievementStats(patch){
     const prev=featureAchievementStats(),next={...prev,...patch,updatedAt:new Date().toISOString()};
@@ -1029,7 +1095,7 @@
     return `<article class="v846-feature-ach ${a.unlocked?"unlocked":"locked"} ${compact?"compact":""}"><span>${a.unlocked?a.icon:"🔒"}</span><div><strong>${esc(API.translate(a.titleKey))}</strong><small>${esc(API.translate(a.descKey))}</small><i><b style="width:${pct}%"></b></i><em>${a.unlocked?(lang()==="th"?"สำเร็จแล้ว":"Completed"):esc(featureAchievementProgressText(a))}</em></div><mark>🪙 +${reward}${a.unlocked&&claimed?" ✓":""}</mark></article>`;
   }
 
-  // ---------- V8.4.7.7 Work Bank + Finale Boost + Compound Interest ----------
+  // ---------- V8.4.8 Work Bank + Finale Boost + Compound Interest ----------
   function bankLedger(){
     const value=read(KEYS.bankLedger,[]); return Array.isArray(value)?value:[];
   }
@@ -1169,7 +1235,7 @@
     const streakText=streakDays>0?(lang()==="th"?`${streakDays} วันต่อเนื่อง`:`${streakDays}-day streak`):(lang()==="th"?"เริ่มฝากเพื่อสร้าง Streak":"Deposit to start a streak");
     const nextStreakText=nextStreak?(lang()==="th"?`อีก ${nextStreak.remaining} วัน รับโบนัส +${(nextStreak.rate*100).toFixed(2)}%/วัน`:`${nextStreak.remaining} more day(s) to +${(nextStreak.rate*100).toFixed(2)}%/day bonus`):(lang()==="th"?"ปลดล็อก Streak Bonus สูงสุดแล้ว":"Maximum Streak Bonus unlocked");
     const bankAchievements=featureAchievementItems("bank"),bankAchievementDone=bankAchievements.filter(a=>a.unlocked).length,bankAchievementMarkup=bankAchievements.map(a=>featureAchievementCardMarkup(a,true)).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.7.7</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"Finale Bank Boost · ฝาก Work Coins รับดอกเบี้ยทบต้นรายวัน พร้อม Savings Streak Bonus":"Finale Bank Boost · earn compounding daily interest plus Savings Streak bonuses."}</p></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🏦</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8</p><h2>Work Bank</h2><p class="muted">${lang()==="th"?"Finale Bank Boost · ฝาก Work Coins รับดอกเบี้ยทบต้นรายวัน พร้อม Savings Streak Bonus":"Finale Bank Boost · earn compounding daily interest plus Savings Streak bonuses."}</p></div></div></div>
       <section class="v83-bank-hero"><div class="v83-bank-balance"><div class="v83-bank-orb">🏦</div><div><small>${lang()==="th"?"SAVINGS BALANCE":"SAVINGS BALANCE"}</small><strong>${formatBankCoin(savings)} <i>🪙</i></strong><span>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)} · ${(rateInfo.effectiveRate*100).toFixed(2)}% / day${rateInfo.bonusRate>0?` (${(rateInfo.baseRate*100).toFixed(2)}% + 🔥 ${(rateInfo.bonusRate*100).toFixed(2)}%)`:""}</span></div></div><div class="v83-bank-kpis"><article><small>${lang()==="th"?"Wallet ใช้จ่ายได้":"Wallet available"}</small><b>${wallet.toLocaleString(bankLocale())} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยรอบถัดไป":"Next daily interest"}</small><b>+${formatBankCoin(daily)} 🪙</b></article><article><small>${lang()==="th"?"ดอกเบี้ยสะสม":"Interest earned"}</small><b>+${formatBankCoin(earned)} 🪙</b></article></div></section>
       <section class="v844-bank-boost"><div class="v844-boost-title"><span>🚀</span><div><p class="eyebrow">FINALE BANK BOOST</p><h3>${lang()==="th"?"ดอกเบี้ยแรงขึ้น + ทบต้นทุกวัน":"Higher rates + daily compounding"}</h3><p>${lang()==="th"?`Base Rate ${(rateInfo.baseRate*100).toFixed(2)}% + Streak Bonus ${(rateInfo.bonusRate*100).toFixed(2)}% · สูงสุด ${BANK_DAILY_CAP} Coins/วัน`:`Base ${(rateInfo.baseRate*100).toFixed(2)}% + Streak ${(rateInfo.bonusRate*100).toFixed(2)}% · capped at ${BANK_DAILY_CAP} Coins/day`}</p></div></div><div class="v844-streak-status"><span><small>🔥 SAVINGS STREAK</small><b>${esc(streakText)}</b><em>${esc(nextStreakText)}</em></span><div class="v844-streak-steps">${[[3,.001],[7,.0025],[14,.005]].map(([d,r])=>`<i class="${streakDays>=d?"done":""}"><b>${d}D</b><small>+${(r*100).toFixed(2)}%</small></i>`).join("")}</div></div></section>
       <section class="v846-bank-achievements"><div class="v83-bank-section-head"><div><p class="eyebrow">SAVINGS ACHIEVEMENTS</p><h3>${lang()==="th"?"เป้าหมาย Work Bank":"Work Bank goals"}</h3></div><span>${bankAchievementDone}/${bankAchievements.length} · ${lang()==="th"?"มี Coin Reward":"Coin rewards"}</span></div><div class="v846-feature-ach-grid">${bankAchievementMarkup}</div></section>
@@ -1184,7 +1250,7 @@
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
   }
 
-  // ---------- V8.4.7.7 Work Exchange ----------
+  // ---------- V8.4.8 Work Exchange ----------
   const EXCHANGE_EPOCH_KEY = "2026-05-05";
   const EXCHANGE_FEE_RATE = 0.01;
   const EXCHANGE_SLOTS = [7,8,9,10,11,12,13,14,15,16];
@@ -1228,7 +1294,7 @@
     {id:"exchange-master",icon:"🏆",reward:100,th:"Exchange Master",en:"Exchange Master",descTh:"Portfolio Value แตะ 2,500 Coins",descEn:"Reach a 2,500 Coin portfolio value"}
   ];
 
-  // ---------- V8.4.7.7 Trading Academy / Beginner Mode ----------
+  // ---------- V8.4.8 Trading Academy / Beginner Mode ----------
   const ACADEMY_LESSON_REWARD = 5;
   const EXCHANGE_ACADEMY = [
     {
@@ -1377,7 +1443,7 @@
     const open=Math.max(5,prevClose*(1+overnight+stock.drift));
     const event=exchangeEventEffect(symbol,key),slots=[];let price=open;
     // Keep the overall daily volatility close to the original 4-round market
-    // even though V8.4.7.7 now generates 10 hourly price points.
+    // even though V8.4.8 now generates 10 hourly price points.
     const noiseScale=Math.sqrt(EXCHANGE_LEGACY_SLOT_COUNT/EXCHANGE_SLOTS.length);
     for(let i=0;i<EXCHANGE_SLOTS.length;i++){
       const noise=(exchangeSeedUnit(`${symbol}|${key}|${i}`)*2-1)*stock.vol*noiseScale;
@@ -1519,7 +1585,7 @@
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.7.7</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
       ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
@@ -1547,7 +1613,7 @@
   }
 
 
-  // ---------- V8.4.7.7 Project File Vault ----------
+  // ---------- V8.4.8 Project File Vault ----------
   const VAULT_BUCKET = "project-files";
   const VAULT_TABLE = "project_file_versions";
   const VAULT_MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -1588,7 +1654,7 @@
 
   function vaultHeaderMarkup(){
     const groups=vaultLogicalGroups(),projectBytes=vaultUi.rows.reduce((sum,x)=>sum+Number(x.file_size||0),0),quotaPct=Math.min(100,(vaultUi.userUsage/VAULT_USER_QUOTA_BYTES)*100);
-    return `<div class="v845-vault-head"><div class="v845-vault-icon">📁</div><div><p class="eyebrow">PROJECT FILE VAULT · V8.4.7.7</p><h2 id="v845VaultTitle">${esc(vaultUi.projectName||vaultCopy("ไฟล์ Project","Project Files"))}</h2><p>${esc(vaultCopy("พื้นที่ Cloud ส่วนตัว · เฉพาะบัญชีของคุณเท่านั้น","Private cloud storage · only your account can access these files"))}</p></div></div><div class="v845-vault-stats"><article><span>${esc(vaultCopy("ไฟล์ใน Project","Project files"))}</span><strong>${groups.length}/${VAULT_MAX_PROJECT_FILES}</strong><small>${vaultUi.rows.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ Project","Project storage"))}</span><strong>${vaultFormatBytes(projectBytes)}</strong><small>${esc(vaultCopy("รวมทุก Version","including all versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ของฉัน","My storage"))}</span><strong>${vaultFormatBytes(vaultUi.userUsage)} / 100 MB</strong><div class="v845-quota"><i style="width:${quotaPct}%"></i></div></article></div>`;
+    return `<div class="v845-vault-head"><div class="v845-vault-icon">📁</div><div><p class="eyebrow">PROJECT FILE VAULT · V8.4.8</p><h2 id="v845VaultTitle">${esc(vaultUi.projectName||vaultCopy("ไฟล์ Project","Project Files"))}</h2><p>${esc(vaultCopy("พื้นที่ Cloud ส่วนตัว · เฉพาะบัญชีของคุณเท่านั้น","Private cloud storage · only your account can access these files"))}</p></div></div><div class="v845-vault-stats"><article><span>${esc(vaultCopy("ไฟล์ใน Project","Project files"))}</span><strong>${groups.length}/${VAULT_MAX_PROJECT_FILES}</strong><small>${vaultUi.rows.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ Project","Project storage"))}</span><strong>${vaultFormatBytes(projectBytes)}</strong><small>${esc(vaultCopy("รวมทุก Version","including all versions"))}</small></article><article><span>${esc(vaultCopy("พื้นที่ของฉัน","My storage"))}</span><strong>${vaultFormatBytes(vaultUi.userUsage)} / 100 MB</strong><div class="v845-quota"><i style="width:${quotaPct}%"></i></div></article></div>`;
   }
 
   function vaultRender(){
@@ -1678,6 +1744,9 @@
     getEquippedEffect: () => selectedEffectId(),
     getEquippedAccessory: () => selectedAccessoryId(),
     getEquippedFrame: () => selectedFrameId(),
+    getCatalog: () => ALL_REWARDS.map(r=>({id:r.id,type:r.type,price:r.price,name:rewardName(r),description:rewardDescription(r),icon:r.emoji||r.icon||"🎁",rarity:r.rarity||"common",codeExclusive:!!r.codeExclusive,owned:isOwned(r)})),
+    getReward: (type,id) => { const r=rewardBy(type,id); return r?{id:r.id,type:r.type,price:r.price,name:rewardName(r),description:rewardDescription(r),icon:r.emoji||r.icon||"🎁",rarity:r.rarity||"common",codeExclusive:!!r.codeExclusive,owned:isOwned(r)}:null; },
+    grantExternalReward,
     renderShop,
     renderMissions,
     renderBank,
@@ -1724,7 +1793,7 @@
     const owned = ownedRewards(); saveOwned(owned);
     applyEquippedRewards();
     ensureCoinChip();
-    // V8.4.7.7: do not settle time-based Economy state before an existing
+    // V8.4.8: do not settle time-based Economy state before an existing
     // signed-in Cloud session has finished its first reconciliation.
     setTimeout(() => initialReconcile(), 700);
     window.addEventListener("workday:v8-cloud-ready", () => setTimeout(() => initialReconcile(20), 40));

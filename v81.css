@@ -715,7 +715,7 @@ html[data-theme="dark"] .v8472-changelog-modal{background:#0d0e10;border-color:#
 @media(max-width:560px){.v84-market-status{min-width:0;width:100%;justify-content:flex-start}.v84-market-status>div{min-width:0}}
 
 
-/* V8.4.7.6 - Tier Mastery unified hero + reward theme colors */
+/* V8.4.7.5 - Tier Mastery unified hero + reward theme colors */
 .v8475-tier-section{--tier-main:#3b82f6;--tier-second:#22d3ee;--tier-soft:rgba(59,130,246,.10);--tier-border:rgba(59,130,246,.28);margin-bottom:1.55rem}
 .v8475-tier-section[data-tier="rare"]{--tier-main:#8b5cf6;--tier-second:#d946ef;--tier-soft:rgba(139,92,246,.10);--tier-border:rgba(139,92,246,.28)}
 .v8475-tier-section[data-tier="epic"]{--tier-main:#f97316;--tier-second:#ec4899;--tier-soft:rgba(249,115,22,.10);--tier-border:rgba(236,72,153,.28)}

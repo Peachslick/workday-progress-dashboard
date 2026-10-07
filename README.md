@@ -1,68 +1,93 @@
 # Workday Journey
 
-**Current version: V8.4.7.7 – Account & Authentication UX Refresh**
+**Current version: V8.4.8 – Reward Codes + Developer Control Center**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
 
+## V8.4.8 – Reward Codes + Developer Control Center
+
+V8.4.8 adds Cloud-backed Reward Codes for signed-in users and a protected Owner workspace for managing codes and special rewards.
+
+### Reward Codes
+
+- Added a **Redeem Code** entry inside Reward Shop.
+- Reward Code redemption requires a Supabase login so usage limits are tied to `auth.uid()`.
+- If a guest starts the flow, the app opens Sign In and returns to Redeem Code after authentication.
+- Codes can reward **Work Coins, Mascots, Accessories, Profile Frames, Themes, Effects, Daily / Weekly / Mystery Chests, or a bundle of multiple rewards**.
+- Supports per-user limits, global max uses, active/inactive state, expiration time, and redemption history.
+- Redemptions are recorded in Supabase first, then applied to the existing local Work Coin / Reward system with idempotent reward IDs.
+- On another signed-in device, recorded redemptions can be re-applied safely without duplicating the same reward.
+
+### Code Exclusive Collection
+
+Five rewards are available only from Reward Codes or Owner tools:
+
+- 🐥 Developer Chick
+- 🛠️ Developer Crown
+- 🔷 Founder Frame
+- 🌠 Secret Galaxy
+- 🪙 Coin Rain
+
+These items cannot be purchased with Coins from the normal shop.
+
+### Developer Control Center
+
+The **Developer Tools** navigation item is shown only when the signed-in Supabase user is listed as an enabled Owner/Admin in `app_admins`. Backend RLS/RPC checks also enforce the Owner role, so hiding/showing the button is not the security boundary.
+
+Owner tools include:
+
+- Create and edit Reward Codes
+- Enable / disable codes
+- Configure Coins, bundle items, Chest rewards, expiry, per-user limit, and max uses
+- View total codes, active codes, total redemptions, and recent users
+- View recent redemption history
+- Copy codes quickly
+- Owner Economy Tools for the Owner's own account: grant Coins, Code Exclusive items, or Owner Chests
+
+The Owner Economy Tools intentionally continue using the existing Work Coin ledger. V8.4.8 does not convert the app to a server-authoritative economy.
+
+## Supabase setup required for V8.4.8
+
+Run this file once in **Supabase → SQL Editor**:
+
+`SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql`
+
+Before running it, edit the Owner bootstrap near the bottom:
+
+```sql
+owner_email text := 'your-owner-email@example.com';
+```
+
+Use the email of the Supabase account that should see **Developer Tools**. The account must already exist in **Authentication → Users**.
+
+The SQL creates:
+
+- `app_admins`
+- `reward_codes`
+- `reward_code_redemptions`
+- `is_workday_owner()` RPC
+- `redeem_reward_code(p_code)` RPC
+- indexes, RLS policies, grants, and Owner bootstrap
+
+Regular users cannot read the Reward Code table directly. A user submits a code through the redemption RPC, which checks login, active state, expiry, max uses, and per-user usage before returning the reward.
+
+Do **not** put a Supabase `service_role` key in frontend files. Continue using the existing publishable/anon key.
+
+**Confirm Email may remain disabled**, matching V8.4.7.7. No additional Auth setting is required for Reward Codes.
 
 ## V8.4.7.7 – Account & Authentication UX Refresh
 
-- Redesigned the Account popup so **Sign in** and **Create account** are clearly separated flows.
-- Added a dedicated signup form with password confirmation and show/hide password controls.
-- Added large centered success states after signup and sign-in instead of relying on a small bottom-right toast.
-- Added inline, user-friendly authentication errors for invalid credentials, duplicate accounts, password mismatch, rate limits, and common signup issues.
-- Optimized signup for this deployment with **Supabase Confirm Email disabled**, so a successful signup can create the session immediately.
-- Added a post-auth return-action event hook (`workday:v8-auth-complete`) for upcoming account-required flows such as Reward Code redemption.
-- No Supabase SQL migration is required for this patch.
-
-## V8.4.7.6 – Cloud Reload Loop Hotfix
-
-This hotfix fixes a Cloud Sync reload loop that could make the app appear to refresh every second after deploying a new version.
-
-### What changed
-
-- `wp-app-version`, `wp-theme-default-version`, and `wp-data-reset-version` are now device-local markers and are no longer included in Cloud Sync payloads or conflict detection.
-- Prevents an older Cloud snapshot from restoring an older app version marker and fighting the newly deployed version on every page load.
-- Added a per-tab automatic reload guard: the same reconciled Cloud payload cannot trigger document reloads repeatedly.
-- Normal Cloud data, Smart Merge, manual **Use this device / Use Cloud**, and existing user data remain unchanged.
-- No Supabase SQL migration is required.
-- Updated the Service Worker cache and app version to `8.4.7.6`.
-
-## V8.4.7.5 – Tier Mastery Card Polish
-
-This patch improves Journey Challenge tier presentation in the Achievement Center so each Tier and its Mastery reward read as one coherent unit.
-
-### What changed
-
-- Combined the Tier heading and Tier Mastery reward into a single themed card.
-- Added a distinct color identity for each Tier based on its Mastery effect: Azure (Common), Violet (Rare), Aurora Flame (Epic), and Gold (Legendary).
-- Split Mastery rewards into clear **Unlocked Title** and **Theme Effect** rows.
-- Improved Thai/English spacing and labels so reward text no longer runs together.
-- Added responsive layouts for notebook/mobile widths and dark mode.
-- Added this patch to the in-app **What's New / Version History**.
-- Updated the Service Worker cache and app version to `8.4.7.5`.
-
-## V8.4.7.4 – Hourly Market Update
-
-This patch makes Work Exchange move more frequently during the workday while preserving the deterministic simulated-market design.
-
-### What changed
-
-- Work Exchange now has **10 hourly price points** per business day: `07:00` through `16:00`.
-- Trading is available Monday–Friday from **07:00 until 16:00**. The `16:00` point is the daily closing price.
-- Added a live **countdown to the next market round/open** in the market status card.
-- The Work Exchange page automatically moves to the next hourly round when the clock crosses an hour; users no longer need to refresh the page.
-- `Today` charts now show a richer hourly intraday path. `5D` and `All` continue to use each business day's current/closing value.
-- Hourly prices remain deterministic from date + slot + symbol + daily market event, so refreshing the same round does not reroll a different price.
-- Per-slot movement is scaled so changing from 4 rounds to 10 rounds does not simply multiply the overall daily volatility.
-- Trading Academy chart guidance now describes the hourly Today path.
-- Added this patch to the in-app **What's New / Version History**.
-- Updated the Service Worker cache and app version to `8.4.7.4`.
+- Separated **Sign in** and **Create account** into clear flows.
+- Added password confirmation and show/hide password controls.
+- Added centered success states after signup/sign-in and clearer inline errors.
+- Optimized signup for this deployment with **Confirm Email disabled**.
+- Added the `workday:v8-auth-complete` return-action hook used by the V8.4.8 Reward Code flow.
 
 ## Recent Version History
 
 | Version | Highlight |
 | --- | --- |
+| V8.4.8 | 🎟 Reward Codes + Developer Control Center |
 | V8.4.7.7 | 👤 Account & Authentication UX Refresh |
 | V8.4.7.6 | ☁ Cloud Reload Loop Hotfix |
 | V8.4.7.5 | 🎨 Tier Mastery Card Polish |
@@ -89,50 +114,43 @@ This patch makes Work Exchange move more frequently during the workday while pre
 
 - Dashboard and internship progress tracking
 - Daily Work Journal
-- Project Tracker
-- Calendar, leave, company holidays, and compensatory workdays
+- Project Tracker and Project File Vault
+- Calendar, leave, holidays, and compensatory workdays
 - Reports & Analytics
 - Journey Challenges and Feature Achievements
-- Work Coins and Reward Shop
-- Daily Deals and Weekly Deals
-- Mascots, Accessories, Profile Frames, Themes, and Effects
-- Daily Missions, Daily Chest, and Weekly Chest
+- Work Coins, Reward Shop, Daily/Weekly Deals, and Reward Codes
+- Mascots, Accessories, Frames, Themes, Effects, Daily Missions, and Chests
 - Work Bank with compound interest and Savings Streak
 - Work Exchange simulated market and Trading Academy
-- Project File Vault using private Supabase Storage
 - Local-first operation with optional Supabase Cloud Sync
+- Owner-only Developer Control Center
 - In-app What's New / Version History
 
-## Updating from V8.4.7.6
+## Updating from V8.4.7.7
 
-Replace the changed files from this release in your existing project, then redeploy the site.
+1. Replace the files included in the V8.4.8 changed-files ZIP.
+2. Run `SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql` once after setting `owner_email`.
+3. Redeploy the site.
+4. If an old cached version appears, use **Clear App Cache / Reload Latest Version** or refresh the PWA cache once.
 
-The Service Worker cache name and asset query version were updated to `8.4.7.7`. If a browser still shows an older version, use the app's **Clear App Cache / Reload Latest Version** option.
+The Service Worker cache and asset query version are `8.4.8`.
 
-## Supabase
-
-V8.4.7.7 does **not** require a new table, SQL migration, Storage bucket, or RLS policy.
-
-Continue using the same Supabase setup from the previous versions:
+## Existing Supabase features retained
 
 - `workday_user_state` for Cloud Sync
 - Supabase Auth for user accounts
-- `project-files` private Storage bucket and `project_file_versions` table for Project File Vault (V8.4.5 setup)
-
-Do not place a Supabase `service_role` key in frontend code. The browser should use the existing publishable/anon key configuration.
+- `project-files` private Storage bucket and `project_file_versions` table for Project File Vault
 
 ## Work Exchange timing
 
-The market schedule is based on the browser's local clock and uses deterministic hourly rounds. A different system clock/timezone can therefore display a different current round. The simulated market still contains no real money or real securities.
+The simulated market continues to use deterministic hourly rounds from 07:00 through 16:00 based on the browser's local clock.
 
 ## Local-first behavior
 
-The application still works without signing in. Local data remains stored in the browser. Cloud Sync is optional and becomes active after a user signs in.
-
-The key `wp-v8472-last-seen-version` remains intentionally device-local. Reading What's New on one device does not create a Cloud conflict or force another device to mark the update as read.
+The main application still works without signing in. Reward Code redemption is intentionally account-required because redemption limits and history are stored in Supabase.
 
 ## Version
 
-`Workday Journey V8.4.7.7`
+`Workday Journey V8.4.8`
 
-Patch focus: **clear sign-in/signup flows / centered success feedback / inline auth errors / Confirm Email OFF signup flow**
+Release focus: **Reward Codes / code-exclusive rewards / Owner-only Developer Control Center / Supabase redemption limits and history**
