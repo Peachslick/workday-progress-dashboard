@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.4.7";
+  const V6_VERSION = "8.4.7.1";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -449,8 +449,8 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.4.7 · Achievement Center · File Vault · Work Exchange · Finale Bank · ข้อมูลเก็บใน Browser":"Workday Journey V8.4.7 · Project File Vault · Work Exchange · Daily Deals · Finale Bank · Local browser data";
-    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V8.4.7";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.4.7.1 · Smart Cloud Sync · Achievement Center · File Vault · ข้อมูลเก็บใน Browser":"Workday Journey V8.4.7.1 · Smart Cloud Sync · File Vault · Work Exchange · Local browser data";
+    const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V8.4.7.1";
   }
 
   function init() {

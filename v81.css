@@ -679,7 +679,7 @@ html[data-theme="dark"] .v846-ach-coin,html[data-theme="dark"] .v846-feature-ach
 
 
 /* =========================================================
-   V8.4.7 - Achievement Center UI Cleanup
+   V8.4.7.1 - Achievement Center UI Cleanup
    ========================================================= */
 .v847-ach-mode{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin:1rem 0 1.05rem}
 .v847-ach-mode button{min-width:0;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);padding:.85rem 1rem;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.8rem;text-align:left;font:inherit;cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease,box-shadow .18s ease}

@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.4.7";
+  const VERSION = "8.4.7.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -19,6 +19,8 @@
   const KEYS = {
     cloudLastSync: "wp-v8-cloud-last-sync",
     cloudLastHash: "wp-v8-cloud-last-hash",
+    cloudLastPayloadHash: "wp-v8-cloud-last-payload-hash",
+    cloudBase: "wp-v8-cloud-base-v2",
     cloudLastUpdated: "wp-v8-cloud-last-updated-at",
     cloudError: "wp-v8-cloud-last-error",
     cloudUserId: "wp-v8-cloud-user-id",
@@ -32,7 +34,7 @@
 
   const TEXT = {
     th: {
-      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"Deployment นี้ยังไม่ได้ตั้งค่า Supabase", cloudNotConfiguredHelp:"ตั้งค่า supabase-config.js และรัน supabase-setup.sql ก่อนเปิด Cloud Sync", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีแล้ว กรุณาตรวจอีเมลเพื่อยืนยันก่อนเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบข้อมูลทั้งในเครื่องและ Cloud", cloudConflictHelp:"เลือกชุดข้อมูลที่จะใช้เป็นข้อมูลหลัก ระบบจะไม่เขียนทับเงียบ ๆ", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
+      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"Deployment นี้ยังไม่ได้ตั้งค่า Supabase", cloudNotConfiguredHelp:"ตั้งค่า supabase-config.js และรัน supabase-setup.sql ก่อนเปิด Cloud Sync", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีแล้ว กรุณาตรวจอีเมลเพื่อยืนยันก่อนเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบการแก้ไขข้อมูลเดียวกันจากหลายอุปกรณ์", cloudConflictHelp:"Smart Sync รวมข้อมูลที่ไม่ชนกันให้อัตโนมัติแล้ว เหลือเฉพาะข้อมูลเดียวกันที่ถูกแก้ทั้งสองฝั่ง กรุณาเลือกชุดที่จะใช้", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
       notifications:"การแจ้งเตือน", markAllRead:"อ่านทั้งหมด", noNotifications:"ยังไม่มีการแจ้งเตือน", journalMissing:"Journal ยังไม่ได้บันทึก", journalMissingBody:"วันที่ {date} เป็นวันทำงานที่ผ่านแล้ว แต่ยังไม่มี Daily Journal", backupOld:"ควรสำรองข้อมูล", backupNever:"ยังไม่เคย Export Backup", backupOldBody:"Backup ล่าสุดผ่านมา {days} วันแล้ว", milestoneClose:"ใกล้ถึง {hours} ชั่วโมง", milestoneBody:"เหลืออีกประมาณ {left} ชั่วโมงทำงาน", achievementUnlocked:"Achievement ใหม่", cloudNeedsSync:"ข้อมูลในเครื่องรอซิงก์", cloudNeedsSyncBody:"กลับมาออนไลน์หรือกด Sync Now เพื่ออัปเดต Cloud",
       draftSaved:"บันทึกร่างล่าสุด {time}", draftRestored:"กู้ร่างที่ยังไม่ได้บันทึกกลับมาแล้ว", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"เลือกตารางทำงานสำเร็จรูป หรือบันทึกตารางปัจจุบันเพื่อใช้และแชร์กับเพื่อน", templateIntern:"Internship · จ–ศ · 07:00–16:10", templateOffice8:"Office · จ–ศ · 08:00–17:00", templateOffice9:"Office · จ–ศ · 09:00–18:00", applyTemplate:"ใช้ Template", saveCurrentTemplate:"บันทึกตารางปัจจุบัน", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"ชื่อ Template", templateSaved:"บันทึก Template แล้ว", templateApplied:"ใช้ตารางใหม่แล้ว ระบบจะ Reload", templateImported:"Import Template สำเร็จ", templateInvalid:"ไฟล์ Template ไม่ถูกต้อง", templateApplyConfirm:"เปลี่ยนตารางทำงานปัจจุบันตาม Template นี้หรือไม่?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"ตรวจสุขภาพข้อมูล Local, Backup, Cloud Sync และเวอร์ชัน PWA", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"ปกติ", statusWarning:"ควรตรวจสอบ", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"ล้าง App Cache แล้ว", updateChecked:"ตรวจสอบอัปเดตแล้ว", storageIssue:"พบข้อมูล Local ที่อ่านไม่ได้ {n} รายการ", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -41,7 +43,7 @@
       profileMenu:"เมนูโปรไฟล์", editProfile:"แก้ไขโปรไฟล์ / Journey", languageLabel:"ภาษา", themeLabel:"ธีม", installLabel:"ติดตั้งแอป", settingsLabel:"ตั้งค่า", lightLabel:"สว่าง", darkLabel:"มืด", accountMenu:"บัญชีและ Cloud Sync"
     },
     en: {
-      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created. Check your email to confirm it, then sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"Both this device and Cloud contain data", cloudConflictHelp:"Choose which copy should become the source of truth. V8 will not silently overwrite either copy.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
+      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created. Check your email to confirm it, then sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"The same data was edited on multiple devices", cloudConflictHelp:"Smart Sync already merged non-conflicting changes. Only the same data was changed on both sides; choose which copy should win.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
       notifications:"Notifications", markAllRead:"Mark all read", noNotifications:"No notifications yet", journalMissing:"Journal is missing", journalMissingBody:"{date} was a completed workday but still has no Daily Journal", backupOld:"Backup recommended", backupNever:"No backup has been exported yet", backupOldBody:"Your latest backup is {days} days old", milestoneClose:"Approaching {hours} hours", milestoneBody:"About {left} working hours remaining", achievementUnlocked:"Achievement unlocked", cloudNeedsSync:"Local changes are waiting to sync", cloudNeedsSyncBody:"Reconnect or press Sync Now to update Cloud",
       draftSaved:"Draft saved {time}", draftRestored:"Unsaved draft restored", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"Choose a ready-made schedule or save your current schedule to reuse and share", templateIntern:"Internship · Mon–Fri · 07:00–16:10", templateOffice8:"Office · Mon–Fri · 08:00–17:00", templateOffice9:"Office · Mon–Fri · 09:00–18:00", applyTemplate:"Apply Template", saveCurrentTemplate:"Save current schedule", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"Template name", templateSaved:"Template saved", templateApplied:"Schedule updated. The app will reload.", templateImported:"Template imported", templateInvalid:"Invalid template file", templateApplyConfirm:"Replace the current work schedule with this template?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"Check Local data, backups, Cloud Sync and PWA version health", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"Healthy", statusWarning:"Needs attention", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"App cache cleared", updateChecked:"Update check completed", storageIssue:"{n} Local data items could not be parsed", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -59,16 +61,68 @@
 
   const cloud = {
     client:null, configured:false, session:null, user:null, status:"local", localDirty:false,
-    applying:false, syncTimer:null, conflictRow:null, authSubscription:null, reconciling:false
+    applying:false, syncTimer:null, conflictRow:null, authSubscription:null, reconciling:false, initialReady:false
   };
 
+  const DEVICE_LOCAL_KEYS = new Set([
+    "wp-v7-sidebar-collapsed",
+    "wp-v76-journal-filters",
+    "wp-v76-project-view",
+    "wp-v81-shop-tab",
+    "wp-v84-exchange-selected",
+    "wp-v84-exchange-range",
+    "wp-v846-achievement-category",
+    "wp-v847-achievement-view",
+    "wp-v847-feature-achievement-category",
+    "wp-v8-open-journal-date",
+    "wp-v8-notification-read",
+    "wp-v8-notifications-initialized",
+    "wp-v6-backup-toast",
+    "wp-v6-recap-dismissed",
+    "wp-v6-last-backup-at"
+  ]);
+  const SOFT_SYNC_KEYS = new Set([
+    "wp-language","wp-locale","wp-theme","wp-font-family","wp-font-size","wp-density",
+    "wp-clock-format","wp-show-seconds","wp-animations","wp-dynamic-mood","wp-privacy-mode",
+    "wp-notifications-enabled","wp-v6-dashboard-layout","wp-v7-selected-title",
+    "wp-v81-equipped-mascot","wp-v81-equipped-theme","wp-v81-equipped-effect",
+    "wp-v831-equipped-accessory","wp-v831-equipped-frame","wp-v84-exchange-watchlist",
+    "wp-v841-beginner-mode","wp-v845-vault-projects","wp-v846-feature-achievement-stats",
+    "wp-seen-achievements","wp-completion-seen","wp-achievements-initialized",
+    "wp-v7-achievement-flags","wp-v7-achievement-unlocked-at","wp-v7-ever-achievements",
+    "wp-v74-achievements-migrated","wp-v81-retro-rewards-v1","wp-v82-coin-rebalance-v1",
+    "wp-theme-default-version","wp-data-reset-version","wp-app-version","wp-setup-completed"
+  ]);
+
   const isCloudMetaKey = key => String(key||"").startsWith("wp-v8-cloud-") || key === KEYS.dataUpdated;
-  const isSyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-");
+  const isDeviceLocalKey = key => DEVICE_LOCAL_KEYS.has(String(key||""));
+  const isSyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-") && !isDeviceLocalKey(key);
+  const isConflictRelevantKey = key => isSyncableKey(key) && !SOFT_SYNC_KEYS.has(String(key||""));
+  const isLegacySyncableKey = key => String(key||"").startsWith("wp-") && !isCloudMetaKey(key) && !String(key).startsWith("wp-notify-");
 
   function hashString(value) {
     let h = 2166136261;
     for (let i=0;i<value.length;i++) { h ^= value.charCodeAt(i); h = Math.imul(h, 16777619); }
     return (h >>> 0).toString(16).padStart(8,"0");
+  }
+  function stableJson(value){
+    if(Array.isArray(value))return `[${value.map(stableJson).join(",")}]`;
+    if(value&&typeof value==="object")return `{${Object.keys(value).sort().map(k=>`${JSON.stringify(k)}:${stableJson(value[k])}`).join(",")}}`;
+    return JSON.stringify(value);
+  }
+  function canonicalStoredValue(value){
+    if(value==null)return "__ABSENT__";
+    const raw=String(value);
+    if(!raw)return raw;
+    const first=raw.trim()[0];
+    if(first!=="{"&&first!=="[")return raw;
+    try{return stableJson(JSON.parse(raw));}catch{return raw;}
+  }
+  function valueFingerprint(value){return hashString(canonicalStoredValue(value));}
+  function normalizeSyncData(input){
+    const out={};
+    Object.keys(input||{}).filter(isSyncableKey).sort().forEach(key=>{if(typeof input[key]==="string")out[key]=input[key];});
+    return out;
   }
   function collectLocalData() {
     const data={};
@@ -77,7 +131,28 @@
     keys.sort().forEach(key=>{data[key]=localStorage.getItem(key);});
     return data;
   }
-  function snapshotHash(data=collectLocalData()) { return hashString(JSON.stringify(data)); }
+  function collectLegacyLocalData(){
+    const data={},keys=[];
+    for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(isLegacySyncableKey(key))keys.push(key);}
+    keys.sort().forEach(key=>{data[key]=localStorage.getItem(key);});
+    return data;
+  }
+  function dataHash(data,filterFn){
+    const source=normalizeSyncData(data),parts=[];
+    Object.keys(source).filter(filterFn).sort().forEach(key=>parts.push([key,valueFingerprint(source[key])]));
+    return hashString(JSON.stringify(parts));
+  }
+  function snapshotHash(data=collectLocalData()) { return dataHash(data,isConflictRelevantKey); }
+  function payloadHash(data=collectLocalData()) { return dataHash(data,isSyncableKey); }
+  function legacyHash(data){
+    const ordered={};Object.keys(data||{}).filter(isLegacySyncableKey).sort().forEach(k=>{if(typeof data[k]==="string")ordered[k]=data[k];});
+    return hashString(JSON.stringify(ordered));
+  }
+  function buildBaseMap(data){
+    const source=normalizeSyncData(data),out={};Object.keys(source).forEach(k=>out[k]=valueFingerprint(source[k]));return out;
+  }
+  function readBaseMap(){const value=readJson(KEYS.cloudBase,null);return value&&typeof value==="object"&&!Array.isArray(value)?value:null;}
+  function setBaseMap(data){setCloudMeta(KEYS.cloudBase,JSON.stringify(buildBaseMap(data)));}
   function buildCloudPayload() { return {schemaVersion:CLOUD_SCHEMA,appVersion:VERSION,exportedAt:new Date().toISOString(),data:collectLocalData()}; }
   function meaningfulLocalData() {
     if(localStorage.getItem("wp-setup-completed")==="true") return true;
@@ -90,7 +165,7 @@
     setCloudMeta(KEYS.dataUpdated,new Date().toISOString());
     cloud.localDirty=true;
     updateCloudIndicators();
-    if(cloud.user && navigator.onLine && !cloud.conflictRow && localStorage.getItem("wp-setup-completed")==="true") scheduleCloudUpload();
+    if(cloud.user && cloud.initialReady && navigator.onLine && !cloud.conflictRow && localStorage.getItem("wp-setup-completed")==="true") scheduleCloudUpload();
   }
 
   try {
@@ -147,17 +222,17 @@
       cloud.client=window.supabase.createClient(cfg.url.replace(/\/$/,""),cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       cloud.client.auth.onAuthStateChange((event,session)=>{
         cloud.session=session||null; cloud.user=session?.user||null;
-        if(event==="SIGNED_OUT"){cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;updateCloudIndicators();renderAccountModal();return;}
+        if(event==="SIGNED_OUT"){cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;cloud.initialReady=false;updateCloudIndicators();renderAccountModal();return;}
         if(session?.user){
           const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";
-          if(previousUser&&previousUser!==session.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;}
+          if(previousUser&&previousUser!==session.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;}
           setCloudMeta(KEYS.cloudUserId,session.user.id);
           cloud.status=navigator.onLine?"syncing":"offline";updateCloudIndicators();if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(()=>reconcileCloudOnLogin(),50);
         }
       });
       cloud.client.auth.getSession().then(({data})=>{
         cloud.session=data?.session||null; cloud.user=cloud.session?.user||null;
-        if(cloud.user){const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";if(previousUser&&previousUser!==cloud.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);}setCloudMeta(KEYS.cloudUserId,cloud.user.id);cloud.status=navigator.onLine?"syncing":"offline";reconcileCloudOnLogin();}else cloud.status="local";
+        if(cloud.user){const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";if(previousUser&&previousUser!==cloud.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.initialReady=false;}setCloudMeta(KEYS.cloudUserId,cloud.user.id);cloud.status=navigator.onLine?"syncing":"offline";reconcileCloudOnLogin();}else cloud.status="local";
         updateCloudIndicators(); renderAccountModal();
       }).catch(()=>{});
     }catch(err){cloud.configured=false;cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();}
@@ -168,30 +243,70 @@
     const {data,error}=await cloud.client.from(CLOUD_TABLE).select("payload,updated_at,client_updated_at").eq("user_id",cloud.user.id).maybeSingle();
     if(error)throw error; return data||null;
   }
-  function markSynced(hash,updatedAt){
-    setCloudMeta(KEYS.cloudLastHash,hash);setCloudMeta(KEYS.cloudLastSync,new Date().toISOString());if(updatedAt)setCloudMeta(KEYS.cloudLastUpdated,updatedAt);setCloudMeta(KEYS.cloudError,null);
-    cloud.localDirty=false;cloud.status="synced";updateCloudIndicators();refreshNotificationCenter();refreshDataHealth();
+  function markSynced(data,updatedAt){
+    const normalized=normalizeSyncData(data);
+    setCloudMeta(KEYS.cloudLastHash,snapshotHash(normalized));
+    setCloudMeta(KEYS.cloudLastPayloadHash,payloadHash(normalized));
+    setBaseMap(normalized);
+    setCloudMeta(KEYS.cloudLastSync,new Date().toISOString());if(updatedAt)setCloudMeta(KEYS.cloudLastUpdated,updatedAt);setCloudMeta(KEYS.cloudError,null);
+    cloud.localDirty=false;cloud.status="synced";
+    const firstReady=!cloud.initialReady;cloud.initialReady=true;
+    updateCloudIndicators();refreshNotificationCenter();refreshDataHealth();
+    if(firstReady){try{window.dispatchEvent(new CustomEvent("workday:v8-cloud-ready"));}catch{}}
+  }
+  function replaceSyncableLocalData(data){
+    const normalized=normalizeSyncData(data),before=payloadHash(collectLocalData());
+    cloud.applying=true;
+    try{
+      const remove=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(isSyncableKey(k))remove.push(k);}remove.forEach(k=>ORIG_REMOVE.call(localStorage,k));
+      Object.entries(normalized).forEach(([k,v])=>ORIG_SET.call(localStorage,k,v));
+    }finally{cloud.applying=false;}
+    return before!==payloadHash(normalized);
   }
   async function uploadCloudState({silent=false}={}){
     if(!cloud.client||!cloud.user||!navigator.onLine)return false;
     if(cloud.conflictRow && silent) return false;
     cloud.status="syncing";updateCloudIndicators();
-    const payload=buildCloudPayload(),hash=snapshotHash(payload.data),now=new Date().toISOString();
+    const payload=buildCloudPayload(),now=new Date().toISOString();
     try{
       const {data,error}=await cloud.client.from(CLOUD_TABLE).upsert({user_id:cloud.user.id,payload,client_updated_at:now},{onConflict:"user_id"}).select("updated_at,client_updated_at").single();
-      if(error)throw error;markSynced(hash,data?.client_updated_at||data?.updated_at||now);if(!silent)toast("☁",t("cloudUploaded"),"success");return true;
+      if(error)throw error;markSynced(payload.data,data?.client_updated_at||data?.updated_at||now);if(!silent)toast("☁",t("cloudUploaded"),"success");return true;
     }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();refreshNotificationCenter();if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
   function applyCloudPayload(payload,updatedAt){
     if(!payload?.data||typeof payload.data!=="object")throw new Error("Invalid cloud payload");
-    cloud.applying=true;
-    try{
-      const preserve={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(isCloudMetaKey(k))preserve[k]=localStorage.getItem(k);}
-      const remove=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(isSyncableKey(k))remove.push(k);}remove.forEach(k=>ORIG_REMOVE.call(localStorage,k));
-      Object.entries(payload.data).forEach(([k,v])=>{if(isSyncableKey(k)&&typeof v==="string")ORIG_SET.call(localStorage,k,v);});
-      Object.entries(preserve).forEach(([k,v])=>ORIG_SET.call(localStorage,k,v));
-      const hash=snapshotHash(payload.data);setCloudMeta(KEYS.cloudLastHash,hash);setCloudMeta(KEYS.cloudLastSync,new Date().toISOString());setCloudMeta(KEYS.cloudLastUpdated,updatedAt||new Date().toISOString());setCloudMeta(KEYS.dataUpdated,payload.exportedAt||updatedAt||new Date().toISOString());cloud.localDirty=false;
-    }finally{cloud.applying=false;}
+    const normalized=normalizeSyncData(payload.data),changed=replaceSyncableLocalData(normalized);
+    markSynced(normalized,updatedAt||new Date().toISOString());
+    setCloudMeta(KEYS.dataUpdated,payload.exportedAt||updatedAt||new Date().toISOString());
+    return changed;
+  }
+  function putMergedValue(target,key,present,value){if(present)target[key]=value;else delete target[key];}
+  function mergeFromBase(localData,cloudData,baseMap,{preferLocalSoft=false}={}){
+    const local=normalizeSyncData(localData),remote=normalizeSyncData(cloudData),base=baseMap||{},localChoice={},cloudChoice={},conflicts=[];
+    const keys=[...new Set([...Object.keys(local),...Object.keys(remote),...Object.keys(base)])].filter(isSyncableKey).sort();
+    keys.forEach(key=>{
+      const hasL=Object.prototype.hasOwnProperty.call(local,key),hasC=Object.prototype.hasOwnProperty.call(remote,key);
+      const lv=hasL?local[key]:null,cv=hasC?remote[key]:null,lh=valueFingerprint(lv),ch=valueFingerprint(cv),bh=Object.prototype.hasOwnProperty.call(base,key)?base[key]:valueFingerprint(null);
+      if(lh===ch){putMergedValue(localChoice,key,hasL,lv);putMergedValue(cloudChoice,key,hasL,lv);return;}
+      const lChanged=lh!==bh,cChanged=ch!==bh;
+      if(lChanged&&!cChanged){putMergedValue(localChoice,key,hasL,lv);putMergedValue(cloudChoice,key,hasL,lv);return;}
+      if(!lChanged&&cChanged){putMergedValue(localChoice,key,hasC,cv);putMergedValue(cloudChoice,key,hasC,cv);return;}
+      if(!isConflictRelevantKey(key)){const useLocal=preferLocalSoft;putMergedValue(localChoice,key,useLocal?hasL:hasC,useLocal?lv:cv);putMergedValue(cloudChoice,key,useLocal?hasL:hasC,useLocal?lv:cv);return;}
+      conflicts.push(key);putMergedValue(localChoice,key,hasL,lv);putMergedValue(cloudChoice,key,hasC,cv);
+    });
+    return {localChoice,cloudChoice,conflicts};
+  }
+  function mergeSoftOnly(localData,cloudData,{preferLocal=false}={}){
+    const local=normalizeSyncData(localData),remote=normalizeSyncData(cloudData),merged={...remote};
+    const keys=[...new Set([...Object.keys(local),...Object.keys(remote)])].sort();
+    keys.forEach(key=>{
+      if(isConflictRelevantKey(key)){if(Object.prototype.hasOwnProperty.call(local,key))merged[key]=local[key];else delete merged[key];return;}
+      const hasL=Object.prototype.hasOwnProperty.call(local,key),hasC=Object.prototype.hasOwnProperty.call(remote,key);
+      if(hasL&&hasC&&valueFingerprint(local[key])===valueFingerprint(remote[key])){merged[key]=local[key];return;}
+      if(preferLocal){if(hasL)merged[key]=local[key];else delete merged[key];}
+      else if(!hasC&&hasL)merged[key]=local[key];
+    });
+    return merged;
   }
   async function loadCloudState({reload=true,silent=false}={}){
     if(!cloud.client||!cloud.user||!navigator.onLine)return false;cloud.status="syncing";updateCloudIndicators();
@@ -201,31 +316,49 @@
   async function reconcileCloudOnLogin(){
     if(!cloud.user||!navigator.onLine||cloud.reconciling)return;cloud.reconciling=true;cloud.status="syncing";updateCloudIndicators();
     try{
-      const row=await fetchCloudRow();const localData=collectLocalData(),localHash=snapshotHash(localData);
+      const row=await fetchCloudRow(),localData=collectLocalData();
       if(!row?.payload?.data){await uploadCloudState({silent:true});renderAccountModal();return;}
-      const cloudHash=snapshotHash(row.payload.data),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";
-      const remoteUpdatedAt=row.client_updated_at||row.updated_at||"";
-      // If both copies already contain the same data, simply refresh the synced
-      // metadata. Returning to this tab must never reopen the conflict dialog.
-      if(localHash===cloudHash){markSynced(localHash,remoteUpdatedAt);renderAccountModal();return;}
-      if(!meaningfulLocalData()){applyCloudPayload(row.payload,remoteUpdatedAt);location.reload();return;}
+      const cloudData=normalizeSyncData(row.payload.data),localPayloadHash=payloadHash(localData),cloudPayloadHash=payloadHash(cloudData);
+      const localConflictHash=snapshotHash(localData),cloudConflictHash=snapshotHash(cloudData),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";
+      const remoteUpdatedAt=row.client_updated_at||row.updated_at||"",localUpdatedAt=localStorage.getItem(KEYS.dataUpdated)||"";
+      const preferLocalSoft=Date.parse(localUpdatedAt||0)>Date.parse(remoteUpdatedAt||0);
 
-      // The last successfully synced DATA hash is the common ancestor for both
-      // copies. Comparing hashes is reliable even if a database updated_at column
-      // is not refreshed by every UPSERT.
-      if(lastHash){
-        const localChanged=localHash!==lastHash;
-        const cloudChanged=cloudHash!==lastHash;
-        if(localChanged&&!cloudChanged){await uploadCloudState({silent:true});renderAccountModal();return;}
-        if(!localChanged&&cloudChanged){applyCloudPayload(row.payload,remoteUpdatedAt);location.reload();return;}
-        if(!localChanged&&!cloudChanged){markSynced(lastHash,remoteUpdatedAt);renderAccountModal();return;}
-        // Both sides changed from the same baseline: this is a real conflict.
-        cloud.conflictRow=row;cloud.status="error";updateCloudIndicators();openConflictModal(row);return;
+      // Exact logical match: refresh sync metadata only. Device-local UI state is
+      // intentionally excluded, so tab/filter/sidebar changes never reopen a dialog.
+      if(localPayloadHash===cloudPayloadHash){markSynced(localData,remoteUpdatedAt);renderAccountModal();return;}
+      if(!meaningfulLocalData()){const changed=applyCloudPayload({...row.payload,data:cloudData},remoteUpdatedAt);if(changed)setTimeout(()=>location.reload(),120);return;}
+
+      // If only soft preferences differ, resolve them by the most recently updated
+      // side and quietly converge both copies without showing a conflict dialog.
+      if(localConflictHash===cloudConflictHash){
+        const merged=mergeSoftOnly(localData,cloudData,{preferLocal:preferLocalSoft}),changed=replaceSyncableLocalData(merged);
+        await uploadCloudState({silent:true});renderAccountModal();if(changed)setTimeout(()=>location.reload(),120);return;
       }
 
-      // First reconciliation has no common baseline yet. Ask once which copy
-      // should become the source of truth, then store its hash for future checks.
-      cloud.conflictRow=row;cloud.status="error";updateCloudIndicators();openConflictModal(row);
+      let baseMap=readBaseMap();
+      // V8.4.7 -> V8.4.7.1 migration: infer the old common ancestor from the
+      // legacy full snapshot hash so existing users do not get a one-time false conflict.
+      if(!baseMap&&lastHash){
+        const legacyLocal=legacyHash(collectLegacyLocalData()),legacyCloud=legacyHash(row.payload.data);
+        if(legacyCloud===lastHash)baseMap=buildBaseMap(cloudData);
+        else if(legacyLocal===lastHash)baseMap=buildBaseMap(localData);
+      }
+
+      if(baseMap){
+        const merged=mergeFromBase(localData,cloudData,baseMap,{preferLocalSoft});
+        if(!merged.conflicts.length){
+          const changed=replaceSyncableLocalData(merged.localChoice);
+          await uploadCloudState({silent:true});renderAccountModal();if(changed)setTimeout(()=>location.reload(),120);return;
+        }
+        cloud.conflictRow={...row,conflictKeys:merged.conflicts,localChoiceData:merged.localChoice,cloudChoiceData:merged.cloudChoice};
+        cloud.status="error";updateCloudIndicators();openConflictModal(cloud.conflictRow);return;
+      }
+
+      // A genuinely new device with meaningful Local data and no shared baseline
+      // still asks once which copy should win. After that, a per-key baseline is
+      // stored and future changes on different keys merge automatically.
+      cloud.conflictRow={...row,conflictKeys:["initial-source"],localChoiceData:localData,cloudChoiceData:cloudData};
+      cloud.status="error";updateCloudIndicators();openConflictModal(cloud.conflictRow);
     }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();}
     finally{cloud.reconciling=false;}
   }
@@ -247,12 +380,12 @@
     if(!cloud.configured||!cloud.client)return;const email=$("v8AuthEmail")?.value.trim(),password=$("v8AuthPassword")?.value||"";if(!email||password.length<6){toast("!",t("signupFailed"),"error");return;}
     setAuthBusy(true);const redirectTo=`${location.origin}${location.pathname}`;const {data,error}=await cloud.client.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});setAuthBusy(false);if(error){toast("!",`${t("signupFailed")}: ${error.message}`,"error");return;}toast("✉",data?.session?t("cloudReady"):t("checkEmail"),"success");renderAccountModal();
   }
-  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";updateCloudIndicators();renderAccountModal();}
+  async function authSignOut(){if(!cloud.client)return;await cloud.client.auth.signOut();cloud.user=null;cloud.session=null;cloud.status="local";cloud.initialReady=false;cloud.conflictRow=null;updateCloudIndicators();renderAccountModal();}
   async function deleteCloudState(){
     if(!cloud.client||!cloud.user)return true;
-    try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
+    try{const {error}=await cloud.client.from(CLOUD_TABLE).delete().eq("user_id",cloud.user.id);if(error)throw error;setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;return true;}catch(err){toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
-  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user})};
+  window.WorkdayV8Cloud={isSignedIn:()=>!!cloud.user,deleteCloudState,syncNow,openAccount:openAccountModal,signOut:authSignOut,getClient:()=>cloud.client||null,getUser:()=>cloud.user?{id:cloud.user.id,email:cloud.user.email||""}:null,getStatus:()=>({status:cloud.status,email:cloud.user?.email||"",signedIn:!!cloud.user,reconciling:cloud.reconciling,conflict:!!cloud.conflictRow,ready:cloud.initialReady})};
   function setAuthBusy(busy){["v8SignIn","v8SignUp","v8SignOut","v8SyncNow","v8UploadDevice","v8LoadCloud"].forEach(id=>{const el=$(id);if(el)el.disabled=busy;});}
 
   // ---------- V8.0.7 Cloud Reconciliation + Interaction Stability ----------
@@ -354,7 +487,7 @@
     }
     if(!$("v8ConflictBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8ConflictBackdrop";wrap.className="v8-modal-backdrop v8-conflict-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-conflict-modal" role="dialog" aria-modal="true"><div class="v8-conflict-icon">↔</div><h2>${esc(t("cloudConflict"))}</h2><p>${esc(t("cloudConflictHelp"))}</p><div id="v8ConflictMeta" class="v8-conflict-meta"></div><div class="v8-conflict-actions"><button id="v8ConflictLocal" class="primary-btn" type="button">💻 ${esc(t("thisDevice"))}</button><button id="v8ConflictCloud" class="outline-btn" type="button">☁ ${esc(t("cloudCopy"))}</button></div><small>${esc(t("cloudAutoHelp"))}</small></section>`;document.body.appendChild(wrap);
-      $("v8ConflictLocal").onclick=async()=>{wrap.hidden=true;await uploadCloudState();cloud.conflictRow=null;};$("v8ConflictCloud").onclick=()=>{const row=cloud.conflictRow;if(!row)return;wrap.hidden=true;applyCloudPayload(row.payload,row.client_updated_at||row.updated_at);cloud.conflictRow=null;location.reload();};
+      $("v8ConflictLocal").onclick=async()=>{const row=cloud.conflictRow;if(!row)return;wrap.hidden=true;cloud.conflictRow=null;if(row.localChoiceData)replaceSyncableLocalData(row.localChoiceData);await uploadCloudState();};$("v8ConflictCloud").onclick=()=>{const row=cloud.conflictRow;if(!row)return;wrap.hidden=true;cloud.conflictRow=null;const data=row.cloudChoiceData||normalizeSyncData(row.payload?.data||{});applyCloudPayload({...row.payload,data},row.client_updated_at||row.updated_at);location.reload();};
     }
     if(!$("v8PublicBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8PublicBackdrop";wrap.className="v8-public-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-public-view"><button id="v8PublicClose" class="v8-modal-close" type="button">×</button><div id="v8PublicViewBody"></div></section>`;document.body.appendChild(wrap);$("v8PublicClose").onclick=closePublicView;
@@ -376,7 +509,8 @@
     const last=localStorage.getItem(KEYS.cloudLastSync);body.innerHTML=`<div class="v8-account-card"><div class="v8-account-avatar">☁</div><div><span>${esc(t("signedInAs"))}</span><strong>${esc(cloud.user.email||cloud.user.id)}</strong><small>${esc(t("lastSync"))}: ${esc(safeDateLabel(last))}</small></div></div><div class="v8-cloud-state"><i data-state="${esc(cloud.status)}"></i><strong>${esc(cloudStatusLabel())}</strong></div><div class="v8-auth-actions grid"><button id="v8SyncNow" class="primary-btn" type="button">↻ ${esc(t("syncNow"))}</button><button id="v8UploadDevice" class="outline-btn" type="button">💻↑ ${esc(t("uploadDevice"))}</button><button id="v8LoadCloud" class="outline-btn" type="button">☁↓ ${esc(t("loadCloud"))}</button><button id="v8SignOut" class="secondary-btn" type="button">${esc(t("signOut"))}</button></div>`;
     $("v8SyncNow").onclick=syncNow;$("v8UploadDevice").onclick=()=>uploadCloudState();$("v8LoadCloud").onclick=()=>loadCloudState();$("v8SignOut").onclick=authSignOut;
   }
-  function openConflictModal(row){ensureUi();const meta=$("v8ConflictMeta"),localStamp=localStorage.getItem(KEYS.dataUpdated),cloudStamp=row?.client_updated_at||row?.updated_at;meta.innerHTML=`<div><span>💻 ${esc(t("thisDevice"))}</span><strong>${esc(safeDateLabel(localStamp))}</strong></div><div><span>☁ ${esc(t("cloudCopy"))}</span><strong>${esc(safeDateLabel(cloudStamp))}</strong></div>`;$("v8ConflictBackdrop").hidden=false;requestAnimationFrame(()=>$("v8ConflictBackdrop").classList.add("open"));}
+  function syncKeyLabel(key){const k=String(key||"");if(k==="initial-source")return lang()==="th"?"ข้อมูลเริ่มต้น":"Initial data";if(k.includes("journal"))return "Journal";if(k.includes("project"))return "Projects";if(k.includes("coin")||k.includes("reward"))return "Work Coins / Rewards";if(k.includes("bank"))return "Work Bank";if(k.includes("exchange"))return "Work Exchange";if(k.includes("mission")||k.includes("chest"))return "Daily Missions";if(k.includes("journey")||k.includes("day-overrides"))return "Journey / Calendar";return k.replace(/^wp-[^-]+-?/,"");}
+  function openConflictModal(row){ensureUi();const meta=$("v8ConflictMeta"),localStamp=localStorage.getItem(KEYS.dataUpdated),cloudStamp=row?.client_updated_at||row?.updated_at,keys=(row?.conflictKeys||[]).map(syncKeyLabel);meta.innerHTML=`<div><span>💻 ${esc(t("thisDevice"))}</span><strong>${esc(safeDateLabel(localStamp))}</strong></div><div><span>☁ ${esc(t("cloudCopy"))}</span><strong>${esc(safeDateLabel(cloudStamp))}</strong></div>${keys.length?`<div><span>⚠ ${lang()==="th"?"ข้อมูลที่ชนกัน":"Conflicting data"}</span><strong>${esc(keys.slice(0,3).join(" · "))}${keys.length>3?` +${keys.length-3}`:""}</strong></div>`:""}`;$("v8ConflictBackdrop").hidden=false;requestAnimationFrame(()=>$("v8ConflictBackdrop").classList.add("open"));}
   function cloudStatusLabel(){if(!navigator.onLine&&cloud.user)return t("cloudOffline");return ({local:t("cloudLocal"),synced:t("cloudSynced"),syncing:t("cloudSyncing"),offline:t("cloudOffline"),error:t("cloudError")})[cloud.status]||t("cloudLocal");}
   function refreshOpenInteractiveStatus(){
     // Never replace an open interactive surface just because Cloud status changed.
@@ -566,10 +700,10 @@
   function boot(){
     ensureUi();ensureCleanTopbar();
     if(!localStorage.getItem(KEYS.dataUpdated))setCloudMeta(KEYS.dataUpdated,new Date().toISOString());
-    const currentHash=snapshotHash(),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";cloud.localDirty=!!lastHash&&lastHash!==currentHash;
+    const currentHash=payloadHash(),lastHash=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";cloud.localDirty=!!lastHash&&lastHash!==currentHash;
     initializeNotificationReadState();initSupabase();enhanceRoute();detectPublicLink();
     setInterval(()=>{refreshNotificationCenter();updateCloudIndicators();},30000);
-    setInterval(()=>{if(!cloud.user||!navigator.onLine||cloud.conflictRow||localStorage.getItem("wp-setup-completed")!=="true")return;const h=snapshotHash(),last=localStorage.getItem(KEYS.cloudLastHash)||"";if(last&&h!==last){cloud.localDirty=true;updateCloudIndicators();scheduleCloudUpload(900);}},5000);
+    setInterval(()=>{if(!cloud.user||!cloud.initialReady||!navigator.onLine||cloud.conflictRow||localStorage.getItem("wp-setup-completed")!=="true")return;const h=payloadHash(),last=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";if(last&&h!==last){cloud.localDirty=true;updateCloudIndicators();scheduleCloudUpload(900);}},5000);
   }
   boot();
 })();
