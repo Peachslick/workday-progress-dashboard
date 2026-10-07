@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.4.8.1";
+  const VERSION = "8.5.0";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -167,7 +167,7 @@
     const root=$("v81RewardsPage");if(!root||$("v848RedeemCard"))return;
     const wallet=q(".v81-wallet-hero",root),card=document.createElement("section");
     card.id="v848RedeemCard";card.className="v848-redeem-card";
-    card.innerHTML=`<div class="v848-redeem-art">🎟</div><div><p class="eyebrow">REWARD CODES · V8.4.8.1</p><h3>${esc(copy("มี Code ลับอยู่ไหม?","Have a secret code?"))}</h3><p>${esc(copy("Login แล้วใช้ Reward Code เพื่อรับ Coins, Code Exclusive Items หรือ Mystery Chest","Sign in and redeem codes for Coins, code-exclusive items or Mystery Chests"))}</p></div><button id="v848OpenRedeem" class="primary-btn" type="button">🎟 ${esc(copy("กรอก Reward Code","Redeem Code"))}</button>`;
+    card.innerHTML=`<div class="v848-redeem-art">🎟</div><div><p class="eyebrow">REWARD CODES · V8.5.0</p><h3>${esc(copy("มี Code ลับอยู่ไหม?","Have a secret code?"))}</h3><p>${esc(copy("Login แล้วใช้ Reward Code เพื่อรับ Coins, Code Exclusive Items หรือ Mystery Chest","Sign in and redeem codes for Coins, code-exclusive items or Mystery Chests"))}</p></div><button id="v848OpenRedeem" class="primary-btn" type="button">🎟 ${esc(copy("กรอก Reward Code","Redeem Code"))}</button>`;
     if(wallet)wallet.insertAdjacentElement("afterend",card);else root.prepend(card);
     $("v848OpenRedeem").onclick=openRedeem;
   }
@@ -242,7 +242,7 @@
   }
   function renderDeveloper(){
     const root=$("v848DeveloperPage");if(!root)return;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🛠</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.4.8.1</p><h2>Developer Control Center</h2><p class="muted">${esc(copy("จัดการ Reward Codes, ดูการ Redeem และใช้ Owner Economy Tools","Manage Reward Codes, review redemptions and use Owner Economy Tools"))}</p></div></div></div>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🛠</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>Developer Control Center</h2><p class="muted">${esc(copy("จัดการ Reward Codes, ดูการ Redeem และใช้ Owner Economy Tools","Manage Reward Codes, review redemptions and use Owner Economy Tools"))}</p></div></div></div>`;
     if(state.owner===null||state.ownerChecking){root.insertAdjacentHTML("beforeend",`<section class="v848-access-card"><span class="v848-spinner">◌</span><h3>${esc(copy("กำลังตรวจสอบสิทธิ์ Owner...","Checking Owner access..."))}</h3></section>`);checkOwner({force:true}).then(ok=>{if(ok)refreshOwnerDashboard();else renderDeveloper();});return;}
     if(!state.owner){root.insertAdjacentHTML("beforeend",ownerGuardHtml());$("v848OwnerLogin")?.addEventListener("click",()=>cloud()?.openAccount?.({mode:"signin",returnAction:"developer-tools"}));return;}
     const stats=adminStats(),email=user()?.email||"Owner";

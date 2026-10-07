@@ -1,8 +1,33 @@
 # Workday Journey
 
-**Current version: V8.4.8.1 – Reward Code Redemption Hotfix**
+**Current version: V8.5.0 – Navigation & App Shell Refresh**
 
 Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
+
+
+## V8.5.0 – Navigation & App Shell Refresh
+
+V8.5.0 starts the UX/UI System Refresh without changing the existing business logic for Work Coins, Reward Codes, Cloud Sync, Work Bank, Work Exchange, Project File Vault, or Achievements.
+
+### What changed
+
+- Reorganized the Sidebar into four clear sections: **WORK / JOURNEY / ECONOMY / SYSTEM**.
+- Replaced Sidebar navigation emoji with one consistent line-icon system while keeping playful emoji inside rewards and gamification content.
+- Simplified Sidebar density and improved the collapsed state with cleaner icon-only navigation and native hover labels.
+- Refined the Topbar into a flatter app-shell surface with one clear page title, a concise subtitle, Notifications, Cloud status, and Profile actions.
+- Standardized page headers across Journal, Projects, Reports, Calendar, Achievements, Missions, Rewards, Work Bank, Work Exchange, Developer Tools, and Settings.
+- Added a compact mobile bottom dock for **Dashboard / Journal / Projects / Rewards / More** while preserving the full Sidebar drawer for every route.
+- Added responsive spacing, dark-mode treatment, focus/hover states, safe-area support, and reduced-motion handling.
+- Added `v850.css` and `v850.js` as an isolated shell layer so the refresh stays low-risk and does not rewrite existing feature logic.
+- Updated the app/PWA cache version and in-app What's New history to `8.5.0`.
+
+### Supabase
+
+V8.5.0 requires **no new SQL, table, RPC, Storage bucket, RLS policy, or Auth setting**. Keep the existing V8.4.8.1 Reward Code setup/hotfix in place.
+
+### Updating from V8.4.8.1
+
+Replace the changed frontend files from the V8.5.0 ZIP and redeploy. No Supabase action is required. If a browser still shows the previous shell, use **Clear App Cache / Reload Latest Version** once.
 
 ## V8.4.8.1 – Reward Code Redemption Hotfix
 
@@ -111,6 +136,7 @@ Do **not** put a Supabase `service_role` key in frontend files. Continue using t
 
 | Version | Highlight |
 | --- | --- |
+| V8.5.0 | 🧭 Navigation & App Shell Refresh |
 | V8.4.8.1 | Reward Code Redemption Hotfix |
 | V8.4.8 | 🎟 Reward Codes + Developer Control Center |
 | V8.4.7.7 | 👤 Account & Authentication UX Refresh |
@@ -151,14 +177,14 @@ Do **not** put a Supabase `service_role` key in frontend files. Continue using t
 - Owner-only Developer Control Center
 - In-app What's New / Version History
 
-## Updating from V8.4.8
+## Updating from V8.4.8.1
 
-1. Replace the changed frontend files from the V8.4.8.1 ZIP.
-2. Run `SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql` once in Supabase SQL Editor.
-3. Do **not** delete or recreate `reward_codes` / `reward_code_redemptions`.
-4. Reload the app. If an old cached version appears, use **Clear App Cache / Reload Latest Version** once.
+1. Replace the changed frontend files from the V8.5.0 ZIP.
+2. Redeploy the site.
+3. No SQL migration is required for V8.5.0.
+4. If an old cached shell appears, use **Clear App Cache / Reload Latest Version** once.
 
-The Service Worker cache and asset query version are `8.4.8.1`.
+The Service Worker cache and asset query version are `8.5.0`.
 
 ## Existing Supabase features retained
 
@@ -176,8 +202,8 @@ The main application still works without signing in. Reward Code redemption is i
 
 ## Version
 
-`Workday Journey V8.4.8.1`
+`Workday Journey V8.5.0`
 
-Release focus: **Reward Code RPC ambiguity hotfix / data-safe Supabase patch**
+Release focus: **Grouped navigation / cleaner app shell / standardized page headers / mobile navigation**
 
-Previous V8.4.8 focus: **Reward Codes / code-exclusive rewards / Owner-only Developer Control Center / Supabase redemption limits and history**
+Previous V8.4.8.1 focus: **Reward Code RPC ambiguity hotfix / data-safe Supabase patch**
