@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0";
+  const VERSION = "8.6.0.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];

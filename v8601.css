@@ -1,0 +1,25 @@
+/* V8.6.0.1 - Secure bank connectivity state. */
+.v8601-bank-pending {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; min-height:260px; text-align:center;
+  margin:18px 0; padding:clamp(20px,5vw,44px);
+  background:var(--card-bg,var(--surface,#fff));
+  border:1px solid var(--border-color,rgba(125,140,160,.25));
+  border-radius:var(--radius-xl,20px);
+}
+.v8601-bank-pending-icon { font-size:2.5rem; }
+.v8601-bank-pending h3 { margin:0; font-size:1.18rem; }
+.v8601-bank-pending p { max-width:42ch; opacity:.76; overflow-wrap:anywhere; }
+.v8601-bank-pending button {
+  min-height:42px; padding:10px 20px; font:inherit; font-weight:700;
+  background:var(--accent,#2563eb); border:0; border-radius:12px; color:white;
+  cursor:pointer;
+}
+.v8601-bank-pending button:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+@media (max-width:420px) {.v8601-bank-pending { min-height:220px; padding:18px 14px; }}
+
+.v8601-bank-legacy-notice {
+  margin:12px 0 18px; padding:12px 16px; border-radius:12px;
+  border:1px solid rgba(215,148,51,.42); background:rgba(215,148,51,.10);
+  line-height:1.65; font-size:.92rem; overflow-wrap:anywhere;
+}

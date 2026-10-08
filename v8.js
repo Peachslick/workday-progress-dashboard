@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0";
+  const VERSION = "8.6.0.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -102,6 +102,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.6.0.1",icon:"🏦",th:"Cloud Sync & Bank Hotfix",en:"Cloud Sync & Bank Hotfix",notesTh:["Work Bank ฝาก/ถอนผ่าน Supabase Transaction แล้ว", "ลดการ Sync ซ้ำและ Loading เมื่อเปลี่ยนหน้า/กลับมาที่เว็บ", "แยกยอด Bank ของ Guest กับ Cloud และเก็บข้อมูล Local เดิมไว้"],notesEn:["Secure Bank deposits and withdrawals now use atomic Supabase transactions","Reduced redundant Cloud Sync requests and loading flicker","Separated Guest savings from Cloud savings while preserving old device data"]},
     {version:"8.6.0",icon:"🔐",th:"Guest to Cloud Security Fix",en:"Guest to Cloud Security Fix",notesTh:["ปิดการนำ Coin และ Item จาก Guest เข้า Cloud ผ่าน RPC โดยตรง","บัญชีใหม่เริ่มยอดจาก Supabase ไม่ใช่ยอดที่แก้ใน Browser","แยกข้อมูล Economy ของ Guest ออกจากบัญชี Cloud และคงยอดเดิมของ User ที่ย้ายสำเร็จแล้ว"],notesEn:["Disabled browser-supplied Guest Coin and Item imports in Supabase RPC","New accounts use server-owned Coin balances instead of local data","Separated Guest economy from Cloud accounts while preserving previous legitimate imports"]},
     {version:"8.5.5",icon:"✨",th:"Final Polish & Responsive QA",en:"Final Polish & Responsive QA",notesTh:["เก็บ UI มือถือ/แท็บเล็ต แก้การล้นจอและพื้นที่กดปุ่มโดยเฉพาะ Finance Tabs","ปรับ Dark Mode, Focus, Modal และ Empty/Loading State ให้สอดคล้องกัน","เพิ่มทางลัดข้ามเมนูและปุ่มกลับขึ้นด้านบน พร้อมรองรับการลด Animation"],notesEn:["Polished mobile/tablet spacing, overflow and touch targets, especially Finance tabs","Refined dark mode, keyboard focus, dialogs and existing empty/loading states","Added skip-to-content and back-to-top controls with reduced-motion support"]},
     {version:"8.5.4",icon:"💰",th:"Finance Hub Refresh",en:"Finance Hub Refresh",notesTh:["แยก Work Exchange เป็นแท็บ Market / Portfolio / Academy / History","จัด Work Bank เป็น Savings / Growth / History พร้อมทางลัดข้ามระบบ","ปรับตาราง กราฟ และพื้นที่ซื้อขายให้อ่านง่ายขึ้น โดยคงระบบจำลองเดิม"],notesEn:["Split Work Exchange into Market / Portfolio / Academy / History tabs","Organized Work Bank into Savings / Growth / History with Finance Hub shortcuts","Improved the visual hierarchy without changing the simulation engine"]},
@@ -142,7 +143,8 @@
 
   const cloud = {
     client:null, configured:false, session:null, user:null, status:"local", localDirty:false,
-    applying:false, syncTimer:null, conflictRow:null, authSubscription:null, reconciling:false, initialReady:false
+    applying:false, syncTimer:null, conflictRow:null, authSubscription:null, reconciling:false, initialReady:false,
+    authUserId:"", uploadPromise:null, lastRemoteCheck:0
   };
   const authUi = {mode:"choose", error:"", success:null, busy:false, returnAction:""};
 
@@ -151,6 +153,9 @@
     "wp-v76-journal-filters",
     "wp-v76-project-view",
     "wp-v81-shop-tab",
+    // Page-visit activity powers exploration missions but is UI activity,
+    // not a Cloud document edit. Switching pages must not trigger an upload.
+    "wp-v82-daily-activity",
     "wp-v84-exchange-selected",
     "wp-v84-exchange-range",
     "wp-v846-achievement-category",
@@ -331,20 +336,40 @@
     const cfg=window.WORKDAY_SUPABASE_CONFIG;
     try{
       cloud.client=window.supabase.createClient(cfg.url.replace(/\/$/,""),cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      cloud.client.auth.onAuthStateChange((event,session)=>{
-        cloud.session=session||null; cloud.user=session?.user||null;
-        if(event==="SIGNED_OUT"){cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;cloud.initialReady=false;updateCloudIndicators();renderAccountModal();try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:false}}));}catch{}return;}
-        if(session?.user){
-          const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";
-          if(previousUser&&previousUser!==session.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;}
-          setCloudMeta(KEYS.cloudUserId,session.user.id);
-          cloud.status=navigator.onLine?"syncing":"offline";updateCloudIndicators();try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:true,userId:session.user.id,email:session.user.email||""}}));}catch{}if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(()=>reconcileCloudOnLogin(),50);
+      const beginUserSession = (user, session, event) => {
+        if (!user) return;
+        const oldUser=cloud.authUserId;
+        const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";
+        cloud.user=user; cloud.session=session||cloud.session;
+        if((previousUser&&previousUser!==user.id)||(oldUser&&oldUser!==user.id)){
+          setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);
+          setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);
+          setCloudMeta(KEYS.cloudLastUpdated,null);cloud.localDirty=false;cloud.initialReady=false;
+          cloud.lastRemoteCheck=0;
         }
+        setCloudMeta(KEYS.cloudUserId,user.id);
+        if(oldUser===user.id) return; // INITIAL_SESSION, getSession and token refresh can overlap.
+        cloud.authUserId=user.id;
+        cloud.status=navigator.onLine?"syncing":"offline"; updateCloudIndicators();
+        try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:true,userId:user.id,email:user.email||""}}));}catch{}
+        setTimeout(()=>{if(cloud.user?.id===user.id)reconcileCloudOnLogin();},60);
+      };
+      cloud.client.auth.onAuthStateChange((event,session)=>{
+        cloud.session=session||null;cloud.user=session?.user||null;
+        if(event==="SIGNED_OUT"){
+          clearTimeout(cloud.syncTimer);cloud.authUserId="";cloud.lastRemoteCheck=0;
+          cloud.status="local";cloud.localDirty=false;cloud.conflictRow=null;cloud.initialReady=false;
+          updateCloudIndicators();renderAccountModal();
+          try{window.dispatchEvent(new CustomEvent("workday:v8-auth-state",{detail:{event,signedIn:false}}));}catch{}
+          return;
+        }
+        if(session?.user)beginUserSession(session.user,session,event);
       });
       cloud.client.auth.getSession().then(({data})=>{
-        cloud.session=data?.session||null; cloud.user=cloud.session?.user||null;
-        if(cloud.user){const previousUser=localStorage.getItem(KEYS.cloudUserId)||"";if(previousUser&&previousUser!==cloud.user.id){setCloudMeta(KEYS.cloudLastHash,null);setCloudMeta(KEYS.cloudLastPayloadHash,null);setCloudMeta(KEYS.cloudBase,null);setCloudMeta(KEYS.cloudLastSync,null);setCloudMeta(KEYS.cloudLastUpdated,null);cloud.initialReady=false;}setCloudMeta(KEYS.cloudUserId,cloud.user.id);cloud.status=navigator.onLine?"syncing":"offline";reconcileCloudOnLogin();}else cloud.status="local";
-        updateCloudIndicators(); renderAccountModal();
+        const session=data?.session||null;
+        if(session?.user)beginUserSession(session.user,session,"INITIAL_SESSION");
+        else if(!cloud.authUserId){cloud.session=null;cloud.user=null;cloud.status="local";}
+        updateCloudIndicators();renderAccountModal();
       }).catch(()=>{});
     }catch(err){cloud.configured=false;cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();}
   }
@@ -352,7 +377,9 @@
   async function fetchCloudRow(){
     if(!cloud.client||!cloud.user) return null;
     const {data,error}=await cloud.client.from(CLOUD_TABLE).select("payload,updated_at,client_updated_at").eq("user_id",cloud.user.id).maybeSingle();
-    if(error)throw error; return data||null;
+    if(error)throw error;
+    cloud.lastRemoteCheck=Date.now();
+    return data||null;
   }
   function markSynced(data,updatedAt){
     const normalized=normalizeSyncData(data);
@@ -376,13 +403,40 @@
   }
   async function uploadCloudState({silent=false}={}){
     if(!cloud.client||!cloud.user||!navigator.onLine)return false;
-    if(cloud.conflictRow && silent) return false;
+    if(cloud.conflictRow && silent)return false;
+    if(cloud.uploadPromise)return cloud.uploadPromise;
+    const userId=cloud.user.id,payload=buildCloudPayload(),hash=payloadHash(payload.data);
+    const lastHash=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";
+    if(cloud.initialReady && lastHash === hash){
+      cloud.localDirty=false;
+      if(cloud.status==="syncing"){cloud.status="synced";updateCloudIndicators();}
+      return true;
+    }
     cloud.status="syncing";updateCloudIndicators();
-    const payload=buildCloudPayload(),now=new Date().toISOString();
-    try{
-      const {data,error}=await cloud.client.from(CLOUD_TABLE).upsert({user_id:cloud.user.id,payload,client_updated_at:now},{onConflict:"user_id"}).select("updated_at,client_updated_at").single();
-      if(error)throw error;markSynced(payload.data,data?.client_updated_at||data?.updated_at||now);if(!silent)toast("☁",t("cloudUploaded"),"success");return true;
-    }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();refreshNotificationCenter();if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
+    const promise=(async()=>{
+      const now=new Date().toISOString();
+      try{
+        const {data,error}=await cloud.client.from(CLOUD_TABLE).upsert({user_id:userId,payload,client_updated_at:now},{onConflict:"user_id"}).select("updated_at,client_updated_at").single();
+        if(error)throw error;
+        if(cloud.user?.id!==userId)return false;
+        markSynced(payload.data,data?.client_updated_at||data?.updated_at||now);
+        if(payloadHash()!==hash){
+          cloud.localDirty=true;
+          scheduleCloudUpload(1300); // Local writes made while the upload was in-flight.
+        }
+        if(!silent)toast("☁",t("cloudUploaded"),"success");
+        return true;
+      }catch(err){
+        if(cloud.user?.id===userId){
+          cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));
+          updateCloudIndicators();refreshNotificationCenter();
+          if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");
+        }
+        return false;
+      }
+    })();
+    cloud.uploadPromise=promise;
+    try{return await promise;}finally{if(cloud.uploadPromise===promise)cloud.uploadPromise=null;}
   }
   function applyCloudPayload(payload,updatedAt){
     if(!payload?.data||typeof payload.data!=="object")throw new Error("Invalid cloud payload");
@@ -425,9 +479,13 @@
     catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();if(!silent)toast("!",`${t("syncFailed")}: ${err?.message||err}`,"error");return false;}
   }
   async function reconcileCloudOnLogin(){
-    if(!cloud.user||!navigator.onLine||cloud.reconciling)return;cloud.reconciling=true;cloud.status="syncing";updateCloudIndicators();
+    if(!cloud.user||!navigator.onLine||cloud.reconciling)return;
+    const targetUser=cloud.user.id;
+    cloud.reconciling=true;cloud.status="syncing";updateCloudIndicators();
     try{
-      const row=await fetchCloudRow(),localData=collectLocalData();
+      const row=await fetchCloudRow();
+      if(cloud.user?.id!==targetUser)return; // Never apply another account's in-flight payload.
+      const localData=collectLocalData();
       if(!row?.payload?.data){await uploadCloudState({silent:true});renderAccountModal();return;}
       const cloudData=normalizeSyncData(row.payload.data),localPayloadHash=payloadHash(localData),cloudPayloadHash=payloadHash(cloudData);
       const localConflictHash=snapshotHash(localData),cloudConflictHash=snapshotHash(cloudData),lastHash=localStorage.getItem(KEYS.cloudLastHash)||"";
@@ -471,7 +529,12 @@
       cloud.conflictRow={...row,conflictKeys:["initial-source"],localChoiceData:localData,cloudChoiceData:cloudData};
       cloud.status="error";updateCloudIndicators();openConflictModal(cloud.conflictRow);
     }catch(err){cloud.status="error";setCloudMeta(KEYS.cloudError,String(err?.message||err));updateCloudIndicators();}
-    finally{cloud.reconciling=false;}
+    finally{
+      cloud.reconciling=false;
+      if(cloud.user?.id&&cloud.user.id!==targetUser){
+        setTimeout(()=>reconcileCloudOnLogin(),60);
+      }
+    }
   }
   async function syncNow({silent=false}={}){
     if(!cloud.user){if(!silent)openAccountModal();return;}
@@ -919,8 +982,12 @@
     if(document.hidden||!cloud.user||!navigator.onLine||cloud.conflictRow)return;
     clearTimeout(v807VisibilitySyncTimer);
     v807VisibilitySyncTimer=setTimeout(()=>{
-      if(!document.hidden&&cloud.user&&navigator.onLine&&!cloud.conflictRow&&!cloud.reconciling)syncNow({silent:true});
-    },350);
+      if(document.hidden||!cloud.user||!navigator.onLine||cloud.conflictRow||cloud.reconciling)return;
+      const different=payloadHash()!==(localStorage.getItem(KEYS.cloudLastPayloadHash)||"");
+      if(cloud.initialReady && different){cloud.localDirty=true;scheduleCloudUpload(1200);return;}
+      // Remote changes are checked occasionally, not on every tab/page switch.
+      if(!cloud.initialReady||Date.now()-cloud.lastRemoteCheck>180000)syncNow({silent:true});
+    },650);
   });
   document.addEventListener("click",e=>{if(!e.target.closest?.("#v8NotifPanel,#v8NotifBtn")&&$("v8NotifPanel")?.hidden===false)setNotificationPanel(false);if(!e.target.closest?.("#v802ProfileMenu,#profileQuickBtn"))closeProfileMenu();});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){setNotificationPanel(false);closeAccountModal();closeProfileMenu();closeWhatsNew();}});
@@ -932,7 +999,7 @@
     const currentHash=payloadHash(),lastHash=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";cloud.localDirty=!!lastHash&&lastHash!==currentHash;
     initializeNotificationReadState();initSupabase();enhanceRoute();detectPublicLink();
     setInterval(()=>{refreshNotificationCenter();updateCloudIndicators();},30000);
-    setInterval(()=>{if(!cloud.user||!cloud.initialReady||!navigator.onLine||cloud.conflictRow||localStorage.getItem("wp-setup-completed")!=="true")return;const h=payloadHash(),last=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";if(last&&h!==last){cloud.localDirty=true;updateCloudIndicators();scheduleCloudUpload(900);}},5000);
+    setInterval(()=>{if(!cloud.user||!cloud.initialReady||!navigator.onLine||cloud.conflictRow||localStorage.getItem("wp-setup-completed")!=="true")return;const h=payloadHash(),last=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";if(last&&h!==last){cloud.localDirty=true;updateCloudIndicators();scheduleCloudUpload(1300);}},12000);
   }
   boot();
 })();

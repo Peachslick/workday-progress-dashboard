@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.5.0.1";
+  const VERSION = "8.6.0.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -1086,16 +1086,29 @@
   }
 
   // ---------- V8.5.0 Work Bank + Finale Boost + Compound Interest ----------
+  const isSignedInBank = () => !!window.WorkdayV8Cloud?.isSignedIn?.();
+  const bankBridge = () => window.WorkdayBankSecurity;
   function bankLedger(){
+    if(isSignedInBank())return bankBridge()?.getCached?.()?.transactions || [];
     const value=read(KEYS.bankLedger,[]); return Array.isArray(value)?value:[];
   }
   function bankState(){
+    if(isSignedInBank())return bankBridge()?.getCached?.()?.state || {};
     const value=read(KEYS.bankState,{}); return value&&typeof value==="object"&&!Array.isArray(value)?value:{};
   }
-  function saveBankState(value){ write(KEYS.bankState,value&&typeof value==="object"?value:{}); }
+  function saveBankState(value){
+    if(isSignedInBank())return; // server-owned data cannot be mutated by render/interest code
+    write(KEYS.bankState,value&&typeof value==="object"?value:{});
+  }
   function roundBank(value){ return Math.round((Number(value)||0)*100)/100; }
-  function bankBalance(list=bankLedger()){ return roundBank(list.reduce((sum,item)=>sum+Number(item?.amount||0),0)); }
-  function bankInterestEarned(list=bankLedger()){ return roundBank(list.filter(x=>x?.type==="interest").reduce((sum,item)=>sum+Math.max(0,Number(item?.amount||0)),0)); }
+  function bankBalance(list=bankLedger()){
+    if(isSignedInBank())return roundBank(bankBridge()?.getCached?.()?.savings || 0);
+    return roundBank(list.reduce((sum,item)=>sum+Number(item?.amount||0),0));
+  }
+  function bankInterestEarned(list=bankLedger()){
+    if(isSignedInBank())return roundBank(bankBridge()?.getCached?.()?.interestEarned || 0);
+    return roundBank(list.filter(x=>x?.type==="interest").reduce((sum,item)=>sum+Math.max(0,Number(item?.amount||0)),0));
+  }
   function bankTierFrom(amount,tiers=BANK_TIERS){
     const value=Math.max(0,Number(amount)||0); return tiers.find(t=>value>=t.min&&value<=t.max)||tiers[tiers.length-1];
   }
@@ -1128,6 +1141,7 @@
     return amount>0?start:null;
   }
   function ensureBankV844State(state=bankState(),list=bankLedger()){
+    if(isSignedInBank())return state;
     let changed=false; const savings=bankBalance(list),hasBankData=list.length>0||!!state.openedAt||!!state.lastInterestDate||savings>0;
     // Do not create empty Bank state before Cloud data has a chance to load.
     if(!hasBankData)return state;
@@ -1157,6 +1171,11 @@
     if(!next)return null; const rate=BANK_STREAK_BONUSES.find(x=>x.days===next)?.rate||0;return{days:next,remaining:Math.max(0,next-Number(days||0)),rate};
   }
   function settleBankInterest({notify=false}={}){
+    if(isSignedInBank()){
+      // The bank RPC accrues time-based interest, not the browser clock.
+      if(location.hash.includes('/bank'))bankBridge()?.ensureFresh?.();
+      return 0;
+    }
     const today=dayKeyNow(),list=bankLedger(),state=ensureBankV844State(bankState(),list); let amount=bankBalance(list);
     if(amount<=0){
       if((state.openedAt||list.length)&&state.lastInterestDate!==today){state.lastInterestDate=today;saveBankState(state);} return 0;
@@ -1180,7 +1199,32 @@
     if(notify&&total>0)toast("🏦",`${lang()==="th"?"รับดอกเบี้ยทบต้นแล้ว":"Compound interest credited"} +${formatBankCoin(total)} Coins`,`success`);
     return total;
   }
+  async function bankSecureTransfer(direction,rawAmount){
+    const amount=Number(rawAmount),bank=bankBridge();
+    if(!Number.isSafeInteger(amount)||amount<1){
+      toast("!",lang()==="th"?"Enter a whole Coin amount (1 or more)":"Enter a whole Coin amount (1 or more)","error");return;
+    }
+    if(!bank?.getCached?.()){
+      toast("!","Secure Bank is not ready. Please wait for Supabase.","error");
+      bank?.refresh?.({force:true}).catch(()=>{});return;
+    }
+    if(direction==="deposit"&&amount>balance()){
+      toast("!",t("insufficient"),"error");return;
+    }
+    if(direction==="withdraw"&&amount>Math.floor(bankBalance())){
+      toast("!","Not enough Savings","error");return;
+    }
+    try{
+      await bank.move(direction,amount);
+      toast("🏦",direction==="deposit"?"Deposit confirmed by Supabase":"Withdrawal confirmed by Supabase","success");
+      reconcileRewards({notify:false});refreshAll();
+    }catch(error){
+      const message=String(error?.message||error||"BANK_ERROR");
+      toast("!",`${lang()==="th"?"รายการไม่สำเร็จ":"Transaction failed"}: ${message}`,"error");
+    }
+  }
   function bankDeposit(rawAmount){
+    if(isSignedInBank())return bankSecureTransfer("deposit",rawAmount);
     settleBankInterest({notify:false});
     const amount=Math.floor(Number(rawAmount)||0),wallet=balance();
     if(amount<1){toast("🏦",lang()==="th"?"กรุณาระบุจำนวน Coin ที่ต้องการฝาก":"Enter the amount of Coins to deposit","error");return;}
@@ -1194,6 +1238,7 @@
     reconcileRewards({notify:true});toast("🏦",`${lang()==="th"?"ฝากสำเร็จ · เริ่มสะสม Savings Streak":"Deposited · Savings Streak active"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
   }
   function bankWithdraw(rawAmount){
+    if(isSignedInBank())return bankSecureTransfer("withdraw",rawAmount);
     settleBankInterest({notify:false});
     const savings=bankBalance(),amount=Math.floor(Number(rawAmount)||0);
     if(amount<1){toast("🏦",lang()==="th"?"กรุณาระบุจำนวน Coin ที่ต้องการถอน":"Enter the amount of Coins to withdraw","error");return;}
@@ -1217,6 +1262,17 @@
   function bankHistoryLabel(item){return lang()==="th"?(item.labelTh||item.labelEn||item.type):(item.labelEn||item.labelTh||item.type);}
   function renderBank(){
     const root=$("v83BankPage");if(!root)return;
+    if(isSignedInBank()){
+      const bank=bankBridge();
+      if(!bank?.getCached?.()){
+        const message=bank?.getError?.();
+        root.innerHTML=`<section class="v8601-bank-pending" role="status"><span class="v8601-bank-pending-icon">🏦</span><h3>${message?"Secure Bank unavailable":"Loading secure Work Bank"}</h3><p>${message?esc(message):"Checking savings and transactions with Supabase. No Local balance will be used."}</p><button type="button" data-v8601-retry>Retry connection</button></section>`;
+        root.querySelector('[data-v8601-retry]')?.addEventListener('click',()=>bank?.refresh?.({force:true}).catch(()=>{}));
+        if(!message)bank?.ensureFresh?.();
+        return;
+      }
+      bank.ensureFresh?.();
+    }
     settleBankInterest({notify:true});
     const wallet=balance(),list=bankLedger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)),savings=bankBalance(list),state=ensureBankV844State(bankState(),list),rateInfo=bankRateInfo(savings,dayKeyNow(),state),tier=rateInfo.tier,daily=bankDailyInterest(savings,dayKeyNow(),state),earned=bankInterestEarned(list),streakDays=rateInfo.streakDays,nextStreak=bankNextStreakMilestone(streakDays),finale=journeyFinaleInfo(),p1=bankProjection(1,savings,state),p7=bankProjection(7,savings,state),p14=bankProjection(14,savings,state),pEnd=bankProjection(Math.max(0,finale.days),savings,state);
     const tierIndex=BANK_TIERS.findIndex(x=>x.id===tier.id),next=BANK_TIERS[tierIndex+1]||null,nextGap=next?Math.max(0,roundBank(next.min-savings)):0;
@@ -1233,11 +1289,22 @@
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · การถอนทุกครั้งจะรีเซ็ต Savings Streak`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · any withdrawal resets the Savings Streak.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
       <section class="v83-bank-growth"><article><p class="eyebrow">SAVINGS TIER</p><h3>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)}</h3><div class="v83-tier-list">${tierCards}</div>${next?`<p class="v83-next-tier">${lang()==="th"?`อีก ${formatBankCoin(nextGap)} Coins ถึง ${next.icon} ${next.th}`:`${formatBankCoin(nextGap)} Coins to ${next.icon} ${next.en}`}</p>`:`<p class="v83-next-tier max">👑 ${lang()==="th"?"คุณอยู่ Tier สูงสุดแล้ว":"You are at the highest tier"}</p>`}</article><article class="v83-projection v844-projection"><p class="eyebrow">COMPOUND FORECAST</p><h3>${lang()==="th"?"ถ้าไม่ถอนเงิน Savings จะโตเท่าไหร่":"How Savings can grow if left untouched"}</h3><div><span><small>TOMORROW</small><b>+${formatBankCoin(p1.interest)} 🪙</b><em>${formatBankCoin(p1.balance)} total</em></span><span><small>7 DAYS</small><b>+${formatBankCoin(p7.interest)} 🪙</b><em>${formatBankCoin(p7.balance)} total</em></span><span><small>14 DAYS</small><b>+${formatBankCoin(p14.interest)} 🪙</b><em>${formatBankCoin(p14.balance)} total</em></span><span class="journey-end"><small>🎓 JOURNEY END</small><b>+${formatBankCoin(pEnd.interest)} 🪙</b><em>${formatBankCoin(pEnd.balance)} total · ${finale.days} days</em></span></div><p>${lang()==="th"?`ดอกเบี้ยเข้าบัญชี Savings และถูกนำไปคิดดอกวันถัดไปอัตโนมัติ · Cap ${BANK_DAILY_CAP} Coins/วัน`:`Interest is credited into Savings and automatically compounds the next day · ${BANK_DAILY_CAP} Coin/day cap.`}</p></article></section>
       <section class="v83-bank-history"><div class="v83-bank-section-head"><div><p class="eyebrow">BANK LEDGER</p><h3>${lang()==="th"?"ประวัติ Savings":"Savings history"}</h3></div><span>${state.openedAt?`${lang()==="th"?"เปิดบัญชี":"Opened"} ${esc(formatHistoryDate(state.openedAt))}`:(lang()==="th"?"ยังไม่ได้ฝาก Coin":"No deposit yet")}</span></div><div class="v83-bank-history-list">${history}</div></section>`;
+    if(isSignedInBank()&&bankBridge()?.hasLocalOnlySavings?.()){
+      const note=document.createElement('aside');
+      note.className='v8601-bank-legacy-notice';
+      note.textContent=lang()==='th'
+        ?'ยอด Savings แบบ Local ที่เคยฝากยังเก็บไว้ใน Browser แต่ไม่ถูกนำเข้า Cloud อัตโนมัติ หากต้องการกู้ยอดเดิมให้ติดต่อ Owner เพื่อตรวจสอบ'
+        :'Older Local-only Savings are backed up on this device, but are not auto-imported into Cloud. Contact the Owner to review any previous balance.';
+      root.prepend(note);
+    }
     const dep=$("v83DepositAmount"),wd=$("v83WithdrawAmount");
     q("[data-v83-deposit]",root)?.addEventListener("click",()=>bankDeposit(dep?.value));q("[data-v83-withdraw]",root)?.addEventListener("click",()=>bankWithdraw(wd?.value));
     qa("[data-v83-deposit-pct]",root).forEach(btn=>btn.addEventListener("click",()=>{if(dep)dep.value=Math.floor(wallet*Number(btn.dataset.v83DepositPct||0)/100)||"";}));
     qa("[data-v83-withdraw-pct]",root).forEach(btn=>btn.addEventListener("click",()=>{if(wd)wd.value=Math.floor(savings*Number(btn.dataset.v83WithdrawPct||0)/100)||"";}));
     [dep,wd].filter(Boolean).forEach(input=>input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input===dep?bankDeposit(input.value):bankWithdraw(input.value);}}));
+    if(isSignedInBank()&&bankBridge()?.isBusy?.()){
+      [dep,wd,...qa('[data-v83-deposit],[data-v83-withdraw]',root)].filter(Boolean).forEach(el=>{el.disabled=true;});
+    }
   }
 
   // ---------- V8.5.0 Work Exchange ----------
