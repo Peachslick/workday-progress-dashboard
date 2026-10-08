@@ -1,0 +1,173 @@
+/* Workday Journey V8.5.5 — Final Polish & Responsive QA
+ * Presentation only. Keeps existing route/layout/business state untouched.
+ */
+:root {
+  --v855-outline: color-mix(in srgb, var(--accent, #356ae6) 78%, #fff);
+  --v855-outline-soft: color-mix(in srgb, var(--accent, #356ae6) 22%, transparent);
+  --v855-note-surface: color-mix(in srgb, var(--surface-soft, #f5f8fc) 86%, var(--surface, #fff));
+  --v855-scroll-thumb: color-mix(in srgb, var(--muted, #66758d) 45%, transparent);
+  --v855-focus-radius: .55rem;
+}
+html[data-theme="dark"] {
+  --v855-outline: #8cb5ff;
+  --v855-outline-soft: rgba(110, 161, 255, .23);
+  --v855-note-surface: color-mix(in srgb, var(--surface-soft, #181c25) 84%, var(--surface, #131720));
+  --v855-scroll-thumb: rgba(159, 177, 203, .42);
+}
+
+/* 1. Keyboard navigation and focus that remains visible in both themes. */
+.v855-skip-link {
+  position: fixed; z-index: 5000; inset: .65rem auto auto .65rem;
+  transform: translateY(calc(-100% - 1.75rem));
+  border: 2px solid var(--v855-outline);
+  border-radius: .75rem; background: var(--surface-solid, #fff);
+  color: var(--text, #17243b); font: inherit; font-weight: 800;
+  padding: .6rem .9rem; box-shadow: 0 10px 25px rgba(8, 25, 52, .2);
+  text-decoration: none; transition: transform .15s ease;
+}
+.v855-skip-link:focus-visible { transform: translateY(0); outline: 2px solid var(--v855-outline); outline-offset: 2px; }
+body.v855-polish :is(button, a[href], input, select, textarea, [role="tab"], [role="button"]):focus-visible {
+  outline: 2px solid var(--v855-outline); outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--v855-outline-soft);
+}
+body.v855-polish :is(.v850-mobile-dock, .v854-tabs, .v81-shop-tabs, .v76-project-tabs) :is(button,[role="tab"]):focus-visible {
+  outline-offset: -2px;
+}
+body.v855-polish :is(button, a, input, select, textarea, [role="tab"]):disabled { cursor: not-allowed; }
+body.v855-polish .v855-main-target:focus { outline: none; }
+body.v855-polish .v855-main-target:focus-visible { outline: 2px solid var(--v855-outline); outline-offset: 3px; }
+
+/* 2. Prevent long project names, record IDs and monetary values from pushing layouts wide. */
+body.v855-polish :is(.v7-workspace, main.dashboard, .v7-page-panel,
+  .v7-project-layout, .v7-project-cards, .v7-journal-grid,
+  .v84-market-grid, .v84-lower-grid, .v854-panel, .v82-mission-card,
+  .v81-shop-grid, .v831-collection, .v7-report-kpis, .v84-kpis) { min-width: 0; max-width: 100%; }
+body.v855-polish :is(.v7-project-card, .v84-stock-detail, .v84-portfolio-card,
+  .v83-bank-history-row, .v84-history-row, .v82-mission-card,
+  .v7-page-title, .v854-panel-heading, .v8472-release-card) { min-width: 0; overflow-wrap: anywhere; }
+body.v855-polish :is(.v7-project-card, .v84-stock-detail, .v84-portfolio-card) :is(strong, h2, h3) { overflow-wrap: anywhere; }
+body.v855-polish :is(.v7-table-wrap, .v7-report-table-wrap, .v7-monthly-table-wrap,
+  .v84-history-list, .v83-bank-history-list) { max-width: 100%; overscroll-behavior-inline: contain; }
+body.v855-polish :is(.v7-table-wrap, .v7-report-table-wrap, .v7-monthly-table-wrap) {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+body.v855-polish :is(.v854-tabs, .v81-shop-tabs, .v76-project-tabs, .v847-ach-mode,
+  .v82-mission-list, .v84-history-list, .v83-bank-history-list, .v8472-changelog-list) {
+  scrollbar-width: thin; scrollbar-color: var(--v855-scroll-thumb) transparent;
+}
+
+/* 3. Cohesive real empty states: no fabricated loading/content placeholders. */
+body.v855-polish :is(.v7-empty, .empty-state) {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 6.5rem; max-width: 100%; padding: 1.35rem;
+  border: 1px dashed var(--border, #dbe3ed);
+  border-radius: var(--ds-radius-lg, 1rem); background: var(--v855-note-surface);
+  color: var(--muted, #6a7589); font-size: max(.84rem, var(--ds-font-sm, .8rem));
+  line-height: 1.65; text-align: center; overflow-wrap: anywhere;
+}
+body.v855-polish :is(.v7-empty, .empty-state) + :is(.v7-empty, .empty-state) { margin-top: .5rem; }
+/* Existing asynchronous actions drive these classes/attributes; V8.5.5 never changes the transaction itself. */
+body.v855-polish :is(button, [role="button"])[aria-busy="true"] {
+  position: relative; pointer-events: none; cursor: progress; opacity: .9;
+}
+body.v855-polish :is(button, [role="button"])[aria-busy="true"]::after {
+  content: ""; display: inline-block; vertical-align: -.12em; margin-inline-start: .5em;
+  width: .85em; height: .85em; border: 2px solid currentColor;
+  border-right-color: transparent; border-radius: 50%; animation: v855-spin .8s linear infinite;
+}
+body.v855-polish :is(.v845-vault-loading, .v848-access-card:has(.v848-spinner)) {
+  border: 1px dashed var(--border, #dbe3ed); background: var(--v855-note-surface);
+  border-radius: var(--ds-radius-xl, 1.25rem);
+}
+@keyframes v855-spin { to { transform: rotate(360deg); } }
+
+/* 4. Dialogs, long patch notes and toast notifications stay usable on short viewports. */
+body.v855-polish :is(.setup-wizard, .v8472-changelog-modal, .v8-auth-modal,
+ .v848-modal, .v843-chest-modal, .v845-vault-modal,
+ .day-modal, .stats-modal, .achievement-modal, .completion-modal) {
+  box-sizing: border-box; max-width: calc(100vw - 1.25rem);
+  max-height: calc(100dvh - 1.25rem);
+}
+body.v855-polish :is(.v8472-changelog-list, .stats-modal-content, .setup-body,
+  .v845-vault-body) { overscroll-behavior: contain; }
+body.v855-polish :is(.v8472-changelog-backdrop, .v848-backdrop, .modal-backdrop,
+  .setup-backdrop)[hidden] { display: none !important; }
+body.v855-polish .v8472-changelog-hero { flex-shrink: 0; }
+body.v855-polish .v8472-release-card ul { overflow-wrap: anywhere; }
+body.v855-polish .toast-stack {
+  max-width: calc(100vw - 1rem); padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 5. Long-page affordance: intentionally not shown until user scrolls. */
+.v855-back-to-top {
+  position: fixed; inset: auto 1.2rem 1.25rem auto; z-index: 1010;
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  border: 1px solid var(--border, #d8e2ed); border-radius: .95rem;
+  background: var(--surface-solid, #fff); color: var(--text, #20314b);
+  box-shadow: var(--ds-shadow-md, 0 10px 28px rgba(12, 27, 52, .16));
+  font: inherit; font-size: 1.3rem; font-weight: 800; cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(.55rem);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s ease, background .2s ease;
+}
+.v855-back-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.v855-back-to-top:hover { background: var(--v855-note-surface); }
+.v855-back-to-top svg { width: 1.25rem; height: 1.25rem; stroke: currentColor; fill: none; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 6. Wider targets for touch, tables, and smooth but non-intrusive controls. */
+@media (hover: hover) and (pointer: fine) {
+  body.v855-polish :is(.v854-tab, .v853-shop-jump button, .v76-project-tabs button,
+    .v81-shop-tabs button, .v84-stock-row, .v84-portfolio-row) {
+    transition: color .17s ease, background-color .17s ease, border-color .17s ease, box-shadow .17s ease;
+  }
+}
+@media (max-width: 980px) {
+  body.v855-polish .v7-workspace main.dashboard { padding-bottom: calc(7rem + env(safe-area-inset-bottom)); }
+  body.v855-polish .footer { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  .v855-back-to-top { bottom: calc(5.65rem + env(safe-area-inset-bottom)); right: .8rem; }
+  body.v855-polish .v850-mobile-dock { bottom: max(.4rem, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 660px) {
+  body.v855-polish :is(.v7-two-col, .setup-form-grid,
+    .v7-project-layout, .v7-journal-grid) { min-width: 0; }
+  body.v855-polish :is(.v7-project-cards, .v84-lower-grid, .v84-market-grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body.v855-polish .v7-page-heading { min-width: 0; }
+  body.v855-polish .v7-page-title { min-width: 0; }
+  body.v855-polish :is(.v7-page-actions, .v84-ticket-actions, .v7-form-actions) { max-width: 100%; }
+  body.v855-polish :is(.v7-page-actions, .v7-form-actions) > button { min-width: 0; }
+  body.v855-polish :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    min-width: 0; max-width: 100%; font-size: max(1rem, var(--ds-font-base, 1rem));
+  }
+  body.v855-polish :is(.v83-bank-history, .v84-history-card, .v7-monthly-table-card) {
+    min-width: 0; max-width: 100%;
+  }
+  body.v855-polish .v850-mobile-dock button { min-height: 2.75rem; }
+  body.v855-polish .v850-mobile-dock button small { line-height: 1.25; }
+  body.v855-polish :is(.v84-ticket-quick button, .v84-range-tabs button,
+    .v853-shop-jump button, .v76-project-tabs button) { min-height: 2.55rem; }
+  body.v855-polish .v8472-changelog-backdrop { padding: max(.45rem, env(safe-area-inset-top)) .45rem max(.45rem, env(safe-area-inset-bottom)); }
+  body.v855-polish .v8472-changelog-modal { max-height: calc(100dvh - 1.1rem); }
+  body.v855-polish .toast-stack { bottom: calc(5.9rem + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 380px) {
+  /* A 320px screen needs horizontally scrolling Finance tabs, NOT a wider document. */
+  body.v855-polish .v854-tabs { display: flex; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; gap: .2rem; }
+  body.v855-polish .v854-tab { flex: 1 0 4.6rem; min-width: 4.6rem; }
+  body.v855-polish .v854-bank-page .v854-tab { flex: 1 0 5.8rem; }
+  body.v855-polish .v850-mobile-dock { left: .35rem; width: calc(100vw - .7rem); transform: none; padding: .3rem; gap: 0; }
+  body.v855-polish .v850-mobile-dock button { padding-inline: 0; }
+  body.v855-polish .v850-mobile-dock button small { font-size: .62rem; }
+  body.v855-polish .v7-workspace main.dashboard { padding-inline: .65rem; }
+  body.v855-polish .v854-hub-switch { padding: .6rem; }
+  .v855-back-to-top { right: .55rem; }
+}
+/* Keep the user's Animation setting and OS preference authoritative. */
+body.no-animations .v855-back-to-top,
+body.no-animations .v855-skip-link,
+body.no-animations [aria-busy="true"]::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .v855-back-to-top, .v855-skip-link,
+  body.v855-polish [aria-busy="true"]::after { animation: none !important; transition: none !important; }
+  body.v855-polish :is(.v854-tab, .v853-shop-jump button, .v76-project-tabs button) { transition: none !important; }
+}

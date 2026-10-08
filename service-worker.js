@@ -1,29 +1,31 @@
-const CACHE_NAME = "workday-journey-v8.5.4";
+const CACHE_NAME = "workday-journey-v8.5.5";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=8.5.4",
-  "./app.js?v=8.5.4",
-  "./v6.js?v=8.5.4",
-  "./v7.css?v=8.5.4",
-  "./v7.js?v=8.5.4",
-  "./v8.css?v=8.5.4",
-  "./v81.css?v=8.5.4",
-  "./v848.css?v=8.5.4",
-  "./v850.css?v=8.5.4",
-  "./v851.css?v=8.5.4",
-  "./v852.css?v=8.5.4",
-  "./v853.css?v=8.5.4",
-  "./v854.css?v=8.5.4",
-  "./v8.js?v=8.5.4",
-  "./v81.js?v=8.5.4",
-  "./v848.js?v=8.5.4",
-  "./v850.js?v=8.5.4",
-  "./v8501.js?v=8.5.4",
-  "./v851.js?v=8.5.4",
-  "./v852.js?v=8.5.4",
-  "./v853.js?v=8.5.4",
-  "./v854.js?v=8.5.4",
+  "./styles.css?v=8.5.5",
+  "./app.js?v=8.5.5",
+  "./v6.js?v=8.5.5",
+  "./v7.css?v=8.5.5",
+  "./v7.js?v=8.5.5",
+  "./v8.css?v=8.5.5",
+  "./v81.css?v=8.5.5",
+  "./v848.css?v=8.5.5",
+  "./v850.css?v=8.5.5",
+  "./v851.css?v=8.5.5",
+  "./v852.css?v=8.5.5",
+  "./v853.css?v=8.5.5",
+  "./v854.css?v=8.5.5",
+  "./v855.css?v=8.5.5",
+  "./v8.js?v=8.5.5",
+  "./v81.js?v=8.5.5",
+  "./v848.js?v=8.5.5",
+  "./v850.js?v=8.5.5",
+  "./v8501.js?v=8.5.5",
+  "./v851.js?v=8.5.5",
+  "./v852.js?v=8.5.5",
+  "./v853.js?v=8.5.5",
+  "./v854.js?v=8.5.5",
+  "./v855.js?v=8.5.5",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png"
@@ -35,7 +37,7 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+    caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("workday-journey-v") && key !== CACHE_NAME).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });

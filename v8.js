@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.5.4";
+  const VERSION = "8.5.5";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -102,6 +102,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.5.5",icon:"✨",th:"Final Polish & Responsive QA",en:"Final Polish & Responsive QA",notesTh:["เก็บ UI มือถือ/แท็บเล็ต แก้การล้นจอและพื้นที่กดปุ่มโดยเฉพาะ Finance Tabs","ปรับ Dark Mode, Focus, Modal และ Empty/Loading State ให้สอดคล้องกัน","เพิ่มทางลัดข้ามเมนูและปุ่มกลับขึ้นด้านบน พร้อมรองรับการลด Animation"],notesEn:["Polished mobile/tablet spacing, overflow and touch targets, especially Finance tabs","Refined dark mode, keyboard focus, dialogs and existing empty/loading states","Added skip-to-content and back-to-top controls with reduced-motion support"]},
     {version:"8.5.4",icon:"💰",th:"Finance Hub Refresh",en:"Finance Hub Refresh",notesTh:["แยก Work Exchange เป็นแท็บ Market / Portfolio / Academy / History","จัด Work Bank เป็น Savings / Growth / History พร้อมทางลัดข้ามระบบ","ปรับตาราง กราฟ และพื้นที่ซื้อขายให้อ่านง่ายขึ้น โดยคงระบบจำลองเดิม"],notesEn:["Split Work Exchange into Market / Portfolio / Academy / History tabs","Organized Work Bank into Savings / Growth / History with Finance Hub shortcuts","Improved the visual hierarchy without changing the simulation engine"]},
     {version:"8.5.3",icon:"🎮",th:"Gamification Pages Refresh",en:"Gamification Pages Refresh",notesTh:["ปรับ Achievement และ Mission ให้เห็นเป้าหมาย/ความคืบหน้าชัดขึ้น","ทำ Daily / Weekly Chest ให้เด่นและแสดงสถานะได้ง่าย","จัด Reward Shop ใหม่ พร้อมวาง Reward Code ใต้ Wallet"],notesEn:["Made achievements and mission progress easier to scan","Highlighted Daily / Weekly Chests and their claim states","Reorganized the Reward Shop and featured Reward Codes below the Wallet"]},
     {version:"8.5.2",icon:"📋",th:"Core Work Pages Refresh",en:"Core Work Pages Refresh",notesTh:["จัด Dashboard ให้โฟกัสงานและ Progress วันนี้","ปรับ Daily Journal และ Projects ให้กรอก/จัดการงานได้สะดวกขึ้น","จัด Calendar และ Reports ให้เนื้อหาหลักเด่น ลด Card ซ้อนกัน"],notesEn:["Prioritized today's work and progress on the Dashboard","Refined Journal and Project editing workspaces","Made Calendar and Reports clearer with less nested-card clutter"]},

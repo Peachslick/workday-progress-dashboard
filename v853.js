@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.5.4";
+  const VERSION = "8.5.5";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -208,7 +208,7 @@
     if (footerVersion) footerVersion.textContent = `v${VERSION}`;
 
     const footerText = q('.footer [data-i18n="footerText"]');
-    if (footerText) footerText.textContent = `Workday Journey V${VERSION} · Finance Hub · Gamification · Core Pages · Design System · Security`;
+    if (footerText) footerText.textContent = `Workday Journey V${VERSION} · Final Polish · Finance Hub · Gamification · Core Pages · Design System`;
 
     qa(".v7-page-heading .eyebrow").forEach(el => {
       if (/WORKDAY JOURNEY/i.test(el.textContent || "")) el.textContent = `WORKDAY JOURNEY · V${VERSION}`;

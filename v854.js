@@ -5,7 +5,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.5.4";
+  const VERSION = "8.5.5";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -204,7 +204,7 @@
     if (footer && footer.textContent !== `v${VERSION}`) footer.textContent = `v${VERSION}`;
     const footText = q('.footer [data-i18n="footerText"]');
     if (footText) {
-      const value = `Workday Journey V${VERSION} · Finance Hub · Gamification · Core Pages · Design System · Security`;
+      const value = `Workday Journey V${VERSION} · Final Polish · Finance Hub · Gamification · Core Pages · Design System`;
       if (footText.textContent !== value) footText.textContent = value;
     }
     document.querySelectorAll(".v7-page-heading .eyebrow, .setup-brand .eyebrow, #v8472ChangelogBackdrop .v8472-changelog-hero .eyebrow").forEach(node => {

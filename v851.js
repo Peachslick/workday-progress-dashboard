@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.5.4";
+  const VERSION = "8.5.5";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -25,8 +25,8 @@
     const footerText = q('.footer [data-i18n="footerText"]');
     if (footerText) {
       footerText.textContent = localStorage.getItem("wp-language") === "en"
-        ? `Workday Journey V${VERSION} · Finance Hub · Gamification · Core Pages · Design System · Security`
-        : `Workday Journey V${VERSION} · Finance Hub · Gamification · Core Pages · Design System · Security`;
+        ? `Workday Journey V${VERSION} · Final Polish · Finance Hub · Gamification · Core Pages · Design System`
+        : `Workday Journey V${VERSION} · Final Polish · Finance Hub · Gamification · Core Pages · Design System`;
     }
 
     document.body?.setAttribute("data-app-version", VERSION);
