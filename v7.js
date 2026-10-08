@@ -784,7 +784,7 @@
       {group:lang()==="th"?"ฟอนต์สไตล์ / เน้นเอกลักษณ์":"Style / Personality",options:[["trirong","Trirong (Serif)"],["itim","Itim (Handwriting)"],["pattaya","Pattaya (Display)"],["chonburi","Chonburi (Display)"]]}
     ]);
     mirrorSelect("v7FontSize","fontSizeSelect",[["small",t("small")],["medium",t("medium")],["large",t("large")]]);
-    mirrorSelect("v7Density","densitySelect",[["comfortable",t("comfortable")],["compact",t("compact")]]);
+    mirrorSelect("v7Density","densitySelect",[["comfortable",t("comfortable")],["compact",t("compact")],["spacious",lang()==="th"?"โปร่งสบาย":"Spacious"]]);
     mirrorSelect("v7Timezone","timezoneSelect",qa("#timezoneSelect option").map(o=>[o.value,o.textContent]));
     mirrorSelect("v7Locale","localeSelect",qa("#localeSelect option").map(o=>[o.value,o.textContent]));
     mirrorToggle("v7Seconds","showSecondsToggle");mirrorToggle("v7Animation","animationToggle");mirrorToggle("v7Mood","dynamicMoodToggle");mirrorToggle("v7Notifications","notificationToggle");

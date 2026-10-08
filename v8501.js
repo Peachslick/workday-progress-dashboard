@@ -2,7 +2,7 @@
    No client-provided legacy balances or inventory may be imported to Cloud. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.1";
+  const VERSION = "8.6.0.2";
   const LEDGER = "wp-v81-coin-ledger";
   const OWNED = "wp-v81-owned-rewards";
   // Deliberately NOT wp-prefixed: these are device-only guest backups and

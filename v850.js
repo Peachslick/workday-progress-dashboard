@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.1";
+  const VERSION = "8.6.0.2";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -43,6 +43,14 @@
     more: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>'
   };
 
+  const CLASSIC_ICONS = {
+    dashboard:"🏠", journal:"📓", projects:"📁", calendar:"📅", reports:"📊",
+    achievements:"🏆", missions:"🎯", rewards:"🎁", bank:"🏦", exchange:"📈",
+    developer:"🛠️", settings:"⚙️", more:"☰"
+  };
+  const iconStyle = () => document.documentElement.dataset.wdjIconStyle === "classic" ? "classic" : "modern";
+  const iconKey = route => `${route}:${iconStyle()}`;
+
   function activeRoute() {
     const route = location.hash.replace(/^#\/?/, "").split(/[?&]/)[0].toLowerCase();
     return Object.prototype.hasOwnProperty.call(ICONS, route) ? route : "dashboard";
@@ -53,7 +61,7 @@
   }
 
   function icon(route) {
-    return ICONS[route] || ICONS.dashboard;
+    return iconStyle() === "classic" ? `<span class="v8602-classic-icon" aria-hidden="true">${CLASSIC_ICONS[route] || "🏠"}</span>` : (ICONS[route] || ICONS.dashboard);
   }
 
   function ensureNavGroups() {
@@ -74,8 +82,8 @@
     qa("[data-v7-route]", nav).forEach(btn => {
       const route = btn.dataset.v7Route;
       const iconHost = btn.firstElementChild;
-      if (iconHost && iconHost.dataset.v850Icon !== route) {
-        iconHost.dataset.v850Icon = route;
+      if (iconHost && iconHost.dataset.v850Icon !== iconKey(route)) {
+        iconHost.dataset.v850Icon = iconKey(route);
         iconHost.innerHTML = icon(route);
       }
       const text = q(`[data-v7-nav-label="${route}"]`, btn)?.textContent?.trim() || label(route);
@@ -95,7 +103,7 @@
     const subtitle = $("v802ContextEyebrow");
     if (host) host.dataset.v850Route = route;
     if (iconHost) {
-      iconHost.dataset.v850Icon = route;
+      iconHost.dataset.v850Icon = iconKey(route);
       iconHost.innerHTML = icon(route);
     }
     if (title && subtitle && title.nextElementSibling !== subtitle) title.insertAdjacentElement("afterend", subtitle);
@@ -109,8 +117,8 @@
     if (!heading) return;
     heading.dataset.v850Route = route;
     const titleIcon = q(".v7-page-title > span:first-child", heading);
-    if (titleIcon && titleIcon.dataset.v850Icon !== route) {
-      titleIcon.dataset.v850Icon = route;
+    if (titleIcon && titleIcon.dataset.v850Icon !== iconKey(route)) {
+      titleIcon.dataset.v850Icon = iconKey(route);
       titleIcon.innerHTML = icon(route);
     }
   }
@@ -143,6 +151,11 @@
       const active = key === route || (key === "more" && !["dashboard", "journal", "projects", "rewards"].includes(route));
       btn.classList.toggle("active", active);
       btn.setAttribute("aria-current", active ? "page" : "false");
+      const iconHost = btn.firstElementChild;
+      if (iconHost && iconHost.dataset.v850Icon !== iconKey(key)) {
+        iconHost.dataset.v850Icon = iconKey(key);
+        iconHost.innerHTML = icon(key);
+      }
       const txt = q(`[data-v850-mobile-label="${key}"]`, btn);
       if (txt) txt.textContent = label(key);
     });

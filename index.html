@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th" data-theme="light">
+<html lang="th" data-theme="light" class="wdj-booting">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,33 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Workday Journey" />
   <title>0.0% · Workday Journey</title>
+  <!-- V8.6.0.2: prepare saved appearance before first paint and cover the legacy startup shell. -->
+  <style>
+    html.wdj-booting body > :not(#wdjBootOverlay) { visibility: hidden !important; }
+    #wdjBootOverlay { position:fixed; inset:0; z-index:2147483000; display:grid; place-items:center; padding:24px; background:#f5f7fc; color:#1f3151; font-family:system-ui,"Sarabun",sans-serif; }
+    html[data-theme="dark"] #wdjBootOverlay { background:#101827; color:#eff4ff; }
+    #wdjBootOverlay .wdj-boot-mark { width:62px; height:62px; display:grid; place-items:center; margin:auto auto 16px; border-radius:20px; color:#fff; font-weight:800; font-size:26px; background:linear-gradient(145deg,#386ce4,#805beb); box-shadow:0 18px 42px rgba(48,91,193,.2); }
+    #wdjBootOverlay strong { font-size:1.14rem; letter-spacing:-.02em; display:block; text-align:center; }
+    #wdjBootOverlay p { margin:8px 0 0; font-size:.82rem; opacity:.7; text-align:center; }
+    html:not(.wdj-booting) #wdjBootOverlay { display:none; }
+    @media(prefers-reduced-motion:no-preference){#wdjBootOverlay .wdj-boot-mark{animation:wdjBootBreathe 1.8s ease-in-out infinite alternate}@keyframes wdjBootBreathe{to{transform:translateY(-3px)}}}
+  </style>
+  <script>
+    (function () {
+      var root=document.documentElement;
+      function get(k,fallback){try{return localStorage.getItem(k)||fallback;}catch(_){return fallback;}}
+      var theme=get('wp-theme','light');
+      root.dataset.theme=theme==='system'?(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):(theme==='dark'?'dark':'light');
+      root.lang=get('wp-language','th')==='en'?'en':'th';
+      var size=get('wp-font-size','medium');
+      root.style.fontSize=(size==='large'?18.88:size==='small'?14.4:16)+'px';
+      root.dataset.wdjUiSize=['small','default','large'].includes(get('wp-v8602-ui-size','default'))?get('wp-v8602-ui-size','default'):'default';
+      root.dataset.wdjIconStyle=get('wp-v8602-icon-style','modern')==='classic'?'classic':'modern';
+      root.dataset.wdjDensity=['compact','comfortable','spacious'].includes(get('wp-density','comfortable'))?get('wp-density','comfortable'):'comfortable';
+      var emergency=setTimeout(function(){root.classList.remove('wdj-booting');},12000);
+      window.__wdjCompleteBoot=function(){clearTimeout(emergency);requestAnimationFrame(function(){requestAnimationFrame(function(){root.classList.remove('wdj-booting');});});};
+    })();
+  </script>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
@@ -18,26 +45,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&family=Chonburi&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Itim&family=Kanit:wght@400;500;600;700&family=Mitr:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Pattaya&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700;800&family=Trirong:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/Anakotmai/Anakotmai.css" />
-  <link rel="stylesheet" href="styles.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v7.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v8.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v81.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v848.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v850.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v851.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v852.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v853.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v854.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v855.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v860.css?v=8.6.0.1" />
-  <link rel="stylesheet" href="v8601.css?v=8.6.0.1" />
+  <link rel="stylesheet" href="styles.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v7.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v8.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v81.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v848.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v850.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v851.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v852.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v853.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v854.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v855.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v860.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v8601.css?v=8.6.0.2" />
+  <link rel="stylesheet" href="v8602.css?v=8.6.0.2" />
 </head>
 <body>
+  <div id="wdjBootOverlay" role="status" aria-live="polite"><div><div class="wdj-boot-mark">WJ</div><strong>Workday Journey</strong><p>กำลังเตรียมหน้าเว็บ / Preparing your workspace…</p></div></div>
   <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
 
   <div id="setupBackdrop" class="setup-backdrop" hidden>
     <section id="setupModal" class="setup-wizard" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.6.0.1</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
+      <div class="setup-brand"><span class="setup-brand-mark">%</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.6.0.2</p><h2 id="setupTitle" data-i18n="welcomeTitle">ยินดีต้อนรับสู่ Workday Journey</h2><p class="muted" data-i18n="welcomeSubtitle">สร้าง Journey ของคุณเอง ข้อมูลทั้งหมดจะถูกเก็บไว้ใน Browser เครื่องนี้</p></div></div>
       <div class="setup-progress" aria-label="Setup progress">
         <button type="button" class="setup-progress-item active" data-setup-jump="1"><span>1</span><strong data-i18n="setupProfile">โปรไฟล์</strong></button>
         <i></i><button type="button" class="setup-progress-item" data-setup-jump="2"><span>2</span><strong data-i18n="setupJourney">ช่วงเวลา</strong></button>
@@ -502,7 +531,7 @@
         </select>
         <div id="fontPreviewCard" class="font-preview-card"><span>FONT PREVIEW</span><strong>ภาษาไทย · Workday Journey · ABC 123</strong><small>เลือกแบบอักษรเพื่อดูตัวอย่างการแสดงผล</small></div><p class="setting-help" data-i18n="fontHelp">ฟอนต์เว็บจะโหลดจาก Google Fonts/Thai Web Fonts เมื่อออนไลน์ และ Browser จะใช้ fallback ที่เหมาะสมหากฟอนต์ยังโหลดไม่สำเร็จ</p></section>
       <section class="setting-group two-column-setting"><div><label for="fontSizeSelect" data-i18n="fontSize">ขนาดตัวอักษร</label><select id="fontSizeSelect"><option value="small" data-i18n="small">เล็ก</option><option value="medium" data-i18n="medium">กลาง</option><option value="large" data-i18n="large">ใหญ่</option></select></div><div><label for="themeSelect" data-i18n="theme">ธีม</label><select id="themeSelect"><option value="system" data-i18n="systemTheme">ตามระบบ</option><option value="light" data-i18n="lightTheme">สว่าง</option><option value="dark" data-i18n="darkTheme">มืด</option></select></div></section>
-      <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option></select></div></section>
+      <section class="setting-group two-column-setting"><div><label for="clockFormatSelect" data-i18n="clockFormat">รูปแบบเวลา</label><select id="clockFormatSelect"><option value="24">24-hour</option><option value="12">12-hour</option></select></div><div><label for="densitySelect" data-i18n="layoutDensity">ระยะห่างหน้าจอ</label><select id="densitySelect"><option value="comfortable" data-i18n="comfortable">สบายตา</option><option value="compact" data-i18n="compact">กระชับ</option><option value="spacious">โปร่งสบาย / Spacious</option></select></div></section>
       <section class="setting-group toggle-setting-group"><label class="toggle-row"><span><strong data-i18n="showSeconds">แสดงวินาที</strong><small data-i18n="showSecondsHelp">แสดงวินาทีในนาฬิกาหลัก</small></span><input id="showSecondsToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="animations">Animation</strong><small data-i18n="animationsHelp">เปิดการเคลื่อนไหวของ Progress และ Card</small></span><input id="animationToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="dynamicMood">Dynamic Dashboard Mood</strong><small data-i18n="dynamicMoodHelp">เปลี่ยนบรรยากาศพื้นหลังตามช่วงเวลาและสถานะการทำงาน</small></span><input id="dynamicMoodToggle" type="checkbox" /><i class="toggle-ui"></i></label><label class="toggle-row"><span><strong data-i18n="smartNotifications">Smart Notifications</strong><small data-i18n="smartNotificationsHelp">แจ้งเตือนก่อนพัก กลับเข้าทำงาน เหลือ 1 ชั่วโมง และจบวันทำงาน</small></span><input id="notificationToggle" type="checkbox" /><i class="toggle-ui"></i></label></section>
       <section class="setting-group journey-profile-setting"><div class="setting-section-heading"><div><strong data-i18n="profileAndJourney">โปรไฟล์และ Journey</strong><p id="journeyProfileSummary" class="setting-help">—</p></div><button id="editJourneyBtn" class="outline-btn" type="button" data-i18n="editJourney">แก้ไข Journey</button></div></section>
       <section class="setting-group two-column-setting"><div><label for="timezoneSelect" data-i18n="timezone">เขตเวลา</label><select id="timezoneSelect"><option value="Asia/Bangkok">Asia/Bangkok</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="Asia/Singapore">Asia/Singapore</option><option value="UTC">UTC</option><option value="Europe/London">Europe/London</option><option value="America/New_York">America/New_York</option></select></div><div><label for="localeSelect" data-i18n="locale">รูปแบบวันที่และตัวเลข</label><select id="localeSelect"><option value="th-TH">ไทย · DD/MM/YYYY</option><option value="en-GB">English · DD/MM/YYYY</option><option value="en-US">English · MM/DD/YYYY</option></select></div></section>
@@ -592,21 +621,22 @@
   </section>
 
   <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
-  <script src="app.js?v=8.6.0.1"></script>
-  <script src="v6.js?v=8.6.0.1"></script>
-  <script src="v7.js?v=8.6.0.1"></script>
+  <script src="app.js?v=8.6.0.2"></script>
+  <script src="v6.js?v=8.6.0.2"></script>
+  <script src="v7.js?v=8.6.0.2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="supabase-config.js?v=8.6.0.1"></script>
-  <script src="v8.js?v=8.6.0.1"></script>
-  <script src="v81.js?v=8.6.0.1"></script>
-  <script src="v848.js?v=8.6.0.1"></script>
-  <script src="v850.js?v=8.6.0.1"></script>
-  <script src="v8501.js?v=8.6.0.1"></script>
-  <script src="v851.js?v=8.6.0.1"></script>
-  <script src="v852.js?v=8.6.0.1"></script>
-  <script src="v853.js?v=8.6.0.1"></script>
-  <script src="v854.js?v=8.6.0.1"></script>
-  <script src="v855.js?v=8.6.0.1"></script>
-  <script src="v8601.js?v=8.6.0.1"></script>
+  <script src="supabase-config.js?v=8.6.0.2"></script>
+  <script src="v8.js?v=8.6.0.2"></script>
+  <script src="v81.js?v=8.6.0.2"></script>
+  <script src="v848.js?v=8.6.0.2"></script>
+  <script src="v850.js?v=8.6.0.2"></script>
+  <script src="v8501.js?v=8.6.0.2"></script>
+  <script src="v851.js?v=8.6.0.2"></script>
+  <script src="v852.js?v=8.6.0.2"></script>
+  <script src="v853.js?v=8.6.0.2"></script>
+  <script src="v854.js?v=8.6.0.2"></script>
+  <script src="v855.js?v=8.6.0.2"></script>
+  <script src="v8601.js?v=8.6.0.2"></script>
+  <script src="v8602.js?v=8.6.0.2"></script>
 </body>
 </html>
