@@ -4,7 +4,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.2";
+  const VERSION = "8.6.0.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -102,6 +102,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.6.0.3",icon:"\u{1F4E6}",th:"\u0e01\u0e39\u0e49\u0e04\u0e37\u0e19\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e40\u0e01\u0e48\u0e32",en:"Legacy Data Recovery",notesTh:["\u0e01\u0e39\u0e49\u0e04\u0e37\u0e19 Work Bank \u0e41\u0e25\u0e30 Portfolio \u0e40\u0e14\u0e34\u0e21", "Owner \u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e01\u0e48\u0e2d\u0e19\u0e04\u0e37\u0e19\u0e22\u0e2d\u0e14"],notesEn:["Safely collect older savings and portfolio records", "Account owner reviews claims before restoring balances"]},
     {version:"8.6.0.2",icon:"🎨",th:"ปรับแต่งหน้าตาได้ตามใจ",en:"Personalize Your Workspace",notesTh:["เปิดเว็บได้ลื่นขึ้น ลดอาการหน้าตาเก่ากระพริบ", "เลือกขนาด UI และสไตล์ไอคอน Modern / Classic ได้", "เพิ่มระยะห่าง Spacious และใช้การตั้งค่ากับทุกหน้า"],notesEn:["Smoother startup without the old layout flashing", "Choose UI size and Modern / Classic icons", "New Spacious layout option with consistent preferences"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ปรับความถูกต้องของยอดเหรียญและการฝากถอน", "ลดการโหลดและซิงก์ข้อมูลซ้ำ", "แยกการเล่น Guest จากบัญชีให้ชัดเจน"],notesEn:["More reliable wallet balances and savings transactions", "Less repeated loading and syncing", "Clear separation between Guest and account progress"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},

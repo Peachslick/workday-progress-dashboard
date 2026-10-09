@@ -2,7 +2,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.2";
+  const VERSION = "8.6.0.3";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
