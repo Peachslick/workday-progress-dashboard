@@ -4,7 +4,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.6.0.3';
+  const VERSION = '8.6.0.4';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -19,7 +19,7 @@
   const client = () => cloud()?.getClient?.();
   const read = (k,f) => { try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; } };
   const validAmount = x => Number.isFinite(Number(x)) && Math.abs(Number(x)) <= 10000000;
-  let sessionUser = '', scanning = null, ownerLoad = null, ownerRows = [], myRows = [], lastError = '';
+  let sessionUser = '', scanning = null, ownerLoad = null, ownerRows = [], ownerBalances = new Map(), myRows = [], lastError = '';
 
   function bankEvidence(userId) {
     const bankOwner = localStorage.getItem(BANK_OWNER);
@@ -133,6 +133,10 @@
     const {data,error}=await client().rpc('wdj_owner_list_legacy_recovery',{p_status:'pending'});
     if(error)throw error;
     ownerRows=Array.isArray(data)?data:[];
+    // Separate privileged read-only RPC: never infer balances from browser snapshots.
+    const {data: balances,error: balanceError}=await client().rpc('wdj_owner_recovery_balances');
+    if(balanceError)throw balanceError;
+    ownerBalances=new Map((Array.isArray(balances)?balances:[]).map(x=>[String(x.userId),x]));
     return ownerRows;
   }
   function bankClaim(snapshot) {
@@ -162,6 +166,19 @@
       <p>${tr('ข้อมูลจากเบราว์เซอร์ยังไม่ใช่หลักฐานยืนยัน ต้องตรวจสอบกับประวัติธุรกรรมก่อนอนุมัติ และระบบจะไม่คืนยอดให้เองโดยอัตโนมัติ','Browser evidence is untrusted. Compare against transaction history before approving. Nothing is restored automatically.')}</p>
       </div><button class="outline-btn" type="button" data-recovery-refresh>${tr('รีเฟรช','Refresh')}</button></div>`;
   }
+  function balanceOverview(r) {
+    const b=ownerBalances.get(String(r.userId));
+    if(!b)return `<div class="wdj-recovery-balances wdj-recovery-balances--missing">${tr('ยังไม่มีข้อมูลยอดบัญชี กรุณากดรีเฟรช','Account balances unavailable. Please refresh.')}</div>`;
+    const fmt=n=>Number(n||0).toLocaleString(inThai()?'th-TH':'en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+    const time=t=>t?formatTime(t):tr('ไม่มีประวัติอัปเดต','No update time');
+    const wallet=b.walletExists?fmt(b.wallet):tr('ยังไม่มีบัญชี Wallet','No wallet record');
+    const savings=b.bankExists?fmt(b.savings):tr('ยังไม่มีบัญชี Bank','No bank record');
+    return `<section class="wdj-recovery-balances" aria-label="${tr('ยอดบัญชีปัจจุบันจากระบบ','Current server account balances')}">
+      <div class="wdj-recovery-balance"><span>${tr('Wallet ปัจจุบัน','Current wallet')}</span><strong>${wallet}${b.walletExists?' Coins':''}</strong><small>${tr('อัปเดตล่าสุด','Last updated')}: ${esc(time(b.walletUpdatedAt))}</small></div>
+      <div class="wdj-recovery-balance"><span>${tr('Savings ปัจจุบัน','Current savings')}</span><strong>${savings}${b.bankExists?' Coins':''}</strong><small>${tr('อัปเดตล่าสุด','Last updated')}: ${esc(time(b.bankUpdatedAt))}</small></div>
+      <p class="wdj-recovery-balance-note">${tr('ยอดจากระบบ ณ เวลาที่กดรีเฟรช ไม่ใช่จำนวนที่ต้องคืนอัตโนมัติ ตรวจธุรกรรมใหม่ก่อนอนุมัติ','Read-only server balances at refresh time, NOT an automatic refund amount. Review later transactions before approval.')}</p>
+    </section>`;
+  }
   function ownerCard(r) {
     const snap=r.snapshot||{}, bank=bankClaim(snap), trades=Array.isArray(snap.trades)?snap.trades:[];
     const bankInfo=snap.bank?.ownerBinding==='unknown_guest'?
@@ -172,6 +189,7 @@
       <header><strong>${esc(r.email||r.userId||tr('บัญชีผู้ใช้','Account'))}</strong><small>${formatTime(r.createdAt)}</small></header>
       <p>${tr('ยอดเงินฝากที่แจ้งขอกู้คืน','Claimed savings')}: <b>${bank.toLocaleString(inThai()?'th-TH':'en-US')} Coins</b> (${esc(bankInfo)})</p>
       <p>${tr('ประวัติหุ้น','Exchange')}: <b>${trades.length} ${tr('รายการซื้อขาย','trades')}</b> | ${tr('หุ้นคงเหลือ','Positions')}: ${positionsPreview(trades)}</p>
+      ${balanceOverview(r)}
       <details><summary>${tr('ตรวจสอบหลักฐานธุรกรรมเดิม','Review original transaction evidence')}</summary><div class="wdj-recovery-evidence">
         ${(snap.bank?.ledger||[]).slice(0,30).map(t=>`<p>${esc(t.createdAt)} | ${esc(evidenceType(t.type))} | ${esc(t.amount)}</p>`).join('')||`<p>${tr('ไม่พบประวัติธนาคาร','No bank history')}</p>`}
         <hr/>${trades.slice(0,50).map(t=>`<p>${esc(t.createdAt)} | ${esc(evidenceType(t.side))} ${esc(t.qty)} ${esc(t.symbol)} @ ${esc(t.price)}</p>`).join('')||`<p>${tr('ไม่พบประวัติซื้อขายหุ้น','No trades')}</p>`}
@@ -281,7 +299,7 @@
     if(event?.detail?.signedIn){const userId=uid();if(sessionUser!==userId){sessionUser=userId;myRows=[];}
       setTimeout(scanAndStage,750);scheduleOwnerUi();}
     else if(event?.detail?.event==='SIGNED_OUT'){
-      sessionUser='';myRows=[];ownerRows=[];updateUserNotice();}
+      sessionUser='';myRows=[];ownerRows=[];ownerBalances=new Map();updateUserNotice();}
   }
   window.WorkdayLegacyRecovery={version:VERSION,scan:scanAndStage,refreshMy:checkMyCases};
   window.addEventListener('workday:v8-auth-state',onAuth);

@@ -1,0 +1,9 @@
+/* V8.6.0.4 - Owner recovery balance comparison (read-only) */
+.wdj-recovery-balances{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0;padding:12px;border:1px solid var(--border-color,#dbe2ec);border-radius:14px;background:var(--surface-soft,rgba(112,130,164,.055))}
+.wdj-recovery-balance{display:flex;flex-direction:column;gap:5px;min-width:0;padding:12px;border-radius:11px;background:var(--card-bg,var(--surface,#fff));border:1px solid var(--border-color,#dbe2ec)}
+.wdj-recovery-balance span{color:var(--muted,#65738b);font-size:.86rem}
+.wdj-recovery-balance strong{font-size:clamp(1.06rem,2vw,1.4rem);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.wdj-recovery-balance small{color:var(--muted,#65738b);font-size:.75rem;overflow-wrap:anywhere}
+.wdj-recovery-balance-note{grid-column:1/-1;margin:0;color:var(--muted,#65738b);font-size:.78rem;line-height:1.55}
+.wdj-recovery-balances--missing{display:block;color:var(--muted,#65738b)}
+@media(max-width:620px){.wdj-recovery-balances{grid-template-columns:1fr;padding:9px}.wdj-recovery-balance{padding:10px}}
