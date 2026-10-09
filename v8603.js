@@ -143,42 +143,90 @@
     const shares=new Map();
     for(const t of trades){const symbol=String(t.symbol||'');const amount=Number(t.qty)||0;
       shares.set(symbol,(shares.get(symbol)||0)+(t.side==='buy'?amount:-amount));}
-    return Array.from(shares.entries()).filter(([,n])=>n!==0).map(([s,n])=>`${esc(s)}: ${n}`).join(', ')||'None';
+    return Array.from(shares.entries()).filter(([,n])=>n!==0).map(([s,n])=>`${esc(s)}: ${n}`).join(', ')||tr('ไม่มี','None');
+  }
+  const evidenceType = type => ({
+    deposit:tr('ฝากเงิน','Deposit'),withdraw:tr('ถอนเงิน','Withdraw'),interest:tr('ดอกเบี้ย','Interest'),
+    buy:tr('ซื้อ','Buy'),sell:tr('ขาย','Sell')
+  })[type] || String(type || '');
+  const formatTime = value => {
+    const date=new Date(value);
+    return Number.isNaN(date.getTime()) ? esc(value||'-') : esc(date.toLocaleString(inThai()?'th-TH-u-ca-gregory':'en-GB',{
+      day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false
+    }));
+  };
+  function ownerHeader() {
+    return `<div class="v848-card-head"><div>
+      <p class="eyebrow">${tr('กู้คืนข้อมูลเก่า','LEGACY RECOVERY')}</p>
+      <h3>${tr('กู้คืนเงินฝากและพอร์ตหุ้นเดิม','Old savings & portfolio recovery')}</h3>
+      <p>${tr('ข้อมูลจากเบราว์เซอร์ยังไม่ใช่หลักฐานยืนยัน ต้องตรวจสอบกับประวัติธุรกรรมก่อนอนุมัติ และระบบจะไม่คืนยอดให้เองโดยอัตโนมัติ','Browser evidence is untrusted. Compare against transaction history before approving. Nothing is restored automatically.')}</p>
+      </div><button class="outline-btn" type="button" data-recovery-refresh>${tr('รีเฟรช','Refresh')}</button></div>`;
   }
   function ownerCard(r) {
     const snap=r.snapshot||{}, bank=bankClaim(snap), trades=Array.isArray(snap.trades)?snap.trades:[];
-    const bankInfo=snap.bank?.ownerBinding==='unknown_guest'?'Unverified guest backup':'Browser session backup';
+    const bankInfo=snap.bank?.ownerBinding==='unknown_guest'?
+      tr('ข้อมูลสำรองจาก Guest (ยังไม่ยืนยัน)','Unverified guest backup'):
+      tr('ข้อมูลสำรองจากเบราว์เซอร์เดิม','Browser session backup');
     const id=esc(r.id);
     return `<article class="wdj-recovery-case" data-recovery-case="${id}">
-      <header><strong>${esc(r.email||r.userId||'Account')}</strong><small>${esc(new Date(r.createdAt).toLocaleString())}</small></header>
-      <p>Bank claim: <b>${bank.toLocaleString()} Coins</b> (${esc(bankInfo)})</p>
-      <p>Exchange: <b>${trades.length} trades</b> | Positions: ${positionsPreview(trades)}</p>
-      <details><summary>Review original transaction evidence</summary><div class="wdj-recovery-evidence">
-        ${(snap.bank?.ledger||[]).slice(0,30).map(t=>`<p>${esc(t.createdAt)} | ${esc(t.type)} | ${esc(t.amount)}</p>`).join('')||'<p>No bank history</p>'}
-        <hr/>${trades.slice(0,50).map(t=>`<p>${esc(t.createdAt)} | ${esc(t.side)} ${esc(t.qty)} ${esc(t.symbol)} @ ${esc(t.price)}</p>`).join('')||'<p>No trades</p>'}
+      <header><strong>${esc(r.email||r.userId||tr('บัญชีผู้ใช้','Account'))}</strong><small>${formatTime(r.createdAt)}</small></header>
+      <p>${tr('ยอดเงินฝากที่แจ้งขอกู้คืน','Claimed savings')}: <b>${bank.toLocaleString(inThai()?'th-TH':'en-US')} Coins</b> (${esc(bankInfo)})</p>
+      <p>${tr('ประวัติหุ้น','Exchange')}: <b>${trades.length} ${tr('รายการซื้อขาย','trades')}</b> | ${tr('หุ้นคงเหลือ','Positions')}: ${positionsPreview(trades)}</p>
+      <details><summary>${tr('ตรวจสอบหลักฐานธุรกรรมเดิม','Review original transaction evidence')}</summary><div class="wdj-recovery-evidence">
+        ${(snap.bank?.ledger||[]).slice(0,30).map(t=>`<p>${esc(t.createdAt)} | ${esc(evidenceType(t.type))} | ${esc(t.amount)}</p>`).join('')||`<p>${tr('ไม่พบประวัติธนาคาร','No bank history')}</p>`}
+        <hr/>${trades.slice(0,50).map(t=>`<p>${esc(t.createdAt)} | ${esc(evidenceType(t.side))} ${esc(t.qty)} ${esc(t.symbol)} @ ${esc(t.price)}</p>`).join('')||`<p>${tr('ไม่พบประวัติซื้อขายหุ้น','No trades')}</p>`}
       </div></details>
       <div class="wdj-recovery-controls">
-        <label>Approved savings (whole Coins)<input type="number" min="0" max="${Math.min(1000000,Math.floor(bank))}" step="1" data-bank-value value="0"></label>
-        <label>Bank settlement<select data-bank-mode><option value="wallet_transfer">Move from wallet (recommended)</option><option value="verified_compensation">Verified compensation (adds savings)</option></select></label>
-        <label class="wdj-recovery-check"><input type="checkbox" data-stocks-check ${trades.length?'':'disabled'}> Restore verified stock history</label>
-        <label class="wdj-recovery-reason">Owner review reason (min 10 characters)<textarea data-reason rows="2" maxlength="1000" placeholder="Checked against account history; justification..."></textarea></label>
+        <label>${tr('จำนวนเงินฝากที่อนุมัติ (เหรียญจำนวนเต็ม)','Approved savings (whole Coins)')}<input type="number" min="0" max="${Math.min(1000000,Math.floor(bank))}" step="1" data-bank-value value="0"></label>
+        <label>${tr('วิธีคืนเงินฝาก','Bank settlement')}<select data-bank-mode>
+          <option value="wallet_transfer">${tr('ย้ายเงินจากกระเป๋าไปเงินฝาก (แนะนำ)','Move from wallet (recommended)')}</option>
+          <option value="verified_compensation">${tr('ชดเชยเงินฝากที่ตรวจสอบแล้ว (เพิ่มยอดเงิน)','Verified compensation (adds savings)')}</option>
+        </select></label>
+        <label class="wdj-recovery-check"><input type="checkbox" data-stocks-check ${trades.length?'':'disabled'}> ${tr('กู้คืนประวัติหุ้นที่ตรวจสอบแล้ว','Restore verified stock history')}</label>
+        <label class="wdj-recovery-reason">${tr('เหตุผลการตรวจสอบของ Owner (อย่างน้อย 10 ตัวอักษร)','Owner review reason (min 10 characters)')}
+          <textarea data-reason rows="2" maxlength="1000" placeholder="${tr('ตรวจสอบกับประวัติในบัญชีแล้ว ระบุเหตุผลประกอบ...','Checked against account history; justification...')}"></textarea></label>
       </div>
-      <div class="wdj-recovery-actions"><button type="button" data-decision="approve" class="primary-btn">Approve selected</button>
-        <button type="button" data-decision="reject" class="outline-btn">Reject</button></div>
+      <div class="wdj-recovery-actions"><button type="button" data-decision="approve" class="primary-btn">${tr('อนุมัติรายการที่เลือก','Approve selected')}</button>
+        <button type="button" data-decision="reject" class="outline-btn">${tr('ปฏิเสธ','Reject')}</button></div>
     </article>`;
   }
   function renderOwnerPanel() {
     const panel=document.getElementById(ownerPanelId); if(!panel)return;
     const list=panel.querySelector('[data-recovery-list]'); if(!list)return;
-    list.innerHTML=ownerRows.length?ownerRows.map(ownerCard).join(''):'<p class="muted">No pending recovery requests.</p>';
+    list.innerHTML=ownerRows.length?ownerRows.map(ownerCard).join(''):`<p class="muted">${tr('ไม่มีคำขอกู้คืนที่รอตรวจสอบ','No pending recovery requests.')}</p>`;
+  }
+  function refreshOwnerLanguage() {
+    const panel=document.getElementById(ownerPanelId);
+    if(!panel || panel.dataset.recoveryLang===(inThai()?'th':'en'))return;
+    const drafts=new Map([...panel.querySelectorAll('[data-recovery-case]')].map(card=>[
+      card.dataset.recoveryCase,{
+        amount:card.querySelector('[data-bank-value]')?.value,
+        mode:card.querySelector('[data-bank-mode]')?.value,
+        stocks:card.querySelector('[data-stocks-check]')?.checked,
+        reason:card.querySelector('[data-reason]')?.value
+      }
+    ]));
+    const header=panel.querySelector('.v848-card-head');
+    if(header)header.outerHTML=ownerHeader();
+    if(!ownerLoad) {
+      renderOwnerPanel();
+      for(const card of panel.querySelectorAll('[data-recovery-case]')){
+        const d=drafts.get(card.dataset.recoveryCase);if(!d)continue;
+        card.querySelector('[data-bank-value]').value=d.amount;
+        card.querySelector('[data-bank-mode]').value=d.mode;
+        card.querySelector('[data-stocks-check]').checked=d.stocks;
+        card.querySelector('[data-reason]').value=d.reason;
+      }
+    }
+    panel.dataset.recoveryLang=inThai()?'th':'en';
   }
   async function refreshOwnerPanel() {
     const panel=document.getElementById(ownerPanelId);if(!panel || ownerLoad)return;
     ownerLoad=(async()=>{
       const list=panel.querySelector('[data-recovery-list]');
-      if(list)list.textContent='Loading recovery cases...';
+      if(list)list.textContent=tr('กำลังโหลดคำขอกู้คืน...','Loading recovery cases...');
       try{await getOwnerRows();renderOwnerPanel();}
-      catch(error){if(list)list.textContent='Unable to load cases: '+String(error?.message||error);}
+      catch(error){if(list)list.textContent=tr('โหลดคำขอไม่สำเร็จ: ','Unable to load cases: ')+String(error?.message||error);}
     })().finally(()=>{ownerLoad=null;});
     return ownerLoad;
   }
@@ -187,10 +235,11 @@
     const page=document.getElementById('v848DeveloperPage');if(!page)return;
     // The base app renders an explicit Owner Access badge when permission is verified.
     if(!page.querySelector('.v848-owner-hero'))return;
-    if(page.querySelector('#'+ownerPanelId))return;
+    if(page.querySelector('#'+ownerPanelId)){refreshOwnerLanguage();return;}
     const panel=document.createElement('section');panel.id=ownerPanelId;
     panel.className='v848-admin-card wdj-recovery-owner';
-    panel.innerHTML='<div class="v848-card-head"><div><p class="eyebrow">LEGACY RECOVERY</p><h3>Old savings & portfolio recovery</h3><p>Browser evidence is untrusted. Compare against transaction history before approving. Nothing is restored automatically.</p></div><button class="outline-btn" type="button" data-recovery-refresh>Refresh</button></div><div data-recovery-list>Loading...</div>';
+    panel.innerHTML=ownerHeader()+`<div data-recovery-list>${tr('กำลังโหลด...','Loading...')}</div>`;
+    panel.dataset.recoveryLang=inThai()?'th':'en';
     page.append(panel);
     panel.addEventListener('click', async e=>{
       if(e.target.closest('[data-recovery-refresh]')){await refreshOwnerPanel();return;}
@@ -201,10 +250,14 @@
         mode=card.querySelector('[data-bank-mode]').value,
         stocks=card.querySelector('[data-stocks-check]').checked,
         reason=card.querySelector('[data-reason]').value.trim();
-      if(reason.length<10){alert('Please provide a review reason (at least 10 characters).');return;}
-      if(action.dataset.decision==='approve' && (!Number.isSafeInteger(amt)||amt<0||(!amt&&!stocks))){alert('Select a valid savings amount or stock history.');return;}
+      if(reason.length<10){alert(tr('กรุณาระบุเหตุผลอย่างน้อย 10 ตัวอักษร','Please provide a review reason (at least 10 characters).'));return;}
+      if(action.dataset.decision==='approve' && (!Number.isSafeInteger(amt)||amt<0||(!amt&&!stocks))){alert(tr('กรุณาระบุยอดเงินฝากจำนวนเต็มที่ถูกต้อง หรือเลือกกู้คืนประวัติหุ้น','Select a valid savings amount or stock history.'));return;}
       const decision=action.dataset.decision;
-      if(!confirm(`Confirm ${decision} recovery case ${id}? Bank: ${amt} Coins, mode: ${mode}, Stocks: ${stocks}. This is auditable and cannot be undone.`))return;
+      const confirmText=decision==='approve'
+        ?tr(`ยืนยันอนุมัติคำขอกู้คืน?\nเงินฝาก: ${amt} Coins\nวิธีคืนเงิน: ${mode==='wallet_transfer'?'ย้ายจาก Wallet':'ชดเชยยอดที่ตรวจสอบแล้ว'}\nกู้คืนหุ้น: ${stocks?'ใช่':'ไม่'}\nการดำเนินการนี้จะถูกบันทึกและไม่สามารถย้อนกลับได้`,
+          `Approve recovery case ${id}?\nSavings: ${amt} Coins\nMethod: ${mode}\nStocks: ${stocks?'Yes':'No'}\nThis action is audited and cannot be undone.`)
+        :tr('ยืนยันปฏิเสธคำขอกู้คืนนี้? ระบบจะบันทึกผลและไม่สามารถย้อนกลับได้',`Reject recovery case ${id}? This action is audited and cannot be undone.`);
+      if(!confirm(confirmText))return;
       card.querySelectorAll('button').forEach(btn=>btn.disabled=true);
       try{
         const {error}=await client().rpc('wdj_owner_review_legacy_recovery',{
@@ -212,7 +265,7 @@
           p_bank_mode:mode,p_restore_stocks:decision==='approve'&&stocks,p_reason:reason});
         if(error)throw error;
         await refreshOwnerPanel();
-      }catch(error){alert('Recovery review failed: '+String(error?.message||error));card.querySelectorAll('button').forEach(btn=>btn.disabled=false);}
+      }catch(error){alert(tr('ตรวจสอบคำขอไม่สำเร็จ: ','Recovery review failed: ')+String(error?.message||error));card.querySelectorAll('button').forEach(btn=>btn.disabled=false);}
     });
     refreshOwnerPanel();
   }
@@ -235,6 +288,9 @@
   window.addEventListener('workday:v8-cloud-ready',()=>setTimeout(scanAndStage,350));
   window.addEventListener('online',()=>setTimeout(scanAndStage,450));
   window.addEventListener('hashchange',scheduleOwnerUi);
+  document.addEventListener('click', e=>{
+    if(e.target.closest?.('.lang-btn,[data-v802-lang]'))setTimeout(refreshOwnerLanguage,220);
+  },true);
   document.addEventListener('DOMContentLoaded',startObserver,{once:true});
   if(document.readyState!=='loading')startObserver();
   setTimeout(scanAndStage,1100);
