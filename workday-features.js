@@ -1,4 +1,4 @@
-/* Workday Journey 8.6.0.7 | consolidated in original execution order.
+/* Workday Journey 8.6.0.8 | consolidated in original execution order.
  * Individual source sections retain their previous isolated IIFE scope.
  * Edit by finding the SOURCE separator. Do not rearrange sections.
  */
@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability"]},
+    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
     {version:"8.3",icon:"🏦",th:"Work Bank",en:"Work Bank",notesTh:["ออมเหรียญและติดตามดอกเบี้ยทบต้น", "ขยายร้านค้าและไอเทมแต่งโปรไฟล์"],notesEn:["Save Coins and track compound interest", "More Shop items and profile customization"]},
@@ -845,7 +845,7 @@
     const marker="wp-v8-notifications-initialized";if(localStorage.getItem(marker)==="1")return;
     const set=notificationReadSet();API.getAchievements(API.getStats()).filter(a=>a.unlocked&&a.unlockedAt).forEach(a=>set.add(`ach:${a.id}:${a.unlockedAt}`));saveNotificationRead(set);localStorage.setItem(marker,"1");
   }
-  // V8.6.0.7: UI-only recent activity. Never placed in localStorage or sent to account sync.
+  // V8.6.0.8: UI-only recent activity. Never placed in localStorage or sent to account sync.
   // Existing reminder/read keys keep their original semantics.
   const wdjRecentNotifications=[];
   const wdjRecentRead=new Set();
@@ -3322,7 +3322,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3651,7 +3651,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3716,7 +3716,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3877,7 +3877,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4145,7 +4145,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4410,7 +4410,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4804,7 +4804,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4951,7 +4951,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.6.0.7';
+  const VERSION = '8.6.0.8';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5263,7 +5263,7 @@
 ;
 
 
-/* Workday Journey V8.6.0.7 - Read-only Data Safety Center.
+/* Workday Journey V8.6.0.8 - Read-only Data Safety Center.
  * This UI reads this device only; it never imports balances or writes to remote storage.
  * The snapshot intentionally has a different format from the legacy importable backup.
  */
@@ -5328,7 +5328,7 @@
     else if(connected)state=s.status.status==='synced'&&!s.status.conflict?T('connected'):T('pending');
     const deviceOnly= s.hasFinance.length>0;
     return `<section id="${id}" class="wdj-safety card ${compact?'wdj-safety-compact':'v7-settings-card v7-settings-wide'}" aria-label="Data Safety">
-      <div class="wdj-safety-head"><div><p class="eyebrow">${esc(T('tag'))} · V8.6.0.7</p><h3>🛡 ${esc(T('title'))}</h3><p>${esc(T('intro'))}</p></div><span class="wdj-safety-indicator ${s.online?'':'wdj-offline'}">${esc(state)}</span></div>
+      <div class="wdj-safety-head"><div><p class="eyebrow">${esc(T('tag'))} · V8.6.0.8</p><h3>🛡 ${esc(T('title'))}</h3><p>${esc(T('intro'))}</p></div><span class="wdj-safety-indicator ${s.online?'':'wdj-offline'}">${esc(state)}</span></div>
       <div class="wdj-safety-stats">
         <div><span>${esc(T('inDevice'))}</span><strong>${s.keys} keys</strong></div>
         <div><span>${esc(T('lastSync'))}</span><strong>${esc(connected?safeDate(s.last):T('guest'))}</strong></div>
@@ -5388,4 +5388,139 @@
   window.addEventListener('storage',e=>{if(e.key===MARKER||e.key==='wp-v8-cloud-last-sync')refresh();});
   document.addEventListener('click',e=>{if(e.target.closest?.('#settingsOpen,.lang-btn,[data-v802-lang]'))setTimeout(refresh,100);},true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mount();refresh();},{once:true});else{mount();refresh();}
+})();
+
+
+/* ===== SOURCE: v8608 - Accessibility & Usability ===== */
+(() => {
+  'use strict';
+  const STORAGE_PREFIX = 'wdj-v8608-a11y-';
+  const TYPES = ['contrast','links','targets'];
+  const root = document.documentElement;
+  const page = document.getElementById('v7SettingsPage');
+  const drawer = document.getElementById('settingsPanel');
+  const thai = () => { try { return localStorage.getItem('wp-language') !== 'en'; } catch (_) { return true; } };
+  const t = (th,en) => thai() ? th : en;
+  const get = type => { try { return localStorage.getItem(STORAGE_PREFIX + type) === '1'; } catch (_) { return false; } };
+  const set = (type,checked) => {
+    if (!TYPES.includes(type)) return;
+    try { localStorage.setItem(STORAGE_PREFIX + type, checked ? '1' : '0'); } catch (_) {}
+    apply();
+  };
+  function apply() {
+    TYPES.forEach(type => {
+      const checked = get(type);
+      root.classList.toggle('wdj-a11y-' + type, checked);
+      document.querySelectorAll(`[data-wdj-a11y="${type}"]`).forEach(input => {
+        if (input.checked !== checked) input.checked = checked;
+      });
+    });
+  }
+  function card(kind) {
+    const options = [
+      ['contrast', t('เพิ่มความชัดของสี','Higher contrast'), t('ตัวอักษรและเส้นขอบชัดขึ้น','Stronger text and borders')],
+      ['links', t('ขีดเส้นใต้ลิงก์','Underline links'), t('แยกลิงก์ออกจากข้อความได้ง่าย','Identify links more easily')],
+      ['targets', t('ขยายพื้นที่กด','Larger tap targets'), t('กดปุ่มและแท็บได้สะดวกขึ้น','Easier buttons and tabs')]
+    ].map(([key,title,help]) => `<label class="wdj-a11y-option"><input type="checkbox" data-wdj-a11y="${key}" ${get(key)?'checked':''}><span><strong>${title}</strong><small>${help}</small></span></label>`).join('');
+    return `<section class="wdj-a11y-card ${kind === 'page' ? 'card v7-settings-card' : 'setting-group'}" data-wdj-a11y-card="${kind}" aria-label="${t('การช่วยการเข้าถึง','Accessibility options')}">
+      <div class="wdj-a11y-header"><p class="eyebrow">ACCESSIBILITY</p><h3>${t('♿ อ่านง่ายและใช้งานสะดวก','♿ Accessibility & Usability')}</h3>
+      <p>${t('ปรับความชัดและการกดปุ่มให้เหมาะกับตัวคุณ โดยไม่เปลี่ยนขนาดฟอนต์เดิม','Adjust clarity and controls without changing your text-size setting')}</p></div>
+      <div class="wdj-a11y-options">${options}</div>
+      <p class="wdj-a11y-hint">${t('คีย์บอร์ด:','Keyboard:')} <kbd>Tab</kbd> / <kbd>Shift + Tab</kbd> ${t('ย้ายจุดโฟกัส','move focus')} · <kbd>Enter</kbd> ${t('เลือก','activate')} · <kbd>Esc</kbd> ${t('ปิดหน้าต่างที่รองรับ','close supported dialogs')}</p>
+      <p class="wdj-a11y-hint">${t('บันทึกการตั้งค่าเฉพาะอุปกรณ์นี้ ไม่กระทบข้อมูลบัญชี','Preferences stay on this device; account data is unchanged')}</p>
+    </section>`;
+  }
+  function updateLabels() {
+    const map = {
+      settingsOpen: ['เปิดการตั้งค่า','Open settings'],
+      settingsClose: ['ปิดการตั้งค่า','Close settings'],
+      themeToggle: ['เปลี่ยนธีม','Change theme']
+    };
+    for (const [id,names] of Object.entries(map)) {
+      const item = document.getElementById(id);
+      if (item) item.setAttribute('aria-label',t(...names));
+    }
+  }
+  function mount() {
+    for (const [kind,container] of [['page',page],['drawer',drawer]]) {
+      if (!container) continue;
+      const previous = container.querySelector(`[data-wdj-a11y-card="${kind}"]`);
+      if (previous && previous.dataset.locale === (thai()?'th':'en')) continue;
+      // After the existing appearance card; this is a presentation-only section.
+      const anchor = container.querySelector(`[data-wdj-appearance="${kind}"]`);
+      if (!anchor) continue;
+      const holder = document.createElement('div');
+      holder.innerHTML = card(kind);
+      const next = holder.firstElementChild;
+      next.dataset.locale = thai()?'th':'en';
+      if (previous) previous.replaceWith(next);
+      else anchor.insertAdjacentElement('afterend',next);
+    }
+    updateLabels();
+    apply();
+  }
+  let pending = false;
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => { pending = false; mount(); });
+  }
+  document.addEventListener('change', event => {
+    const input = event.target.closest?.('[data-wdj-a11y]');
+    if (input && TYPES.includes(input.dataset.wdjA11y)) set(input.dataset.wdjA11y,input.checked);
+  });
+  window.addEventListener('storage', event => { if (event.key?.startsWith(STORAGE_PREFIX)) apply(); });
+  document.addEventListener('click',event => {
+    if (event.target.closest?.('.lang-btn,[data-v802-lang],#settingsOpen')) setTimeout(schedule,80);
+  },true);
+  window.addEventListener('hashchange',schedule);
+  // Route rendering may replace the settings page; observe that root only, not the entire app.
+  if (page) new MutationObserver(records => {
+    if (records.some(r => r.type === 'childList' && r.target === page)) schedule();
+  }).observe(page,{childList:true});
+  if (drawer) {
+    const header = drawer.querySelector('.settings-header h2');
+    if (header) { header.id ||= 'wdjSettingsDialogTitle'; drawer.setAttribute('aria-labelledby',header.id); }
+    drawer.setAttribute('role','dialog');
+    drawer.setAttribute('aria-modal','true');
+    // Existing v855 focus trap now handles this panel. Restore focus to its opener on close.
+    let openedBy = null;
+    document.getElementById('settingsOpen')?.addEventListener('click',event => { openedBy = event.currentTarget; },true);
+    new MutationObserver(() => {
+      if (drawer.getAttribute('aria-hidden') === 'false') {
+        requestAnimationFrame(() => {
+          if (drawer.getAttribute('aria-hidden') === 'false' && !drawer.contains(document.activeElement)) {
+            drawer.querySelector('#settingsClose')?.focus({preventScroll:true});
+          }
+        });
+      } else if (drawer.getAttribute('aria-hidden') === 'true' && drawer.contains(document.activeElement)) {
+        const target = openedBy;
+        if (target?.isConnected && !target.disabled) requestAnimationFrame(() => target.focus({preventScroll:true}));
+      }
+    }).observe(drawer,{attributes:true,attributeFilter:['aria-hidden']});
+  }
+  // Page navigation is announced politely, without moving the user's keyboard focus.
+  let announcer = document.getElementById('wdjA11yRouteAnnouncer');
+  if (!announcer) {
+    announcer = document.createElement('div');
+    announcer.id = 'wdjA11yRouteAnnouncer';
+    announcer.className = 'v855-sr-only';
+    announcer.setAttribute('role','status');
+    announcer.setAttribute('aria-live','polite');
+    announcer.setAttribute('aria-atomic','true');
+    document.body.appendChild(announcer);
+  }
+  window.addEventListener('hashchange', () => {
+    requestAnimationFrame(() => {
+      const heading = [...document.querySelectorAll('.v7-page-heading h1,.v7-page-heading h2')]
+        .find(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+      if (heading) announcer.textContent = t('เปิดหน้า ','Opened ') + (heading.textContent||'').trim().slice(0,90);
+    });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Tab') root.classList.add('wdj-keyboard-user');
+  },true);
+  document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
+  mount();
+  window.WorkdayV8608 = { version:'8.6.0.8',refresh:mount };
 })();

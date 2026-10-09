@@ -1,4 +1,4 @@
-/* Workday Journey 8.6.0.7 | consolidated in original execution order.
+/* Workday Journey 8.6.0.8 | consolidated in original execution order.
  * Individual source sections retain their previous isolated IIFE scope.
  * Edit by finding the SOURCE separator. Do not rearrange sections.
  */
@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.6.0.7";
+  const APP_VERSION = "8.6.0.8";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2361,7 +2361,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.6.0.7";
+  const V6_VERSION = "8.6.0.8";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2826,7 +2826,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.7";
+  const VERSION = "8.6.0.8";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];

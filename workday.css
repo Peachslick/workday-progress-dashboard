@@ -5058,3 +5058,44 @@ body.v850-shell-refresh .v850-mobile-dock .v8602-classic-icon { font-size:1.2rem
   /* Reserve space for Workday Journey's persistent bottom navigation. */
   .wdj-notification-center{bottom:86px;max-height:calc(100dvh - 163px)}
 }
+
+
+/* ===== V8.6.0.8 - Accessibility and Usability (presentation only) ===== */
+.wdj-a11y-card{min-width:0;overflow-wrap:anywhere}
+.wdj-a11y-header h3{margin:.1rem 0 .25rem;font-size:1.06rem;line-height:1.45;color:var(--text)}
+.wdj-a11y-header p:last-child{margin:0 0 .85rem;color:var(--muted);line-height:1.6;font-size:.85rem}
+.wdj-a11y-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+.wdj-a11y-option{min-width:0;display:flex;align-items:flex-start;gap:.65rem;padding:.85rem;border:1px solid var(--border,#dce5f0);border-radius:var(--ds-radius-md,12px);background:var(--surface,#fff);cursor:pointer;line-height:1.5}
+.wdj-a11y-option:hover{border-color:var(--accent,#356ae6)}
+.wdj-a11y-option input{width:1.1rem;height:1.1rem;flex:0 0 auto;margin:.15rem 0 0;accent-color:var(--accent,#356ae6)}
+.wdj-a11y-option strong{display:block;font-size:.85rem;color:var(--text)}
+.wdj-a11y-option small{display:block;margin-top:.2rem;font-size:.75rem;color:var(--muted)}
+.wdj-a11y-hint{margin:.7rem 0 0;color:var(--muted);font-size:.76rem;line-height:1.65}
+.wdj-a11y-hint kbd{display:inline-block;border:1px solid var(--border,#dce5f0);border-bottom-width:2px;border-radius:.3rem;padding:.06rem .38rem;color:var(--text);background:var(--surface,#fff);font-family:inherit;font-size:.78rem}
+.wdj-a11y-card [type="checkbox"]:focus-visible{outline:3px solid var(--accent,#356ae6);outline-offset:3px}
+/* Visible focus for keyboard users on all interactive types, not just inputs and buttons. */
+html.wdj-keyboard-user :is(a[href],button,input,select,textarea,summary,[role="tab"],[role="button"],[tabindex="0"]):focus-visible{outline:3px solid var(--accent,#356ae6)!important;outline-offset:3px!important;box-shadow:0 0 0 5px color-mix(in srgb,var(--accent,#356ae6) 18%,transparent)}
+/* High-contrast mode affects appearance only; user data and selected theme remain unchanged. */
+html.wdj-a11y-contrast[data-theme="light"]{--muted:#40506a;--border:#64748b;--text:#101828;--accent-strong:#163eaa}
+html.wdj-a11y-contrast[data-theme="dark"]{--muted:#c0ccdf;--border:#8493aa;--text:#ffffff;--accent:#a8bfff}
+html.wdj-a11y-contrast :is(.muted,.setting-help,.v7-small,.wdj-a11y-option small){opacity:1}
+html.wdj-a11y-contrast :is(button,input,select,textarea,.card,.v7-settings-card,.v854-tab,.wdj-notif-tab){border-color:var(--border)}
+html.wdj-a11y-contrast :is(button,input,select,textarea):focus-visible{outline:3px solid var(--accent)!important;outline-offset:3px}
+html.wdj-a11y-links a[href]:not(.v855-skip-link){text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1.5px}
+/* Enlarge only actionable touch targets; don't disrupt tables or dense information cards. */
+html.wdj-a11y-targets :is(.icon-btn,.small-icon-btn,.v854-tab,.wdj-notif-tab,.v850-mobile-dock button,.v853-shop-jump button,.v7-page-actions button,.v7-form-actions button,.v84-ticket-actions button,.wdj-a11y-option){min-height:44px}
+html.wdj-a11y-targets :is(.icon-btn,.small-icon-btn){min-width:44px}
+/* Mobile form readability, wrapping and browser zoom (do not block pinch zoom). */
+@media (max-width:660px){
+ .wdj-a11y-options{grid-template-columns:minmax(0,1fr)}
+ .wdj-a11y-option{padding:.8rem}
+ .wdj-a11y-card{max-width:100%}
+ .wdj-a11y-card :is(input,select,textarea){max-width:100%}
+ .wdj-a11y-card .wdj-a11y-hint{overflow-wrap:anywhere}
+}
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ html .wdj-a11y-card *,html .v855-back-to-top{animation:none!important;transition:none!important}
+}
+body.no-animations .wdj-a11y-card *{animation:none!important;transition:none!important}
+#wdjA11yRouteAnnouncer{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;padding:0!important;margin:-1px!important;border:0!important}
