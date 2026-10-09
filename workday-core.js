@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.4.1";
+  const APP_VERSION = "8.7.6";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2361,7 +2361,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.7.4.1";
+  const V6_VERSION = "8.7.6";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2826,7 +2826,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.4.1";
+  const VERSION = "8.7.6";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -2859,7 +2859,7 @@
 
   const TEXT = {
     th: {
-      dashboard:"แดชบอร์ด", journal:"บันทึกประจำวัน", projects:"โปรเจกต์", achievements:"ความสำเร็จ", reports:"รายงานและการวิเคราะห์", calendar:"ปฏิทินและการเข้างาน", missions:"ภารกิจรายวัน", bank:"Work Bank", exchange:"Work Exchange", rewards:"รางวัล", developer:"Developer Tools", settings:"ตั้งค่า",
+      dashboard:"แดชบอร์ด", journal:"บันทึกประจำวัน", projects:"โปรเจกต์", achievements:"ความสำเร็จ", reports:"รายงานและการวิเคราะห์", calendar:"ปฏิทินและการเข้างาน", missions:"ภารกิจรายวัน", focus:"Focus Studio", focusSub:"จับเวลาโฟกัสและสรุป Session", skills:"Skill Tree", skillsSub:"เติบโตจาก Journal และ Projects", bank:"Work Bank", exchange:"Work Exchange", rewards:"รางวัล", developer:"Developer Tools", settings:"ตั้งค่า",
       dashboardSub:"ภาพรวมวันนี้และ Journey", journalSub:"บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้", projectsSub:"ติดตามงานและความคืบหน้าของ Project", achievementsSub:"Milestones, Badge และ Journey Story", reportsSub:"สถิติ Attendance, Heatmap และรายงาน", calendarSub:"วันลา วันหยุด และวันทำงานชดเชย", missionsSub:"ภารกิจรายวันและ Daily / Weekly Chest", bankSub:"ออม Work Coins · ดอกเบี้ยทบต้น + Streak", exchangeSub:"ตลาดจำลองและ Trading Academy", rewardsSub:"ร้านค้า ของสะสม Daily / Weekly Deals", developerSub:"Reward Codes และ Owner Control", settingsSub:"โปรไฟล์และการตั้งค่าแอป", fontPreview:"ตัวอย่างแบบอักษร", fontPreviewText:"ภาษาไทย · Workday Journey · ABC 123", fontPreviewHelp:"แบบอักษรที่เลือกจะใช้กับทั้งแอป",
       privateLocal:"Private · Local data", menu:"เมนู", quickActions:"ทางลัด", addJournal:"เพิ่ม Journal วันนี้", manageProjects:"จัดการ Projects", openReports:"ดู Reports", openCalendar:"เปิด Calendar",
       journalTitle:"Daily Work Journal", journalHelp:"บันทึกว่าวันนี้ทำอะไร เรียนรู้อะไร และ Project ที่เกี่ยวข้อง", journalDate:"วันที่", workDone:"วันนี้ทำอะไร", learned:"สิ่งที่ได้เรียนรู้", mood:"ความรู้สึกวันนี้", relatedProjects:"Project ที่เกี่ยวข้อง", saveJournal:"บันทึก Journal", deleteJournal:"ลบบันทึก", recentEntries:"บันทึกล่าสุด", noEntries:"ยังไม่มีบันทึก", demoLocked:"Journal ถูกซ่อนใน Public Demo Mode", journalSaved:"บันทึก Journal แล้ว", journalDeleted:"ลบบันทึกแล้ว", journalDateInvalid:"กรุณาใส่วันที่ให้ถูกต้องในรูปแบบ DD/MM/YYYY", journalCalendar:"สถานะการบันทึกประจำวัน", journalCalendarHelp:"✓ = บันทึกแล้ว · ช่องว่างสีอ่อน = วันทำงานที่ยังไม่ได้บันทึก", pendingJournals:"ค้าง {n} วัน", journalAllCaughtUp:"บันทึกครบแล้ว", previousMonth:"เดือนก่อนหน้า", nextMonth:"เดือนถัดไป", summaryLive:"อัปเดตจากข้อมูลล่าสุดของคุณ",
@@ -2874,7 +2874,7 @@
       journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"ยังไม่ถึงเวลาเริ่มงาน พักอีกนิดนะ 💤", mascotStart:"เพิ่งเริ่มเอง ค่อย ๆ ลุยไปด้วยกัน!", mascotWork:"กำลังไปได้สวย ลุยกันต่อ!", mascotHalf:"ผ่านครึ่งทางแล้ว! เก่งมาก ☕", mascotAlmost:"อีกนิดเดียววว เตรียมตัวฉลอง!", mascotBreak:"พักก่อนนะ เดี๋ยวค่อยกลับมาลุยต่อ ☕", mascotDone:"วันนี้สำเร็จแล้ว กลับบ้านได้! 🎉", mascotRest:"วันนี้เป็นวันพัก เติมพลังให้เต็มที่ 🌿", mascotHoliday:"วันหยุดบริษัท วันนี้พักให้เต็มที่ 🏡", mascotLeave:"วันนี้เป็นวันลา พักผ่อนให้เต็มที่ 🌿", mascotJourneyDone:"Journey สำเร็จแล้ว! ลูกเจี๊ยบภูมิใจมาก 🏆", mascotProgress:"ความคืบหน้าวันนี้", avatarTitle:"รูปโปรไฟล์", avatarHelp:"เลือกใช้ Mascot หรือรูปของคุณเองใน Profile", avatarMascot:"ใช้ Mascot", avatarPhoto:"ใช้รูปของฉัน", avatarUpload:"อัปโหลดรูป", avatarChange:"เปลี่ยนรูป", avatarRemove:"ลบรูป", avatarStoredLocal:"รูปจะถูกย่อขนาดและเก็บไว้ใน Browser นี้ รวมอยู่ในไฟล์ Backup ด้วย", avatarUploaded:"อัปโหลดรูปโปรไฟล์แล้ว", avatarRemoved:"ลบรูปโปรไฟล์แล้ว", avatarInvalid:"กรุณาเลือกไฟล์รูปภาพที่ถูกต้อง", avatarTooLarge:"ไฟล์รูปใหญ่เกินไป กรุณาเลือกไฟล์ไม่เกิน 12 MB", avatarRemoveConfirm:"ต้องการลบรูปโปรไฟล์ที่อัปโหลดไว้หรือไม่?", avatarMascotDemo:"Public Demo Mode จะแสดง Mascot แทนรูปส่วนตัว"
     },
     en: {
-      dashboard:"Dashboard", journal:"Daily Journal", projects:"Projects", achievements:"Achievements", reports:"Reports & Analytics", calendar:"Calendar & Attendance", missions:"Daily Missions", bank:"Work Bank", exchange:"Work Exchange", rewards:"Rewards", developer:"Developer Tools", settings:"Settings",
+      dashboard:"Dashboard", journal:"Daily Journal", projects:"Projects", achievements:"Achievements", reports:"Reports & Analytics", calendar:"Calendar & Attendance", missions:"Daily Missions", focus:"Focus Studio", focusSub:"Stay focused and review your sessions", skills:"Skill Tree", skillsSub:"See your skill growth", bank:"Work Bank", exchange:"Work Exchange", rewards:"Rewards", developer:"Developer Tools", settings:"Settings",
       dashboardSub:"Today and journey overview", journalSub:"Record your work and learning", projectsSub:"Track project status and progress", achievementsSub:"Milestones, Trophy Room and Journey Story", reportsSub:"Attendance, heatmap and journey reports", calendarSub:"Leave, company holidays and compensatory days", missionsSub:"Daily Missions & Chests", bankSub:"Compound Savings + Streak", exchangeSub:"Simulated market + Trading Academy for beginners", rewardsSub:"Shop, Collection, Daily & Weekly Deals", developerSub:"Reward Codes & Owner Control", settingsSub:"Profile & App Settings", fontPreview:"Font Preview", fontPreviewText:"ภาษาไทย · Workday Journey · ABC 123", fontPreviewHelp:"The selected font is applied across the app",
       privateLocal:"Private · Local data", menu:"Menu", quickActions:"Quick Actions", addJournal:"Add Today's Journal", manageProjects:"Manage Projects", openReports:"View Reports", openCalendar:"Open Calendar",
       journalTitle:"Daily Work Journal", journalHelp:"Record what you worked on, what you learned, and the related projects", journalDate:"Date", workDone:"What did you work on?", learned:"What did you learn?", mood:"Today's mood", relatedProjects:"Related Projects", saveJournal:"Save Journal", deleteJournal:"Delete Entry", recentEntries:"Recent Entries", noEntries:"No entries yet", demoLocked:"Journal is hidden in Public Demo Mode", journalSaved:"Journal saved", journalDeleted:"Journal deleted", journalDateInvalid:"Enter a valid date in DD/MM/YYYY format", journalCalendar:"Journal Calendar", journalCalendarHelp:"✓ = saved · softly highlighted blank = working day still missing a journal", pendingJournals:"{n} days pending", journalAllCaughtUp:"All caught up", previousMonth:"Previous month", nextMonth:"Next month", summaryLive:"Updated from your latest data",
@@ -2901,6 +2901,8 @@
     ["dashboard","🏠"],
     ["journal","📓"],
     ["projects","🧩"],
+    ["focus","⏱️"],
+    ["skills","🌳"],
     ["calendar","📅"],
     ["reports","📊"],
     ["achievements","🏆"],
@@ -3193,6 +3195,8 @@
     const missions = document.createElement("section"); missions.id="v82MissionsPage"; missions.className="v7-page-panel"; missions.dataset.v7Page="missions"; main.appendChild(missions);
     const bank = document.createElement("section"); bank.id="v83BankPage"; bank.className="v7-page-panel"; bank.dataset.v7Page="bank"; main.appendChild(bank);
     const exchange = document.createElement("section"); exchange.id="v84ExchangePage"; exchange.className="v7-page-panel"; exchange.dataset.v7Page="exchange"; main.appendChild(exchange);
+    const skills = document.createElement("section"); skills.id="wdjSkillTreePage"; skills.className="v7-page-panel"; skills.dataset.v7Page="skills"; main.appendChild(skills);
+    const focus = document.createElement("section"); focus.id="wdjFocusPage"; focus.className="v7-page-panel"; focus.dataset.v7Page="focus"; main.appendChild(focus);
     const ws = document.createElement("section"); ws.id="wdjWorkspacePage"; ws.className="v7-page-panel"; ws.dataset.v7Page="workspace"; main.appendChild(ws);
     const rewards = document.createElement("section"); rewards.id="v81RewardsPage"; rewards.className="v7-page-panel"; rewards.dataset.v7Page="rewards"; main.appendChild(rewards);
     const developer = document.createElement("section"); developer.id="v848DeveloperPage"; developer.className="v7-page-panel"; developer.dataset.v7Page="developer"; main.appendChild(developer);
@@ -3273,6 +3277,8 @@
     if (route === "exchange") window.WorkdayRewards?.renderExchange?.();
     if (route === "rewards") window.WorkdayRewards?.renderShop?.();
     if (route === "workspace") window.WorkdayWorkspace?.render?.();
+    if (route === "focus") window.WorkdayFocus?.render?.();
+    if (route === "skills") window.WorkdaySkills?.render?.();
     if (route === "developer") window.WorkdayV848?.renderDeveloper?.();
     if (route === "settings") renderSettingsPage();
     // Complete presentation refresh synchronously after the page DOM is rebuilt.
