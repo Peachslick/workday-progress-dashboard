@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -3325,7 +3325,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3655,7 +3655,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3720,7 +3720,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3881,7 +3881,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4149,7 +4149,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4414,7 +4414,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4808,7 +4808,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.4";
+  const VERSION = "8.7.4.1";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4955,7 +4955,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.4';
+  const VERSION = '8.7.4.1';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5526,10 +5526,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.4',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.4.1',refresh:mount };
 })();
 
-/* SOURCE: V8.7.4 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.4.1 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5851,7 +5851,160 @@
     if(copy){const snap=milestoneSnapshot(),event=latestMilestone(snap);
       copy.textContent=celebration?(celebrationType==='projects'?txt('🏆 เยี่ยมมาก! Project สำเร็จแล้ว','🏆 Well done! Project completed'):txt('🌱 ยอดเยี่ยม! Journal ครบ 7 วัน','🌱 Great work! Seven Journal days')):(event?event.name:txt('เริ่มบันทึก Journal หรือทำ Project ให้สำเร็จ เพื่อสร้างความทรงจำในห้อง','Log Journals or finish projects to create workspace memories'));}
     updateMoodVisual();
+    if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
+  // V8.7.4.1: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
+  // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
+  const PIXEL_PALETTES={
+    day:{wall:'#a9cce3',wall2:'#b9d9e6',wallShade:'#92bad4',floor:'#bd8b72',floor2:'#c99879',line:'#926d66',sky:'#83c7ef',sky2:'#bceaff',light:'#ffdb91'},
+    sunset:{wall:'#cc9aaf',wall2:'#e4b3b0',wallShade:'#ac879f',floor:'#96778d',floor2:'#ae8491',line:'#756681',sky:'#ef987e',sky2:'#f8ce9c',light:'#ffb36b'},
+    night:{wall:'#455778',wall2:'#536b88',wallShade:'#344765',floor:'#605e78',floor2:'#716a82',line:'#4a486b',sky:'#233961',sky2:'#3d567b',light:'#f0d7a3'}
+  };
+  // Small authored sprites, intentionally not emoji: color-keyed pixel matrices.
+  const PIXEL_SPRITES={
+    plant:['....GG....','..G.GG.G..','...GGGG...','..GGGGGG..','....GG....','....GG....','..OOOOOO..','..OooooO..','...OOOO...'],
+    cactus:['...GGGG...','...G..G...','..GG..GG..','.GGG..G...','...G..G...','...GGGG...','..OOOOOO..','..OooooO..','...OOOO...'],
+    lamp:['....yyyy..','...yyyyyy.','...ywwwwy.','....YYYY..','.....OO...','.....OO...','....OOOO..','..OOOOOO..'],
+    books:['.rrr.bbb..','.rwr.bwb..','.rwr.bwb..','.rwr.bwb..','.rrr.bbb..','ooooggggoo','OOOOOOOOOO'],
+    trophy:['...yyyy...','.yyyyyyyy.','yyYYYYYYyy','y.yYYYYy.y','..yYYYYy..','...YYYY...','....YY....','...yyyy...','..OOOOOO..'],
+    coffee:['..ssssss..','..swwwws..','..swwwwsss','..swwwws.s','..ssssss.s','...ssssss.','..OOOOOO..'],
+    clock:['..OOOOOO..','.OwwwwwwO.','OwwwwwwwwO','OwwwswwwwO','OwwwssswwO','OwwwwwwwwO','.OwwwwwwO.','..OOOOOO..'],
+    bear:['..OO..OO..','.OooOOooO.','OooooooooO','OoOooooOoO','OoooOOoooO','.OooooooO.','..OOOOOO..','...OooO...'],
+    painting:['OOOOOOOOOO','OwwwwwwwwO','OwbbbbbbbO','OwbbwwbbbO','OwbbGGbbbO','OwGGGGGGbO','OwgggggggO','OOOOOOOOOO'],
+    rug:['...rrrr...','.rppppppr.','rppppppppr','rppwwwpppr','rppppppppr','.rppppppr.','...rrrr...'],
+    bookshelf:['OOOOOOOOOO','OrrrrbbbbO','OyyyyggggO','OOOOOOOOOO','OrrrgggggO','OrrrgggggO','OOOOOOOOOO'],
+    banner:['r..p..b..r','rrppppbbrr','.rrppbbr..','..rrbb....','...yy.....'],
+    star:['....y.....','...yyy....','yyyyyyyyyy','..yyyyyy..','...yyyy...','...y..y...'],
+    chair:['..bbbbbb..','.bwwwwwwb.','bwwwwwwwwb','bbbbbbbbbb','.bbbbbbbb.','..BBBBBB..','..B....B..'],
+    fireplace:['OOOOOOOOOO','OooooooooO','Oooyyyyyoo','Oooyrrryoo','Ooorrrrooo','Ooosssssoo','OOOOOOOOOO'],
+    blueprint:['bbbbbbbbbb','bwwwwwwwwb','bwbbbbbbwb','bwbwwbbwwb','bwbwbbbbwb','bwwwwwwwwb','bbbbbbbbbb'],
+    cloud:['..wwwwww..','.wwwwwwww.','wwwwwwwwww','wwwwwwwwww','.bbbbbbbb.'],
+    default:['..pppppp..','.pwwwwwwp.','pwwppppwwp','pwwppppwwp','.pwwwwwwp.','..pppppp..']
+  };
+  const PIXEL_COLORS={x:'#3b4159',w:'#fff4d8',g:'#68ad6b',G:'#36785e',y:'#fce07c',Y:'#cf9b3d',r:'#e7797a',b:'#629bc4',B:'#466a9a',o:'#c69a72',O:'#805b5c',p:'#eeb0b8',s:'#a0b2bf',l:'#b69bda'};
+  const SPRITE_TYPES={goldplant:'plant',bonsai:'plant',pawframe:'painting',painting:'painting',certificate:'painting',clock:'clock',fairylight:'lamp',cloudlamp:'cloud',starmobile:'star',crown:'star',projectcup:'trophy',goldcup:'trophy',bookshelf:'bookshelf',reading:'books',blueprint:'blueprint',fireplace:'fireplace',cushion:'chair',banner:'banner',cactus:'cactus',rug:'rug',coffee:'coffee',bear:'bear',plant:'plant',lamp:'lamp',books:'books',trophy:'trophy'};
+  let pixelObserver=null;
+  let lastArtSignature='';
+  function paintWorkspace(scene){
+    const canvas=scene?.querySelector('[data-wdj-room-canvas]');
+    if(!canvas||!scene.clientWidth||!scene.clientHeight)return;
+    const width=300,height=Math.max(110,Math.round(width*scene.clientHeight/scene.clientWidth));
+    const phase=resolvedPhase(),signature=[width,height,phase,JSON.stringify(data.items),edit,selected].join('|');
+    if(canvas.width===width&&canvas.height===height&&lastArtSignature===signature)return;
+    canvas.width=width;canvas.height=height;
+    const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+    ctx.imageSmoothingEnabled=false;
+    const p=PIXEL_PALETTES[phase]||PIXEL_PALETTES.day;
+    const cw=width/10,ch=height/6;
+    const fill=(color,x,y,w,h)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));};
+    const cell=(x,y,w,h)=>[x*cw,y*ch,w*cw,h*ch];
+    const rect=(color,x,y,w,h)=>fill(color,...cell(x,y,w,h));
+    // Walls, paneling and parquet all share the 10 x 6 cell origin.
+    fill(p.wall,0,0,width,height);
+    fill(p.floor,0,ch*3.5,width,height-ch*3.5);
+    for(let y=0;y<3.5;y+=.5){
+      fill(y%1===0?p.wall2:p.wallShade,0,Math.floor(y*ch),width,1);
+      for(let x=(Math.round(y*2)%2)*.5;x<10;x+=1.5)fill(p.wallShade,x*cw,Math.floor(y*ch),1,Math.min(ch*.5,8));
+    }
+    fill(p.line,0,ch*3.5-2,width,4);
+    for(let y=3.75;y<6;y+=.7){
+      fill(p.floor2,0,y*ch,width,2);
+      for(let x=(Math.round(y*4)%2)*.75;x<10;x+=1.5)fill(p.line,x*cw,y*ch,2,ch*.7);
+    }
+    // A pixel-art window (cell-aligned, not % positioned independently).
+    const wx=cw*1,wy=ch*.55,ww=cw*2.1,wh=ch*2.15;
+    fill('#554b6c',wx-5,wy-5,ww+12,wh+12);
+    fill('#f0d1a0',wx-3,wy-3,ww+6,wh+6);
+    fill(p.sky,wx+3,wy+3,ww-6,wh-6);
+    fill(p.sky2,wx+3,wy+wh*.53,ww-6,wh*.4);
+    // Clouds or stars inside the window.
+    if(phase==='night'){
+      for(const [x,y] of [[.3,.3],[1.5,.6],[.9,1.3],[1.8,1.8]])fill('#fff7d7',wx+x*cw*.8,wy+y*ch*.8,2,2);
+      fill('#e9e8bc',wx+ww*.65,wy+wh*.2,10,10);
+    }else{
+      fill('#f7f6df',wx+ww*.18,wy+wh*.25,ww*.25,5);
+      fill('#f7f6df',wx+ww*.25,wy+wh*.22,ww*.15,5);
+    }
+    fill('#f0d1a0',wx+ww*.49,wy,5,wh);fill('#f0d1a0',wx,wy+wh*.5,ww,5);
+    fill('#7b6782',wx-6,wy+wh+3,ww+15,4);
+    // Wall print / small hanging shelf.
+    const shx=cw*7.65,shy=ch*2.4;
+    fill('#5d506e',shx,shy,cw*1.85,5);fill('#bf835e',shx,shy-4,cw*1.85,5);
+    for(const [col,x,h] of [['#ef9789',.15,.28],['#91c9b1',.39,.4],['#e8ca84',.8,.3]])fill(col,shx+cw*x,shy-h*ch,cw*.2,h*ch);
+    fill('#7b6276',shx+cw*.07,shy+5,cw*.15,8);fill('#7b6276',shx+cw*1.6,shy+5,cw*.15,8);
+    // Pixel bed bottom-left, snapped to columns 1..3 / rows 4..5.
+    const bx=cw*.85,by=ch*4.2;
+    fill('#514760',bx-3,by-6,cw*2.65,ch*1.1+10);
+    fill('#8a88ab',bx+2,by-2,cw*2.5,ch*.9);
+    fill('#c5d3e5',bx+5,by+3,cw*2.35,ch*.76);
+    fill('#fae5d2',bx+8,by+6,cw*.56,ch*.35);
+    fill('#7d6d91',bx-4,by+ch*.84,cw*2.65,5);
+    // Flat, pixel-edged rug aligned to cells 4..7, row 5.
+    const rx=cw*3.9,ry=ch*5.15;
+    fill('#6f647c',rx,ry,cw*3.1,ch*.55);
+    fill('#dc9e99',rx+4,ry+3,cw*3.1-8,ch*.55-6);
+    fill('#f4cfaf',rx+9,ry+6,cw*3.1-18,ch*.55-12);
+    // Desk exactly on the same columns/rows as the editable grid.
+    const dx=cw*4.05,dy=ch*3.30,dw=cw*2.75;
+    fill('#644f62',dx-4,dy-1,dw+10,ch*.35+6);
+    fill('#bd8665',dx,dy+2,dw,ch*.29);
+    fill('#e3a879',dx,dy-3,dw,6);
+    fill('#6f5661',dx+cw*.10,dy+ch*.29,8,ch*.95);
+    fill('#6f5661',dx+dw-14,dy+ch*.29,8,ch*.95);
+    fill('#c8916d',dx+cw*.1,dy+ch*.29,6,ch*.75);
+    fill('#c8916d',dx+dw-12,dy+ch*.29,6,ch*.75);
+    // Monitor and keyboard pixels.
+    const mx=dx+cw*.87,my=dy-ch*.98;
+    fill('#404966',mx-3,my-3,cw*1.1+6,ch*.88+6);
+    fill(phase==='night'?'#6689bd':'#82c8d2',mx+2,my+2,cw*1.1-4,ch*.88-5);
+    fill('#b2eff1',mx+7,my+7,cw*.55,3);
+    fill('#4c5c7b',mx+cw*.5,my+ch*.88,cw*.13,ch*.2);
+    fill('#474c68',mx+cw*.24,my+ch*1.04,cw*.65,4);
+    fill('#f2e5c8',dx+cw*1,dy+2,cw*.9,2);
+    // Pixel chair at columns 5..6, row 4.
+    const cx=cw*5.04,cy=ch*4.36;
+    fill('#4b5071',cx-4,cy-4,cw*.9,ch*1.25);
+    fill('#758fbe',cx,cy,cw*.76,ch*.85);
+    fill('#a3b7da',cx+5,cy+5,cw*.76-10,ch*.75);
+    fill('#505578',cx-6,cy+ch*.78,cw*.95,ch*.26);
+    // Render ALL user items at their exact grid positions.
+    const makeSprite=(item)=>{
+      const key=SPRITE_TYPES[item.id]||'default';
+      const rows=PIXEL_SPRITES[key]||PIXEL_SPRITES.default;
+      const step=Math.max(1,Math.floor(Math.min(cw*.82,ch*.78)/11));
+      const size=step*10;
+      const sx=(item.x+.5)*cw-size/2;
+      const sy=(item.y+1)*ch-rows.length*step-Math.max(1,ch*.1);
+      if(item.y<3){
+        fill('#64546a',sx-3,(item.y+1)*ch-3,size+6,3);
+        fill('#d29e72',sx-3,(item.y+1)*ch-5,size+6,3);
+      }else{
+        fill('#5b4b6266',sx+size*.2,(item.y+1)*ch-4,size*.65,3);
+      }
+      rows.forEach((line,iy)=>{for(let ix=0;ix<line.length;ix++){
+        const color=PIXEL_COLORS[line[ix]];
+        if(color)fill(color,sx+ix*step,sy+iy*step,step,step);
+      }});
+      if(edit&&selected===item.id){
+        ctx.strokeStyle='#ffe590';ctx.lineWidth=2;
+        ctx.strokeRect(Math.round(item.x*cw+1),Math.round(item.y*ch+1),Math.floor(cw-2),Math.floor(ch-2));
+      }
+    };
+    data.items.forEach(makeSprite);
+    scene.dataset.wdjPixelReady='yes';
+    lastArtSignature=signature;
+  }
+  function attachPixelScene(scene){
+    if(pixelObserver){pixelObserver.disconnect();pixelObserver=null;}
+    lastArtSignature='';paintWorkspace(scene);
+    if(typeof ResizeObserver!=='undefined'){
+      pixelObserver=new ResizeObserver(()=>{if(scene.isConnected)paintWorkspace(scene);});
+      pixelObserver.observe(scene);
+    }
+  }
+  window.addEventListener('resize',()=>{const scene=document.querySelector('#wdjWorkspacePage .wdj-room-scene');if(scene&&activePage())paintWorkspace(scene);});
+
   function render(){
     const el=document.getElementById('wdjWorkspacePage');if(!el)return;
     const {list,active,equipped}=collection();
@@ -5896,21 +6049,21 @@
         <strong>${esc(name)}</strong><small>${esc(unlocked?txt('พร้อมวาง','Unlocked'):decorRequirement(item))}</small>
       </button>`;
     }).join('');
-    const objectMarkup=data.items.map(item=>{
-      const found=CATALOG.find(c=>c[0]===item.id);
-      return `<div class="wdj-room-object ${edit&&selected===item.id?'selected':''}" style="left:${(item.x+.5)*10}%;top:${(item.y+.5)*100/6}%" title="${esc(found?.[en()?3:2]||item.id)}" aria-hidden="true">${found?.[1]||''}</div>`;
-    }).join('');
+    // Pixel-art objects are painted directly into the same 10x6 canvas as the desk.
+    // Keep the original item coordinates in localStorage unchanged. The old emoji
+    // markup was intentionally removed so that scene objects never appear offset.
+    const objectMarkup='';
     el.innerHTML=`<div class="wdj-room-wrap wdj-life-root wdj-decor-root">
-      <header class="wdj-room-head"><div><div class="wdj-room-muted">WORKDAY JOURNEY · V8.7.4 · EVENTS & POLISH</div><h2>🏡 ${txt('ห้องทำงานของฉัน','My Virtual Workspace')}</h2><p class="wdj-room-muted">${txt('ห้องส่วนตัวที่เติบโตไปพร้อมกับ Journal, Project และ Mascot','A personal room that grows with your Journals, Projects and Mascot')}</p></div><span class="wdj-room-pill">🧰 ${unlockedCount}/${decor.length} ${txt('ปลดล็อก','unlocked')}</span></header>
+      <header class="wdj-room-head"><div><div class="wdj-room-muted">WORKDAY JOURNEY · PIXEL ROOM UPDATE</div><h2>🏡 ${txt('ห้องทำงานของฉัน','My Virtual Workspace')}</h2><p class="wdj-room-muted">${txt('ห้องส่วนตัวที่เติบโตไปพร้อมกับ Journal, Project และ Mascot','A personal room that grows with your Journals, Projects and Mascot')}</p></div><span class="wdj-room-pill">🧰 ${unlockedCount}/${decor.length} ${txt('ปลดล็อก','unlocked')}</span></header>
       <div class="wdj-room-tools wdj-v874-toolbox"><div class="wdj-v874-toolgroup"><span class="wdj-v874-tool-label">🌤️ ${txt('แสงในห้อง','Room lighting')}</span><div class="wdj-v874-controls" role="group" aria-label="${txt('เลือกช่วงเวลาในห้อง','Room lighting')}">${ambienceButtons}</div></div><div class="wdj-v874-toolgroup"><span class="wdj-v874-tool-label">✨ ${txt('บรรยากาศ','Atmosphere')}</span><div class="wdj-v874-controls" role="group" aria-label="${txt('เลือกเอฟเฟกต์อากาศจำลอง','Select decorative weather effect')}">${weatherButtons}<button type="button" data-wdj-v874-fx class="wdj-room-btn ${ambience.effects?'active':''}" aria-pressed="${ambience.effects}">${ambience.effects?'✨ '+txt('เอฟเฟกต์เปิด','Effects on'):'◌ '+txt('เอฟเฟกต์ปิด','Effects off')}</button></div><small class="wdj-v874-hint">${txt('เอฟเฟกต์ตกแต่งเท่านั้น ไม่ใช่พยากรณ์อากาศ','Decorative effects only; not a weather forecast')}</small></div><div class="wdj-v874-tool-actions"><button type="button" class="wdj-room-btn ${edit?'active':''}" data-wdj-edit aria-pressed="${edit}">${edit?'✓ '+txt('เสร็จสิ้น','Done'):'✏️ '+txt('จัดห้อง','Decorate')}</button> <button type="button" class="wdj-room-btn wdj-room-reset" data-wdj-reset>↺ ${txt('คืนค่าห้อง','Reset room')}</button></div></div>
       <div class="wdj-life-layout">
         <div class="wdj-room-frame"><div class="wdj-room-scene ${phase==='night'?'night':''}" data-wdj-v874-phase="${phase}" data-wdj-v874-weather="${ambience.weather}" data-wdj-v874-fx="${ambience.effects?'on':'off'}" data-wdj-v874-event="${Date.now()<celebrationUntil?celebrationType:'none'}" data-wdj-mascot-mood="${mood}" data-wdj-friend-stage="${bond.stage}" role="group" aria-label="${esc(txt('ฉากห้อง Pixel Art เต็มความกว้าง','Full-width pixel art room scene'))}">
-          <div class="wdj-v874-sky" aria-hidden="true"><span class="wdj-v874-sunmoon"></span><span class="wdj-v874-stars"></span></div><div class="wdj-v874-weather-layer" aria-hidden="true"></div><div class="wdj-v874-celebration" aria-hidden="true">✨ 🎉 ⭐ 🌟 🎉 ✨</div>
+          <canvas class="wdj-room-pixel-canvas" data-wdj-room-canvas aria-hidden="true"></canvas><div class="wdj-v874-sky" aria-hidden="true"><span class="wdj-v874-sunmoon"></span><span class="wdj-v874-stars"></span></div><div class="wdj-v874-weather-layer" aria-hidden="true"></div><div class="wdj-v874-celebration" aria-hidden="true">✨ 🎉 ⭐ 🌟 🎉 ✨</div>
           <div class="wdj-room-window"></div><div class="wdj-room-shelf" aria-hidden="true"></div><div class="wdj-room-rug" aria-hidden="true"></div><div class="wdj-room-bed" aria-hidden="true"></div><div class="wdj-room-desk"><div class="wdj-room-screen"></div></div><div class="wdj-room-chair"></div>
-          <button type="button" class="wdj-room-mascot wdj-life-mascot" data-wdj-life-pet data-wdj-mascot-id="${esc(active.id)}" style="--wdj-mascot-accent:${accent}" aria-label="${petLabel}" title="${petLabel}"><span class="wdj-life-ground" aria-hidden="true"></span><span class="wdj-life-character" aria-hidden="true"><span class="wdj-life-emoji">${esc(active.icon||'🐣')}</span>${accessory?.owned?`<span class="wdj-life-accessory">${esc(accessory.icon||'')}</span>`:''}</span><span class="wdj-life-fx" aria-hidden="true"></span><span class="wdj-bond-scene-badge" aria-hidden="true">${bond.level>=10?'👑':bond.level>=5?'🌟':bond.level>=3?'💗':''}</span></button>
+          <button type="button" class="wdj-room-mascot wdj-life-mascot" data-wdj-life-pet data-wdj-mascot-id="${esc(active.id)}" style="--wdj-mascot-accent:${accent}" aria-label="${petLabel}" title="${petLabel}"><span class="wdj-life-ground" aria-hidden="true"></span><span class="wdj-life-character" aria-hidden="true"><span class="wdj-life-emoji">${esc(active.icon||'🐣')}</span>${accessory?.owned?`<span class="wdj-life-accessory">${esc(accessory.icon||'')}</span>`:''}</span><span class="wdj-life-fx" aria-hidden="true"></span><span class="wdj-life-work-keyboard" aria-hidden="true"><i></i><i></i><i></i></span><span class="wdj-bond-scene-badge" aria-hidden="true">${bond.level>=10?'👑':bond.level>=5?'🌟':bond.level>=3?'💗':''}</span></button>
           <div class="wdj-life-speech" aria-hidden="true" data-wdj-life-speech>${esc(moodCopy(mood))}</div>
           ${objectMarkup}
-          ${edit?`<div class="wdj-room-edit-grid" aria-label="${txt('ตารางจัดวาง','Placement grid')}">${Array.from({length:60},(_,n)=>`<button type="button" data-wdj-cell="${n}" aria-label="${txt('วางหรือย้ายของช่อง','Place or remove item in cell')} ${n+1}"></button>`).join('')}</div>`:''}
+          ${edit?`<div class="wdj-room-edit-grid" aria-label="${txt('ตารางจัดวาง','Placement grid')}">${Array.from({length:60},(_,n)=>{const occupant=data.items.find(i=>i.x===n%10&&i.y===Math.floor(n/10));const itemName=CATALOG.find(x=>x[0]===occupant?.id);return `<button type="button" data-wdj-cell="${n}" data-wdj-cell-occupied="${occupant?'yes':'no'}" aria-label="${esc(occupant?txt('นำออก','Remove')+' '+(itemName?.[en()?3:2]||occupant.id):txt('วางของช่อง','Place item in cell')+' '+(n+1))}"></button>`;}).join('')}</div>`:''}
         </div><div class="wdj-scene-bar"><span>🐾 ${esc(active.name||active.id)} · Lv. ${bond.level} <span data-wdj-life-status>${MOODS[mood].icon} ${moodName(mood)}</span></span><span>🌤️ <span data-wdj-phase-status>${esc(phaseName(phase))}</span> · ${esc(weatherName(ambience.weather))} · 🪑 ${data.items.length}/24 ${txt('ชิ้น','items')}</span></div><div class="wdj-v874-milestone" role="status"><span aria-hidden="true">${activeMilestone?'🏆':'🌱'}</span><span data-wdj-v874-event-note>${esc(activeMilestone?activeMilestone.name:txt('บันทึก Journal หรือทำ Project ให้สำเร็จเพื่อเพิ่มความทรงจำในห้อง','Keep journaling or completing projects to create room memories'))}</span>${activeMilestone?`<button type="button" data-wdj-v874-celebrate class="wdj-v874-celebrate-btn">🎊 ${txt('ฉลอง','Celebrate')}</button>`:''}<span class="wdj-v874-milestone-tag">${txt('ความสำเร็จสะท้อนในห้อง','Progress in your room')}</span></div></div>
         <section class="wdj-room-furniture" aria-label="${txt('คลังของตกแต่ง','Decoration collection')}">
           <div class="wdj-decor-head"><div><strong>🎁 ${txt('Furniture & Decoration Collection','Furniture & Decoration Collection')}</strong><p class="wdj-room-muted">${txt('เลือกของด้านล่าง แล้วแตะช่องในห้องเพื่อวางหรือนำออก','Select an item below, then tap a room cell to place or remove it')}</p></div><span class="wdj-decor-count">${unlockedCount}/${decor.length} ${txt('ชิ้นที่ใช้ได้','available')}</span></div>
@@ -5928,6 +6081,7 @@
       </div>
     </div>`;
     updateSceneLive();
+    attachPixelScene(el.querySelector('.wdj-room-scene'));
   }
   function focusAfterRender(kind,value){
     const root=document.getElementById('wdjWorkspacePage');if(!root)return;
@@ -6031,6 +6185,6 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.4',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.4.1',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();

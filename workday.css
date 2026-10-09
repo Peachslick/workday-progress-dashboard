@@ -5315,3 +5315,70 @@ body.no-animations #wdjWorkspacePage .wdj-v874-weather-layer,body.no-animations 
 #wdjWorkspacePage .wdj-v874-celebrate-btn{border:1px solid #e6ca83;border-radius:999px;background:color-mix(in srgb,var(--card,#fff) 79%,#f5db96);color:var(--text,#233858);padding:5px 12px;min-height:35px;font:800 .7rem/1.3 var(--app-font,inherit);cursor:pointer}
 #wdjWorkspacePage .wdj-v874-celebrate-btn:hover{border-color:#cb9b47;background:#ffe6ad}
 #wdjWorkspacePage .wdj-v874-celebrate-btn:focus-visible{outline:3px solid #e5a32a;outline-offset:2px}
+
+/* V8.7.4.1 - Pixel Room: coordinate-matched scene and smooth Mascot actions.
+   All built-in furniture and decor are drawn on one 10x6 canvas grid. */
+#wdjWorkspacePage .wdj-room-pixel-canvas{
+  position:absolute;inset:0;display:block;width:100%;height:100%;z-index:0;
+  pointer-events:none;image-rendering:pixelated;image-rendering:crisp-edges;
+}
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-window,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-shelf,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-rug,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-bed,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-desk,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-chair,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-room-object,
+#wdjWorkspacePage .wdj-room-scene[data-wdj-pixel-ready="yes"] .wdj-v874-sky{display:none!important}
+#wdjWorkspacePage .wdj-room-edit-grid{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr))}
+#wdjWorkspacePage .wdj-room-edit-grid button{position:relative;border:1px dashed #fff9;background:#ffffff06;box-sizing:border-box}
+#wdjWorkspacePage .wdj-room-edit-grid button[data-wdj-cell-occupied="yes"]{background:#ffffff12}
+#wdjWorkspacePage .wdj-room-edit-grid button:hover,
+#wdjWorkspacePage .wdj-room-edit-grid button:focus-visible{background:#fff4a640;outline:2px solid #fce08a;outline-offset:-2px;z-index:1}
+#wdjWorkspacePage .wdj-room-frame .wdj-life-mascot{
+  left:71%;top:54%;transform:translate(-50%,-8%);transition:
+  left .72s cubic-bezier(.25,.7,.3,1),top .72s cubic-bezier(.25,.7,.3,1);
+}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-mascot{left:68%;top:49%}
+#wdjWorkspacePage [data-wdj-mascot-mood="sleep"] .wdj-life-mascot{left:24%;top:66%}
+#wdjWorkspacePage [data-wdj-mascot-mood="dance"] .wdj-life-mascot,
+#wdjWorkspacePage [data-wdj-mascot-mood="victory"] .wdj-life-mascot{left:76%;top:55%}
+/* Gently breathing/typing instead of the previous 3-frame jerky work animation. */
+@keyframes wdj-pixel-soft-work{
+  0%,100%{transform:translate3d(0,0,0) rotate(-1.3deg) scale(1)}
+  25%{transform:translate3d(1px,1px,0) rotate(.7deg) scale(.995)}
+  50%{transform:translate3d(0,-3px,0) rotate(1.2deg) scale(1.018)}
+  75%{transform:translate3d(-1px,0,0) rotate(-.6deg) scale(1.006)}
+}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-character{
+  animation:wdj-pixel-soft-work 2.65s cubic-bezier(.45,0,.55,1) infinite;
+}
+#wdjWorkspacePage .wdj-life-work-keyboard{
+  display:none;position:absolute;z-index:4;left:3%;bottom:13%;width:36px;height:17px;
+  border:3px solid #3a4e72;background:#879ec5;box-shadow:3px 4px 0 #27345099;
+  transform:rotate(-8deg);pointer-events:none;overflow:hidden;
+}
+#wdjWorkspacePage .wdj-life-work-keyboard i{
+  position:absolute;display:block;width:5px;height:3px;background:#f0e1b4;top:3px;left:4px;
+  box-shadow:7px 0 #f0e1b4,14px 0 #f0e1b4,0 5px #fff5db,7px 5px #fff5db,14px 5px #fff5db;
+}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-work-keyboard{display:block}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-work-keyboard i:nth-child(2){left:11px;opacity:0}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-work-keyboard i:nth-child(3){left:18px;opacity:0}
+@keyframes wdj-pixel-typing{0%,100%{opacity:.46}24%,75%{opacity:1}42%{opacity:.75}}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-work-keyboard i:first-child{animation:wdj-pixel-typing 1.6s ease-in-out infinite}
+#wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-fx:before{content:'✦';color:#c7f8ee}
+@media(max-width:640px){
+  #wdjWorkspacePage .wdj-room-frame .wdj-life-mascot{width:62px;height:72px}
+  #wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-mascot{left:72%;top:48%}
+  #wdjWorkspacePage [data-wdj-mascot-mood="sleep"] .wdj-life-mascot{left:26%;top:70%}
+  #wdjWorkspacePage .wdj-life-work-keyboard{transform:scale(.75) rotate(-8deg);transform-origin:bottom left}
+}
+@media(prefers-reduced-motion:reduce){
+  #wdjWorkspacePage .wdj-life-work-keyboard i,
+  #wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-character{animation:none!important}
+  #wdjWorkspacePage .wdj-room-frame .wdj-life-mascot{transition:none!important}
+}
+body.no-animations #wdjWorkspacePage .wdj-life-work-keyboard i,
+body.no-animations #wdjWorkspacePage [data-wdj-mascot-mood="work"] .wdj-life-character{animation:none!important}
+body.no-animations #wdjWorkspacePage .wdj-room-frame .wdj-life-mascot{transition:none!important}
