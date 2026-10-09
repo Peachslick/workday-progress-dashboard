@@ -1,4 +1,4 @@
-/* Workday Journey 8.6.0.5 | consolidated in original execution order.
+/* Workday Journey 8.6.0.6 | consolidated in original execution order.
  * Individual source sections retain their previous isolated IIFE scope.
  * Edit by finding the SOURCE separator. Do not rearrange sections.
  */
@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.6.0.5";
+  const APP_VERSION = "8.6.0.6";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2078,6 +2078,7 @@
   async function importBackupFile(file) {
     try {
       const payload = migrateBackupPayload(JSON.parse(await file.text()));
+      if (window.WorkdayDataSafety?.confirmRisk && !window.WorkdayDataSafety.confirmRisk("import")) return;
       if (!confirm(t("importConfirm"))) return;
       [...Array(localStorage.length)].map((_,i) => localStorage.key(i)).filter(Boolean).filter(k => k.startsWith("wp-")).forEach(k => localStorage.removeItem(k));
       for (const [key, value] of Object.entries(payload.data)) if (key.startsWith("wp-") && typeof value === "string") localStorage.setItem(key, value);
@@ -2093,10 +2094,12 @@
     window.dispatchEvent(new CustomEvent("workday:journey-cleared"));
   }
   function startNewJourney() {
+    if (window.WorkdayDataSafety?.confirmRisk && !window.WorkdayDataSafety.confirmRisk("journey")) return;
     if (!confirm(t("newJourneyConfirm"))) return;
     clearJourneyStorage(); state.dayOverrides = {}; state.setupCompleted = false; applyJourneyConfig(DEFAULT_JOURNEY_CONFIG, false); journeyConfig = normalizeJourneyConfig(DEFAULT_JOURNEY_CONFIG); openSetupWizard("first");
   }
   async function resetAllData() {
+    if (window.WorkdayDataSafety?.confirmRisk && !window.WorkdayDataSafety.confirmRisk("reset")) return;
     if (!confirm(t("resetAllConfirm"))) return;
     if (window.WorkdayV8Cloud?.isSignedIn?.()) { const ok = await window.WorkdayV8Cloud.deleteCloudState?.(); if (ok === false) return; }
     const keys=[]; for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);} keys.forEach(k=>localStorage.removeItem(k)); localStorage.setItem(DATA_RESET_MARKER, DATA_RESET_VERSION); location.reload();
@@ -2358,7 +2361,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.6.0.5";
+  const V6_VERSION = "8.6.0.6";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2823,7 +2826,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3617,7 +3620,7 @@
     mirrorToggle("v7Seconds","showSecondsToggle");mirrorToggle("v7Animation","animationToggle");mirrorToggle("v7Mood","dynamicMoodToggle");mirrorToggle("v7Notifications","notificationToggle");
     const previewTitle=()=>{const value=$("v7TitleSelect")?.value||"",item=titleStates().find(x=>x.id===value&&x.unlocked)||null,box=$("v76TitlePreview");if(!box)return;box.classList.toggle("active",!!item);box.dataset.tier=item?.tier||"common";box.dataset.mastery=item?.masteryTier||"";box.querySelector("span").textContent=item?.masteryTier?"✦":"👑";box.querySelector("strong").textContent=item?titleName(item):t("noTitle");};
     $("v7TitleSelect")?.addEventListener("change",previewTitle); $("v76ApplyTitle")?.addEventListener("click",()=>setSelectedTitle($("v7TitleSelect")?.value||""));
-    $("v7EditJourney")?.addEventListener("click",()=>$("editJourneyBtn")?.click());$("v7ExportBackup")?.addEventListener("click",()=>$("exportBackupBtn")?.click());$("v7ImportBackup")?.addEventListener("click",()=>$("importBackupBtn")?.click());$("v7Customize")?.addEventListener("click",()=>$("v6SettingsCustomize")?.click());$("v7OpenAdvanced")?.addEventListener("click",()=>$("settingsOpen")?.click());$("v7NewJourney")?.addEventListener("click",()=>$("startNewJourneyBtn")?.click());$("v7ResetData")?.addEventListener("click",async()=>{if(!(await askConfirm(t("confirmResetData"))))return;if(window.WorkdayV8Cloud?.isSignedIn?.()){const ok=await window.WorkdayV8Cloud.deleteCloudState?.();if(ok===false)return;}const keys=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);}keys.forEach(k=>localStorage.removeItem(k));localStorage.setItem("wp-data-reset-version","5.2-setup-calendar-reset");location.reload();});
+    $("v7EditJourney")?.addEventListener("click",()=>$("editJourneyBtn")?.click());$("v7ExportBackup")?.addEventListener("click",()=>$("exportBackupBtn")?.click());$("v7ImportBackup")?.addEventListener("click",()=>$("importBackupBtn")?.click());$("v7Customize")?.addEventListener("click",()=>$("v6SettingsCustomize")?.click());$("v7OpenAdvanced")?.addEventListener("click",()=>$("settingsOpen")?.click());$("v7NewJourney")?.addEventListener("click",()=>$("startNewJourneyBtn")?.click());$("v7ResetData")?.addEventListener("click",async()=>{if(window.WorkdayDataSafety?.confirmRisk && !window.WorkdayDataSafety.confirmRisk("reset"))return;if(!(await askConfirm(t("confirmResetData"))))return;if(window.WorkdayV8Cloud?.isSignedIn?.()){const ok=await window.WorkdayV8Cloud.deleteCloudState?.();if(ok===false)return;}const keys=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith("wp-"))keys.push(key);}keys.forEach(k=>localStorage.removeItem(k));localStorage.setItem("wp-data-reset-version","5.2-setup-calendar-reset");location.reload();});
   }
 
   function renderVersion() {

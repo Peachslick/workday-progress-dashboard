@@ -1,4 +1,4 @@
-/* Workday Journey 8.6.0.5 | consolidated in original execution order.
+/* Workday Journey 8.6.0.6 | consolidated in original execution order.
  * Individual source sections retain their previous isolated IIFE scope.
  * Edit by finding the SOURCE separator. Do not rearrange sections.
  */
@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,10 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.6.0.5",icon:"⚡",th:"เปิดเว็บเร็วขึ้น",en:"Faster, Smoother Loading",notesTh:["รวมไฟล์หน้าเว็บ ลดการโหลดหลายไฟล์", "ปรับความเสถียรของการเปิดเว็บและสลับหน้า"],notesEn:["Fewer files for a smoother startup", "More consistent loading and navigation"]},
-    {version:"8.6.0.3",icon:"\u{1F4E6}",th:"\u0e01\u0e39\u0e49\u0e04\u0e37\u0e19\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e40\u0e01\u0e48\u0e32",en:"Legacy Data Recovery",notesTh:["\u0e01\u0e39\u0e49\u0e04\u0e37\u0e19 Work Bank \u0e41\u0e25\u0e30 Portfolio \u0e40\u0e14\u0e34\u0e21", "Owner \u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e01\u0e48\u0e2d\u0e19\u0e04\u0e37\u0e19\u0e22\u0e2d\u0e14"],notesEn:["Safely collect older savings and portfolio records", "Account owner reviews claims before restoring balances"]},
-    {version:"8.6.0.2",icon:"🎨",th:"ปรับแต่งหน้าตาได้ตามใจ",en:"Personalize Your Workspace",notesTh:["เปิดเว็บได้ลื่นขึ้น ลดอาการหน้าตาเก่ากระพริบ", "เลือกขนาด UI และสไตล์ไอคอน Modern / Classic ได้", "เพิ่มระยะห่าง Spacious และใช้การตั้งค่ากับทุกหน้า"],notesEn:["Smoother startup without the old layout flashing", "Choose UI size and Modern / Classic icons", "New Spacious layout option with consistent preferences"]},
-    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ปรับความถูกต้องของยอดเหรียญและการฝากถอน", "ลดการโหลดและซิงก์ข้อมูลซ้ำ", "แยกการเล่น Guest จากบัญชีให้ชัดเจน"],notesEn:["More reliable wallet balances and savings transactions", "Less repeated loading and syncing", "Clear separation between Guest and account progress"]},
+    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["Data Safety & Backup: \u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e01\u0e48\u0e2d\u0e19\u0e25\u0e49\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25", "ปรับความถูกต้องของยอดเหรียญและการฝากถอน", "ลดการโหลดและซิงก์ข้อมูลซ้ำ"],notesEn:["More reliable wallet balances and savings", "Faster page loading", "Data Safety & read-only JSON backup tools"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
     {version:"8.3",icon:"🏦",th:"Work Bank",en:"Work Bank",notesTh:["ออมเหรียญและติดตามดอกเบี้ยทบต้น", "ขยายร้านค้าและไอเทมแต่งโปรไฟล์"],notesEn:["Save Coins and track compound interest", "More Shop items and profile customization"]},
@@ -912,7 +909,7 @@
   function enhanceRoute(){
     ensureUi();ensureCleanTopbar();ensureSetupTemplates();ensureSetupCloudPrompt();restoreJournalDraft();restoreProjectDraft();
     if(location.hash.includes("calendar"))ensureCalendarTemplates();
-    if(location.hash.includes("settings"))ensureDataHealth();
+    if(location.hash.includes("settings")){ensureDataHealth();window.WorkdayDataSafety?.mount?.();}
     if(location.hash.includes("reports"))ensurePublicShareCard();
     const pending=localStorage.getItem(KEYS.pendingJournalDate);if(pending&&location.hash.includes("journal")&&$("v7JournalDate")){localStorage.removeItem(KEYS.pendingJournalDate);const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(pending);if(m){$("v7JournalDate").value=`${m[3]}/${m[2]}/${m[1]}`;$("v7JournalDate").dispatchEvent(new Event("change",{bubbles:true}));}}
     updateCloudIndicators();refreshNotificationCenter();ensureWhatsNewUi();
@@ -3206,7 +3203,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3535,7 +3532,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3600,7 +3597,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3761,7 +3758,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4029,7 +4026,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4294,7 +4291,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4688,7 +4685,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.5.1";
+  const VERSION = "8.6.0.6";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4835,7 +4832,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.6.0.5.1';
+  const VERSION = '8.6.0.6';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5145,3 +5142,131 @@
   setTimeout(scanAndStage,1100);
 })();
 ;
+
+
+/* Workday Journey V8.6.0.6 - Read-only Data Safety Center.
+ * This UI reads this device only; it never imports balances or writes to remote storage.
+ * The snapshot intentionally has a different format from the legacy importable backup.
+ */
+(function WorkdayDataSafetyCenter(){
+  'use strict';
+  const MARKER='wdj-v8606-last-export-at'; // Device-only timestamp, never an economy key.
+  const MAX_EXPORT_BYTES=25*1024*1024;
+  const localFinance=['wp-v84-exchange-trades','wp-v83-bank-ledger','wp-v83-bank-state','wdj-v8601-guest-bank-backup'];
+  const $=id=>document.getElementById(id);
+  const th=()=>{try{return localStorage.getItem('wp-language')!=='en';}catch(_){return true;}};
+  const labels={
+    th:{
+      title:'Data Safety & Backup',tag:'READ-ONLY',intro:'\u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e43\u0e19\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e41\u0e25\u0e30\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e01\u0e48\u0e2d\u0e19\u0e25\u0e49\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25',
+      connected:'\u0e40\u0e0a\u0e37\u0e48\u0e2d\u0e21\u0e15\u0e48\u0e2d\u0e1a\u0e31\u0e0d\u0e0a\u0e35',guest:'Guest / Local',offline:'\u0e2d\u0e2d\u0e1f\u0e44\u0e25\u0e19\u0e4c',pending:'\u0e23\u0e2d\u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a',
+      inDevice:'\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e43\u0e19\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d',lastSync:'\u0e0b\u0e34\u0e07\u0e01\u0e4c\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14',localFinance:'Bank / Exchange \u0e43\u0e19\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d',lastExport:'\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e25\u0e48\u0e32\u0e2a\u0e38\u0e14',
+      download:'\u0e14\u0e32\u0e27\u0e19\u0e4c\u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2a\u0e33\u0e23\u0e2d\u0e07 (JSON)',rescan:'\u0e15\u0e23\u0e27\u0e08\u0e0b\u0e49\u0e33',
+      notice:'\u0e44\u0e1f\u0e25\u0e4c\u0e2d\u0e32\u0e08\u0e21\u0e35\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2a\u0e48\u0e27\u0e19\u0e15\u0e31\u0e27 \u0e2d\u0e22\u0e48\u0e32\u0e41\u0e0a\u0e23\u0e4c\u0e43\u0e2b\u0e49\u0e04\u0e19\u0e2d\u0e37\u0e48\u0e19; \u0e44\u0e21\u0e48\u0e43\u0e0a\u0e48\u0e44\u0e1f\u0e25\u0e4c\u0e19\u0e33\u0e40\u0e02\u0e49\u0e32\u0e41\u0e25\u0e30\u0e44\u0e21\u0e48\u0e40\u0e1e\u0e34\u0e48\u0e21 Coin \u0e2d\u0e31\u0e15\u0e42\u0e19\u0e21\u0e31\u0e15\u0e34',
+      warn:'\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e01\u0e32\u0e23\u0e40\u0e07\u0e34\u0e19\u0e08\u0e32\u0e01\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e2d\u0e32\u0e08\u0e44\u0e21\u0e48\u0e15\u0e23\u0e07\u0e01\u0e31\u0e1a\u0e1a\u0e31\u0e0d\u0e0a\u0e35',
+      confirmExport:'\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e08\u0e32\u0e01 Browser \u0e19\u0e35\u0e49\u0e25\u0e07\u0e44\u0e1f\u0e25\u0e4c JSON? \u0e44\u0e1f\u0e25\u0e4c\u0e2d\u0e32\u0e08\u0e21\u0e35\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e2a\u0e48\u0e27\u0e19\u0e15\u0e31\u0e27\u0e41\u0e25\u0e30\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e02\u0e2d\u0e07\u0e1c\u0e39\u0e49\u0e43\u0e0a\u0e49\u0e40\u0e14\u0e34\u0e21\u0e1a\u0e19\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e19\u0e35\u0e49',
+      exported:'\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22',
+      noData:'\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e43\u0e19\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d',
+      error:'\u0e44\u0e21\u0e48\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e44\u0e14\u0e49: ',
+      destructive:'\u0e04\u0e33\u0e40\u0e15\u0e37\u0e2d\u0e19: \u0e01\u0e32\u0e23\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23\u0e19\u0e35\u0e49\u0e2d\u0e32\u0e08\u0e25\u0e1a\u0e2b\u0e23\u0e37\u0e2d\u0e17\u0e31\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25. \u0e01\u0e23\u0e38\u0e13\u0e32\u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e01\u0e48\u0e2d\u0e19',
+      enter:'\u0e1e\u0e34\u0e21\u0e1e\u0e4c',never:'\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e40\u0e04\u0e22',done:'\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08',
+    },
+    en:{title:'Data Safety & Backup',tag:'READ-ONLY',intro:'Inspect device data and make a backup before resetting your journey.',connected:'Signed in',guest:'Guest / Local',offline:'Offline',pending:'Needs attention',inDevice:'Data on this device',lastSync:'Last sync',localFinance:'Bank / Exchange on device',lastExport:'Last read-only export',download:'Download read-only JSON',rescan:'Check again',notice:'This may contain private data from this browser. Do not share it. It cannot be imported and never adds Coins automatically.',warn:'Device-only finance history might not match your account balance.',confirmExport:'Download a device-only JSON snapshot? It may contain personal journals and data left by previous users of this browser.',exported:'Read-only snapshot downloaded.',noData:'No local data found',error:'Backup failed: ',destructive:'Warning: this may remove or replace data. Export a backup first.',enter:'Type',never:'Never',done:'Completed'}
+  };
+  const T=k=>(labels[th()?'th':'en'][k]||k);
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const localGet=k=>{try{return localStorage.getItem(k);}catch(_){return null;}};
+  function safeDate(v){if(!v)return T('never');const d=new Date(v);return Number.isNaN(d.getTime())?T('never'):d.toLocaleString(th()?'th-TH':'en-GB',{dateStyle:'medium',timeStyle:'short'});}
+  function deviceSnapshot(){
+    const data=Object.create(null), excluded=[];
+    // Local-only evidence is included for safekeeping, never used as authoritative wallet/stock amounts.
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(!k)continue;
+      const eligible=k.startsWith('wp-')||k==='wdj-v8601-guest-bank-backup';
+      if(!eligible)continue;
+      if(/^wp-v8-cloud-|^wp-v8606-safety-|secret|password|passwd|token|session|authorization|credential|apikey|api-key|private-key|refresh-key/i.test(k)){
+        excluded.push(k);continue;
+      }
+      const v=localGet(k);
+      if(typeof v==='string')data[k]=v;
+    }
+    return {format:'workday-journey-read-only-snapshot',schemaVersion:1,readOnly:true,exportedAt:new Date().toISOString(),source:'device-local-storage',
+      warning:'Not verified financial records; never import this file into an economy account. Contains private information.',
+      localKeys:data,excludedKeyCount:excluded.length};
+  }
+  function view(){
+    let keys=0,problem=0;
+    try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('wp-'))keys++;}}catch(_){problem++;}
+    const hasFinance=localFinance.filter(k=>{const v=localGet(k);return v && v!=='[]' && v!=='{}';});
+    const status=window.WorkdayV8Cloud?.getStatus?.()||{};
+    const online=typeof navigator.onLine==='boolean'?navigator.onLine:true;
+    return {keys,hasFinance,online,status,last:localGet('wp-v8-cloud-last-sync'),exportAt:localGet(MARKER),problem};
+  }
+  function html(id,compact){
+    const s=view(),connected=!!s.status.signedIn;
+    let state=T('guest');
+    if(!s.online)state=T('offline');
+    else if(connected)state=s.status.status==='synced'&&!s.status.conflict?T('connected'):T('pending');
+    const deviceOnly= s.hasFinance.length>0;
+    return `<section id="${id}" class="wdj-safety card ${compact?'wdj-safety-compact':'v7-settings-card v7-settings-wide'}" aria-label="Data Safety">
+      <div class="wdj-safety-head"><div><p class="eyebrow">${esc(T('tag'))} · V8.6.0.6</p><h3>🛡 ${esc(T('title'))}</h3><p>${esc(T('intro'))}</p></div><span class="wdj-safety-indicator ${s.online?'':'wdj-offline'}">${esc(state)}</span></div>
+      <div class="wdj-safety-stats">
+        <div><span>${esc(T('inDevice'))}</span><strong>${s.keys} keys</strong></div>
+        <div><span>${esc(T('lastSync'))}</span><strong>${esc(connected?safeDate(s.last):T('guest'))}</strong></div>
+        <div><span>${esc(T('localFinance'))}</span><strong>${s.hasFinance.length} ${deviceOnly?'⚠':''}</strong></div>
+        <div><span>${esc(T('lastExport'))}</span><strong>${esc(safeDate(s.exportAt))}</strong></div>
+      </div>
+      ${deviceOnly?`<p class="wdj-safety-warning">⚠ ${esc(T('warn'))}</p>`:''}
+      <div class="wdj-safety-actions"><button type="button" class="primary-btn" data-safety-export>↓ ${esc(T('download'))}</button><button type="button" class="outline-btn" data-safety-rescan>↻ ${esc(T('rescan'))}</button></div>
+      <p class="wdj-safety-note">🔒 ${esc(T('notice'))}</p>
+    </section>`;
+  }
+  function mount(){
+    const target=$('v7SettingsPage')?.querySelector('.v7-settings-grid');
+    if(target && !$('wdjDataSafetyMain'))target.insertAdjacentHTML('beforeend',html('wdjDataSafetyMain',false));
+    const side=$('settingsPanel')?.querySelector('.data-tools-setting');
+    if(side && !$('wdjDataSafetySide'))side.insertAdjacentHTML('afterend',html('wdjDataSafetySide',true));
+  }
+  function refresh(){
+    const a=$('wdjDataSafetyMain'),b=$('wdjDataSafetySide');
+    if(a)a.outerHTML=html('wdjDataSafetyMain',false);
+    if(b)b.outerHTML=html('wdjDataSafetySide',true);
+    mount();
+  }
+  function exportReadOnly(){
+    if(!window.confirm(T('confirmExport')))return false;
+    try{
+      const payload=deviceSnapshot();const file=JSON.stringify(payload,null,2);
+      if(file.length>MAX_EXPORT_BYTES)throw new Error('Data exceeds 25 MB. Contact the owner before clearing this browser.');
+      const blob=new Blob([file],{type:'application/json'});
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.download=`workday-journey-device-snapshot-${new Date().toISOString().slice(0,10)}.json`;
+      a.href=url;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+      // Updating only this device's backup metadata does not alter local project/economy data.
+      try{localStorage.setItem(MARKER,new Date().toISOString());}catch(_){}
+      refresh();return true;
+    }catch(e){window.alert(T('error')+String(e?.message||e));return false;}
+  }
+  function confirmRisk(kind){
+    const token=kind==='import'?'IMPORT':kind==='journey'?'NEW':'RESET';
+    const qualifier=kind==='reset'?' / online data may also be deleted':kind==='import'?' / may replace and later sync your data':' / clears journey settings and records';
+    if(!window.confirm(`${T('destructive')}\n${kind.toUpperCase()}${qualifier}`))return false;
+    const value=window.prompt(`${T('enter')} ${token} to continue:`,'');
+    return value===token;
+  }
+  // Event delegation persists when the settings page re-renders.
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest?.('[data-safety-export],[data-safety-rescan]');if(!btn)return;
+    if(btn.hasAttribute('data-safety-export'))exportReadOnly();else refresh();
+  });
+  window.WorkdayDataSafety=Object.freeze({confirmRisk,exportReadOnly,scan:view,mount,refresh});
+  const page=$('v7SettingsPage');
+  if(page)new MutationObserver(()=>{if(!page.querySelector('#wdjDataSafetyMain'))mount();}).observe(page,{childList:true});
+  window.addEventListener('hashchange',()=>setTimeout(()=>{mount();refresh();},30));
+  window.addEventListener('workday:v8-auth-state',()=>setTimeout(refresh,40));
+  window.addEventListener('online',refresh);window.addEventListener('offline',refresh);
+  window.addEventListener('storage',e=>{if(e.key===MARKER||e.key==='wp-v8-cloud-last-sync')refresh();});
+  document.addEventListener('click',e=>{if(e.target.closest?.('#settingsOpen,.lang-btn,[data-v802-lang]'))setTimeout(refresh,100);},true);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mount();refresh();},{once:true});else{mount();refresh();}
+})();
