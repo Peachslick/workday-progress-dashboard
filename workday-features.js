@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -3329,7 +3329,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3661,7 +3661,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3726,7 +3726,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3887,7 +3887,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4155,7 +4155,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4420,7 +4420,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4814,7 +4814,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.6";
+  const VERSION = "8.7.6.1";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4961,7 +4961,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.6';
+  const VERSION = '8.7.6.1';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5532,10 +5532,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.6',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.6.1',refresh:mount };
 })();
 
-/* SOURCE: V8.7.6 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.6.1 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5859,7 +5859,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.6: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.6.1: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6191,12 +6191,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.6',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.6.1',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.6: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.6.1: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6354,97 +6354,173 @@
 })();
 
 
-/* ===== V8.7.6: Skill Tree & Career Growth (cosmetic, local-only preferences) ===== */
+/* ===== V8.7.6.1 Personalized Skill Tree & Hybrid Smart Tagging =====
+ * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
+ */
 (() => {
-  'use strict';
-  const ROOT='wdjSkillTreePage', PREF='wdj-v876-skill-tree-preference-v1:';
-  const $=id=>document.getElementById(id);
-  const locale=()=>localStorage.getItem('wp-language')==='en'?'en':'th';
-  const tr=(th,en)=>locale()==='en'?en:th;
-  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const json=(key,fallback)=>{try{const raw=JSON.parse(localStorage.getItem(key)||'null');return raw??fallback;}catch{return fallback;}};
-  const nowAccount=()=>String(window.WorkdayV8Cloud?.getUser?.()?.id||'guest').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,90)||'guest';
-  const SKILLS=[
-    {id:'coding',icon:'💻',th:'Coding & Development',en:'Coding & Development',descTh:'Frontend, Backend, JavaScript และการพัฒนาเว็บ',descEn:'Frontend, backend, JavaScript and web development',tags:['coding','code','program','javascript','typescript','react','vue','next.js','vite','node','express','html','css','frontend','backend','php','python','api','software','เว็บ','เขียนโค้ด','โปรแกรม','พัฒนาเว็บไซต์','พัฒนาระบบ','โค้ด','ฟังก์ชัน'],tone:'blue'},
-    {id:'database',icon:'🗄️',th:'Database & Data',en:'Database & Data',descTh:'SQL, ข้อมูล, ระบบจัดเก็บ และการเชื่อมต่อ',descEn:'SQL, data models, storage and integration',tags:['database','sql','query','dbeaver','supabase','postgres','mysql','mssql','data model','etl','schema','table','data warehouse','ฐานข้อมูล','ดึงข้อมูล','จัดการข้อมูล','ตารางข้อมูล','คลังข้อมูล'],tone:'teal'},
-    {id:'design',icon:'🎨',th:'UX/UI Design',en:'UX/UI Design',descTh:'ออกแบบหน้าจอ การใช้งาน และระบบดีไซน์',descEn:'Interface design, usability and design systems',tags:['ui','ux','design','layout','figma','tailwind','responsive','wireframe','prototype','user experience','user interface','accessibility','ออกแบบ','เลย์เอาต์','หน้าตา','ประสบการณ์ผู้ใช้','ดีไซน์','ตกแต่งหน้า'],tone:'purple'},
-    {id:'analytics',icon:'📊',th:'Power BI & Analytics',en:'Power BI & Analytics',descTh:'Dashboard, DAX, รายงานและการวิเคราะห์',descEn:'Dashboards, DAX, reporting and analytics',tags:['power bi','powerbi','dax','analytics','dashboard','visualization','measure','chart','graph','insight','report','kpi','กราฟ','รายงาน','วิเคราะห์','แดชบอร์ด','สรุปข้อมูล','ตัวชี้วัด'],tone:'amber'},
-    {id:'communication',icon:'🗣️',th:'Communication',en:'Communication',descTh:'Presentation, Documentation และการสื่อสาร',descEn:'Presentations, documentation and collaboration',tags:['presentation','present','meeting','training','trainer','manual','document','guide','english','communication','team','mentor','handover','review','ประชุม','พรีเซนต์','นำเสนอ','คู่มือ','สอน','อธิบาย','ภาษาอังกฤษ','สื่อสาร','เอกสาร','พูดคุย'],tone:'pink'},
-    {id:'problem',icon:'🧩',th:'Problem Solving',en:'Problem Solving',descTh:'Debug, Test, ปรับปรุงและแก้ปัญหา',descEn:'Debugging, testing, improvements and troubleshooting',tags:['debug','fix','bug','troubleshoot','issue','error','test','testing','optimize','refactor','security','performance','root cause','resolve','แก้ไข','ทดสอบ','ตรวจสอบ','ปัญหา','ปรับปรุง','ข้อผิดพลาด','เพิ่มประสิทธิภาพ'],tone:'green'}
-  ];
-  const LEVEL_STEPS=[0,60,160,320,540,830,1190,1620,2120,2700,3350];
-  const MAX_LEVEL=10;
-  const levelFor=xp=>{let level=1;for(let i=1;i<LEVEL_STEPS.length;i++){if(xp>=LEVEL_STEPS[i])level=i+1;}return Math.min(MAX_LEVEL,level);};
-  const progressFor=xp=>{const level=levelFor(xp);if(level>=MAX_LEVEL)return {level,percent:100,current:xp,next:xp,delta:0};const low=LEVEL_STEPS[level-1],high=LEVEL_STEPS[level];return {level,percent:Math.max(0,Math.min(100,100*(xp-low)/(high-low))),current:xp-low,next:high-low,delta:high-xp};};
-  const localizedDate=x=>{const n=Date.parse(x);return Number.isFinite(n)?new Intl.DateTimeFormat(locale()==='th'?'th-TH':'en-GB',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(n)):'';};
-  const tagged=text=>{
-    const words=String(text||'').toLowerCase();
-    const rated=SKILLS.map(skill=>({id:skill.id,score:skill.tags.reduce((sum,tag)=>sum+(tag.length<4&&/^[a-z]+$/.test(tag)?new RegExp('(^|[^a-z])'+tag.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'($|[^a-z])','i').test(words):words.includes(tag)?1:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
-    return rated.slice(0,3).map(x=>x.id);
-  };
-  let scope='',selected='coding',history=[];
-  function ensureScope(){const account=nowAccount();if(scope===account)return;scope=account;const saved=json(PREF+scope,{});selected=SKILLS.some(x=>x.id===saved?.selected)?saved.selected:'coding';}
-  function savePreference(){try{localStorage.setItem(PREF+scope,JSON.stringify({selected}));}catch{}}
-  function collect(){
-    const totals=Object.fromEntries(SKILLS.map(x=>[x.id,{xp:0,journals:0,projects:0,focus:0,evidence:[]}]));
-    const journals=json('wp-v6-journal',{});
-    if(journals&&typeof journals==='object'&&!Array.isArray(journals)){
-      Object.entries(journals).slice(0,1200).forEach(([day,j])=>{
-        if(!j||typeof j!=='object')return;
-        const body=[j.work,j.learned].map(x=>String(x||'').trim()).join(' ');
-        if(body.trim().length<10)return;
-        tagged(body).forEach(id=>{const item=totals[id];item.xp+=15;item.journals++;item.evidence.push({type:'journal',th:'Journal',en:'Journal',name:day,date:day});});
-      });
-    }
-    const projects=json('wp-v6-projects',[]);
-    const projectMap=new Map();
-    if(Array.isArray(projects))projects.slice(0,400).forEach(p=>{
-      if(!p||typeof p!=='object')return;
-      const ids=tagged([p.name,p.title,p.category,p.description].filter(Boolean).join(' '));
-      if(p.id)projectMap.set(String(p.id),ids);
-      const completed=p.status==='completed'||Number(p.progress)>=100;
-      const progress=Math.max(0,Math.min(100,Number(p.progress)||0));
-      // Derived, never awarded or accumulated on Save. Decreasing progress decreases derived XP.
-      const points=10+Math.floor(progress/25)*10+(completed?50:0);
-      ids.forEach(id=>{const item=totals[id];item.xp+=points;item.projects++;item.evidence.push({type:'project',th:completed?'Project สำเร็จ':'Project',en:completed?'Completed project':'Project',name:String(p.name||p.title||'Project').slice(0,90),date:String(p.updatedAt||p.createdAt||'')});});
-    });
-    const focus=json('wdj-v875-focus-history-v1:'+scope,[]);
-    if(Array.isArray(focus)){
-      // Only linked sessions count; no unlinked time is assigned to an arbitrary skill.
-      focus.slice(0,240).forEach(f=>{
-        if(!f||!Number.isFinite(f.seconds)||f.seconds<60||!f.projectId)return;
-        const ids=projectMap.get(String(f.projectId))||tagged(f.projectName||'');
-        const points=Math.min(20,Math.floor(f.seconds/1500)*5);
-        if(!points)return;
-        ids.forEach(id=>{const item=totals[id];item.xp+=points;item.focus++;item.evidence.push({type:'focus',th:'Focus Session',en:'Focus session',name:String(f.projectName||'Project').slice(0,90),date:Number.isFinite(Number(f.completedAt))?new Date(Number(f.completedAt)).toISOString():''});});
-      });
-    }
-    return totals;
-  }
-  const milestone=(level)=>level>=10?['🌟','Master','ผู้เชี่ยวชาญ']:level>=7?['💎','Expert','ระดับสูง']:level>=5?['🏅','Pro','ชำนาญ']:level>=3?['🌱','Growing','กำลังเติบโต']:['🔰','Learner','เริ่มต้น'];
-  function render(){
-    ensureScope();const root=$(ROOT);if(!root)return;
-    const totals=collect(),current=totals[selected]||totals.coding,chosen=SKILLS.find(x=>x.id===selected)||SKILLS[0];
-    const sum=SKILLS.reduce((n,s)=>n+totals[s.id].xp,0),levels=SKILLS.reduce((n,s)=>n+levelFor(totals[s.id].xp),0),started=SKILLS.filter(s=>totals[s.id].xp>0).length;
-    const summary=SKILLS.map(s=>({s,data:totals[s.id],p:progressFor(totals[s.id].xp)}));
-    const prog=progressFor(current.xp),stage=milestone(prog.level);
-    const orderedEvidence=[...current.evidence].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,8);
-    root.innerHTML=`<div class="wdj-skill-page">
-      <section class="wdj-skill-hero"><div class="wdj-skill-hero-copy"><div class="wdj-skill-eyebrow">🌳 CAREER GROWTH · V8.7</div><h2>${tr('ต้นไม้ทักษะของฉัน','My Skill Tree')}</h2><p>${tr('เห็นเส้นทางการเติบโตจาก Journal, Projects และ Focus Studio ในพื้นที่เดียว','Explore your career growth through journals, projects and completed focus sessions.')}</p><span class="wdj-skill-local">🔒 ${tr('คะแนนประเมินเพื่อสะท้อนความก้าวหน้า · ไม่ใช่การรับรองทักษะ','Indicative growth points · not a skills certification')}</span></div><div class="wdj-skill-hero-art" aria-hidden="true">🌱<span>✦</span></div></section>
-      <section class="wdj-skill-kpis" aria-label="${tr('สรุปทักษะ','Skill overview')}"><div><span>${tr('Growth XP รวม','Total growth XP')}</span><strong>${sum.toLocaleString()}</strong><small>${tr('คำนวณจากข้อมูลที่มี','Derived from existing activity')}</small></div><div><span>${tr('สายทักษะที่เริ่มเติบโต','Active skill paths')}</span><strong>${started} / 6</strong><small>${tr('จากทั้งหมด 6 สาย','of six career tracks')}</small></div><div><span>${tr('เลเวลรวม','Combined levels')}</span><strong>${levels}</strong><small>${tr('แต่ละสายเริ่มที่ Lv.1','Each track starts at Lv.1')}</small></div></section>
-      <div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">YOUR CAREER MAP</span><h3>${tr('เลือกสายทักษะบนแผนผัง','Explore your skill branches')}</h3></div><span>${tr('แตะเพื่อดู XP และหลักฐาน','Choose a node for details')}</span></div>
-      <section class="wdj-skill-map" aria-label="${tr('แผนผังทักษะ','Skill tree')}"><div class="wdj-skill-trunk" aria-hidden="true"><span>✨</span><strong>${tr('MY GROWTH','MY GROWTH')}</strong><small>WORKDAY JOURNEY</small></div><div class="wdj-skill-branches">${summary.map(({s,data,p},index)=>`<button type="button" data-skill-id="${s.id}" class="wdj-skill-node wdj-skill-tone-${s.tone} ${selected===s.id?'is-selected':''} ${data.xp>0?'is-active':'is-empty'}" aria-pressed="${selected===s.id}" aria-label="${escapeHtml(s.en)} Level ${p.level}"><span class="wdj-skill-node-icon">${s.icon}</span><span class="wdj-skill-node-main"><strong>${escapeHtml(s[locale()])}</strong><small>Lv.${p.level} · ${data.xp.toLocaleString()} XP</small></span><span class="wdj-skill-node-progress"><i style="width:${p.percent.toFixed(1)}%"></i></span></button>`).join('')}</div></section>
-      <section class="wdj-skill-detail" aria-live="polite"><div class="wdj-skill-detail-head"><span class="wdj-skill-detail-icon wdj-skill-tone-${chosen.tone}">${chosen.icon}</span><div><span class="wdj-skill-eyebrow">SELECTED SKILL PATH</span><h3>${escapeHtml(chosen[locale()])}</h3><p>${escapeHtml(locale()==='th'?chosen.descTh:chosen.descEn)}</p></div><span class="wdj-skill-level">Lv. ${prog.level}</span></div>
-        <div class="wdj-skill-xp-head"><strong>${current.xp.toLocaleString()} XP</strong><span>${prog.level>=MAX_LEVEL?tr('ถึงระดับสูงสุดในเวอร์ชันนี้','Current maximum level'):tr(`อีก ${prog.delta.toLocaleString()} XP จะขึ้น Lv.${prog.level+1}`,`${prog.delta.toLocaleString()} XP to Lv.${prog.level+1}`)}</span></div><div class="wdj-skill-xp-bar"><i style="width:${prog.percent.toFixed(1)}%"></i></div>
-        <div class="wdj-skill-evidence-kpis"><div><strong>${current.journals}</strong><span>${tr('วัน Journal','Journal days')}</span></div><div><strong>${current.projects}</strong><span>${tr('Project ที่เกี่ยวข้อง','Related projects')}</span></div><div><strong>${current.focus}</strong><span>${tr('Focus Session','Focus sessions')}</span></div></div>
-        <div class="wdj-skill-milestone-head"><h4>${tr('Milestones','Milestones')}</h4><small>${tr('ปลดล็อกอัตโนมัติตาม Level','Automatically reached by leveling')}</small></div><div class="wdj-skill-milestones">${[[3,'🌱',tr('เริ่มเติบโต','Growing')],[5,'🏅',tr('ชำนาญ','Pro')],[7,'💎',tr('ระดับสูง','Expert')],[10,'🌟',tr('ผู้เชี่ยวชาญ','Master')]].map(([n,emoji,label])=>`<div class="${prog.level>=n?'is-earned':'is-locked'}"><span>${prog.level>=n?emoji:'🔒'}</span><strong>Lv.${n}</strong><small>${label}</small></div>`).join('')}</div>
-        <div class="wdj-skill-evidence-head"><h4>${tr('กิจกรรมที่เกี่ยวข้อง','Related activity')}</h4><small>${tr('แสดงสูงสุด 8 รายการล่าสุด','Up to 8 recent entries')}</small></div>${orderedEvidence.length?`<div class="wdj-skill-evidence-list">${orderedEvidence.map(e=>`<div><span class="wdj-skill-evidence-icon">${e.type==='journal'?'📓':e.type==='project'?'🧩':'⏱️'}</span><span><strong>${escapeHtml(e.name)}</strong><small>${escapeHtml(locale()==='th'?e.th:e.en)}</small></span><time>${escapeHtml(e.type==='journal'?e.date:localizedDate(e.date))}</time></div>`).join('')}</div>`:`<div class="wdj-skill-empty">🌿 ${tr('ยังไม่พบ Journal หรือ Project ที่มีคำเกี่ยวข้องกับทักษะนี้','No related journal or project content found for this skill yet.')}</div>`}
-      </section><section class="wdj-skill-footnote"><strong>💡 ${tr('XP คำนวณอย่างไร?','How is growth XP calculated?')}</strong><p>${tr('Journal ที่มีรายละเอียดอย่างน้อย 10 ตัวอักษร: +15 XP ต่อวันและสายทักษะ · Project: +10 XP เริ่มต้น, +10 ต่อความคืบหน้า 25% และ +50 เมื่อสำเร็จ · Focus ที่ผูกกับ Project: +5 XP ต่อ 25 นาที (สูงสุด +20 ต่อ Session) โดยจับคู่คำสำคัญภาษาไทย/อังกฤษ ไม่บวกซ้ำเมื่อกด Save','Journal with 10+ characters: +15 XP per date and matched skill. Project: +10 base, +10 per 25% progress, +50 at completion. Linked focus: +5 per 25 minutes (max +20 per session). Matching uses TH/EN keywords, not save clicks.')}</p><p>${tr('เป็นการสะท้อนความก้าวหน้าจากข้อความ ไม่ใช่การประเมินคุณภาพงาน ข้อมูลต้นฉบับไม่ถูกแก้ไข และไม่มีการแจก Coin','This is a descriptive activity estimate, not a quality judgment. Source data is read-only and no Coins are awarded.')}</p></section>
-    </div>`;
-  }
-  document.addEventListener('click',event=>{const btn=event.target.closest?.('#wdjSkillTreePage [data-skill-id]');if(!btn)return;ensureScope();const id=btn.dataset.skillId;if(!SKILLS.some(s=>s.id===id))return;selected=id;savePreference();render();const next=document.querySelector('#wdjSkillTreePage [data-skill-id="'+id+'"]');next?.focus({preventScroll:true});});
-  window.addEventListener('storage',e=>{if(!e.key||e.key==='wp-v6-journal'||e.key==='wp-v6-projects'||e.key.startsWith('wdj-v875-focus-')||e.key.startsWith(PREF)){scope='';if(document.body?.dataset.v7Route==='skills')render();}});
-  ['workday:v7-data-changed','workday:v8-data-changed','workday:v8-auth-state','workday:v8-cloud-ready'].forEach(e=>window.addEventListener(e,()=>{if(e.includes('auth')||e.includes('cloud'))scope='';if(document.body?.dataset.v7Route==='skills')render();}));
-  window.WorkdaySkills={render,getSnapshot:()=>{ensureScope();const values=collect();return {account:scope,skills:Object.fromEntries(SKILLS.map(s=>[s.id,values[s.id].xp]))};}};
-  if(location.hash.replace(/^#\/?/,'').split('?')[0]==='skills')queueMicrotask(render);
+'use strict';
+const ROOT='wdjSkillTreePage';
+const PREF='wdj-v876-skill-tree-preference-v1:'; // Keep existing selection.
+const CONFIG='wdj-v8761-skill-config-v1:';
+const OVERRIDES='wdj-v8761-skill-tags-v1:';
+const MAX_MANUAL=5;
+const $=id=>document.getElementById(id);
+const loc=()=>localStorage.getItem('wp-language')==='en'?'en':'th';
+const t=(th,en)=>loc()==='en'?en:th;
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const get=(key,fb)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??fb;}catch{return fb;}};
+const put=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj));return true;}catch{return false;}};
+const account=()=>String(window.WorkdayV8Cloud?.getUser?.()?.id||'guest').replace(/[^\w-]/g,'').slice(0,90)||'guest';
+const ORIGINAL=[
+{id:'coding',icon:'💻',th:'Coding & Development',en:'Coding & Development',tags:['coding','code','program','javascript','typescript','react','vue','next.js','vite','node','express','html','css','frontend','backend','php','python','api','software','เว็บ','เขียนโค้ด','โปรแกรม','พัฒนาเว็บไซต์','พัฒนาระบบ','โค้ด','ฟังก์ชัน'],tone:'blue'},
+{id:'database',icon:'🗄️',th:'Database & Data',en:'Database & Data',tags:['database','sql','query','dbeaver','supabase','postgres','mysql','mssql','data model','etl','schema','table','data warehouse','ฐานข้อมูล','ดึงข้อมูล','จัดการข้อมูล','ตารางข้อมูล','คลังข้อมูล'],tone:'teal'},
+{id:'design',icon:'🎨',th:'UX/UI Design',en:'UX/UI Design',tags:['ui','ux','design','layout','figma','tailwind','responsive','wireframe','prototype','user experience','user interface','accessibility','ออกแบบ','เลย์เอาต์','หน้าตา','ประสบการณ์ผู้ใช้','ดีไซน์','ตกแต่งหน้า'],tone:'purple'},
+{id:'analytics',icon:'📊',th:'Power BI & Analytics',en:'Power BI & Analytics',tags:['power bi','powerbi','dax','analytics','dashboard','visualization','measure','chart','graph','insight','report','kpi','กราฟ','รายงาน','วิเคราะห์','แดชบอร์ด','สรุปข้อมูล','ตัวชี้วัด'],tone:'amber'},
+{id:'communication',icon:'🗣️',th:'Communication',en:'Communication',tags:['presentation','present','meeting','training','trainer','manual','document','guide','english','communication','team','mentor','handover','review','ประชุม','พรีเซนต์','นำเสนอ','คู่มือ','สอน','อธิบาย','ภาษาอังกฤษ','สื่อสาร','เอกสาร','พูดคุย'],tone:'pink'},
+{id:'problem',icon:'🧩',th:'Problem Solving',en:'Problem Solving',tags:['debug','fix','bug','troubleshoot','issue','error','test','testing','optimize','refactor','security','performance','root cause','resolve','แก้ไข','ทดสอบ','ตรวจสอบ','ปัญหา','ปรับปรุง','ข้อผิดพลาด','เพิ่มประสิทธิภาพ'],tone:'green'}
+];
+const ADDITIONAL=[
+{id:'production',icon:'🏭',th:'วางแผนการผลิต',en:'Production Planning',tags:['production','wip','lot','planning','scheduling','fifo','line balance','capacity','machine queue','การผลิต','วางแผน','เครื่องจักร','จัดลำดับงาน','ล็อต','กำลังการผลิต'],tone:'blue'},
+{id:'quality',icon:'🧪',th:'ควบคุมคุณภาพ',en:'Quality Control',tags:['quality','qc','qa','ncr','inspection','audit','defect','reject','ตรวจคุณภาพ','ตรวจสอบคุณภาพ','ของเสีย','คุณภาพ'],tone:'purple'},
+{id:'process',icon:'⚙️',th:'ปรับปรุงกระบวนการ',en:'Process Improvement',tags:['kaizen','lean','six sigma','process improvement','efficiency','oee','optimize','productivity','ปรับปรุงกระบวนการ','ลดของเสีย','เพิ่มประสิทธิภาพ'],tone:'green'},
+{id:'safety',icon:'🦺',th:'ความปลอดภัย',en:'Workplace Safety',tags:['safety','bbs','ppe','hazard','risk assessment','incident','ความปลอดภัย','อุบัติเหตุ','ความเสี่ยง'],tone:'amber'},
+{id:'excel',icon:'📗',th:'Excel & Spreadsheet',en:'Excel & Spreadsheet',tags:['excel','spreadsheet','pivot','vlookup','xlookup','power query','สูตร excel','ตารางคำนวณ','สเปรดชีต'],tone:'green'},
+{id:'analysis',icon:'📈',th:'การวิเคราะห์ธุรกิจ',en:'Business Analysis',tags:['business analysis','requirement','stakeholder','strategy','business model','market research','วิเคราะห์ธุรกิจ','ความต้องการ','ผู้มีส่วนได้ส่วนเสีย','กลยุทธ์'],tone:'teal'},
+{id:'leadership',icon:'🤝',th:'การทำงานเป็นทีม',en:'Teamwork & Leadership',tags:['leadership','collaboration','teamwork','delegate','coordinate','facilitate','ประสานงาน','ทำงานเป็นทีม','ภาวะผู้นำ','มอบหมาย'],tone:'pink'},
+{id:'hr',icon:'👥',th:'งานบุคคล',en:'People & HR',tags:['human resource','recruit','interview','onboarding','payroll','hr','บุคคล','ทรัพยากรมนุษย์','สัมภาษณ์','สรรหา','ฝึกอบรมพนักงาน'],tone:'purple'},
+{id:'documentation',icon:'📚',th:'จัดทำเอกสาร',en:'Documentation',tags:['documentation','document','manual','sop','procedure','report writing','คู่มือ','จัดทำเอกสาร','เอกสาร','รายงาน'],tone:'amber'},
+{id:'marketing',icon:'📣',th:'การตลาด',en:'Marketing',tags:['marketing','campaign','branding','seo','content','social media','customer','การตลาด','แคมเปญ','ลูกค้า','คอนเทนต์'],tone:'pink'},
+{id:'finance',icon:'💼',th:'บัญชีและการเงิน',en:'Finance & Accounting',tags:['accounting','finance','invoice','budget','cash flow','tax','expense','บัญชี','การเงิน','งบประมาณ','ภาษี','ค่าใช้จ่าย'],tone:'green'}
+];
+const ALL=[...ORIGINAL,...ADDITIONAL];
+const TEMPLATES={
+ it:{th:'IT / Software',en:'IT / Software',ids:['coding','database','design','analytics','communication','problem']},
+ engineering:{th:'Production / Engineering',en:'Production / Engineering',ids:['production','quality','process','safety','communication','problem']},
+ data:{th:'Data / Business Analytics',en:'Data / Business Analytics',ids:['analytics','excel','database','analysis','communication','problem']},
+ business:{th:'HR / Business',en:'HR / Business',ids:['hr','documentation','leadership','marketing','finance','communication']},
+ custom:{th:'กำหนดเอง',en:'My Custom Tree',ids:[]}
+};
+const LEVELS=[0,60,160,320,540,830,1190,1620,2120,2700,3350];
+const level=x=>{let n=1;for(let i=1;i<LEVELS.length;i++)if(x>=LEVELS[i])n=i+1;return Math.min(10,n);};
+const growth=x=>{const n=level(x);if(n===10)return {n,pct:100,next:0};return {n,pct:Math.max(0,Math.min(100,100*(x-LEVELS[n-1])/(LEVELS[n]-LEVELS[n-1]))),next:LEVELS[n]-x};};
+let scope='',chosen='coding',cfg=null,tags=null,activeEditor=null;
+function ensure(){const id=account();if(id===scope)return;scope=id;
+ const src=get(CONFIG+scope,{}),previous=get(PREF+scope,{});
+ const template=TEMPLATES[src.template]?src.template:'it';
+ const custom=(Array.isArray(src.custom)?src.custom:[]).filter(s=>s&&/^custom_[a-z0-9_-]{3,30}$/.test(s.id)).slice(0,20).map(s=>({id:s.id,icon:/^[^<>]{1,5}$/.test(s.icon||'')?s.icon:'🌱',th:String(s.th||'').slice(0,42),en:String(s.en||s.th||'').slice(0,42),tags:Array.isArray(s.tags)?s.tags.map(x=>String(x).trim().toLowerCase()).filter(Boolean).slice(0,25):[],tone:'teal',archived:!!s.archived}));
+ cfg={template,custom,customIds:Array.isArray(src.customIds)?src.customIds.filter(x=>typeof x==='string').slice(0,30):ORIGINAL.map(s=>s.id)};
+ const raw=get(OVERRIDES+scope,{});tags={journal:raw?.journal&&typeof raw.journal==='object'&&!Array.isArray(raw.journal)?raw.journal:{},project:raw?.project&&typeof raw.project==='object'&&!Array.isArray(raw.project)?raw.project:{}};
+ chosen=String(previous.selected||'coding');activeEditor=null;
+}
+function catalog(){return [...ALL,...cfg.custom.filter(s=>!s.archived)];}
+function visible(){const available=new Set(catalog().map(s=>s.id));let ids=cfg.template==='custom'?cfg.customIds:TEMPLATES[cfg.template].ids;
+ return [...new Set([...ids,...cfg.custom.filter(x=>!x.archived).map(x=>x.id)])].filter(id=>available.has(id)).map(id=>catalog().find(s=>s.id===id)).filter(Boolean);
+}
+function persistConfig(){put(CONFIG+scope,cfg);}
+function persistTags(){put(OVERRIDES+scope,tags);}
+function setSelection(id){chosen=id;put(PREF+scope,{selected:id});}
+function validIDs(ids){const allowed=new Set(catalog().map(s=>s.id));return [...new Set((Array.isArray(ids)?ids:[]).filter(id=>allowed.has(id)))].slice(0,MAX_MANUAL);}
+function auto(text){const value=String(text||'').toLowerCase();if(!value.trim())return [];
+ const sorted=visible().map(s=>({id:s.id,score:s.tags.reduce((sum,raw)=>{const kw=String(raw||'').toLowerCase().trim();if(!kw)return sum;
+ const safe=kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const matched=/^[a-z]{1,3}$/.test(kw)?new RegExp('(^|[^a-z])'+safe+'($|[^a-z])','i').test(value):value.includes(kw);return sum+(matched?1:0);},0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+ return sorted.slice(0,3).map(x=>x.id);
+}
+function assignment(type,id,text){const explicit=tags[type]?.[id];const a=auto(text);
+ if(Array.isArray(explicit))return {ids:validIDs(explicit),mode:'manual',suggested:a};
+ return {ids:a,mode:'auto',suggested:a};
+}
+const journalText=j=>[j.work,j.learned].map(x=>String(x||'')).join(' ');
+const projectText=p=>[p.name,p.title,p.category,p.description].filter(Boolean).join(' ');
+function activities(){const result=[];
+ const journals=get('wp-v6-journal',{});if(journals&&typeof journals==='object'&&!Array.isArray(journals))Object.entries(journals).slice(0,1200).forEach(([day,j])=>{if(j&&typeof j==='object'&&journalText(j).trim().length>=10)result.push({type:'journal',id:day,name:day,date:day,text:journalText(j),raw:j});});
+ const projects=get('wp-v6-projects',[]);const projectMap=new Map();if(Array.isArray(projects))projects.slice(0,400).forEach(p=>{if(!p||typeof p!=='object')return;const id=String(p.id||'');const title=String(p.name||p.title||'Project');const project={type:'project',id,name:title,date:String(p.updatedAt||p.createdAt||''),text:projectText(p),raw:p};if(id){result.push(project);projectMap.set(id,project);}});
+ return {items:result,projectMap};
+}
+function calculate(){const skills=catalog(),totals=Object.fromEntries(skills.map(s=>[s.id,{xp:0,journals:0,projects:0,focus:0,evidence:[]}])) ,{items,projectMap}=activities();
+ items.forEach(item=>{const a=assignment(item.type,item.id,item.text);let points=0;
+ if(item.type==='journal')points=15;
+ else{const p=item.raw,complete=p.status==='completed'||Number(p.progress)>=100;points=10+Math.floor(Math.max(0,Math.min(100,Number(p.progress)||0))/25)*10+(complete?50:0);}
+ a.ids.forEach(id=>{const row=totals[id];if(!row)return;row.xp+=points;row[item.type==='journal'?'journals':'projects']++;row.evidence.push({...item,mode:a.mode,points});});
+ });
+ const focus=get('wdj-v875-focus-history-v1:'+scope,[]);
+ if(Array.isArray(focus))focus.slice(0,240).forEach(f=>{if(!f||!Number.isFinite(f.seconds)||f.seconds<60||!f.projectId)return;const project=projectMap.get(String(f.projectId));const a=project?assignment('project',project.id,project.text):{ids:auto(f.projectName||''),mode:'auto'};const points=Math.min(20,Math.floor(f.seconds/1500)*5);if(points<=0)return;
+ a.ids.forEach(id=>{const row=totals[id];if(!row)return;row.xp+=points;row.focus++;row.evidence.push({type:'focus',name:String(f.projectName||project?.name||'Project'),date:Number.isFinite(Number(f.completedAt))?new Date(Number(f.completedAt)).toISOString():'',points,mode:a.mode});});
+ });
+ return {totals,items};
+}
+function displayName(id){const s=catalog().find(x=>x.id===id);return s?`${s.icon} ${loc()==='en'?s.en:s.th}`:id;}
+function chips(ids){return ids.map(id=>`<span class="wdj-hybrid-chip">${esc(displayName(id))}</span>`).join('')||`<span class="wdj-hybrid-muted">${t('ยังไม่พบคำที่ตรงกับทักษะ','No matching skill yet')}</span>`;}
+function checkEditor(type,id,text,source){const a=assignment(type,id,text);const opts=catalog();return `<section class="wdj-hybrid-editor" data-wdj-editor="${esc(source)}" data-wdj-type="${esc(type)}" data-wdj-id="${esc(id)}"><div class="wdj-hybrid-head"><strong>🏷 ${t('ทักษะที่เกี่ยวข้อง','Related skills')}</strong><small>${t('Hybrid: แนะนำจากข้อความ + เลือกเอง','Hybrid: keyword suggestions + manual tags')}</small></div><div class="wdj-hybrid-mode"><label><input type="radio" name="wdj-hybrid-mode-${esc(source)}" value="auto" ${a.mode==='auto'?'checked':''}> ${t('ตรวจจับอัตโนมัติ','Auto detect')}</label><label><input type="radio" name="wdj-hybrid-mode-${esc(source)}" value="manual" ${a.mode==='manual'?'checked':''}> ${t('เลือกเอง','Choose manually')}</label></div><div class="wdj-hybrid-auto">${t('ระบบแนะนำ','Suggested')}: <span data-wdj-suggestions>${chips(a.suggested)}</span></div><div class="wdj-hybrid-choice" ${a.mode==='auto'?'hidden':''}>${opts.map(s=>`<label class="wdj-hybrid-choice-item"><input type="checkbox" value="${esc(s.id)}" ${a.ids.includes(s.id)?'checked':''}><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}</span></label>`).join('')}</div><div class="wdj-hybrid-hint" aria-live="polite">${a.mode==='manual'?t('เลือกได้สูงสุด 5 ทักษะ; บันทึกพร้อม Journal/Project','Up to 5 skills; saved with Journal/Project'):t('ระบบจะปรับคำแนะนำเมื่อแก้ข้อความ','Suggestions update as you type')}</div></section>`;}
+function editorText(type){return type==='journal'?[ $('v7JournalWork')?.value,$('v7JournalLearned')?.value ].join(' '):[ $('v7ProjectName')?.value,$('v7ProjectCategory')?.value,$('v7ProjectDescription')?.value ].join(' ');}
+function mount(type,id){ensure();const form=$(type==='journal'?'v7JournalForm':'v7ProjectForm');if(!form||form.querySelector('[data-wdj-editor]'))return;
+ const actions=form.querySelector('.v7-form-actions');if(!actions)return;
+ actions.insertAdjacentHTML('beforebegin',checkEditor(type,id,editorText(type),type+'-form'));
+ const panel=form.querySelector('[data-wdj-editor]');const inputs=type==='journal'?['v7JournalWork','v7JournalLearned']:['v7ProjectName','v7ProjectCategory','v7ProjectDescription'];
+ inputs.forEach(key=>$(key)?.addEventListener('input',()=>{const host=panel.querySelector('[data-wdj-suggestions]');if(host)host.innerHTML=chips(auto(editorText(type)));}));
+}
+function saveForm(type,id){ensure();const form=$(type==='journal'?'v7JournalForm':'v7ProjectForm'),panel=form?.querySelector('[data-wdj-editor]');if(!panel||!id)return;
+ const mode=panel.querySelector('input[type="radio"]:checked')?.value;
+ if(mode==='manual'){const ids=[...panel.querySelectorAll('.wdj-hybrid-choice input:checked')].map(x=>x.value);tags[type][id]=validIDs(ids);}
+ else delete tags[type][id];persistTags();
+}
+function editorSelectHtml(item){return checkEditor(item.type,item.id,item.text,'manage');}
+function render(){ensure();const root=$(ROOT);if(!root)return;
+ const active=visible();if(!active.some(x=>x.id===chosen)){chosen=active[0]?.id||'coding';setSelection(chosen);}
+ const {totals,items}=calculate();const stat=id=>totals[id]||{xp:0,journals:0,projects:0,focus:0,evidence:[]};
+ const current=stat(chosen),chosenSkill=catalog().find(s=>s.id===chosen)||active[0]||ORIGINAL[0];
+ const g=growth(current.xp),sum=active.reduce((n,s)=>n+stat(s.id).xp,0),started=active.filter(s=>stat(s.id).xp>0).length;
+ const evidence=[...current.evidence].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,8);
+ const recent=[...items].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,16);
+ const activeSelection=activeEditor&&items.find(e=>e.type===activeEditor.type&&e.id===activeEditor.id);
+ root.innerHTML=`<div class="wdj-skill-page wdj-hybrid-page">
+ <section class="wdj-skill-hero"><div class="wdj-skill-hero-copy"><div class="wdj-skill-eyebrow">🌳 PERSONALIZED CAREER GROWTH · V8.7</div><h2>${t('Skill Tree ของฉัน','My Personalized Skill Tree')}</h2><p>${t('เลือกเส้นทางอาชีพ ให้ระบบแนะนำทักษะจากคำสำคัญ และปรับ Skill Tag ของแต่ละกิจกรรมเองได้','Choose a career path, get keyword suggestions, and manually assign skills to each activity.')}</p><span class="wdj-skill-local">🔒 ${t('ข้อมูลทักษะเก็บในเครื่อง · ไม่แก้ข้อมูล Journal หรือ Project','Local skill preferences · original work data unchanged')}</span></div><div class="wdj-skill-hero-art" aria-hidden="true">🌱<span>✦</span></div></section>
+ <section class="wdj-hybrid-config"><div class="wdj-hybrid-config-top"><div><span class="wdj-skill-eyebrow">CAREER TEMPLATE</span><h3>${t('เลือกสายงานของคุณ','Choose your career path')}</h3></div><label><span>${t('สายงาน','Track')}</span><select id="wdjCareerTemplate">${Object.entries(TEMPLATES).map(([key,v])=>`<option value="${key}" ${key===cfg.template?'selected':''}>${esc(loc()==='en'?v.en:v.th)}</option>`).join('')}</select></label></div><p>${t('เปลี่ยนสายงานได้ตลอด; ข้อมูลและคะแนนจากสายเดิมไม่ถูกลบ','Switch templates anytime. Previous data and skill mappings are not deleted.')}</p><details class="wdj-hybrid-custom"><summary>⚙️ ${t('จัดการทักษะและคำสำคัญ','Manage skills & keywords')}</summary><div class="wdj-hybrid-custom-content">${cfg.template==='custom'?`<p>${t('เลือกสายทักษะที่ต้องการให้ปรากฏ','Choose which built-in skills to show')}</p><div class="wdj-hybrid-choice">${ALL.map(s=>`<label class="wdj-hybrid-choice-item"><input data-wdj-custom-toggle="${esc(s.id)}" type="checkbox" ${cfg.customIds.includes(s.id)?'checked':''}><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}</span></label>`).join('')}</div><p>${t('เลือกทักษะอย่างน้อยหนึ่งสาย','Choose at least one skill')}</p>`:''}<div class="wdj-hybrid-custom-list">${cfg.custom.map(s=>`<div class="wdj-hybrid-custom-row ${s.archived?'is-archived':''}"><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}<small>${esc(s.tags.join(', ').slice(0,130))}</small></span><div class="wdj-hybrid-custom-buttons"><button type="button" data-wdj-custom-action="edit" data-id="${esc(s.id)}">${t('แก้ไข','Edit')}</button><button type="button" data-wdj-custom-action="${s.archived?'restore':'archive'}" data-id="${esc(s.id)}">${s.archived?t('คืนค่า','Restore'):t('ซ่อน','Hide')}</button></div></div>`).join('')}</div><form id="wdjAddSkillForm" class="wdj-hybrid-add-form"><label>${t('ชื่อทักษะใหม่','New skill name')}<input name="skillName" maxlength="42" required placeholder="${t('เช่น CAD / Automation','e.g. CAD / Automation')}"></label><label>${t('ไอคอน','Icon')}<input name="icon" maxlength="5" value="🌱"></label><label>${t('คำสำคัญ (คั่นด้วยจุลภาค)','Keywords (comma-separated)')}<input name="keywords" maxlength="360" placeholder="CAD, SolidWorks, ออกแบบชิ้นงาน"></label><button type="submit" class="primary-btn">＋ ${t('เพิ่มทักษะ','Add skill')}</button><button type="button" id="wdjCancelSkillEdit" hidden>${t('ยกเลิกแก้ไข','Cancel editing')}</button></form><small>${t('เพิ่มได้สูงสุด 20 ทักษะส่วนตัว ไม่ใช้ Coin และไม่เปลี่ยนข้อมูล Project','Up to 20 custom skills. No Coins or source Project data are changed.')}</small></div></details></section>
+ <section class="wdj-skill-kpis"><div><span>${t('Growth XP ของสายที่แสดง','Visible growth XP')}</span><strong>${sum.toLocaleString()}</strong><small>${t('คำนวณใหม่จากกิจกรรม','Derived from activity')}</small></div><div><span>${t('ทักษะที่กำลังพัฒนา','Active skill paths')}</span><strong>${started} / ${active.length}</strong><small>${t('ของสายงานที่เลือก','In selected career path')}</small></div><div><span>${t('เลเวลรวม','Combined levels')}</span><strong>${active.reduce((n,s)=>n+level(stat(s.id).xp),0)}</strong><small>${t('ไม่ใช่ระดับรับรอง','Not a certification')}</small></div></section>
+ <div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">YOUR CAREER MAP</span><h3>${t('เส้นทางทักษะของฉัน','My career skills')}</h3></div><span>${t('แตะทักษะเพื่อดูคะแนนและหลักฐาน','Select a skill to view its XP and evidence')}</span></div><section class="wdj-skill-map"><div class="wdj-skill-trunk"><span>✨</span><strong>MY GROWTH</strong><small>WORKDAY JOURNEY</small></div><div class="wdj-skill-branches">${active.map(s=>{const xp=stat(s.id).xp,p=growth(xp);return `<button type="button" data-skill-id="${esc(s.id)}" class="wdj-skill-node wdj-skill-tone-${s.tone} ${s.id===chosen?'is-selected':''}" aria-pressed="${s.id===chosen}"><span class="wdj-skill-node-icon">${esc(s.icon)}</span><span class="wdj-skill-node-main"><strong>${esc(loc()==='en'?s.en:s.th)}</strong><small>Lv.${p.n} · ${xp.toLocaleString()} XP</small></span><span class="wdj-skill-node-progress"><i style="width:${p.pct.toFixed(1)}%"></i></span></button>`;}).join('')}</div></section>
+ <section class="wdj-skill-detail"><div class="wdj-skill-detail-head"><span class="wdj-skill-detail-icon wdj-skill-tone-${chosenSkill.tone}">${esc(chosenSkill.icon)}</span><div><span class="wdj-skill-eyebrow">SELECTED SKILL PATH</span><h3>${esc(loc()==='en'?chosenSkill.en:chosenSkill.th)}</h3><p>${t('อัตโนมัติ + ผู้ใช้เลือกเอง','Keyword matches + manual tags')}</p></div><span class="wdj-skill-level">Lv. ${g.n}</span></div><div class="wdj-skill-xp-head"><strong>${current.xp.toLocaleString()} XP</strong><span>${g.n===10?t('ระดับสูงสุด','Maximum level'):`${g.next.toLocaleString()} XP → Lv.${g.n+1}`}</span></div><div class="wdj-skill-xp-bar"><i style="width:${g.pct}%"></i></div><div class="wdj-skill-evidence-kpis"><div><strong>${current.journals}</strong><span>${t('Journal (วัน)','Journal days')}</span></div><div><strong>${current.projects}</strong><span>Projects</span></div><div><strong>${current.focus}</strong><span>Focus Sessions</span></div></div><div class="wdj-skill-milestone-head"><h4>Milestones</h4></div><div class="wdj-skill-milestones">${[[3,'🌱','Growing'],[5,'🏅','Pro'],[7,'💎','Expert'],[10,'🌟','Master']].map(([n,emoji,name])=>`<div class="${g.n>=n?'is-earned':'is-locked'}"><span>${g.n>=n?emoji:'🔒'}</span><strong>Lv.${n}</strong><small>${name}</small></div>`).join('')}</div><div class="wdj-skill-evidence-head"><h4>${t('กิจกรรมที่ให้คะแนน','XP evidence')}</h4><small>${t('ล่าสุด 8 รายการ','8 recent entries')}</small></div>${evidence.length?`<div class="wdj-skill-evidence-list">${evidence.map(e=>`<div><span class="wdj-skill-evidence-icon">${e.type==='journal'?'📓':e.type==='project'?'🧩':'⏱️'}</span><span><strong>${esc(e.name)}</strong><small>${e.mode==='manual'?t('เลือกเอง','Manual'):t('อัตโนมัติ','Auto')} · +${e.points} XP</small></span><time>${esc(String(e.date||'').slice(0,10))}</time></div>`).join('')}</div>`:`<div class="wdj-skill-empty">${t('ยังไม่พบกิจกรรมในสายนี้ ลองเลือก Skill Tags ให้ Journal/Project','No activities here yet. Try tagging your Journal/Project.')}</div>`}</section>
+ <section class="wdj-hybrid-manager"><div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">SMART TAGGING</span><h3>${t('ตรวจทักษะของ Journal และ Projects','Review Journal & Project skills')}</h3></div><span>${t('ล่าสุด 16 รายการ · กดแก้ไข','Latest 16 items · edit tags')}</span></div><div class="wdj-hybrid-entry-list">${recent.length?recent.map(e=>{const a=assignment(e.type,e.id,e.text);return `<div class="wdj-hybrid-entry"><div><strong>${e.type==='journal'?'📓':'🧩'} ${esc(e.name)}</strong><small>${a.mode==='manual'?t('กำหนดเอง','Manual'):t('จับคู่จากคำสำคัญ','Keyword match')}</small><div class="wdj-hybrid-entry-chips">${chips(a.ids)}</div></div><button type="button" data-wdj-edit-entry="${esc(e.type)}" data-id="${esc(e.id)}">✎ ${t('เลือกทักษะ','Edit tags')}</button></div>`;}).join(''):`<p>${t('ยังไม่มี Journal หรือ Project','No journals or projects yet.')}</p>`}</div>${activeSelection?`<div class="wdj-hybrid-manager-edit"><h4>🏷 ${esc(activeSelection.name)}</h4>${editorSelectHtml(activeSelection)}<div class="wdj-hybrid-manager-actions"><button class="primary-btn" type="button" data-wdj-save-manage>✓ ${t('บันทึกทักษะ','Save tags')}</button><button type="button" data-wdj-close-manage>${t('ยกเลิก','Cancel')}</button></div></div>`:''}</section>
+ <section class="wdj-skill-footnote"><strong>💡 ${t('ระบบ Hybrid ทำงานอย่างไร','How Hybrid Smart Tagging works')}</strong><p>${t('Auto: ตรวจคำสำคัญและเลือกสูงสุด 3 สาย · Manual: เลือกเองได้สูงสุด 5 สายต่อรายการ และใช้แทนผล Auto ในรายการนั้น · Focus ใช้ทักษะของ Project ที่ผูกไว้','Auto: up to 3 skills based on keywords. Manual: up to 5 selected skills replace Auto on that entry. Linked Focus inherits Project skills.')}</p><p>${t('XP เป็นคะแนนสะท้อนกิจกรรมเท่านั้น คำนวณใหม่เมื่อข้อมูลต้นทางเปลี่ยน ไม่มีการแจกเหรียญ และไม่ส่งข้อมูล Skill Tree ขึ้น Cloud','XP is derived from work activity, not a credential. No Coins or cloud changes.')}</p></section>
+ </div>`;
+}
+function showError(msg){const host=$(ROOT)?.querySelector('.wdj-hybrid-error');if(host){host.textContent=msg;return;}const el=document.createElement('p');el.className='wdj-hybrid-error';el.setAttribute('role','alert');el.textContent=msg;$(ROOT)?.querySelector('.wdj-hybrid-config')?.prepend(el);}
+function onChoiceChanged(event){const panel=event.target.closest('[data-wdj-editor]');if(!panel)return;
+ if(event.target.matches('input[type="radio"]')){const manual=event.target.value==='manual';panel.querySelector('.wdj-hybrid-choice').hidden=!manual;
+ if(manual){const selected=[...panel.querySelectorAll('.wdj-hybrid-choice input:checked')];if(selected.length===0){const suggested=auto(panel.dataset.wdjEditor==='manage'?(activities().items.find(i=>i.type===panel.dataset.wdjType&&i.id===panel.dataset.wdjId)?.text||''):editorText(panel.dataset.wdjType));panel.querySelectorAll('.wdj-hybrid-choice input').forEach(x=>{x.checked=suggested.includes(x.value);});}}
+ }
+ if(event.target.matches('.wdj-hybrid-choice input[type="checkbox"]')){const selected=[...panel.querySelectorAll('.wdj-hybrid-choice input:checked')];if(selected.length>MAX_MANUAL){event.target.checked=false;panel.querySelector('.wdj-hybrid-hint').textContent=t('เลือกได้สูงสุด 5 ทักษะ','Select at most five skills');}}
+}
+function onClick(event){const skill=event.target.closest('#wdjSkillTreePage [data-skill-id]');if(skill){ensure();setSelection(skill.dataset.skillId);render();$(ROOT)?.querySelector('[data-skill-id="'+skill.dataset.skillId+'"]')?.focus({preventScroll:true});return;}
+ const edit=event.target.closest('#wdjSkillTreePage [data-wdj-edit-entry]');if(edit){activeEditor={type:edit.dataset.wdjEditEntry,id:edit.dataset.id};render();$(ROOT)?.querySelector('.wdj-hybrid-manager-edit')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
+ if(event.target.closest('#wdjSkillTreePage [data-wdj-close-manage]')){activeEditor=null;render();return;}
+ if(event.target.closest('#wdjSkillTreePage [data-wdj-save-manage]')){const p=$(ROOT)?.querySelector('[data-wdj-editor="manage"]');if(p){const typ=p.dataset.wdjType,id=p.dataset.wdjId;const manual=p.querySelector('input[type="radio"]:checked')?.value==='manual';if(manual)tags[typ][id]=validIDs([...p.querySelectorAll('.wdj-hybrid-choice input:checked')].map(x=>x.value));else delete tags[typ][id];persistTags();activeEditor=null;render();}return;}
+ const btn=event.target.closest('#wdjSkillTreePage [data-wdj-custom-action]');if(btn){const s=cfg.custom.find(s=>s.id===btn.dataset.id);if(s){
+ if(btn.dataset.wdjCustomAction==='edit'){const form=$('wdjAddSkillForm');if(!form)return;form.dataset.editId=s.id;form.elements.skillName.value=s.th;form.elements.icon.value=s.icon;form.elements.keywords.value=s.tags.join(', ');form.querySelector('button[type="submit"]').textContent=t('บันทึกทักษะ','Update skill');$('wdjCancelSkillEdit').hidden=false;form.scrollIntoView({block:'nearest'});}
+ else{s.archived=btn.dataset.wdjCustomAction==='archive';persistConfig();render();}
+ }return;}
+ if(event.target.id==='wdjCancelSkillEdit'){const form=$('wdjAddSkillForm');if(form){form.reset();delete form.dataset.editId;form.querySelector('button[type="submit"]').textContent=t('เพิ่มทักษะ','Add skill');event.target.hidden=true;}return;}
+}
+function onChange(event){if(event.target.closest('[data-wdj-editor]')){onChoiceChanged(event);return;}
+ if(event.target.id==='wdjCareerTemplate'){ensure();cfg.template=event.target.value;persistConfig();activeEditor=null;render();return;}
+ const custom=event.target.closest('[data-wdj-custom-toggle]');if(custom){const id=custom.dataset.wdjCustomToggle;if(custom.checked){if(!cfg.customIds.includes(id))cfg.customIds.push(id);}else if(cfg.customIds.length>1)cfg.customIds=cfg.customIds.filter(x=>x!==id);else{custom.checked=true;showError(t('ต้องมีทักษะอย่างน้อยหนึ่งสาย','Select at least one skill'));return;}persistConfig();render();}
+}
+function onSubmit(event){if(event.target.id!=='wdjAddSkillForm')return;event.preventDefault();ensure();if(!event.target.dataset.editId&&cfg.custom.filter(s=>!s.archived).length>=20){showError(t('เพิ่มได้สูงสุด 20 ทักษะ','Limit: 20 custom skills'));return;}
+ const data=new FormData(event.target),name=String(data.get('skillName')||'').trim(),icon=String(data.get('icon')||'🌱').trim().slice(0,5),keywords=String(data.get('keywords')||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).slice(0,25);
+ if(name.length<2){showError(t('ชื่อทักษะต้องยาวอย่างน้อย 2 ตัวอักษร','Skill name must be at least 2 characters'));return;}
+ const editing=String(event.target.dataset.editId||'');
+ if(cfg.custom.some(s=>s.id!==editing&&s.th.toLowerCase()===name.toLowerCase())){showError(t('มีชื่อทักษะนี้แล้ว','Skill already exists'));return;}
+ if(editing){const s=cfg.custom.find(s=>s.id===editing);if(!s)return;s.th=name;s.en=name;s.icon=icon||'🌱';s.tags=keywords;persistConfig();setSelection(editing);render();return;}
+ const id='custom_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6);
+ cfg.custom.push({id,th:name,en:name,icon:icon||'🌱',tags:keywords,tone:'teal',archived:false});cfg.customIds.push(id);persistConfig();setSelection(id);render();
+}
+function refresh(){scope='';if(document.body?.dataset.v7Route==='skills')render();}
+document.addEventListener('click',onClick);document.addEventListener('change',onChange);document.addEventListener('submit',onSubmit);
+window.addEventListener('storage',e=>{if(!e.key||[CONFIG+scope,OVERRIDES+scope,'wp-v6-journal','wp-v6-projects'].includes(e.key)||e.key.startsWith(PREF)||e.key.startsWith('wdj-v875-focus-'))refresh();});
+['workday:v7-data-changed','workday:v8-data-changed','workday:v8-auth-state','workday:v8-cloud-ready'].forEach(name=>window.addEventListener(name,()=>{if(name.includes('auth')||name.includes('cloud'))scope='';if(document.body?.dataset.v7Route==='skills')render();}));
+window.WorkdaySkills={render,mountJournalTags:day=>mount('journal',day),mountProjectTags:id=>mount('project',id),saveJournalTags:day=>saveForm('journal',day),saveProjectTags:id=>saveForm('project',id),getSnapshot:()=>{ensure();const a=calculate().totals;return {account:scope,template:cfg.template,skills:Object.fromEntries(catalog().map(s=>[s.id,(a[s.id]?.xp||0)]))};},_test:{auto,assignment,calculate,templates:TEMPLATES,config:()=>{ensure();return cfg;}}};
+queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
+ if(route==='skills')render();
+ if(route==='journal')mount('journal',$('v7JournalPage')?.dataset.selectedDate||'');
+ if(route==='projects')mount('project',$('v7ProjectId')?.value||'');
+});
 })();
+

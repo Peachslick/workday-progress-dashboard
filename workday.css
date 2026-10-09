@@ -5519,3 +5519,60 @@ html[data-theme="dark"] .wdj-skill-node-icon,html[data-theme="dark"] .wdj-skill-
 @media(max-width:950px){.wdj-skill-branches{grid-template-columns:repeat(2,minmax(0,1fr))}.wdj-skill-branches:before{left:25%;right:25%}}
 @media(max-width:580px){.wdj-skill-page{gap:16px;padding:4px 0 45px}.wdj-skill-hero{padding:21px 19px;border-radius:19px}.wdj-skill-hero-art{font-size:3.3rem}.wdj-skill-hero h2{font-size:1.5rem}.wdj-skill-hero p{font-size:.82rem}.wdj-skill-local{font-size:.68rem}.wdj-skill-kpis{gap:7px}.wdj-skill-kpis>div{padding:11px;border-radius:13px;gap:4px}.wdj-skill-kpis span{font-size:.66rem}.wdj-skill-kpis strong{font-size:1.35rem}.wdj-skill-kpis small{font-size:.62rem}.wdj-skill-map{padding:15px;border-radius:20px}.wdj-skill-branches{gap:10px}.wdj-skill-node{grid-template-columns:1fr;justify-items:center;text-align:center;padding:13px 8px 10px;gap:6px;border-radius:16px}.wdj-skill-node-icon{height:43px;width:43px;font-size:1.4rem}.wdj-skill-node-main strong{font-size:.76rem}.wdj-skill-node-main small{font-size:.68rem}.wdj-skill-node-progress{width:100%}.wdj-skill-section-title{align-items:start;flex-direction:column}.wdj-skill-detail{padding:16px;border-radius:19px;gap:16px}.wdj-skill-detail-icon{width:49px;height:49px;font-size:1.65rem}.wdj-skill-detail-head{gap:10px}.wdj-skill-detail-head h3{font-size:1rem}.wdj-skill-detail-head p{font-size:.7rem}.wdj-skill-level{font-size:.75rem;padding:7px}.wdj-skill-xp-head{font-size:.7rem}.wdj-skill-evidence-kpis{gap:6px}.wdj-skill-evidence-kpis>div{padding:10px 7px}.wdj-skill-evidence-kpis strong{font-size:1.1rem}.wdj-skill-evidence-kpis span{font-size:.65rem}.wdj-skill-milestones{gap:5px}.wdj-skill-milestones>div{padding:12px 4px}.wdj-skill-milestones small{font-size:.63rem}.wdj-skill-evidence-list time{white-space:nowrap}.wdj-skill-hero-art{display:none}}
 @media(prefers-reduced-motion:reduce){.wdj-skill-node,.wdj-skill-node-progress i{transition:none!important}}
+/* ===== V8.7.6.1 Personalized Skill Tree: local-only hybrid tags ===== */
+.wdj-hybrid-page{gap:20px}
+.wdj-hybrid-config,.wdj-hybrid-manager{background:#fff;border:1px solid #e0e7f4;border-radius:23px;padding:clamp(18px,2.4vw,28px);box-shadow:0 10px 25px #2b4a8410;display:grid;gap:12px;min-width:0}
+.wdj-hybrid-config-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.wdj-hybrid-config h3,.wdj-hybrid-manager h3{margin:4px 0;font-size:1.14rem;color:#243354}
+.wdj-hybrid-config-top label{display:grid;gap:5px;color:#62738f;font-size:.78rem;font-weight:700;min-width:min(100%,260px)}
+.wdj-hybrid-config select,.wdj-hybrid-config input{font:inherit;border:1px solid #d3dff0;border-radius:12px;background:#fff;color:#203154;padding:10px 12px;max-width:100%;width:100%;min-height:41px}
+.wdj-hybrid-config p,.wdj-hybrid-config small{margin:0;font-size:.78rem;color:#71819b;line-height:1.6}
+.wdj-hybrid-custom{border-top:1px solid #e8edf5;margin-top:2px;padding-top:12px}
+.wdj-hybrid-custom summary{font-size:.85rem;font-weight:800;color:#3561bf;cursor:pointer;list-style-position:inside}
+.wdj-hybrid-custom-content{display:grid;gap:12px;padding:15px 0 0}
+.wdj-hybrid-custom-list{display:grid;gap:6px}
+.wdj-hybrid-custom-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid #e6edf7;border-radius:13px;padding:9px 12px}
+.wdj-hybrid-custom-row.is-archived{opacity:.7}
+.wdj-hybrid-custom-row>span{display:grid;gap:2px;font-weight:700;font-size:.8rem;min-width:0;overflow-wrap:anywhere}
+.wdj-hybrid-custom-row small{font-size:.71rem;font-weight:400}
+.wdj-hybrid-custom-row button,.wdj-hybrid-entry button,.wdj-hybrid-manager-actions button{cursor:pointer;padding:8px 13px;border-radius:11px;border:1px solid #ccd9ec;background:#f7f9ff;color:#355aa5;font-weight:700;font-size:.8rem}
+.wdj-hybrid-add-form{display:grid;grid-template-columns:minmax(150px,1fr) 82px minmax(150px,1.35fr) auto;align-items:end;gap:10px;margin:0}
+.wdj-hybrid-add-form label{display:grid;gap:5px;color:#667893;font-size:.74rem;font-weight:700;min-width:0}
+.wdj-hybrid-add-form button{min-height:41px;padding:8px 15px;white-space:nowrap}
+.wdj-hybrid-editor{border:1px solid #dce6f6;background:#f7faff;padding:16px;border-radius:17px;display:grid;gap:12px;min-width:0}
+.wdj-hybrid-head{display:grid;gap:3px}.wdj-hybrid-head strong{font-size:.88rem;color:#28477f}.wdj-hybrid-head small{color:#75849d;font-size:.74rem}
+.wdj-hybrid-mode{display:flex;gap:18px;flex-wrap:wrap}.wdj-hybrid-mode label{display:flex;gap:8px;align-items:center;color:#354a6c;font-size:.8rem;font-weight:700;cursor:pointer}
+.wdj-hybrid-mode input,.wdj-hybrid-choice input{accent-color:#396bee;width:16px;height:16px;flex:none;cursor:pointer}
+.wdj-hybrid-auto{font-size:.75rem;color:#607697;line-height:2;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.wdj-hybrid-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid #cbdaf8;background:#edf4ff;border-radius:99px;font-size:.72rem;font-weight:700;color:#3760a5}
+.wdj-hybrid-muted{font-size:.74rem;color:#93a0b5}
+.wdj-hybrid-choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wdj-hybrid-choice[hidden]{display:none!important}
+.wdj-hybrid-choice-item{display:flex;align-items:center;gap:9px;border:1px solid #dce5f3;padding:9px;border-radius:11px;background:#fff;font-size:.75rem;font-weight:700;color:#354a6a;cursor:pointer;min-width:0;overflow-wrap:anywhere}
+.wdj-hybrid-hint{font-size:.72rem;color:#647995;line-height:1.5}
+.wdj-hybrid-manager .wdj-skill-section-title{margin-bottom:4px}
+.wdj-hybrid-entry-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.wdj-hybrid-entry{padding:13px;border:1px solid #e1e8f3;border-radius:14px;background:#fbfcff;display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0}
+.wdj-hybrid-entry>div{min-width:0;display:grid;gap:5px}
+.wdj-hybrid-entry strong{font-size:.82rem;color:#283b61;overflow-wrap:anywhere}
+.wdj-hybrid-entry small{font-size:.72rem;color:#8390a5}
+.wdj-hybrid-entry-chips{display:flex;gap:4px;flex-wrap:wrap}
+.wdj-hybrid-entry button{white-space:nowrap;flex:none}
+.wdj-hybrid-manager-edit{display:grid;gap:12px;background:#f7f9ff;border:1px solid #cfddf2;border-radius:17px;padding:18px;scroll-margin-top:85px}
+.wdj-hybrid-manager-edit h4{margin:0;font-size:.99rem;color:#2c3e64}
+.wdj-hybrid-manager-actions{display:flex;gap:10px;flex-wrap:wrap}
+.wdj-hybrid-manager-actions .primary-btn{background:#3567ed;color:white;border-color:#3567ed}
+.wdj-hybrid-error{color:#b42330;background:#fff2f1;padding:10px 12px;border-radius:9px;font-size:.8rem}
+.wdj-hybrid-page .wdj-skill-branches{grid-template-columns:repeat(3,minmax(0,1fr))}
+.wdj-hybrid-page .wdj-skill-branches:before{display:none}
+.wdj-hybrid-page .wdj-skill-branches{max-width:100%;width:100%}
+html[data-theme="dark"] .wdj-hybrid-config,html[data-theme="dark"] .wdj-hybrid-manager,[data-theme="dark"] .wdj-hybrid-config,[data-theme="dark"] .wdj-hybrid-manager{background:#202d44;border-color:#3a4d6f;color:#e8eeff}
+html[data-theme="dark"] .wdj-hybrid-config h3,html[data-theme="dark"] .wdj-hybrid-manager h3,[data-theme="dark"] .wdj-hybrid-config h3,[data-theme="dark"] .wdj-hybrid-manager h3{color:#e7eefe}
+html[data-theme="dark"] .wdj-hybrid-editor,html[data-theme="dark"] .wdj-hybrid-manager-edit,html[data-theme="dark"] .wdj-hybrid-entry,html[data-theme="dark"] .wdj-hybrid-choice-item,[data-theme="dark"] .wdj-hybrid-editor,[data-theme="dark"] .wdj-hybrid-manager-edit,[data-theme="dark"] .wdj-hybrid-entry,[data-theme="dark"] .wdj-hybrid-choice-item{background:#293a56;border-color:#415777;color:#dde8ff}
+html[data-theme="dark"] .wdj-hybrid-entry strong,html[data-theme="dark"] .wdj-hybrid-head strong,html[data-theme="dark"] .wdj-hybrid-mode label,html[data-theme="dark"] .wdj-hybrid-manager-edit h4,[data-theme="dark"] .wdj-hybrid-entry strong,[data-theme="dark"] .wdj-hybrid-head strong,[data-theme="dark"] .wdj-hybrid-mode label,[data-theme="dark"] .wdj-hybrid-manager-edit h4{color:#e6efff}
+html[data-theme="dark"] .wdj-hybrid-config select,html[data-theme="dark"] .wdj-hybrid-config input,[data-theme="dark"] .wdj-hybrid-config select,[data-theme="dark"] .wdj-hybrid-config input{background:#1d2941;color:#f4f6ff;border-color:#49607d}
+html[data-theme="dark"] .wdj-hybrid-chip,[data-theme="dark"] .wdj-hybrid-chip{background:#33486b;color:#d1e4ff;border-color:#506b9a}
+@media(max-width:1050px){.wdj-hybrid-add-form{grid-template-columns:1fr 85px}.wdj-hybrid-add-form label:nth-of-type(3){grid-column:1/-1}.wdj-hybrid-add-form button{grid-column:1/-1}}
+@media(max-width:780px){.wdj-hybrid-entry-list{grid-template-columns:1fr}.wdj-hybrid-choice{grid-template-columns:repeat(2,minmax(0,1fr))}.wdj-hybrid-page .wdj-skill-branches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:440px){.wdj-hybrid-config,.wdj-hybrid-manager{padding:15px;border-radius:18px}.wdj-hybrid-config-top label{width:100%}.wdj-hybrid-add-form{grid-template-columns:1fr 76px}.wdj-hybrid-entry{flex-direction:column;align-items:stretch}.wdj-hybrid-entry button{align-self:flex-end}.wdj-hybrid-mode{gap:10px}.wdj-hybrid-choice{grid-template-columns:1fr}.wdj-hybrid-page .wdj-skill-branches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wdj-hybrid-custom-buttons{display:flex;gap:6px;flex-wrap:wrap}.wdj-hybrid-add-form #wdjCancelSkillEdit{grid-column:1/-1;border:1px solid #d4dff0;border-radius:10px;background:#f5f7fc;padding:9px;color:#576d92;cursor:pointer}
