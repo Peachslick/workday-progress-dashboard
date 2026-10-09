@@ -2823,7 +2823,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.5";
+  const VERSION = "8.6.0.5.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3269,6 +3269,14 @@
     if (route === "rewards") window.WorkdayRewards?.renderShop?.();
     if (route === "developer") window.WorkdayV848?.renderDeveloper?.();
     if (route === "settings") renderSettingsPage();
+    // Complete presentation refresh synchronously after the page DOM is rebuilt.
+    // JS runs to completion before the browser paints, avoiding a one-frame legacy UI.
+    if (["dashboard", "journal", "projects", "calendar", "reports"].includes(route)) {
+      window.WorkdayV852?.refresh?.();
+    } else if (route === "achievements") {
+      window.WorkdayV853?.refresh?.();
+    }
+    window.WorkdayV850?.refresh?.();
   }
 
   function journalStreakCount(){
