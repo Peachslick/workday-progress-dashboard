@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,6 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
+    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art เต็มพื้นที่ ปรับบรรยากาศตามเวลาและสภาพอากาศจำลอง", "ของตกแต่ง 26 ชิ้น และเหตุการณ์ฉลองความก้าวหน้า", "Mascot มี Friendship Level พร้อมท่าทางพิเศษ"],notesEn:["Full-width Pixel Art room with dynamic lighting and playful weather", "26 decorations and milestone celebrations", "Mascot friendship levels and special actions"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
@@ -608,6 +609,7 @@
       bank:["🏦","Work Bank","Savings, Daily Interest และ Work Coins"],
       exchange:["📈","Work Exchange","ตลาดหุ้นจำลอง Portfolio และ Trading ด้วย Work Coins"],
       rewards:["🎁","รางวัล","Reward Shop, Reward Codes และของสะสม"],
+      workspace:["🏡","ห้องทำงานของฉัน","ห้อง Pixel Art · Mascot และของตกแต่ง"],
       developer:["🛠","Developer Control Center","Reward Codes, Redeem History และ Owner Economy Tools"],
       settings:["⚙️","ตั้งค่า","โปรไฟล์ การแสดงผล Cloud และข้อมูล"]
     },
@@ -622,6 +624,7 @@
       bank:["🏦","Work Bank","Savings, daily interest and Work Coins"],
       exchange:["📈","Work Exchange","Simulated market, portfolio and Work Coin trading"],
       rewards:["🎁","Rewards","Reward Shop, Reward Codes and collections"],
+      workspace:["🏡","My Workspace","Pixel Art room · Mascot and decorations"],
       developer:["🛠","Developer Control Center","Reward Codes, redemption history and Owner Economy Tools"],
       settings:["⚙️","Settings","Profile, appearance, cloud and data"]
     }
@@ -3322,7 +3325,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3356,6 +3359,7 @@
     reports: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 20V10.8h4V20M10 20V4.8h4V20M15.5 20v-7.2h4V20"/><path d="M3.2 20.2h17.6"/></svg>',
     achievements: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4.5h8v3.3a4 4 0 0 1-8 0Z"/><path d="M8 6H4.5v1.5A4 4 0 0 0 8.2 11M16 6h3.5v1.5a4 4 0 0 1-3.7 3.5M12 12v4.2M8.7 20h6.6M10 16.2h4v3.8"/></svg>',
     missions: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.6"/><path d="m12 12 6.6-6.6M16.2 5.4h2.4v2.4"/></svg>',
+    workspace: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.6 9.3V20h12.8V9.3M9.5 20v-6.3h5V20"/></svg>',
     rewards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4Z"/><path d="M3.2 7.2h17.6V10H3.2ZM12 7.2V20"/><path d="M12 7.2H8.1a2.1 2.1 0 1 1 2.1-2.1c0 1.2 1.8 2.1 1.8 2.1ZM12 7.2h3.9a2.1 2.1 0 1 0-2.1-2.1c0 1.2-1.8 2.1-1.8 2.1Z"/></svg>',
     bank: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 9 8.5-5 8.5 5"/><path d="M5.2 9h13.6M6.7 9v7.6M10.2 9v7.6M13.8 9v7.6M17.3 9v7.6M4.2 16.6h15.6M3.5 20h17"/></svg>',
     exchange: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5 9 13l3.2 2.8 6.8-8"/><path d="M15.2 7.8H19V11.6"/><path d="M4 5v13.5h16"/></svg>',
@@ -3366,7 +3370,7 @@
 
   const CLASSIC_ICONS = {
     dashboard:"🏠", journal:"📓", projects:"📁", calendar:"📅", reports:"📊",
-    achievements:"🏆", missions:"🎯", rewards:"🎁", bank:"🏦", exchange:"📈",
+    achievements:"🏆", missions:"🎯", rewards:"🎁", workspace:"🏡", bank:"🏦", exchange:"📈",
     developer:"🛠️", settings:"⚙️", more:"☰"
   };
   const iconStyle = () => document.documentElement.dataset.wdjIconStyle === "classic" ? "classic" : "modern";
@@ -3651,7 +3655,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3716,7 +3720,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3877,7 +3881,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4145,7 +4149,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4410,7 +4414,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4804,7 +4808,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4951,7 +4955,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.6.0.8';
+  const VERSION = '8.7.4';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5522,5 +5526,511 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.6.0.8',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.4',refresh:mount };
+})();
+
+/* SOURCE: V8.7.4 Virtual Workspace - Friendship & Evolution.
+   Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
+;(function(){
+  'use strict';
+  const ROOM_KEY='wdj-v870-workspace-local-v1'; // Preserve V8.7.0 room layouts.
+  const LIFE_KEY='wdj-v871-mascot-life-local-v1'; // Retain saved V8.7.1 preferences.
+  const BOND_KEY='wdj-v872-mascot-friendship-local-v1'; // Never part of wp-* cloud sync.
+  const AMBIENCE_KEY='wdj-v874-workspace-ambience-local-v1'; // Cosmetic preferences, local-only.
+  // Original eight IDs are retained for V8.7.0 room backward compatibility.
+  // New rewards are cosmetic-only: unlocks derive from read-only existing activity.
+  const CATALOG=[
+    ['plant','🪴','ต้นไม้','Plant','starter'],['lamp','💡','โคมไฟ','Lamp','starter'],
+    ['books','📚','หนังสือ','Books','starter'],['clock','🕰️','นาฬิกา','Clock','starter'],
+    ['trophy','🏆','ถ้วยรางวัล','Trophy','starter'],['coffee','☕','กาแฟ','Coffee','starter'],
+    ['bear','🧸','ตุ๊กตา','Teddy','starter'],['painting','🖼️','รูปภาพ','Painting','starter'],
+    ['cactus','🌵','กระบองเพชร','Cactus','nature'],
+    ['reading','📖','มุมอ่านหนังสือ','Reading Nook','cozy'],
+    ['rug','🧶','พรมถัก','Woven Rug','cozy'],
+    ['goldplant','🌿','ต้นไม้พิเศษ','Special Plant','nature'],
+    ['fairylight','🪔','โคมไฟอุ่น','Warm Lantern','cozy'],
+    ['bonsai','🌳','บอนไซ','Bonsai','nature'],
+    ['fireplace','🔥','เตาผิง','Fireplace','cozy'],
+    ['projectcup','🏅','ถ้วยโปรเจกต์','Project Medal','trophy'],
+    ['blueprint','📐','พิมพ์เขียว','Blueprint','trophy'],
+    ['goldcup','🏆','ถ้วยทอง','Gold Trophy','trophy'],
+    ['bookshelf','🗄️','ชั้นหนังสือ','Bookshelf','trophy'],
+    ['certificate','📜','ใบประกาศ','Certificate','trophy'],
+    ['cloudlamp','☁️','โคมไฟเมฆ','Cloud Lamp','mascot'],
+    ['pawframe','🐾','กรอบรอยเท้า','Paw Frame','mascot'],
+    ['cushion','🛋️','เบาะ Mascot','Mascot Cushion','mascot'],
+    ['starmobile','⭐','ดาวแขวน','Star Mobile','mascot'],
+    ['banner','🎀','ธงมิตรภาพ','Friendship Banner','mascot'],
+    ['crown','👑','มงกุฎประดับ','Crown Display','mascot']
+  ];
+  const DECOR_RULES={
+    cactus:['journals',2],reading:['journals',3],rug:['journals',5],
+    goldplant:['journals',7],fairylight:['journals',10],bonsai:['journals',14],fireplace:['journals',21],
+    projectcup:['projects',1],blueprint:['projects',1],bookshelf:['projects',2],certificate:['projects',2],goldcup:['projects',3],
+    cloudlamp:['level',2],pawframe:['level',3],cushion:['level',5],starmobile:['level',5],banner:['level',7],crown:['level',10]
+  };
+  const CATEGORIES=[['all','ทั้งหมด','All'],['starter','เริ่มต้น','Starter'],['nature','ธรรมชาติ','Nature'],['cozy','ห้องน่าอยู่','Cozy'],['trophy','ผลงาน','Projects'],['mascot','Mascot','Mascot']];
+  const DEFAULT={theme:'day',items:[{id:'plant',x:2,y:4},{id:'lamp',x:7,y:2}],updatedAt:null};
+  const MOODS={
+    auto:{icon:'✨',th:'อัตโนมัติ',en:'Auto'},
+    idle:{icon:'🌿',th:'พักผ่อน',en:'Idle'},
+    work:{icon:'💻',th:'ทำงาน',en:'Working'},
+    sleep:{icon:'💤',th:'นอนหลับ',en:'Sleeping'},
+    happy:{icon:'🎉',th:'ดีใจ',en:'Happy'},
+    dance:{icon:'🎶',th:'เต้นฉลอง',en:'Dance'},
+    sparkle:{icon:'🌟',th:'ประกายดาว',en:'Star Glow'},
+    victory:{icon:'👑',th:'ท่าชัยชนะ',en:'Victory'}
+  };
+  const SPECIAL_LEVELS={dance:3,sparkle:5,victory:10};
+  const MILESTONES=[{level:3,mood:'dance',icon:'🎶'},{level:5,mood:'sparkle',icon:'🌟'},{level:10,mood:'victory',icon:'👑'}];
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  const en=()=>document.documentElement.lang==='en'||document.documentElement.getAttribute('lang')==='en-US';
+  const txt=(th,eng)=>en()?eng:th;
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function loadRoom(){
+    try{
+      const v=JSON.parse(localStorage.getItem(ROOM_KEY)||'null');
+      if(!v||!Array.isArray(v.items))return clone(DEFAULT);
+      return {
+        theme:v.theme==='night'?'night':'day',
+        items:v.items.filter(i=>CATALOG.some(c=>c[0]===i.id)&&Number.isInteger(i.x)&&Number.isInteger(i.y)&&i.x>=0&&i.x<10&&i.y>=0&&i.y<6).slice(0,24),
+        updatedAt:v.updatedAt||null
+      };
+    }catch{return clone(DEFAULT);}
+  }
+  function loadLife(){
+    try{
+      const v=JSON.parse(localStorage.getItem(LIFE_KEY)||'null')||{};
+      return {
+        mascot:typeof v.mascot==='string'&&v.mascot.length<42?v.mascot:'equipped',
+        mood:Object.hasOwn(MOODS,v.mood)?v.mood:'auto'
+      };
+    }catch{return {mascot:'equipped',mood:'auto'};}
+  }
+  const AMBIENCE_MODES=['auto','day','sunset','night'];
+  const WEATHER_MODES=['clear','rain','snow']; // Decorative only; never a live weather report.
+  function loadAmbience(){
+    try {
+      const saved=JSON.parse(localStorage.getItem(AMBIENCE_KEY)||'null');
+      const legacy=localStorage.getItem(ROOM_KEY);
+      return {
+        mode:AMBIENCE_MODES.includes(saved?.mode)?saved.mode:(legacy?loadRoom().theme:'auto'),
+        weather:WEATHER_MODES.includes(saved?.weather)?saved.weather:'clear',
+        effects:saved?.effects!==false
+      };
+    }catch{return {mode:'auto',weather:'clear',effects:true};}
+  }
+  let ambience=loadAmbience();
+  function saveAmbience(){
+    try{localStorage.setItem(AMBIENCE_KEY,JSON.stringify(ambience));message=txt('บันทึกบรรยากาศในเครื่องแล้ว','Atmosphere saved on this device');}
+    catch{message=txt('บันทึกบรรยากาศไม่ได้','Unable to save atmosphere');}
+  }
+  function autoPhase(date=new Date()){
+    const h=date.getHours();
+    if(h>=6&&h<17)return 'day';
+    if(h>=17&&h<19)return 'sunset';
+    return 'night';
+  }
+  function resolvedPhase(){return ambience.mode==='auto'?autoPhase():ambience.mode;}
+  function phaseName(mode){return ({auto:txt('ตามเวลา','Auto'),day:txt('กลางวัน','Day'),sunset:txt('พระอาทิตย์ตก','Sunset'),night:txt('กลางคืน','Night')})[mode]||mode;}
+  function weatherName(mode){return ({clear:txt('ท้องฟ้าใส','Clear'),rain:txt('ฝนตก','Rain'),snow:txt('หิมะ','Snow')})[mode]||mode;}
+  let data=loadRoom(),life=loadLife(),edit=false,selected='plant',category='all',message='';
+  const milestonesSeen=new Map(); // In-memory per account: never writes a reward or user state.
+  let celebrationUntil=0, celebrationTimer=0, celebrationType='';
+  function milestoneSnapshot(){const v=appProgress();return {journals:v.journals,projects:v.projects,pending:v.pending};}
+  function latestMilestone(v){
+    if(v.projects>0)return {type:'projects',name:txt('สำเร็จไปอีกหนึ่งโปรเจกต์! 🏆','Project completed! 🏆')};
+    if(v.journals>=7)return {type:'journals',name:txt('เขียน Journal ครบ 7 วันแล้ว! 🌱','7 Journal days reached! 🌱')};
+    return null;
+  }
+  function detectMilestone(){
+    if(!activePage())return;
+    const scope=profileScope();if(!scope)return;
+    const next=milestoneSnapshot();if(next.pending)return;
+    const prior=milestonesSeen.get(scope);
+    milestonesSeen.set(scope,next);
+    if(!prior)return; // Initial visit is a baseline, not a new completion.
+    const isProject=next.projects>prior.projects;
+    const isJournal=next.journals>=7&&prior.journals<7;
+    if(!isProject&&!isJournal)return;
+    celebrationType=isProject?'projects':'journals';
+    celebrationUntil=Date.now()+5600;
+    clearTimeout(celebrationTimer);
+    updateSceneLive();
+    celebrationTimer=setTimeout(()=>{celebrationUntil=0;if(activePage())updateSceneLive();},5700);
+  }
+
+  let petUntil=0,petTimer=0;
+  function saveRoom(){
+    data.updatedAt=new Date().toISOString();
+    try{localStorage.setItem(ROOM_KEY,JSON.stringify(data));message=txt('บันทึกห้องในเครื่องแล้ว','Room saved on this device');}
+    catch{message=txt('บันทึกไม่ได้: พื้นที่จัดเก็บอาจเต็ม','Could not save: browser storage may be full');}
+  }
+  function saveLife(){
+    try{localStorage.setItem(LIFE_KEY,JSON.stringify({...life,updatedAt:new Date().toISOString()}));message=txt('บันทึก Mascot ในเครื่องแล้ว','Mascot preferences saved locally');}
+    catch{message=txt('บันทึกการตั้งค่า Mascot ไม่สำเร็จ','Mascot preferences could not be saved');}
+  }
+  // Ownership comes only from the existing Reward Shop API. Local room choices
+  // never grant an item, equip an item in the Shop, or modify protected economy keys.
+  function collection(){
+    let list=[];
+    try{list=window.WorkdayRewards?.getCatalog?.().filter(r=>r.type==='mascot'&&r.owned)||[];}
+    catch{list=[];}
+    const chick={id:'chick',icon:'🐣',name:txt('Default Chick','Default Chick'),owned:true};
+    if(!list.some(m=>m.id==='chick'))list.unshift(chick);
+    const equippedId=window.WorkdayRewards?.getEquippedMascot?.()?.id||'chick';
+    const equipped=list.find(m=>m.id===equippedId)||list.find(m=>m.id==='chick')||chick;
+    const active=life.mascot==='equipped'?equipped:(list.find(m=>m.id===life.mascot)||equipped);
+    return {list,active,equipped};
+  }
+  // These points only customize the local mascot appearance. They never grant
+  // spendable Coins or write to any existing Journal, Project, Shop or cloud keys.
+  function safeJson(key, fallback){
+    try { const value=JSON.parse(localStorage.getItem(key)||'null'); return value??fallback; }
+    catch { return fallback; }
+  }
+  function appProgress(){
+    let pending=false;
+    try { const status=window.WorkdayV8Cloud?.getStatus?.(); pending=!!status?.signedIn&&status.ready===false; }
+    catch {}
+    if(pending)return {journals:0,projects:0,pending:true};
+    const rawJournal=safeJson('wp-v6-journal',{});
+    const journals=rawJournal&&typeof rawJournal==='object'&&!Array.isArray(rawJournal)
+      ?Object.entries(rawJournal).filter(([date,j])=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&j&&typeof j==='object'&&(
+        String(j.work||'').trim().length>0||String(j.learned||'').trim().length>0
+      )).length:0;
+    const rawProjects=safeJson('wp-v6-projects',[]);
+    const uniqueProjects=new Set();
+    if(Array.isArray(rawProjects))rawProjects.forEach((p,index)=>{
+      if(!p||typeof p!=='object'||!(p.status==='completed'||Number(p.progress)>=100))return;
+      uniqueProjects.add(String(p.id||`project-${index}`).slice(0,140));
+    });
+    return {journals:Math.min(200,journals),projects:Math.min(40,uniqueProjects.size),pending:false};
+  }
+  function localDate(){
+    const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function profileScope(){
+    try {
+      const cloud=window.WorkdayV8Cloud;
+      if(cloud?.isSignedIn?.()){
+        const id=cloud.getUser?.()?.id;
+        return id?`user:${String(id).slice(0,110)}`:null;
+      }
+    }catch{return null;}
+    return 'guest';
+  }
+  function loadBonds(){
+    const v=safeJson(BOND_KEY,{});
+    return v&&v.version===1&&v.profiles&&typeof v.profiles==='object'&&!Array.isArray(v.profiles)
+      ?v:{version:1,profiles:{}};
+  }
+  function careDays(id){
+    const scope=profileScope();if(!scope)return [];
+    const rows=loadBonds().profiles?.[scope]?.[id];
+    return Array.isArray(rows)?[...new Set(rows.filter(x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)))].slice(-500):[];
+  }
+  function recordGreeting(id){
+    const scope=profileScope();if(!scope)return {newDay:false,saved:false};
+    const state=loadBonds(),today=localDate();
+    if(!state.profiles[scope]||typeof state.profiles[scope]!=='object')state.profiles[scope]={};
+    const current=careDays(id);
+    if(current.includes(today))return {newDay:false,saved:true};
+    state.profiles[scope][id]=[...current,today].slice(-500);
+    try { localStorage.setItem(BOND_KEY,JSON.stringify(state));return {newDay:true,saved:true}; }
+    catch { return {newDay:false,saved:false}; }
+  }
+  function legacyXp(id){
+    try {
+      const xp=Number(window.WorkdayRewards?.getMascotBond?.(id)?.xp||0);
+      return Number.isFinite(xp)?Math.max(0,Math.min(100000,Math.round(xp))):0;
+    }catch{return 0;}
+  }
+  function friendship(id){
+    const activity=appProgress(),days=careDays(id).length;
+    const journalXp=activity.journals*15,projectXp=activity.projects*60,careXp=days*8,shopXp=legacyXp(id);
+    const xp=journalXp+projectXp+careXp+shopXp;
+    const level=Math.floor(xp/100)+1,progress=xp%100;
+    const stage=level>=10?'legend':level>=5?'star':level>=3?'buddy':'seed';
+    const stageCopy={
+      seed:txt('เพื่อนใหม่','New Friend'),buddy:txt('เพื่อนซี้','Close Buddy'),
+      star:txt('เพื่อนคู่ใจ','Best Friend'),legend:txt('คู่หูระดับตำนาน','Legendary Partner')
+    };
+    return {id,xp,level,progress,stage,stageName:stageCopy[stage],journalXp,projectXp,careXp,shopXp,days,activity};
+  }
+  function decorUnlocked(item,activity,bond){
+    const rule=DECOR_RULES[item[0]];
+    if(!rule)return true;
+    if(rule[0]==='level')return bond.level>=rule[1];
+    return !activity.pending&&Number(activity[rule[0]]||0)>=rule[1];
+  }
+  function decorRequirement(item){
+    const rule=DECOR_RULES[item[0]];
+    if(!rule)return txt('พร้อมใช้','Available');
+    if(rule[0]==='level')return `Mascot Lv. ${rule[1]}`;
+    if(rule[0]==='projects')return txt(`Project สำเร็จ ${rule[1]} งาน`,`${rule[1]} completed projects`);
+    return txt(`Journal ${rule[1]} วัน`,`${rule[1]} journal days`);
+  }
+  function decorCollection(activity,bond){
+    return CATALOG.map(item=>({item,unlocked:decorUnlocked(item,activity,bond)}));
+  }
+  function requiredLevel(mood){return SPECIAL_LEVELS[mood]||1;}
+  function canUseMood(mood,id){return !!MOODS[mood]&&friendship(id).level>=requiredLevel(mood);}
+  function milestoneName(mood){
+    const m=MOODS[mood];return m?(en()?m.en:m.th):mood;
+  }
+  function friendshipMarkup(bond){
+    const summary=bond.activity.pending
+      ?txt('กำลังรอข้อมูลกิจกรรมของบัญชี…','Waiting for account activity…')
+      :txt(`Journal ${bond.activity.journals} วัน · Project สำเร็จ ${bond.activity.projects} งาน`,
+        `${bond.activity.journals} Journal days · ${bond.activity.projects} completed projects`);
+    const milestones=MILESTONES.map(item=>{
+      const reached=bond.level>=item.level;
+      return `<div class="wdj-bond-milestone ${reached?'unlocked':'locked'}"><span aria-hidden="true">${reached?item.icon:'🔒'}</span><strong>Lv. ${item.level}</strong><small>${esc(milestoneName(item.mood))}</small></div>`;
+    }).join('');
+    return `<section class="wdj-life-panel wdj-bond-panel" data-wdj-bond-stage="${bond.stage}">
+      <div class="wdj-life-heading"><span>❤️ ${txt('Friendship & Evolution','Friendship & Evolution')}</span><span class="wdj-bond-stage">${esc(bond.stageName)}</span></div>
+      <div class="wdj-bond-stats"><div><strong>Lv. ${bond.level.toLocaleString('en-US')}</strong><small>${esc(txt('ระดับความสนิท','Friendship Level'))}</small></div><div><strong>${bond.xp.toLocaleString('en-US')} XP</strong><small>${esc(txt('XP สะสมทั้งหมด','Total XP'))}</small></div></div>
+      <div class="wdj-bond-progress-label"><span>${esc(txt('สู่ระดับถัดไป','To next level'))}</span><strong>${bond.progress}/100 XP</strong></div>
+      <div class="wdj-bond-track" role="progressbar" aria-label="${esc(txt('ความคืบหน้า Friendship','Friendship progress'))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${bond.progress}"><span style="width:${bond.progress}%"></span></div>
+      <p class="wdj-bond-activity">${esc(summary)}</p>
+      <div class="wdj-bond-sources"><span>📓 +${bond.journalXp} XP</span><span>🏁 +${bond.projectXp} XP</span><span>💗 +${bond.careXp} XP</span><span>🎁 +${bond.shopXp} XP</span></div>
+      <div class="wdj-bond-heading">✨ ${txt('ปลดล็อกท่าทางพิเศษ','Special pose milestones')}</div><div class="wdj-bond-milestones">${milestones}</div>
+      <p class="wdj-life-hint">${txt('Journal +15 XP/วัน · Project สำเร็จ +60 XP/งาน · ทักทาย +8 XP/วันต่อ Mascot · นับ XP ที่มีใน Reward Shop ด้วย','Journal +15 XP/day · completed project +60 XP · greeting +8 XP/day per mascot · includes existing Shop XP')}</p>
+      <p class="wdj-life-hint">${txt('ความสนิทเป็นของตกแต่ง เก็บในเครื่องนี้เท่านั้น ไม่เพิ่ม Coin หรือเปลี่ยนไอเทมในร้าน','Friendship is cosmetic and stored on this device only. It never changes Coins or Shop items.')}</p>
+    </section>`;
+  }
+  function autoMood(){
+    const hour=new Date().getHours();
+    if(resolvedPhase()==='night'||hour>=21||hour<6)return 'sleep';
+    if(hour>=8&&hour<17)return 'work';
+    return 'idle';
+  }
+  function currentMood(){
+    if(Date.now()<petUntil)return 'happy';
+    const id=collection().active.id;
+    return life.mood==='auto'||!canUseMood(life.mood,id)?autoMood():life.mood;
+  }
+  function moodCopy(mood){
+    return {
+      idle:txt('กำลังเดินเล่นในห้องของคุณ 🌿','Just wandering around your cozy room 🌿'),
+      work:txt('กำลังตั้งใจทำงานอยู่ 💻','Busy working on something cool 💻'),
+      sleep:txt('ขอพักสายตาสักครู่... 💤','Just a little nap... 💤'),
+      happy:txt('เย่! ดีใจที่ได้เจอกัน! 🎉','Yay! So happy to see you! 🎉'),
+      dance:txt('มาเต้นฉลองไปด้วยกัน! 🎶','Let us dance together! 🎶'),
+      sparkle:txt('ดาวแห่งมิตรภาพกำลังเปล่งประกาย! 🌟','Our friendship is shining! 🌟'),
+      victory:txt('เราเป็นคู่หูระดับตำนานแล้ว! 👑','Legendary partners forever! 👑')
+    }[mood]||'';
+  }
+  function moodName(mood){const m=MOODS[mood]||MOODS.idle;return en()?m.en:m.th;}
+  function activePage(){const node=document.getElementById('wdjWorkspacePage');return node&&!node.classList.contains('v7-route-hidden')&&document.body?.dataset.v7Route==='workspace';}
+  function updateMoodVisual(){
+    const root=document.getElementById('wdjWorkspacePage');if(!root)return;
+    const mood=currentMood(),scene=root.querySelector('.wdj-room-scene');
+    if(scene)scene.dataset.wdjMascotMood=mood;
+    const status=root.querySelector('[data-wdj-life-status]');
+    if(status)status.textContent=`${MOODS[mood]?.icon||''} ${moodName(mood)}`;
+    const speech=root.querySelector('[data-wdj-life-speech]');
+    if(speech)speech.textContent=moodCopy(mood);
+    const pet=root.querySelector('[data-wdj-life-pet]');
+    if(pet)pet.setAttribute('aria-label',txt('เล่นกับ Mascot เพื่อให้ดีใจ','Interact with mascot to make it happy'));
+  }
+  function updateSceneLive(){
+    if(!activePage())return;
+    const scene=document.querySelector('#wdjWorkspacePage .wdj-room-scene');
+    if(!scene)return;
+    const phase=resolvedPhase();
+    scene.dataset.wdjV874Phase=phase;
+    scene.classList.toggle('night',phase==='night');
+    const phaseLabel=document.querySelector('#wdjWorkspacePage [data-wdj-phase-status]');
+    if(phaseLabel)phaseLabel.textContent=`${ambience.mode==='auto'?'🕒 ':''}${phaseName(phase)}`;
+    const celebration=Date.now()<celebrationUntil;
+    scene.classList.toggle('wdj-v874-celebrating',celebration);
+    scene.dataset.wdjV874Event=celebration?celebrationType:'none';
+    const copy=document.querySelector('#wdjWorkspacePage [data-wdj-v874-event-note]');
+    if(copy){const snap=milestoneSnapshot(),event=latestMilestone(snap);
+      copy.textContent=celebration?(celebrationType==='projects'?txt('🏆 เยี่ยมมาก! Project สำเร็จแล้ว','🏆 Well done! Project completed'):txt('🌱 ยอดเยี่ยม! Journal ครบ 7 วัน','🌱 Great work! Seven Journal days')):(event?event.name:txt('เริ่มบันทึก Journal หรือทำ Project ให้สำเร็จ เพื่อสร้างความทรงจำในห้อง','Log Journals or finish projects to create workspace memories'));}
+    updateMoodVisual();
+  }
+  function render(){
+    const el=document.getElementById('wdjWorkspacePage');if(!el)return;
+    const {list,active,equipped}=collection();
+    const bond=friendship(active.id);
+    const mood=currentMood();
+    const phase=resolvedPhase();
+    const ambienceButtons=[['auto','🕒'],['day','☀️'],['sunset','🌇'],['night','🌙']].map(([id,icon])=>
+      `<button type="button" class="wdj-room-btn ${ambience.mode===id?'active':''}" data-wdj-ambience="${id}" aria-pressed="${ambience.mode===id}">${icon} ${esc(phaseName(id))}</button>`).join('');
+    const weatherButtons=[['clear','🌤️'],['rain','🌧️'],['snow','❄️']].map(([id,icon])=>
+      `<button type="button" class="wdj-room-btn ${ambience.weather===id?'active':''}" data-wdj-weather="${id}" aria-pressed="${ambience.weather===id}" title="${esc(txt('เอฟเฟกต์จำลอง ไม่ใช่ข้อมูลอากาศจริง','Visual effect; not live weather'))}">${icon} ${esc(weatherName(id))}</button>`).join('');
+    const activeMilestone=latestMilestone(bond.activity);
+    const petLabel=txt('เล่นกับ Mascot เพื่อให้ดีใจ','Interact with mascot to make it happy');
+    const decor=decorCollection(bond.activity,bond);
+    const unlockedCount=decor.filter(x=>x.unlocked).length;
+    if(!decor.some(x=>x.item[0]===selected&&x.unlocked))selected='plant';
+    const visibleDecor=decor.filter(({item})=>category==='all'||item[4]===category);
+    const moodButtons=Object.entries(MOODS).filter(([id])=>!SPECIAL_LEVELS[id]).map(([id,meta])=>
+      `<button type="button" class="wdj-life-mood-btn ${life.mood===id?'active':''}" data-wdj-life-mood="${id}" aria-pressed="${life.mood===id}"><span aria-hidden="true">${meta.icon}</span>${esc(en()?meta.en:meta.th)}</button>`
+    ).join('');
+    const specialButtons=Object.entries(SPECIAL_LEVELS).map(([id,need])=>{
+      const meta=MOODS[id],unlocked=bond.level>=need;
+      return `<button type="button" class="wdj-life-mood-btn wdj-bond-pose ${life.mood===id&&unlocked?'active':''}" data-wdj-life-mood="${id}" aria-pressed="${life.mood===id&&unlocked}" ${unlocked?'':'disabled'} title="${unlocked?esc(txt('ใช้ท่าทางนี้','Play this pose')):esc(txt(`ปลดล็อกที่เลเวล ${need}`,`Unlocks at Level ${need}`))}"><span aria-hidden="true">${unlocked?meta.icon:'🔒'}</span>${esc(en()?meta.en:meta.th)}<small>Lv. ${need}</small></button>`;
+    }).join('');
+    const mascotButtons=[
+      `<button type="button" class="wdj-life-pick ${life.mascot==='equipped'?'active':''}" data-wdj-life-choice="equipped" aria-pressed="${life.mascot==='equipped'}"><span aria-hidden="true">${esc(equipped.icon||'🐣')}</span><strong>${txt('ตามที่ Equip','Use equipped')}</strong><small>${esc(equipped.name||'')}</small></button>`,
+      ...list.map(m=>`<button type="button" class="wdj-life-pick ${life.mascot===m.id?'active':''}" data-wdj-life-choice="${esc(m.id)}" aria-pressed="${life.mascot===m.id}"><span aria-hidden="true">${esc(m.icon||'🐣')}</span><strong>${esc(m.name||m.id)}</strong>${m.id===equipped.id?`<small>${txt('กำลัง Equip','Equipped')}</small>`:''}</button>`)
+    ].join('');
+    const accessoryId=window.WorkdayRewards?.getEquippedAccessory?.();
+    const accessory=accessoryId&&accessoryId!=='none'?window.WorkdayRewards?.getReward?.('accessory',accessoryId):null;
+    const accent={chick:'#f7c948',cat:'#f0a35e',bear:'#b78560',bunny:'#ef88bd',ghost:'#9d8cff',hamster:'#bf7b4a',fox:'#f28a38',penguin:'#4678b8',dragon:'#8b64ef',developerChick:'#3b82f6'}[active.id]||'#f7c948';
+    const moodTip=txt('อัตโนมัติจะเปลี่ยนท่าทางตามเวลาและกลางวัน/กลางคืน · กด Mascot เพื่อให้ดีใจชั่วคราว',
+      'Auto reacts to local time and room lighting · tap your mascot for a happy moment');
+    const categories=CATEGORIES.map(([id,th,enName])=>{
+      const size=id==='all'?decor.length:decor.filter(({item})=>item[4]===id).length;
+      return `<button type="button" class="wdj-decor-tab ${category===id?'active':''}" data-wdj-category="${id}" aria-pressed="${category===id}">${esc(en()?enName:th)} <span>${size}</span></button>`;
+    }).join('');
+    const furnitureCards=visibleDecor.map(({item,unlocked})=>{
+      const [id,icon,th,enName]=item;
+      const name=en()?enName:th;
+      return `<button type="button" class="wdj-room-item wdj-decor-card ${edit&&selected===id?'active':''} ${unlocked?'':'locked'}" data-wdj-item="${esc(id)}" aria-pressed="${edit&&selected===id}" ${unlocked?'':'disabled'} title="${esc(unlocked?txt('เลือกและวางในห้อง','Choose and place in room'):decorRequirement(item))}">
+        <span class="wdj-decor-icon" aria-hidden="true">${unlocked?icon:'🔒'}</span>
+        <strong>${esc(name)}</strong><small>${esc(unlocked?txt('พร้อมวาง','Unlocked'):decorRequirement(item))}</small>
+      </button>`;
+    }).join('');
+    const objectMarkup=data.items.map(item=>{
+      const found=CATALOG.find(c=>c[0]===item.id);
+      return `<div class="wdj-room-object ${edit&&selected===item.id?'selected':''}" style="left:${(item.x+.5)*10}%;top:${(item.y+.5)*100/6}%" title="${esc(found?.[en()?3:2]||item.id)}" aria-hidden="true">${found?.[1]||''}</div>`;
+    }).join('');
+    el.innerHTML=`<div class="wdj-room-wrap wdj-life-root wdj-decor-root">
+      <header class="wdj-room-head"><div><div class="wdj-room-muted">WORKDAY JOURNEY · V8.7.4 · EVENTS & POLISH</div><h2>🏡 ${txt('ห้องทำงานของฉัน','My Virtual Workspace')}</h2><p class="wdj-room-muted">${txt('ห้องส่วนตัวที่เติบโตไปพร้อมกับ Journal, Project และ Mascot','A personal room that grows with your Journals, Projects and Mascot')}</p></div><span class="wdj-room-pill">🧰 ${unlockedCount}/${decor.length} ${txt('ปลดล็อก','unlocked')}</span></header>
+      <div class="wdj-room-tools wdj-v874-toolbox"><div class="wdj-v874-toolgroup"><span class="wdj-v874-tool-label">🌤️ ${txt('แสงในห้อง','Room lighting')}</span><div class="wdj-v874-controls" role="group" aria-label="${txt('เลือกช่วงเวลาในห้อง','Room lighting')}">${ambienceButtons}</div></div><div class="wdj-v874-toolgroup"><span class="wdj-v874-tool-label">✨ ${txt('บรรยากาศ','Atmosphere')}</span><div class="wdj-v874-controls" role="group" aria-label="${txt('เลือกเอฟเฟกต์อากาศจำลอง','Select decorative weather effect')}">${weatherButtons}<button type="button" data-wdj-v874-fx class="wdj-room-btn ${ambience.effects?'active':''}" aria-pressed="${ambience.effects}">${ambience.effects?'✨ '+txt('เอฟเฟกต์เปิด','Effects on'):'◌ '+txt('เอฟเฟกต์ปิด','Effects off')}</button></div><small class="wdj-v874-hint">${txt('เอฟเฟกต์ตกแต่งเท่านั้น ไม่ใช่พยากรณ์อากาศ','Decorative effects only; not a weather forecast')}</small></div><div class="wdj-v874-tool-actions"><button type="button" class="wdj-room-btn ${edit?'active':''}" data-wdj-edit aria-pressed="${edit}">${edit?'✓ '+txt('เสร็จสิ้น','Done'):'✏️ '+txt('จัดห้อง','Decorate')}</button> <button type="button" class="wdj-room-btn wdj-room-reset" data-wdj-reset>↺ ${txt('คืนค่าห้อง','Reset room')}</button></div></div>
+      <div class="wdj-life-layout">
+        <div class="wdj-room-frame"><div class="wdj-room-scene ${phase==='night'?'night':''}" data-wdj-v874-phase="${phase}" data-wdj-v874-weather="${ambience.weather}" data-wdj-v874-fx="${ambience.effects?'on':'off'}" data-wdj-v874-event="${Date.now()<celebrationUntil?celebrationType:'none'}" data-wdj-mascot-mood="${mood}" data-wdj-friend-stage="${bond.stage}" role="group" aria-label="${esc(txt('ฉากห้อง Pixel Art เต็มความกว้าง','Full-width pixel art room scene'))}">
+          <div class="wdj-v874-sky" aria-hidden="true"><span class="wdj-v874-sunmoon"></span><span class="wdj-v874-stars"></span></div><div class="wdj-v874-weather-layer" aria-hidden="true"></div><div class="wdj-v874-celebration" aria-hidden="true">✨ 🎉 ⭐ 🌟 🎉 ✨</div>
+          <div class="wdj-room-window"></div><div class="wdj-room-shelf" aria-hidden="true"></div><div class="wdj-room-rug" aria-hidden="true"></div><div class="wdj-room-bed" aria-hidden="true"></div><div class="wdj-room-desk"><div class="wdj-room-screen"></div></div><div class="wdj-room-chair"></div>
+          <button type="button" class="wdj-room-mascot wdj-life-mascot" data-wdj-life-pet data-wdj-mascot-id="${esc(active.id)}" style="--wdj-mascot-accent:${accent}" aria-label="${petLabel}" title="${petLabel}"><span class="wdj-life-ground" aria-hidden="true"></span><span class="wdj-life-character" aria-hidden="true"><span class="wdj-life-emoji">${esc(active.icon||'🐣')}</span>${accessory?.owned?`<span class="wdj-life-accessory">${esc(accessory.icon||'')}</span>`:''}</span><span class="wdj-life-fx" aria-hidden="true"></span><span class="wdj-bond-scene-badge" aria-hidden="true">${bond.level>=10?'👑':bond.level>=5?'🌟':bond.level>=3?'💗':''}</span></button>
+          <div class="wdj-life-speech" aria-hidden="true" data-wdj-life-speech>${esc(moodCopy(mood))}</div>
+          ${objectMarkup}
+          ${edit?`<div class="wdj-room-edit-grid" aria-label="${txt('ตารางจัดวาง','Placement grid')}">${Array.from({length:60},(_,n)=>`<button type="button" data-wdj-cell="${n}" aria-label="${txt('วางหรือย้ายของช่อง','Place or remove item in cell')} ${n+1}"></button>`).join('')}</div>`:''}
+        </div><div class="wdj-scene-bar"><span>🐾 ${esc(active.name||active.id)} · Lv. ${bond.level} <span data-wdj-life-status>${MOODS[mood].icon} ${moodName(mood)}</span></span><span>🌤️ <span data-wdj-phase-status>${esc(phaseName(phase))}</span> · ${esc(weatherName(ambience.weather))} · 🪑 ${data.items.length}/24 ${txt('ชิ้น','items')}</span></div><div class="wdj-v874-milestone" role="status"><span aria-hidden="true">${activeMilestone?'🏆':'🌱'}</span><span data-wdj-v874-event-note>${esc(activeMilestone?activeMilestone.name:txt('บันทึก Journal หรือทำ Project ให้สำเร็จเพื่อเพิ่มความทรงจำในห้อง','Keep journaling or completing projects to create room memories'))}</span>${activeMilestone?`<button type="button" data-wdj-v874-celebrate class="wdj-v874-celebrate-btn">🎊 ${txt('ฉลอง','Celebrate')}</button>`:''}<span class="wdj-v874-milestone-tag">${txt('ความสำเร็จสะท้อนในห้อง','Progress in your room')}</span></div></div>
+        <section class="wdj-room-furniture" aria-label="${txt('คลังของตกแต่ง','Decoration collection')}">
+          <div class="wdj-decor-head"><div><strong>🎁 ${txt('Furniture & Decoration Collection','Furniture & Decoration Collection')}</strong><p class="wdj-room-muted">${txt('เลือกของด้านล่าง แล้วแตะช่องในห้องเพื่อวางหรือนำออก','Select an item below, then tap a room cell to place or remove it')}</p></div><span class="wdj-decor-count">${unlockedCount}/${decor.length} ${txt('ชิ้นที่ใช้ได้','available')}</span></div>
+          <div class="wdj-decor-tabs" role="group" aria-label="${txt('หมวดหมู่ของตกแต่ง','Decoration categories')}">${categories}</div>
+          <div class="wdj-room-items wdj-decor-grid">${furnitureCards}</div>
+          <div class="wdj-decor-foot"><span class="wdj-room-tip">${txt('ของล็อกจะเปิดตามจำนวนวัน Journal, Project ที่สำเร็จ และเลเวลของ Mascot','Locked decor unlocks through Journal days, completed Projects and Mascot level')}</span><span class="wdj-room-status" role="status">${esc(message||txt('บันทึกเฉพาะเครื่องนี้ · ไม่หัก Coin','Device-only saving · no Coins spent'))}</span></div>
+        </section>
+        <div class="wdj-decor-section-heading"><strong>🐾 ${txt('Mascot & Friendship','Mascot & Friendship')}</strong><span class="wdj-room-muted">${txt('เลือกเพื่อนร่วมงานและท่าทางของคุณ','Choose your companion and mood')}</span></div>
+        <div class="wdj-life-sidebar">
+          <section class="wdj-life-panel wdj-life-identity"><div class="wdj-life-heading"><span>🐾 ${txt('เพื่อนร่วมงานตัวน้อย','Your little companion')}</span><span class="wdj-life-live">● LIVE</span></div><div class="wdj-life-profile"><span class="wdj-life-portrait" aria-hidden="true">${esc(active.icon||'🐣')}</span><div><strong>${esc(active.name||active.id)}</strong><small>❤️ Lv. ${bond.level} · ${esc(bond.stageName)}</small><span class="wdj-life-state" data-wdj-life-status>${MOODS[mood].icon} ${moodName(mood)}</span><small>${txt('แตะ Mascot ในห้องเพื่อทักทาย','Tap mascot in room to say hi')}</small></div></div></section>
+          ${friendshipMarkup(bond)}
+          <section class="wdj-life-panel"><div class="wdj-life-heading">🎭 ${txt('ท่าทางของ Mascot','Mascot actions')}</div><div class="wdj-life-moods" role="group" aria-label="${txt('เลือกท่าทาง Mascot','Choose mascot action')}">${moodButtons}</div><p class="wdj-life-hint">${moodTip}</p><div class="wdj-bond-heading">🔓 ${txt('ท่าทางตามเลเวล','Level unlocks')}</div><div class="wdj-life-moods wdj-bond-poses">${specialButtons}</div></section>
+          <section class="wdj-life-panel"><div class="wdj-life-heading">🎁 ${txt('เลือก Mascot ที่มี','Owned mascots')}</div><div class="wdj-life-collection">${mascotButtons}</div><p class="wdj-life-hint">${txt('เลือกเฉพาะตัวที่ปลดล็อก · ไม่เปลี่ยนตัว Equip ในร้าน','Unlocked only · does not change Shop equipped mascot')}</p><a class="wdj-life-shop-link" href="#/rewards">${txt('เปิด Reward Shop','Open Reward Shop')} ↗</a></section>
+        </div>
+      </div>
+    </div>`;
+    updateSceneLive();
+  }
+  function focusAfterRender(kind,value){
+    const root=document.getElementById('wdjWorkspacePage');if(!root)return;
+    const target=[...root.querySelectorAll(`[${kind}]`)].find(n=>n.getAttribute(kind)===value);
+    target?.focus?.({preventScroll:true});
+  }
+  document.addEventListener('click',e=>{
+    const target=e.target instanceof Element?e.target.closest('[data-wdj-ambience],[data-wdj-weather],[data-wdj-v874-fx],[data-wdj-v874-celebrate],[data-wdj-edit],[data-wdj-reset],[data-wdj-item],[data-wdj-cell],[data-wdj-life-choice],[data-wdj-life-mood],[data-wdj-life-pet],[data-wdj-category]'):null;
+    if(!target||!target.closest('#wdjWorkspacePage'))return;
+    if(target.hasAttribute('data-wdj-life-pet')){
+      const result=recordGreeting(collection().active.id);
+      if(result.newDay){message=txt('ทักทายครั้งแรกวันนี้ +8 Friendship XP 💗','First greeting today +8 Friendship XP 💗');render();}
+      else if(!result.saved){message=txt('บันทึก XP ไม่สำเร็จ กรุณาตรวจพื้นที่จัดเก็บ','Could not save XP. Check browser storage.');render();}
+      petUntil=Date.now()+4200;
+      clearTimeout(petTimer);
+      updateMoodVisual();
+      petTimer=setTimeout(()=>{petUntil=0;if(activePage())updateMoodVisual();},4250);
+      return;
+    }
+    if(target.hasAttribute('data-wdj-life-choice')){
+      const id=target.dataset.wdjLifeChoice;
+      if(id!=='equipped'&&!collection().list.some(m=>m.id===id))return;
+      life.mascot=id;
+      if(!canUseMood(life.mood,collection().active.id))life.mood='auto';
+      saveLife();render();focusAfterRender('data-wdj-life-choice',id);return;
+    }
+    if(target.hasAttribute('data-wdj-life-mood')){
+      const id=target.dataset.wdjLifeMood;
+      if(!Object.hasOwn(MOODS,id)||!canUseMood(id,collection().active.id))return;
+      life.mood=id;petUntil=0;clearTimeout(petTimer);saveLife();render();focusAfterRender('data-wdj-life-mood',id);return;
+    }
+    if(target.hasAttribute('data-wdj-v874-celebrate')){
+      const event=latestMilestone(appProgress());
+      if(!event)return;
+      celebrationType=event.type;
+      celebrationUntil=Date.now()+5200;
+      clearTimeout(celebrationTimer);
+      updateSceneLive();
+      celebrationTimer=setTimeout(()=>{celebrationUntil=0;if(activePage())updateSceneLive();},5250);
+      return;
+    }
+    if(target.hasAttribute('data-wdj-ambience')){
+      const next=target.dataset.wdjAmbience;
+      if(!AMBIENCE_MODES.includes(next))return;
+      ambience.mode=next;
+      // Keep the original V8.7.0 day/night preference compatible, but do not
+      // overwrite the room layout when Auto or Sunset is selected.
+      if(next==='day'||next==='night'){data.theme=next;saveRoom();}
+      saveAmbience();render();focusAfterRender('data-wdj-ambience',next);return;
+    }
+    if(target.hasAttribute('data-wdj-weather')){
+      const next=target.dataset.wdjWeather;
+      if(!WEATHER_MODES.includes(next))return;
+      ambience.weather=next;saveAmbience();render();focusAfterRender('data-wdj-weather',next);return;
+    }
+    if(target.hasAttribute('data-wdj-v874-fx')){
+      ambience.effects=!ambience.effects;saveAmbience();render();document.querySelector('#wdjWorkspacePage [data-wdj-v874-fx]')?.focus?.({preventScroll:true});return;
+    }
+    if(target.hasAttribute('data-wdj-edit')){edit=!edit;render();document.querySelector('#wdjWorkspacePage [data-wdj-edit]')?.focus?.({preventScroll:true});return;}
+    if(target.hasAttribute('data-wdj-category')){
+      const next=target.dataset.wdjCategory;
+      if(!CATEGORIES.some(x=>x[0]===next))return;
+      category=next;render();focusAfterRender('data-wdj-category',next);return;
+    }
+    if(target.hasAttribute('data-wdj-item')){
+      const id=target.dataset.wdjItem;
+      const item=CATALOG.find(c=>c[0]===id);
+      if(!item||!decorUnlocked(item,appProgress(),friendship(collection().active.id)))return;
+      selected=id;edit=true;render();focusAfterRender('data-wdj-item',selected);return;
+    }
+    if(target.hasAttribute('data-wdj-reset')){
+      if(!window.confirm(txt('คืนค่าตำแหน่งของตกแต่งทั้งหมดในเครื่องนี้? การตั้งค่า Mascot จะยังอยู่','Reset decorations on this device? Mascot preferences will remain')))return;
+      data=clone(DEFAULT);saveRoom();render();document.querySelector('#wdjWorkspacePage [data-wdj-reset]')?.focus?.({preventScroll:true});return;
+    }
+    if(target.hasAttribute('data-wdj-cell')&&edit){
+      const n=Number(target.dataset.wdjCell),x=n%10,y=Math.floor(n/10);
+      const old=data.items.findIndex(i=>i.x===x&&i.y===y);
+      if(old>=0)data.items.splice(old,1);
+      else if(data.items.length<24&&CATALOG.some(c=>c[0]===selected)&&decorUnlocked(CATALOG.find(c=>c[0]===selected),appProgress(),friendship(collection().active.id)))data.items.push({id:selected,x,y});
+      else{message=txt('ไม่สามารถวางของชิ้นนี้ได้ หรือห้องเต็ม 24 ชิ้น','Item locked or room has reached 24 decorations');render();return;}
+      saveRoom();render();focusAfterRender('data-wdj-cell',String(n));
+    }
+  });
+  // Never poll Cloud or write a transaction. Only refresh the lightweight animation
+  // when the workspace is on screen and local time might change its auto mood.
+  setInterval(()=>{if(activePage()){updateSceneLive();}},60000);
+  window.addEventListener('storage',e=>{
+    if(![ROOM_KEY,LIFE_KEY,BOND_KEY,AMBIENCE_KEY,'wp-v81-equipped-mascot','wp-v81-owned-rewards','wp-v82-mascot-xp','wp-v6-journal','wp-v6-projects'].includes(e.key))return;
+    if(e.key===ROOM_KEY)data=loadRoom();
+    if(e.key===LIFE_KEY)life=loadLife();
+    if(e.key===AMBIENCE_KEY)ambience=loadAmbience();
+    if(activePage()){render();detectMilestone();}
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden||!activePage())return;
+    data=loadRoom();life=loadLife();ambience=loadAmbience();render();detectMilestone();
+  });
+  // Same-tab account/equipment updates do not emit the native storage event.
+  // These existing application signals let the room refresh safely after login
+  // and when verified Shop ownership arrives from the account.
+  ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
+    window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
+  });
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.4',getFriendship:id=>friendship(String(id||collection().active.id))};
+  if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();

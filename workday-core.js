@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.6.0.8";
+  const APP_VERSION = "8.7.4";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2361,7 +2361,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.6.0.8";
+  const V6_VERSION = "8.7.4";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2826,7 +2826,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.8";
+  const VERSION = "8.7.4";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -2906,6 +2906,7 @@
     ["achievements","🏆"],
     ["missions","🎯"],
     ["rewards","🎁"],
+    ["workspace","🪴"],
     ["bank","🏦"],
     ["exchange","📈"],
     ["developer","🛠"],
@@ -3192,6 +3193,7 @@
     const missions = document.createElement("section"); missions.id="v82MissionsPage"; missions.className="v7-page-panel"; missions.dataset.v7Page="missions"; main.appendChild(missions);
     const bank = document.createElement("section"); bank.id="v83BankPage"; bank.className="v7-page-panel"; bank.dataset.v7Page="bank"; main.appendChild(bank);
     const exchange = document.createElement("section"); exchange.id="v84ExchangePage"; exchange.className="v7-page-panel"; exchange.dataset.v7Page="exchange"; main.appendChild(exchange);
+    const ws = document.createElement("section"); ws.id="wdjWorkspacePage"; ws.className="v7-page-panel"; ws.dataset.v7Page="workspace"; main.appendChild(ws);
     const rewards = document.createElement("section"); rewards.id="v81RewardsPage"; rewards.className="v7-page-panel"; rewards.dataset.v7Page="rewards"; main.appendChild(rewards);
     const developer = document.createElement("section"); developer.id="v848DeveloperPage"; developer.className="v7-page-panel"; developer.dataset.v7Page="developer"; main.appendChild(developer);
     const settings = document.createElement("section"); settings.id="v7SettingsPage"; settings.className="v7-page-panel"; settings.dataset.v7Page="settings"; main.appendChild(settings);
@@ -3238,7 +3240,7 @@
   function renderSidebar() {
     NAV.forEach(([key]) => {
       const label = q(`[data-v7-nav-label="${key}"]`); const sub = q(`[data-v7-nav-sub="${key}"]`);
-      if (label) label.textContent = t(key); if (sub) sub.textContent = t(`${key}Sub`);
+      if (label) label.textContent = key === "workspace" ? (document.documentElement.lang === "en" ? "My Workspace" : "ห้องทำงานของฉัน") : t(key); if (sub) sub.textContent = key === "workspace" ? (document.documentElement.lang === "en" ? "Decorate your cozy pixel room" : "ตกแต่งห้อง Pixel Art ส่วนตัว") : t(`${key}Sub`);
     });
     const cfg = API.getConfig();
     if ($("v7SideName")) $("v7SideName").textContent = isDemo() ? t("publicDemo") : (cfg.profileName || t("myJourney"));
@@ -3270,6 +3272,7 @@
     if (route === "bank") window.WorkdayRewards?.renderBank?.();
     if (route === "exchange") window.WorkdayRewards?.renderExchange?.();
     if (route === "rewards") window.WorkdayRewards?.renderShop?.();
+    if (route === "workspace") window.WorkdayWorkspace?.render?.();
     if (route === "developer") window.WorkdayV848?.renderDeveloper?.();
     if (route === "settings") renderSettingsPage();
     // Complete presentation refresh synchronously after the page DOM is rebuilt.
