@@ -1,4 +1,4 @@
-/* Workday Journey 8.6.0.6 | consolidated in original execution order.
+/* Workday Journey 8.6.0.7 | consolidated in original execution order.
  * Individual source sections retain their previous isolated IIFE scope.
  * Edit by finding the SOURCE separator. Do not rearrange sections.
  */
@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["Data Safety & Backup: \u0e2a\u0e33\u0e23\u0e2d\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e01\u0e48\u0e2d\u0e19\u0e25\u0e49\u0e32\u0e07\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25", "ปรับความถูกต้องของยอดเหรียญและการฝากถอน", "ลดการโหลดและซิงก์ข้อมูลซ้ำ"],notesEn:["More reliable wallet balances and savings", "Faster page loading", "Data Safety & read-only JSON backup tools"]},
+    {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
     {version:"8.3",icon:"🏦",th:"Work Bank",en:"Work Bank",notesTh:["ออมเหรียญและติดตามดอกเบี้ยทบต้น", "ขยายร้านค้าและไอเทมแต่งโปรไฟล์"],notesEn:["Save Coins and track compound interest", "More Shop items and profile customization"]},
@@ -718,10 +718,10 @@
     if(actions&&!$("v8CloudBtn")){
       const cloudBtn=document.createElement("button");cloudBtn.id="v8CloudBtn";cloudBtn.className="v8-top-btn v8-cloud-btn";cloudBtn.type="button";cloudBtn.innerHTML=`<span class="v8-top-icon">☁</span><span id="v8CloudLabel">${esc(t("cloudLocal"))}</span><i id="v8CloudDot"></i>`;cloudBtn.addEventListener("click",openAccountModal);
       const profile=$("profileQuickBtn");profile?.insertAdjacentElement("afterend",cloudBtn);
-      const bell=document.createElement("button");bell.id="v8NotifBtn";bell.className="v8-top-btn v8-notif-btn";bell.type="button";bell.setAttribute("aria-label",t("notifications"));bell.innerHTML=`<span class="v8-top-icon">🔔</span><b id="v8NotifBadge" hidden>0</b>`;bell.addEventListener("click",toggleNotificationPanel);cloudBtn.insertAdjacentElement("afterend",bell);
+      const bell=document.createElement("button");bell.id="v8NotifBtn";bell.className="v8-top-btn v8-notif-btn";bell.type="button";bell.setAttribute("aria-label",t("notifications"));bell.setAttribute("aria-controls","v8NotifPanel");bell.setAttribute("aria-expanded","false");bell.innerHTML=`<span class="v8-top-icon">🔔</span><b id="v8NotifBadge" hidden>0</b>`;bell.addEventListener("click",toggleNotificationPanel);cloudBtn.insertAdjacentElement("afterend",bell);
     }
     if(!$("v8NotifPanel")){
-      const panel=document.createElement("aside");panel.id="v8NotifPanel";panel.className="v8-notif-panel";panel.hidden=true;panel.innerHTML=`<div class="v8-panel-head"><div><p class="eyebrow">NOTIFICATION CENTER</p><h3>${esc(t("notifications"))}</h3></div><button id="v8NotifClose" class="icon-btn" type="button">×</button></div><div id="v8NotifList" class="v8-notif-list"></div><div class="v8-panel-foot"><button id="v8NotifReadAll" class="text-btn" type="button">${esc(t("markAllRead"))}</button></div>`;document.body.appendChild(panel);$("v8NotifClose").onclick=()=>setNotificationPanel(false);$("v8NotifReadAll").onclick=markAllNotificationsRead;
+      const panel=document.createElement("aside");panel.id="v8NotifPanel";panel.className="v8-notif-panel wdj-notification-center";panel.hidden=true;panel.setAttribute("role","dialog");panel.setAttribute("aria-labelledby","v8NotifHeading");panel.innerHTML=`<div class="v8-panel-head"><div><p class="eyebrow">WORKDAY JOURNEY</p><h3 id="v8NotifHeading">${esc(t("notifications"))}</h3><small id="wdjNotifSubtitle"></small></div><button id="v8NotifClose" class="icon-btn" type="button" aria-label="${esc(t("close"))}">×</button></div><div class="wdj-notif-tabs" id="wdjNotifTabs" role="group" aria-label="${esc(t("notifications"))}"></div><div id="v8NotifList" class="v8-notif-list" aria-live="polite"></div><div class="v8-panel-foot"><span id="wdjNotifFootnote"></span><button id="v8NotifReadAll" class="text-btn" type="button">${esc(t("markAllRead"))}</button></div>`;document.body.appendChild(panel);$("v8NotifClose").onclick=()=>setNotificationPanel(false);$("v8NotifReadAll").onclick=markAllNotificationsRead;
     }
     if(!$("v8AuthBackdrop")){
       const wrap=document.createElement("div");wrap.id="v8AuthBackdrop";wrap.className="v8-modal-backdrop";wrap.hidden=true;wrap.innerHTML=`<section class="v8-auth-modal v8477-auth-modal" role="dialog" aria-modal="true" aria-labelledby="v8AuthTitle"><button id="v8AuthClose" class="v8-modal-close" type="button" aria-label="${esc(t("close"))}">×</button><div class="v8-auth-hero v8477-auth-hero"><span id="v8477AuthHeroIcon">☁</span><div><p id="v8477AuthEyebrow" class="eyebrow">WORKDAY JOURNEY ACCOUNT</p><h2 id="v8AuthTitle">${esc(authT("accountTitle"))}</h2><p id="v8477AuthIntro">${esc(authT("accountIntro"))}</p></div></div><div id="v8AuthBody"></div></section>`;document.body.appendChild(wrap);$("v8AuthClose").onclick=closeAccountModal;wrap.addEventListener("click",e=>{if(e.target===wrap)closeAccountModal();});
@@ -845,20 +845,139 @@
     const marker="wp-v8-notifications-initialized";if(localStorage.getItem(marker)==="1")return;
     const set=notificationReadSet();API.getAchievements(API.getStats()).filter(a=>a.unlocked&&a.unlockedAt).forEach(a=>set.add(`ach:${a.id}:${a.unlockedAt}`));saveNotificationRead(set);localStorage.setItem(marker,"1");
   }
-  function refreshNotificationCenter(forceList=false){
-    ensureUi();const list=buildNotifications(),read=notificationReadSet(),unread=list.filter(n=>!read.has(n.id));const badge=$("v8NotifBadge");
-    if(badge){badge.hidden=!unread.length;badge.textContent=unread.length>9?"9+":String(unread.length);}
-    const host=$("v8NotifList");if(!host)return;
-    const panel=$("v8NotifPanel"),panelOpen=panel && !panel.hidden;
-    // Keep the existing notification buttons stable while the panel is open.
-    if(panelOpen && !forceList && host.dataset.v806Rendered==="1") return;
-    host.innerHTML=list.length?list.map(n=>`<button class="v8-notif-item ${read.has(n.id)?"read":"unread"}" data-v8-notif="${esc(n.id)}" data-route="${esc(n.route||"")}" data-date="${esc(n.date||"")}" type="button"><span class="v8-notif-icon ${esc(n.tone||"info")}">${n.icon}</span><div><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>${read.has(n.id)?"":"<i></i>"}</button>`).join(""):`<div class="v8-empty-notif">🔕<strong>${esc(t("noNotifications"))}</strong></div>`;
-    host.dataset.v806Rendered="1";
-    qa("[data-v8-notif]",host).forEach(btn=>btn.onclick=()=>{const set=notificationReadSet();set.add(btn.dataset.v8Notif);saveNotificationRead(set);if(btn.dataset.date)localStorage.setItem(KEYS.pendingJournalDate,btn.dataset.date);if(btn.dataset.route)location.hash=`#/${btn.dataset.route}`;setNotificationPanel(false);requestEnhance(100);refreshNotificationCenter(true);});
+  // V8.6.0.7: UI-only recent activity. Never placed in localStorage or sent to account sync.
+  // Existing reminder/read keys keep their original semantics.
+  const wdjRecentNotifications=[];
+  const wdjRecentRead=new Set();
+  const wdjToastSignatures=new Map();
+  let wdjEventCounter=0;
+  let wdjNoticeAccountId=cloud.user?.id||"guest";
+  let wdjNotificationFilter="all";
+  let wdjNotifRenderSignature="";
+  const wdjNotifText={
+    th:{all:"ทั้งหมด",unread:"ยังไม่อ่าน",success:"สำเร็จ",warning:"คำเตือน",error:"ข้อผิดพลาด",recent:"กิจกรรมล่าสุด",reminders:"รายการที่ควรทราบ",shown:"รายการ",noMatches:"ไม่มีการแจ้งเตือนในหมวดนี้",clear:"อ่านทั้งหมด",subtitle:"ติดตามสิ่งสำคัญและกิจกรรมล่าสุด",activity:"การทำรายการล่าสุด",time:"เวลา"},
+    en:{all:"All",unread:"Unread",success:"Success",warning:"Warnings",error:"Errors",recent:"Recent activity",reminders:"Reminders & updates",shown:"items",noMatches:"Nothing in this category",clear:"Mark all read",subtitle:"Important updates and recent activity",activity:"Recent action",time:"Time"}
+  };
+  const wdjNt=(key)=>wdjNotifText[lang()][key]||key;
+  const wdjIsRead=(n,read)=>n.recent?wdjRecentRead.has(n.id):read.has(n.id);
+  function wdjNotificationItems(){
+    const accountId=cloud.user?.id||"guest";
+    if(wdjNoticeAccountId!==accountId){
+      // Do not show recent action messages from another signed-in account.
+      wdjNoticeAccountId=accountId;
+      wdjRecentNotifications.length=0;
+      wdjRecentRead.clear();
+      wdjToastSignatures.clear();
+      wdjNotifRenderSignature="";
+    }
+    return [...wdjRecentNotifications,...buildNotifications()];
   }
-  function markAllNotificationsRead(){const set=notificationReadSet();buildNotifications().forEach(n=>set.add(n.id));saveNotificationRead(set);refreshNotificationCenter(true);}
+  function wdjTone(node){
+    if(node.classList.contains("toast-error")||node.classList.contains("toast-danger"))return "error";
+    if(node.classList.contains("toast-warning")||node.classList.contains("toast-warn"))return "warning";
+    if(node.classList.contains("toast-success"))return "success";
+    return "info";
+  }
+  function wdjRegisterToast(node){
+    if(!node||node.nodeType!==1||!node.classList.contains("app-toast")||node.dataset.wdjNotifProcessed)return;
+    node.dataset.wdjNotifProcessed="1";
+    const tone=wdjTone(node);
+    // Use textContent only. Never persist toast text (which may contain private data).
+    const strong=node.querySelector("strong");
+    const title=String(strong?.textContent||"").trim().slice(0,140);
+    const body=String(node.querySelector("small")?.textContent||"").trim().slice(0,180);
+    if(!title)return;
+    const signature=`${tone}|${title}|${body}`;
+    const now=Date.now();
+    for(const [key,stamp] of wdjToastSignatures){if(now-stamp>15000)wdjToastSignatures.delete(key);}
+    if(wdjToastSignatures.has(signature)){
+      // Suppress rapid duplicates from several legacy toast emitters.
+      node.remove();return;
+    }
+    wdjToastSignatures.set(signature,now);
+    const icons={success:"✓",warning:"!",error:"×",info:"i"};
+    wdjRecentNotifications.unshift({id:`recent:${now}:${++wdjEventCounter}`,recent:true,tone,icon:icons[tone],title,body,createdAt:now});
+    if(wdjRecentNotifications.length>25){const removed=wdjRecentNotifications.splice(25);removed.forEach(n=>wdjRecentRead.delete(n.id));}
+    const stack=$("toastStack");
+    if(stack){const active=qa(".app-toast:not(.out)",stack);active.slice(0,Math.max(0,active.length-3)).forEach(item=>{item.classList.add("out");setTimeout(()=>item.remove(),260);});}
+    refreshNotificationCenter(false);
+  }
+  function wdjObserveToasts(){
+    const stack=$("toastStack");if(!stack||stack.dataset.wdjNotifWatch)return;
+    stack.dataset.wdjNotifWatch="1";
+    const observer=new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{
+      if(node.nodeType!==1)return;
+      if(node.classList?.contains("app-toast"))wdjRegisterToast(node);
+      else node.querySelectorAll?.(".app-toast").forEach(wdjRegisterToast);
+    })));
+    observer.observe(stack,{childList:true});
+    qa(".app-toast",stack).forEach(wdjRegisterToast);
+  }
+  function wdjRecentTime(stamp){
+    return new Intl.DateTimeFormat(lang()==="th"?"th-TH":"en-GB",{hour:"2-digit",minute:"2-digit"}).format(new Date(stamp));
+  }
+  function wdjNotificationTabs(list,read){
+    const tabs=$("wdjNotifTabs");if(!tabs)return;
+    const kinds=["all","unread","success","warning","error"];
+    tabs.innerHTML=kinds.map(key=>{
+      const count=list.filter(n=>key==="all"||(key==="unread"?!wdjIsRead(n,read):n.tone===key)).length;
+      return `<button type="button" class="wdj-notif-tab ${key===wdjNotificationFilter?"active":""}" data-wdj-notif-filter="${key}" aria-pressed="${key===wdjNotificationFilter}">${esc(wdjNt(key))}<span>${count}</span></button>`;
+    }).join("");
+    qa("[data-wdj-notif-filter]",tabs).forEach(btn=>btn.onclick=(event)=>{event.stopPropagation();
+      const left=tabs.scrollLeft;
+      wdjNotificationFilter=btn.dataset.wdjNotifFilter;
+      refreshNotificationCenter(true);
+      const next=$("wdjNotifTabs");if(next){next.scrollLeft=left;next.querySelector(`[data-wdj-notif-filter="${wdjNotificationFilter}"]`)?.focus({preventScroll:true});}
+    });
+  }
+  function refreshNotificationCenter(forceList=false){
+    ensureUi();
+    const list=wdjNotificationItems(),read=notificationReadSet(),unread=list.filter(n=>!wdjIsRead(n,read)),badge=$("v8NotifBadge");
+    if(badge){badge.hidden=!unread.length;badge.textContent=unread.length>9?"9+":String(unread.length);}
+    const bell=$("v8NotifBtn");if(bell)bell.setAttribute("aria-label",`${t("notifications")}${unread.length?` (${unread.length})`:""}`);
+    const host=$("v8NotifList"),panel=$("v8NotifPanel");if(!host||!panel||panel.hidden)return;
+    const signature=JSON.stringify([lang(),wdjNotificationFilter,list.map(n=>[n.id,n.tone,n.body,wdjIsRead(n,read)] )]);
+    if(!forceList&&signature===wdjNotifRenderSignature)return;
+    wdjNotifRenderSignature=signature;
+    const heading=$("v8NotifHeading"),subtitle=$("wdjNotifSubtitle"),footer=$("wdjNotifFootnote"),all=$("v8NotifReadAll"),close=$("v8NotifClose");
+    if(heading)heading.textContent=t("notifications");
+    if(subtitle)subtitle.textContent=wdjNt("subtitle");
+    if(footer)footer.textContent=`${unread.length} ${wdjNt("unread")} · ${list.length} ${wdjNt("shown")}`;
+    if(all){all.textContent=wdjNt("clear");all.disabled=unread.length===0;}
+    if(close)close.setAttribute("aria-label",t("close"));
+    wdjNotificationTabs(list,read);
+    const filtered=list.filter(n=>wdjNotificationFilter==="all"||
+      (wdjNotificationFilter==="unread"?!wdjIsRead(n,read):n.tone===wdjNotificationFilter));
+    if(!filtered.length){host.innerHTML=`<div class="v8-empty-notif"><span>🔕</span><strong>${esc(wdjNt("noMatches"))}</strong></div>`;return;}
+    let lastSection="";
+    host.innerHTML=filtered.map(n=>{
+      const section=n.recent?"recent":"reminders";
+      const heading=section!==lastSection?`<p class="wdj-notif-section">${esc(wdjNt(section))}</p>`:"";
+      lastSection=section;
+      const time=n.recent?`<small class="wdj-notif-time">${esc(wdjRecentTime(n.createdAt))}</small>`:"";
+      const body=n.body?`<p>${esc(n.body)}</p>`:"";
+      return `${heading}<button class="v8-notif-item wdj-notif-item ${wdjIsRead(n,read)?"read":"unread"}" data-v8-notif="${esc(n.id)}" data-wdj-recent="${n.recent?"1":"0"}" data-route="${esc(n.route||"")}" data-date="${esc(n.date||"")}" type="button"><span class="v8-notif-icon ${esc(n.tone||"info")}">${esc(n.icon||"🔔")}</span><div><strong>${esc(n.title)}</strong>${body}${time}</div>${wdjIsRead(n,read)?"":"<i aria-hidden=\"true\"></i>"}</button>`;
+    }).join("");
+    qa("[data-v8-notif]",host).forEach(btn=>btn.onclick=(event)=>{event.stopPropagation();
+      if(btn.dataset.wdjRecent==="1")wdjRecentRead.add(btn.dataset.v8Notif);
+      else{const set=notificationReadSet();set.add(btn.dataset.v8Notif);saveNotificationRead(set);}
+      if(btn.dataset.date)localStorage.setItem(KEYS.pendingJournalDate,btn.dataset.date);
+      if(btn.dataset.route){location.hash=`#/${btn.dataset.route}`;setNotificationPanel(false);requestEnhance(100);}
+      refreshNotificationCenter(true);
+    });
+  }
+  function markAllNotificationsRead(){
+    const set=notificationReadSet();buildNotifications().forEach(n=>set.add(n.id));saveNotificationRead(set);
+    wdjRecentNotifications.forEach(n=>wdjRecentRead.add(n.id));refreshNotificationCenter(true);
+  }
   function toggleNotificationPanel(){setNotificationPanel($("v8NotifPanel")?.hidden!==false);}
-  function setNotificationPanel(open){const p=$("v8NotifPanel");if(!p)return;p.hidden=!open;p.classList.toggle("open",open);if(open)refreshNotificationCenter(true);}
+  function setNotificationPanel(open){
+    const panel=$("v8NotifPanel");if(!panel)return;
+    const wasOpen=!panel.hidden;panel.hidden=!open;panel.classList.toggle("open",open);
+    $("v8NotifBtn")?.setAttribute("aria-expanded",String(!!open));
+    if(open){wdjNotifRenderSignature="";refreshNotificationCenter(true);if(!wasOpen)$("v8NotifClose")?.focus({preventScroll:true});}
+    else if(wasOpen&&panel.contains(document.activeElement))$("v8NotifBtn")?.focus({preventScroll:true});
+  }
 
   // ---------- Schedule Templates ----------
   const BUILTIN_TEMPLATES = [
@@ -977,7 +1096,7 @@
     ensureUi();ensureCleanTopbar();
     if(!localStorage.getItem(KEYS.dataUpdated))setCloudMeta(KEYS.dataUpdated,new Date().toISOString());
     const currentHash=payloadHash(),lastHash=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";cloud.localDirty=!!lastHash&&lastHash!==currentHash;
-    initializeNotificationReadState();initSupabase();enhanceRoute();detectPublicLink();
+    initializeNotificationReadState();wdjObserveToasts();initSupabase();enhanceRoute();detectPublicLink();
     setInterval(()=>{refreshNotificationCenter();updateCloudIndicators();},30000);
     setInterval(()=>{if(!cloud.user||!cloud.initialReady||!navigator.onLine||cloud.conflictRow||localStorage.getItem("wp-setup-completed")!=="true")return;const h=payloadHash(),last=localStorage.getItem(KEYS.cloudLastPayloadHash)||"";if(last&&h!==last){cloud.localDirty=true;updateCloudIndicators();scheduleCloudUpload(1300);}},12000);
   }
@@ -3203,7 +3322,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3532,7 +3651,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3597,7 +3716,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3758,7 +3877,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4026,7 +4145,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4291,7 +4410,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4685,7 +4804,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.6.0.6";
+  const VERSION = "8.6.0.7";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4832,7 +4951,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.6.0.6';
+  const VERSION = '8.6.0.7';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5144,7 +5263,7 @@
 ;
 
 
-/* Workday Journey V8.6.0.6 - Read-only Data Safety Center.
+/* Workday Journey V8.6.0.7 - Read-only Data Safety Center.
  * This UI reads this device only; it never imports balances or writes to remote storage.
  * The snapshot intentionally has a different format from the legacy importable backup.
  */
@@ -5209,7 +5328,7 @@
     else if(connected)state=s.status.status==='synced'&&!s.status.conflict?T('connected'):T('pending');
     const deviceOnly= s.hasFinance.length>0;
     return `<section id="${id}" class="wdj-safety card ${compact?'wdj-safety-compact':'v7-settings-card v7-settings-wide'}" aria-label="Data Safety">
-      <div class="wdj-safety-head"><div><p class="eyebrow">${esc(T('tag'))} · V8.6.0.6</p><h3>🛡 ${esc(T('title'))}</h3><p>${esc(T('intro'))}</p></div><span class="wdj-safety-indicator ${s.online?'':'wdj-offline'}">${esc(state)}</span></div>
+      <div class="wdj-safety-head"><div><p class="eyebrow">${esc(T('tag'))} · V8.6.0.7</p><h3>🛡 ${esc(T('title'))}</h3><p>${esc(T('intro'))}</p></div><span class="wdj-safety-indicator ${s.online?'':'wdj-offline'}">${esc(state)}</span></div>
       <div class="wdj-safety-stats">
         <div><span>${esc(T('inDevice'))}</span><strong>${s.keys} keys</strong></div>
         <div><span>${esc(T('lastSync'))}</span><strong>${esc(connected?safeDate(s.last):T('guest'))}</strong></div>
