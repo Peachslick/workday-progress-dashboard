@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree และ Journey Timeline สรุปผลงาน"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree and Journey Timeline for work milestones"]},
+    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree, Journey Timeline และ Productivity Insights"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree, Journey Timeline and productivity trends"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
@@ -604,6 +604,7 @@
       projects:["🧩","โปรเจกต์","ติดตามงานและความคืบหน้าของ Project"],
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · สรุปเวลาโฟกัส"],
       timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
+      insights:["📊","สถิติการทำงาน","Journal · Focus · Projects · Skills"],
       skills:["🌳","Skill Tree","แผนผังทักษะ · Level · Growth XP"],
       achievements:["🏆","ความสำเร็จ","Journey Challenges · Feature Achievements · ฉายา"],
       reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
@@ -622,6 +623,7 @@
       projects:["🧩","Projects","Track project status and progress"],
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · Focus history"],
       timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
+      insights:["📊","Productivity Insights","Journal · Focus · Projects · Skills"],
       skills:["🌳","Skill Tree","Career paths · Levels · Growth XP"],
       achievements:["🏆","Achievements","Journey Challenges · Feature Achievements · Titles"],
       reports:["📊","Reports & Analytics","Attendance, heatmap and journey reports"],
@@ -3331,14 +3333,14 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
   const lang = () => localStorage.getItem("wp-language") === "en" ? "en" : "th";
 
   const ROUTE_GROUPS = [
-    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "calendar", "reports"] },
+    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "insights", "calendar", "reports"] },
     { id: "journey", label: "JOURNEY", routes: ["achievements", "missions"] },
     { id: "economy", label: "ECONOMY", routes: ["rewards", "bank", "exchange"] },
     { id: "system", label: "SYSTEM", routes: ["developer", "settings"] }
@@ -3346,12 +3348,12 @@
 
   const ROUTE_LABELS = {
     th: {
-      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", calendar: "ปฏิทิน",
+      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", insights: "ข้อมูลเชิงลึก", calendar: "ปฏิทิน",
       reports: "รายงาน", achievements: "ความสำเร็จ", missions: "ภารกิจ", rewards: "รางวัล",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "ตั้งค่า", more: "เพิ่มเติม"
     },
     en: {
-      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", calendar: "Calendar",
+      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", insights: "Insights", calendar: "Calendar",
       reports: "Reports", achievements: "Achievements", missions: "Missions", rewards: "Rewards",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "Settings", more: "More"
     }
@@ -3368,6 +3370,7 @@
     focus: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.4v5.1l3.4 2.1M9.3 2.7h5.4"/></svg>',
     skills: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 13 6.5 8M12 11l5.5-5M6.5 8V4M17.5 6V3"/><path d="M5 20c2-3 12-3 14 0"/></svg>',
     timeline: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M6 6h6l2 3h5M6 15h5l2 3h6"/><circle cx="6" cy="4" r="1.5"/></svg>',
+    insights: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V11h4v8M10 19V5h4v14M16 19v-6h4v6M3 20h18"/></svg>',
     workspace: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.6 9.3V20h12.8V9.3M9.5 20v-6.3h5V20"/></svg>',
     rewards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4Z"/><path d="M3.2 7.2h17.6V10H3.2ZM12 7.2V20"/><path d="M12 7.2H8.1a2.1 2.1 0 1 1 2.1-2.1c0 1.2 1.8 2.1 1.8 2.1ZM12 7.2h3.9a2.1 2.1 0 1 0-2.1-2.1c0 1.2-1.8 2.1-1.8 2.1Z"/></svg>',
     bank: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 9 8.5-5 8.5 5"/><path d="M5.2 9h13.6M6.7 9v7.6M10.2 9v7.6M13.8 9v7.6M17.3 9v7.6M4.2 16.6h15.6M3.5 20h17"/></svg>',
@@ -3379,7 +3382,7 @@
 
   const CLASSIC_ICONS = {
     dashboard:"🏠", journal:"📓", projects:"📁", calendar:"📅", reports:"📊",
-    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", timeline:"🗺️", workspace:"🏡", bank:"🏦", exchange:"📈",
+    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", timeline:"🗺️", insights:"📊", workspace:"🏡", bank:"🏦", exchange:"📈",
     developer:"🛠️", settings:"⚙️", more:"☰"
   };
   const iconStyle = () => document.documentElement.dataset.wdjIconStyle === "classic" ? "classic" : "modern";
@@ -3664,7 +3667,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3729,7 +3732,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3890,7 +3893,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4158,7 +4161,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4423,7 +4426,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4817,7 +4820,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.7";
+  const VERSION = "8.7.8";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4964,7 +4967,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.7';
+  const VERSION = '8.7.8';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5535,10 +5538,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.7',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.8',refresh:mount };
 })();
 
-/* SOURCE: V8.7.7 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.8 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5862,7 +5865,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.7: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.8: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6194,12 +6197,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.7',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.8',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.7: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.8: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6376,7 +6379,7 @@
 })();
 
 
-/* ===== V8.7.7 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.8 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6538,7 +6541,7 @@ function refresh(){scope='';if(document.body?.dataset.v7Route==='skills')render(
 document.addEventListener('click',onClick);document.addEventListener('change',onChange);document.addEventListener('submit',onSubmit);
 window.addEventListener('storage',e=>{if(!e.key||[CONFIG+scope,OVERRIDES+scope,'wp-v6-journal','wp-v6-projects'].includes(e.key)||e.key.startsWith(PREF)||e.key.startsWith('wdj-v875-focus-'))refresh();});
 ['workday:v7-data-changed','workday:v8-data-changed','workday:v8-auth-state','workday:v8-cloud-ready'].forEach(name=>window.addEventListener(name,()=>{if(name.includes('auth')||name.includes('cloud'))scope='';if(document.body?.dataset.v7Route==='skills')render();}));
-window.WorkdaySkills={render,mountJournalTags:day=>mount('journal',day),mountProjectTags:id=>mount('project',id),saveJournalTags:day=>saveForm('journal',day),saveProjectTags:id=>saveForm('project',id),getSnapshot:()=>{ensure();const a=calculate().totals;return {account:scope,template:cfg.template,skills:Object.fromEntries(catalog().map(s=>[s.id,(a[s.id]?.xp||0)]))};},_test:{auto,assignment,calculate,templates:TEMPLATES,config:()=>{ensure();return cfg;}}};
+window.WorkdaySkills={render,getInsights:()=>{ensure();const rows=calculate().totals;return visible().map(s=>({id:s.id,icon:s.icon,th:s.th,en:s.en,xp:rows[s.id]?.xp||0}));},mountJournalTags:day=>mount('journal',day),mountProjectTags:id=>mount('project',id),saveJournalTags:day=>saveForm('journal',day),saveProjectTags:id=>saveForm('project',id),getSnapshot:()=>{ensure();const a=calculate().totals;return {account:scope,template:cfg.template,skills:Object.fromEntries(catalog().map(s=>[s.id,(a[s.id]?.xp||0)]))};},_test:{auto,assignment,calculate,templates:TEMPLATES,config:()=>{ensure();return cfg;}}};
 queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
  if(route==='skills')render();
  if(route==='journal')mount('journal',$('v7JournalPage')?.dataset.selectedDate||'');
@@ -6548,7 +6551,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.7 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.8 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6670,3 +6673,125 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='timeline')queueMicrotask(render);
 })();
 
+
+
+/* ===== V8.7.8 Productivity Insights 2.0 (read-only) =====
+ * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
+ * No monetary, achievement or Cloud writes occur in this module.
+ */
+(() => {
+  'use strict';
+  const ROOT='wdjInsightsPage';
+  const $=id=>document.getElementById(id);
+  const read=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback;}catch{return fallback;}};
+  const tr=(th,en)=>localStorage.getItem('wp-language')==='en'?en:th;
+  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const scope=()=>String(window.WorkdayV8Cloud?.getUser?.()?.id||'guest').replace(/[^\w-]/g,'').slice(0,90)||'guest';
+  const localDay=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const strictDay=x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(String(x||'')))return '';const d=new Date(x+'T12:00:00');return Number.isFinite(+d)&&localDay(d)===x?x:'';};
+  const dayOf=x=>{
+    if(typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x))return strictDay(x);
+    if(x===null||x===undefined||x==='')return '';
+    const d=new Date(x);return Number.isFinite(+d)?localDay(d):'';
+  };
+  const dayDate=x=>new Date(x+'T12:00:00');
+  const shift=(day,n)=>{const d=dayDate(day);d.setDate(d.getDate()+n);return localDay(d);};
+  const displayDay=day=>{const d=dayDate(day);return Number.isFinite(+d)?new Intl.DateTimeFormat(tr('th-TH','en-GB'),{day:'numeric',month:'short'}).format(d):day;};
+  const compactNumber=x=>Number(x||0).toLocaleString(tr('th-TH','en-US'));
+  const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
+  let selectedDays=30;
+  function collect(days=selectedDays,now=new Date()){
+    const auth=window.WorkdayV8Cloud?.getStatus?.();
+    if(auth?.signedIn && auth.ready===false)return {pending:true};
+    const today=localDay(now),start=shift(today,1-days),daily=new Map();
+    for(let d=start;d<=today;d=shift(d,1)) daily.set(d,{day:d,journal:0,focus:0,minutes:0,completed:0});
+    const journals=read('wp-v6-journal',{}), journalDays=[];
+    if(journals&&typeof journals==='object'&&!Array.isArray(journals)){
+      Object.entries(journals).slice(0,1500).forEach(([key,entry])=>{
+        const day=strictDay(key);
+        if(!day||!entry||typeof entry!=='object'||![entry.work,entry.learned].some(x=>String(x||'').trim()))return;
+        journalDays.push(day);
+        const hit=daily.get(day);if(hit)hit.journal=1;
+      });
+    }
+    const projects=read('wp-v6-projects',[]), validProjects=Array.isArray(projects)?projects.filter(p=>p&&typeof p==='object').slice(0,450):[];
+    const completeProjects=validProjects.filter(p=>p.status==='completed'||Number(p.progress)>=100);
+    const projectDates=[];
+    completeProjects.forEach(p=>{
+      const exact=dayOf(p.completedAt||p.completed_at);
+      const estimated=dayOf(p.updatedAt||p.updated_at);
+      const day=exact||estimated;
+      if(day){projectDates.push({day,estimated:!exact,name:String(p.name||p.title||tr('โปรเจกต์','Project')).slice(0,95)});const hit=daily.get(day);if(hit)hit.completed++;}
+    });
+    const focusRows=read('wdj-v875-focus-history-v1:'+scope(),[]);
+    const validFocus=Array.isArray(focusRows)?focusRows.filter(f=>f&&typeof f==='object'&&Number.isFinite(Number(f.seconds))&&Number(f.seconds)>=60).slice(0,240):[];
+    let focusMinutes=0,focusCount=0;
+    validFocus.forEach(f=>{const day=dayOf(f.completedAt),hit=daily.get(day);if(!hit)return;hit.focus++;hit.minutes+=Math.round(Number(f.seconds)/60);focusMinutes+=Math.round(Number(f.seconds)/60);focusCount++;});
+    const rows=[...daily.values()],journalCount=rows.reduce((a,d)=>a+d.journal,0),activeDays=rows.filter(d=>d.journal||d.focus||d.completed).length,projectsDone=rows.reduce((a,d)=>a+d.completed,0);
+    const projectOverview={all:validProjects.length,completed:completeProjects.length,active:validProjects.filter(p=>p.status!=='archived'&&p.status!=='completed'&&Number(p.progress)<100).length,archived:validProjects.filter(p=>p.status==='archived'&&Number(p.progress)<100).length,average:validProjects.length?Math.round(validProjects.reduce((sum,p)=>sum+clamp(p.progress,0,100),0)/validProjects.length):0};
+    let streak=0;for(let d=today;daily.has(d);d=shift(d,-1)){if(daily.get(d).journal)streak++;else break;}
+    return {pending:false,days,start,today,rows,journalCount,activeDays,focusMinutes,focusCount,projectsDone,projectDates,projectOverview,streak,journalDates:[...new Set(journalDays)],projects:validProjects,focusLocal:true};
+  }
+  function weekly(data){
+    const buckets=new Map();
+    data.rows.forEach(row=>{
+      const d=dayDate(row.day),offset=(d.getDay()+6)%7;d.setDate(d.getDate()-offset);
+      const id=localDay(d);if(!buckets.has(id))buckets.set(id,{id,display:displayDay(id),journal:0,minutes:0,projects:0});
+      const b=buckets.get(id);b.journal+=row.journal;b.minutes+=row.minutes;b.projects+=row.completed;
+    });
+    return [...buckets.values()];
+  }
+  function monthly(data){
+    const buckets=new Map();
+    data.rows.forEach(row=>{const id=row.day.slice(0,7);if(!buckets.has(id)){
+      const d=new Date(id+'-15T12:00:00');buckets.set(id,{id,display:new Intl.DateTimeFormat(tr('th-TH','en-GB'),{month:'short'}).format(d),journal:0,minutes:0,projects:0});}
+      const b=buckets.get(id);b.journal+=row.journal;b.minutes+=row.minutes;b.projects+=row.completed;
+    });
+    return [...buckets.values()];
+  }
+  function heatmap(data){
+    const monday=dayDate(data.start);monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+    const sunday=dayDate(data.today);sunday.setDate(sunday.getDate()+6-(sunday.getDay()+6)%7);
+    const weeks=[];for(let date=new Date(monday);date<=sunday;date.setDate(date.getDate()+7)){
+      const week=[];for(let i=0;i<7;i++){const d=new Date(date);d.setDate(d.getDate()+i);const day=localDay(d),row=data.rows.find(x=>x.day===day);
+        const intensity=!row?0:Math.min(4,(row.journal?1:0)+(row.focus?1:0)+(row.minutes>=25?1:0)+(row.completed?1:0));
+        week.push({day,intensity,empty:!row,details:row?`${row.journal} Journal · ${row.minutes} min Focus · ${row.completed} Projects`:''});}
+      weeks.push(week);
+    }
+    return `<div class="wdj-insights-heatmap-wrap"><div class="wdj-insights-weekdays"><span>${tr('จ','M')}</span><span>${tr('อ','T')}</span><span>${tr('พ','W')}</span><span>${tr('พฤ','T')}</span><span>${tr('ศ','F')}</span><span>${tr('ส','S')}</span><span>${tr('อา','S')}</span></div><div class="wdj-insights-heatmap" role="img" aria-label="${esc(tr('ระดับกิจกรรมรายวัน','Daily activity levels'))}">${weeks.map(w=>`<div class="wdj-insights-week">${w.map(d=>`<span class="wdj-insights-cell level-${d.intensity}${d.empty?' out':''}" title="${esc(d.day+(d.details?' · '+d.details:''))}" aria-label="${esc(d.day+(d.details?' '+d.details:''))}"></span>`).join('')}</div>`).join('')}</div></div><div class="wdj-insights-heatmap-foot"><small>${esc(displayDay(data.start))} – ${esc(displayDay(data.today))}</small><span>${tr('น้อย','Less')} ${[0,1,2,3,4].map(n=>`<i class="wdj-insights-cell level-${n}"></i>`).join('')} ${tr('มาก','More')}</span></div>`;
+  }
+  function chart(data){
+    const buckets=(data.days===90?monthly:weekly)(data);
+    const maxJournal=Math.max(1,...buckets.map(b=>b.journal)),maxFocus=Math.max(1,...buckets.map(b=>b.minutes));
+    return `<div class="wdj-insights-trend-head"><div><strong>${tr('แนวโน้มกิจกรรม','Activity trends')}</strong><small>${data.days===90?tr('สรุปรายเดือน','Monthly summary'):tr('สรุปรายสัปดาห์','Weekly summary')}</small></div><div class="wdj-insights-legend"><span><i class="journal"></i>Journal</span><span><i class="focus"></i>Focus</span></div></div><div class="wdj-insights-bars" role="img" aria-label="${esc(tr('กราฟเปรียบเทียบจำนวน Journal กับนาที Focus','Journal days and Focus minutes by period'))}">${buckets.map(b=>`<div class="wdj-insights-bar-group" title="${esc(`${b.id}: ${b.journal} journals, ${b.minutes} Focus minutes`)}"><div class="wdj-insights-bar-pair"><i class="journal" style="height:${b.journal?Math.max(8,b.journal/maxJournal*100):0}%"></i><i class="focus" style="height:${b.minutes?Math.max(8,b.minutes/maxFocus*100):0}%"></i></div><small>${esc(b.display)}</small><span>${b.journal} / ${b.minutes}${tr('น.','m')}</span></div>`).join('')}</div><p class="wdj-insights-chart-caption">${tr('แต่ละแท่งใช้สเกลของตัวเอง: สีน้ำเงินเป็นจำนวนวันที่เขียน Journal, สีม่วงเป็นนาที Focus (ไม่ใช่หน่วยเดียวกัน)','Separate scales: blue is Journal days; purple is Focus minutes (different units).')}</p>`;
+  }
+  function projectCard(data){
+    const p=data.projectOverview;
+    const latest=[...data.projects].sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||''))).slice(0,4);
+    return `<div class="wdj-insights-section-head"><div><h3>🧩 ${tr('สุขภาพโปรเจกต์','Project overview')}</h3><p>${tr('ภาพรวมทั้งหมด ไม่จำกัดเฉพาะช่วงวันที่ด้านบน','All projects, not limited to the selected date range')}</p></div><a href="#/projects">${tr('ไปหน้าโปรเจกต์','Open Projects')} ↗</a></div><div class="wdj-insights-project-stats"><div><strong>${p.all}</strong><small>${tr('ทั้งหมด','Total')}</small></div><div><strong>${p.active}</strong><small>${tr('กำลังทำ','Active')}</small></div><div><strong>${p.completed}</strong><small>${tr('สำเร็จ','Completed')}</small></div><div><strong>${p.average}%</strong><small>${tr('Progress เฉลี่ย','Average progress')}</small></div></div><div class="wdj-insights-project-list">${latest.length?latest.map(project=>{const pct=clamp(project.progress,0,100);return `<div class="wdj-insights-project-row"><div><strong>${esc(String(project.name||project.title||'Project').slice(0,100))}</strong><small>${esc(String(project.status||tr('กำลังทำ','Active')).slice(0,45))}</small></div><div class="wdj-insights-project-progress"><span><i style="width:${pct}%"></i></span><b>${pct}%</b></div></div>`;}).join(''):`<p class="wdj-insights-empty">${tr('ยังไม่มีโปรเจกต์','No projects yet')}</p>`}</div>`;
+  }
+  function skillsCard(){
+    let skills=[];try{const result=window.WorkdaySkills?.getInsights?.();if(Array.isArray(result))skills=result.filter(s=>Number.isFinite(Number(s.xp))&&Number(s.xp)>0).sort((a,b)=>b.xp-a.xp).slice(0,5);}catch{}
+    const max=Math.max(1,...skills.map(s=>s.xp));
+    return `<div class="wdj-insights-section-head"><div><h3>🌳 ${tr('สายทักษะที่พัฒนา','Skill growth')}</h3><p>${tr('Growth XP สะสมจาก Skill Tree (ตลอดช่วง Journey)','Lifetime Growth XP from Skill Tree')}</p></div><a href="#/skills">Skill Tree ↗</a></div>${skills.length?`<div class="wdj-insights-skills">${skills.map(s=>`<div class="wdj-insights-skill"><span>${esc(String(s.icon||'🌱').slice(0,8))} ${esc(String(tr(s.th||s.en,s.en||s.th)||s.id).slice(0,65))}</span><div class="wdj-insights-skill-track"><i style="width:${Math.round(s.xp/max*100)}%"></i></div><strong>${compactNumber(s.xp)} XP</strong></div>`).join('')}</div>`:`<div class="wdj-insights-empty">${tr('เริ่มบันทึกงานหรือกำหนด Skill Tags เพื่อดูสายทักษะเด่นของคุณ','Record work or tag skills to see your growth here.')}</div>`}`;
+  }
+  function markup(){
+    const data=collect();if(data.pending)return `<div class="wdj-insights-page"><div class="wdj-insights-empty" role="status">⏳ ${tr('กำลังโหลดข้อมูลของบัญชี...','Loading account data...')}</div></div>`;
+    const percent=data.days?Math.round(data.activeDays/data.days*100):0;
+    const cells=[{icon:'📓',title:tr('วันที่เขียน Journal','Journal days'),value:data.journalCount,sub:tr('นับวันละหนึ่งครั้ง','Unique days')},{icon:'⏱️',title:tr('เวลา Focus','Focus time'),value:`${compactNumber(data.focusMinutes)} ${tr('นาที','min')}`,sub:`${data.focusCount} ${tr('เซสชัน','sessions')}`},{icon:'🗓️',title:tr('วันที่มีกิจกรรม','Active days'),value:`${percent}%`,sub:`${data.activeDays}/${data.days} ${tr('วัน','days')}`},{icon:'🏁',title:tr('Project สำเร็จ','Projects completed'),value:data.projectsDone,sub:tr('นับวันที่สำเร็จ/อัปเดต','Completion/last update date')}];
+    return `<div class="wdj-insights-page"><header class="wdj-insights-hero"><div class="wdj-insights-headline"><div class="wdj-insights-icon" aria-hidden="true">📊</div><div><span class="wdj-insights-eyebrow">WORKDAY JOURNEY · PRODUCTIVITY INSIGHTS 2.0</span><h2>${tr('ภาพรวมการทำงาน','Productivity Insights')}</h2><p>${tr('ดูความสม่ำเสมอของการบันทึกงานและเวลาโฟกัสโดยไม่แก้ข้อมูลเดิม','Explore your journal and focus patterns without changing your records.')}</p></div></div><div class="wdj-insights-period" role="group" aria-label="${tr('เลือกช่วงเวลา','Select time range')}">${[7,30,90].map(n=>`<button type="button" data-insights-days="${n}" aria-pressed="${selectedDays===n}" class="${selectedDays===n?'active':''}">${n} ${tr('วัน','days')}</button>`).join('')}</div></header>
+    <section class="wdj-insights-kpis" aria-label="${tr('สถิติช่วงที่เลือก','Selected period statistics')}">${cells.map(c=>`<article class="wdj-insights-kpi"><span class="wdj-insights-kpi-icon">${c.icon}</span><small>${esc(c.title)}</small><strong>${esc(c.value)}</strong><span>${esc(c.sub)}</span></article>`).join('')}</section>
+    <div class="wdj-insights-primary"><section class="wdj-insights-panel"><div class="wdj-insights-section-head"><div><h3>🟩 ${tr('ปฏิทินกิจกรรม','Activity heatmap')}</h3><p>${tr('Journal, Focus และการจบ Project ในแต่ละวัน','Journal, Focus and project completions by date')}</p></div></div>${heatmap(data)}</section><section class="wdj-insights-panel">${chart(data)}</section></div>
+    <div class="wdj-insights-secondary"><section class="wdj-insights-panel">${projectCard(data)}</section><section class="wdj-insights-panel">${skillsCard()}</section></div>
+    <section class="wdj-insights-method"><strong>ℹ️ ${tr('วิธีอ่านข้อมูล','How these metrics work')}</strong><p>${tr('Journal นับหนึ่งครั้งต่อวันจากบันทึกที่มีข้อความ, Focus นับเฉพาะ Session ที่ทำสำเร็จบน Browser นี้, Project สำเร็จอิงวันที่บันทึกเสร็จหรือวันอัปเดตล่าสุดหากไม่มีวันเสร็จจริง, และ Skill XP เป็นคะแนนกิจกรรมสะสม ไม่ใช่คะแนนประสิทธิภาพการทำงาน','Journal counts unique days with written entries. Focus includes completed sessions from this browser only. Project completion uses its saved completion date, or last update if no completion date exists. Skill XP is activity-based, not a performance score.')}</p><p>🔒 ${tr('การ์ดนี้อ่านข้อมูลเท่านั้น ไม่บันทึก ไม่ Sync เพิ่ม และไม่แจก Coin','Read-only: no extra sync, writes or Coin rewards.')}</p></section></div>`;
+  }
+  function render(){const host=$(ROOT);if(host)host.innerHTML=markup();}
+  document.addEventListener('click',ev=>{
+    const button=ev.target.closest?.('#wdjInsightsPage [data-insights-days]');if(!button)return;
+    const n=Number(button.dataset.insightsDays);if(![7,30,90].includes(n))return;selectedDays=n;render();$(ROOT)?.querySelector(`[data-insights-days="${n}"]`)?.focus({preventScroll:true});
+  });
+  for(const event of ['workday:v7-data-changed','workday:v8-cloud-ready','workday:v8-auth-state'])window.addEventListener(event,()=>{if(document.body?.dataset.v7Route==='insights')render();});
+  window.addEventListener('storage',ev=>{if(document.body?.dataset.v7Route==='insights'&&(!ev.key||['wp-v6-journal','wp-v6-projects','wp-language'].includes(ev.key)||ev.key.startsWith('wdj-v875-focus-history-v1:')))render();});
+  window.WorkdayInsights={render,collect,_test:{strictDay,dayOf,weekly,monthly}};
+  if(location.hash.replace(/^#\/?/,'').split('?')[0]==='insights')queueMicrotask(render);
+})();
