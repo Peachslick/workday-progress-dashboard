@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -3329,7 +3329,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3661,7 +3661,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3726,7 +3726,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3887,7 +3887,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4155,7 +4155,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4420,7 +4420,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4814,7 +4814,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4961,7 +4961,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.6.1';
+  const VERSION = '8.7.6.2';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5532,10 +5532,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.6.1',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.6.2',refresh:mount };
 })();
 
-/* SOURCE: V8.7.6.1 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.6.2 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5859,7 +5859,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.6.1: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.6.2: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6191,12 +6191,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.6.1',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.6.2',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.6.1: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.6.2: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6253,6 +6253,7 @@
       state.pendingBreak=true;
     }else state.pendingBreak=false;
     state.session=null;saveState();
+    updateTabTitle();
     if(document.body.dataset.v7Route==='focus'){render();if(s.kind==='focus')celebrate();}
     return true;
   }
@@ -6322,13 +6323,30 @@
       <section class="wdj-focus-history"><div class="wdj-focus-section-title"><div><span class="wdj-focus-eyebrow">FOCUS JOURNAL</span><h3>📚 ${tr('ประวัติ Session','Session history')}</h3></div><small>${tr('เก็บใน Browser นี้ สูงสุด 240 รายการ','Stored locally · up to 240 entries')}</small></div>${last.length?`<div class="wdj-focus-history-list">${last.map(x=>`<div class="wdj-focus-history-row"><span class="wdj-focus-history-icon">${x.preset==='deep'?'🌌':'🍅'}</span><div><strong>${x.preset==='deep'?'Deep Work':'Pomodoro'} · ${Math.round(x.seconds/60)} ${tr('นาที','min')}</strong><small>${safe(x.projectName||tr('ไม่ได้ระบุ Project','General focus'))}</small></div><time>${safe(stamp(x.completedAt))}</time></div>`).join('')}</div>`:`<div class="wdj-focus-empty"><div>🌱</div><strong>${tr('ยังไม่มี Session ที่ทำสำเร็จ','No completed sessions yet')}</strong><p>${tr('เริ่มโฟกัส Session แรก แล้วสถิติจะปรากฏที่นี่','Complete your first focus session to start building a record.')}</p></div>`}</section>
     </div>`;
   }
+  function getTabTitle(){
+    ensureScope();
+    const s=state.session;
+    if(!s)return null;
+    const time=formatClock(secLeft());
+    // Put the countdown first: it remains readable in narrow browser tabs
+    // and in the Windows taskbar preview while working in another program.
+    if(s.status==='paused')return `⏸ ${time} · ${tr('หยุดชั่วคราว','Paused')}`;
+    if(s.kind==='break')return `☕ ${time} · ${tr('พัก','Break')}`;
+    return `⏱ ${time} · Focus Studio`;
+  }
+  function updateTabTitle(){
+    const next=getTabTitle()||window.WorkdayDefaultTabTitle||'Workday Journey';
+    if(document.title!==next)document.title=next;
+  }
   function updateLive(){
+    // Title must refresh even when the user navigates away from Focus Studio.
+    // The visible timer UI is only refreshed while that page is active.
+    updateTabTitle();
     if(document.body.dataset.v7Route!=='focus')return;
     const root=$(ROOT_ID);if(!root)return;
     const sec=secLeft(),s=state.session,total=s?s.durationSec:PRESETS[state.preset].focus;
     const timer=root.querySelector('[data-focus-timer]');if(timer)timer.textContent=formatClock(sec);
     const ring=root.querySelector('[data-focus-ring]');if(ring)ring.style.setProperty('--focus-progress',`${Math.min(100,Math.max(0,100*(total-sec)/total))}%`);
-    document.title=`${state.session?formatClock(sec)+' · ':''}Workday Journey`;
   }
   function render(){
     ensureScope();if(finishIfDue())return;
@@ -6344,17 +6362,18 @@
   document.addEventListener('change',e=>{if(e.target?.id==='wdjFocusProject')setProject(e.target.value);});
   window.addEventListener('storage',e=>{if(e.key&&e.key.startsWith('wdj-v875-focus-')){scope='';ensureScope();if(document.body.dataset.v7Route==='focus')render();}});
   ['workday:v8-auth-state','workday:v8-cloud-ready'].forEach(ev=>window.addEventListener(ev,()=>{scope='';ensureScope();if(document.body.dataset.v7Route==='focus')render();}));
-  window.addEventListener('hashchange',()=>{ensureScope();finishIfDue();if(document.body.dataset.v7Route==='focus')updateLive();});
+  window.addEventListener('hashchange',()=>{ensureScope();finishIfDue();updateLive();});
   document.addEventListener('visibilitychange',()=>{ensureScope();if(!document.hidden){if(!finishIfDue())updateLive();}});
+  window.addEventListener('focus',()=>{ensureScope();if(!finishIfDue())updateLive();});
   // Wall-clock deadlines avoid timer drift in background tabs. No network polling.
   setInterval(()=>{ensureScope();if(!finishIfDue())updateLive();},1000);
-  window.WorkdayFocus={render,getSnapshot:()=>{ensureScope();return {account:scope,active:!!state.session,completed:history.length};}};
-  ensureScope();finishIfDue();
+  window.WorkdayFocus={render,getTabTitle,getSnapshot:()=>{ensureScope();return {account:scope,active:!!state.session,completed:history.length};}};
+  ensureScope();finishIfDue();updateTabTitle();
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='focus')queueMicrotask(render);
 })();
 
 
-/* ===== V8.7.6.1 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.6.2 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {

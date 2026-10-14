@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.6.1";
+  const APP_VERSION = "8.7.6.2";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -1560,12 +1560,17 @@
     if(status.type==="break") document.body.classList.add("mood-break"); if(status.type==="finished") document.body.classList.add("mood-finished");
   }
   function updateBrowserTitle(status,dailyPercent,stats,nextBreak) {
-    // Keep the browser tab clean and stable. The old title included live
-    // countdown/status text, while V7/V8 page routing could also overwrite it.
-    // That made the tab look like it was changing every second.
+    // Keep the normal browser tab title stable, unless Focus Studio currently
+    // owns it with a live countdown. Do not overwrite an active focus timer.
     const percent=Number.isFinite(Number(dailyPercent)) ? Math.max(0,Math.min(100,Number(dailyPercent))) : 0;
     const nextTitle=`${percent.toFixed(1)}% · Workday Journey`;
-    if(document.title!==nextTitle) document.title=nextTitle;
+    // A running Focus Studio session owns the tab title, including when a
+    // different page is open inside Workday Journey. The normal title remains
+    // available so it can be restored immediately when a session ends.
+    window.WorkdayDefaultTabTitle=nextTitle;
+    const focusTitle=window.WorkdayFocus?.getTabTitle?.();
+    const effectiveTitle=focusTitle||nextTitle;
+    if(document.title!==effectiveTitle) document.title=effectiveTitle;
   }
   function toastTypeFromIcon(icon,title="") {
     const text=String(title||"").toLowerCase();
@@ -2361,7 +2366,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.7.6.1";
+  const V6_VERSION = "8.7.6.2";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2826,7 +2831,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.6.1";
+  const VERSION = "8.7.6.2";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
