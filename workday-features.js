@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree, Journey Timeline และ Productivity Insights"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree, Journey Timeline and productivity trends"]},
+    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree, Journey Timeline, Insights และ Journey Wrapped"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree, Journey Timeline, Insights and Journey Wrapped"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
@@ -605,6 +605,7 @@
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · สรุปเวลาโฟกัส"],
       timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
       insights:["📊","สถิติการทำงาน","Journal · Focus · Projects · Skills"],
+      wrapped:["🎊","Journey Wrapped","การ์ดสรุปและความสำเร็จ"],
       skills:["🌳","Skill Tree","แผนผังทักษะ · Level · Growth XP"],
       achievements:["🏆","ความสำเร็จ","Journey Challenges · Feature Achievements · ฉายา"],
       reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
@@ -624,6 +625,7 @@
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · Focus history"],
       timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
       insights:["📊","Productivity Insights","Journal · Focus · Projects · Skills"],
+      wrapped:["🎊","Journey Wrapped","Your story in shareable cards"],
       skills:["🌳","Skill Tree","Career paths · Levels · Growth XP"],
       achievements:["🏆","Achievements","Journey Challenges · Feature Achievements · Titles"],
       reports:["📊","Reports & Analytics","Attendance, heatmap and journey reports"],
@@ -3333,14 +3335,14 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
   const lang = () => localStorage.getItem("wp-language") === "en" ? "en" : "th";
 
   const ROUTE_GROUPS = [
-    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "insights", "calendar", "reports"] },
+    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "insights", "wrapped", "calendar", "reports"] },
     { id: "journey", label: "JOURNEY", routes: ["achievements", "missions"] },
     { id: "economy", label: "ECONOMY", routes: ["rewards", "bank", "exchange"] },
     { id: "system", label: "SYSTEM", routes: ["developer", "settings"] }
@@ -3348,12 +3350,12 @@
 
   const ROUTE_LABELS = {
     th: {
-      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", insights: "ข้อมูลเชิงลึก", calendar: "ปฏิทิน",
+      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", insights: "ข้อมูลเชิงลึก", wrapped: "Journey Wrapped", calendar: "ปฏิทิน",
       reports: "รายงาน", achievements: "ความสำเร็จ", missions: "ภารกิจ", rewards: "รางวัล",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "ตั้งค่า", more: "เพิ่มเติม"
     },
     en: {
-      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", insights: "Insights", calendar: "Calendar",
+      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", insights: "Insights", wrapped: "Wrapped", calendar: "Calendar",
       reports: "Reports", achievements: "Achievements", missions: "Missions", rewards: "Rewards",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "Settings", more: "More"
     }
@@ -3371,6 +3373,7 @@
     skills: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 13 6.5 8M12 11l5.5-5M6.5 8V4M17.5 6V3"/><path d="M5 20c2-3 12-3 14 0"/></svg>',
     timeline: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M6 6h6l2 3h5M6 15h5l2 3h6"/><circle cx="6" cy="4" r="1.5"/></svg>',
     insights: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V11h4v8M10 19V5h4v14M16 19v-6h4v6M3 20h18"/></svg>',
+    wrapped: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16v11H4zM3 6h18v3H3zM12 6v14M8 6c-4-3-3-6 0-5 2 1 4 5 4 5s2-4 4-5c3-1 4 2 0 5"/></svg>',
     workspace: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.6 9.3V20h12.8V9.3M9.5 20v-6.3h5V20"/></svg>',
     rewards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4Z"/><path d="M3.2 7.2h17.6V10H3.2ZM12 7.2V20"/><path d="M12 7.2H8.1a2.1 2.1 0 1 1 2.1-2.1c0 1.2 1.8 2.1 1.8 2.1ZM12 7.2h3.9a2.1 2.1 0 1 0-2.1-2.1c0 1.2-1.8 2.1-1.8 2.1Z"/></svg>',
     bank: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 9 8.5-5 8.5 5"/><path d="M5.2 9h13.6M6.7 9v7.6M10.2 9v7.6M13.8 9v7.6M17.3 9v7.6M4.2 16.6h15.6M3.5 20h17"/></svg>',
@@ -3382,7 +3385,7 @@
 
   const CLASSIC_ICONS = {
     dashboard:"🏠", journal:"📓", projects:"📁", calendar:"📅", reports:"📊",
-    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", timeline:"🗺️", insights:"📊", workspace:"🏡", bank:"🏦", exchange:"📈",
+    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", timeline:"🗺️", insights:"📊", wrapped:"🎊", workspace:"🏡", bank:"🏦", exchange:"📈",
     developer:"🛠️", settings:"⚙️", more:"☰"
   };
   const iconStyle = () => document.documentElement.dataset.wdjIconStyle === "classic" ? "classic" : "modern";
@@ -3667,7 +3670,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3732,7 +3735,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3893,7 +3896,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4161,7 +4164,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4426,7 +4429,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4820,7 +4823,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.8";
+  const VERSION = "8.7.9";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4967,7 +4970,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.8';
+  const VERSION = '8.7.9';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5538,10 +5541,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.8',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.9',refresh:mount };
 })();
 
-/* SOURCE: V8.7.8 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.9 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5865,7 +5868,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.8: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.9: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6197,12 +6200,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.8',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.9',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.8: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.9: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6379,7 +6382,7 @@
 })();
 
 
-/* ===== V8.7.8 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.9 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6551,7 +6554,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.8 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.9 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6675,7 +6678,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.8 Productivity Insights 2.0 (read-only) =====
+/* ===== V8.7.9 Productivity Insights 2.0 (read-only) =====
  * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
  * No monetary, achievement or Cloud writes occur in this module.
  */
@@ -6794,4 +6797,119 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   window.addEventListener('storage',ev=>{if(document.body?.dataset.v7Route==='insights'&&(!ev.key||['wp-v6-journal','wp-v6-projects','wp-language'].includes(ev.key)||ev.key.startsWith('wdj-v875-focus-history-v1:')))render();});
   window.WorkdayInsights={render,collect,_test:{strictDay,dayOf,weekly,monthly}};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='insights')queueMicrotask(render);
+})();
+
+
+/* ===== V8.7.9 Journey Wrapped: private, read-only story cards ===== */
+(() => {
+  'use strict';
+  const ROOT='wdjWrappedPage';
+  const $=id=>document.getElementById(id);
+  const lang=()=>localStorage.getItem('wp-language')==='en'?'en':'th';
+  const tr=(th,en)=>lang()==='en'?en:th;
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const read=(key,def)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??def;}catch{return def;}};
+  const account=()=>String(window.WorkdayV8Cloud?.getUser?.()?.id||'guest').replace(/[^\w-]/g,'').slice(0,90)||'guest';
+  const fmt=x=>Number(x||0).toLocaleString(lang()==='en'?'en-US':'th-TH');
+  const pad=x=>String(x).padStart(2,'0');
+  const localDay=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const validDay=x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(String(x??'')))return '';const d=new Date(x+'T12:00:00');return Number.isFinite(+d)&&localDay(d)===x?x:'';};
+  const day=x=>{if(typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x))return validDay(x);if(x===null||x===undefined||x==='')return '';const d=new Date(x);return Number.isFinite(+d)?localDay(d):'';};
+  const showDate=d=>{if(!d)return '—';const dt=new Date(d+'T12:00:00');return new Intl.DateTimeFormat(lang()==='en'?'en-GB':'th-TH',{day:'numeric',month:'short',year:'numeric'}).format(dt);};
+  const clamp=(x,min,max)=>Math.min(max,Math.max(min,Number(x)||0));
+  const slideNames=()=>[tr('ภาพรวม','Overview'),tr('บันทึก','Journal'),tr('โปรเจกต์','Projects'),tr('โฟกัส','Focus'),tr('ทักษะ','Skills'),tr('ช่วงเวลาที่น่าจดจำ','Highlights')];
+  let slide=0,period='journey',showName=false,lastDownload='';
+  function collect(){
+    const cloud=window.WorkdayV8Cloud?.getStatus?.();
+    if(cloud?.signedIn&&cloud.ready===false)return {pending:true};
+    const config=window.WorkdayJourneyAPI?.getConfig?.()||{};
+    const journal=read('wp-v6-journal',{}),projectRows=read('wp-v6-projects',[]),unlocks=read('wp-v7-achievement-unlocked-at',{});
+    const today=localDay(new Date());
+    const allJournal=journal&&typeof journal==='object'&&!Array.isArray(journal)?Object.entries(journal).slice(0,2000).filter(([k,v])=>validDay(k)&&k<=today&&v&&typeof v==='object'&&String(v.work||v.learned||'').trim()).map(([k])=>k).sort():[];
+    const projects=Array.isArray(projectRows)?projectRows.filter(v=>v&&typeof v==='object').slice(0,550):[];
+    const allFocus=read('wdj-v875-focus-history-v1:'+account(),[]);
+    const focus=Array.isArray(allFocus)?allFocus.filter(f=>f&&Number.isFinite(Number(f.seconds))&&Number(f.seconds)>=60&&day(f.completedAt)&&day(f.completedAt)<=today).slice(0,240):[];
+    const achievements=unlocks&&typeof unlocks==='object'&&!Array.isArray(unlocks)?Object.entries(unlocks).slice(0,350).filter(([,v])=>day(v)&&day(v)<=today).map(([k,v])=>({id:k,day:day(v)})):[];
+    const completion=projects.filter(p=>p.status==='completed'||Number(p.progress)>=100).map(p=>({name:String(p.name||p.title||'Project').slice(0,100),completeDay:day(p.completedAt||p.completed_at),estimatedDay:day(p.updatedAt||p.updated_at)}));
+    const available=[...new Set([...allJournal.map(x=>x.slice(0,4)),...focus.map(f=>day(f.completedAt).slice(0,4)),...completion.map(p=>(p.completeDay||p.estimatedDay).slice(0,4)),...achievements.map(x=>x.day.slice(0,4)),day(config.startDate).slice(0,4)].filter(x=>/^\d{4}$/.test(x)))].sort((a,b)=>b.localeCompare(a));
+    const accept=d=>period==='journey'||String(d||'').startsWith(period);
+    const journals=allJournal.filter(accept),sessions=focus.filter(f=>accept(day(f.completedAt))),done=completion.filter(p=>period==='journey'||accept(p.completeDay||p.estimatedDay));
+    const ach=achievements.filter(a=>accept(a.day));
+    const projectCount=period==='journey'?projects.length:projects.filter(p=>accept(day(p.createdAt||p.created_at))).length;
+    const sortedJournal=[...new Set(journals)].sort();
+    let maxStreak=0,run=0,previous='';const counts=new Map();
+    sortedJournal.forEach(k=>{const d=new Date(k+'T12:00:00');d.setDate(d.getDate()-1);run=localDay(d)===previous?run+1:1;previous=k;maxStreak=Math.max(maxStreak,run);const month=k.slice(0,7);counts.set(month,(counts.get(month)||0)+1);});
+    const topMonth=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+    let skill=[];try{const s=window.WorkdaySkills?.getInsights?.();if(Array.isArray(s))skill=s.filter(x=>Number(x.xp)>0).sort((a,b)=>Number(b.xp)-Number(a.xp)).slice(0,3);}catch{}
+    const minutes=sessions.reduce((a,f)=>a+Math.round(Number(f.seconds)/60),0);
+    const activity=new Set([...journals,...sessions.map(f=>day(f.completedAt)),...done.map(p=>p.completeDay||p.estimatedDay)].filter(Boolean));
+    const events=[...journals.map(d=>({day:d,kind:tr('เขียน Journal','Journal entry')})),...done.map(p=>({day:p.completeDay||p.estimatedDay,kind:tr('ทำ Project สำเร็จ','Project completed')})),...ach.map(a=>({day:a.day,kind:tr('ปลดล็อก Achievement','Achievement unlocked')}))].filter(e=>e.day).sort((a,b)=>b.day.localeCompare(a.day));
+    const dateRange=period==='journey'?[day(config.startDate),day(config.endDate)]:[`${period}-01-01`,`${period}-12-31`];
+    return {pending:false,available,journals,projects,done,projectCount,ach,events,focus:sessions,minutes,skill,topMonth,activity:activity.size,maxStreak,first:sortedJournal[0]||'',latest:events[0]?.day||'',range:dateRange,name:String(config.profileName||'').trim().slice(0,65),totalJournal:allJournal.length,allDone:completion.length};
+  }
+  function slides(data){
+    const title=period==='journey'?tr('ตลอดการเดินทาง','Your entire journey'):period;
+    const bestSkill=data.skill[0];
+    const skillName=bestSkill?(lang()==='en'?bestSkill.en||bestSkill.th:bestSkill.th||bestSkill.en)||tr('ทักษะที่เติบโต','Growing skill'):tr('ยังไม่มีทักษะเด่น','Skills to explore');
+    const monthLabel=data.topMonth?new Intl.DateTimeFormat(lang()==='en'?'en-US':'th-TH',{month:'long',year:'numeric'}).format(new Date(data.topMonth[0]+'-15T12:00:00')):'—';
+    return [
+      {id:'intro',tone:'blue',eyebrow:'YOUR JOURNEY · WRAPPED',icon:'✨',title:tr('นี่คือเรื่องราวของคุณ','This is your story'),lead:tr(`สรุป${title} ใน Workday Journey`,`A look back at ${title}`),big:fmt(data.activity),unit:tr('วันที่มีกิจกรรม','active days'),stats:[[fmt(data.journals.length),'Journal'],[fmt(data.done.length),tr('โปรเจกต์สำเร็จ','Projects done')],[fmt(data.ach.length),'Achievements']],foot:tr('ทุกความก้าวหน้าเล็ก ๆ มีความหมาย','Every small step deserves to be remembered.')},
+      {id:'journal',tone:'violet',eyebrow:'CHAPTER 01 · DAILY NOTES',icon:'📓',title:tr('เรื่องราวที่คุณเขียนไว้','The pages you wrote'),lead:tr('บันทึกแต่ละวันกลายเป็นเส้นทางการเติบโต','Your daily reflections tell a bigger story.'),big:fmt(data.journals.length),unit:tr('วันที่มีบันทึก','Journal days'),stats:[[fmt(data.maxStreak),tr('วันต่อเนื่องสูงสุด','Longest streak')],[data.first?showDate(data.first):'—',tr('บันทึกแรก','First note')],[data.topMonth?fmt(data.topMonth[1]):'0',tr('วันที่บันทึกในเดือนเด่น','Best month days')]],foot:data.topMonth?`${tr('เดือนที่บันทึกมากที่สุด','Most active journal month')}: ${monthLabel}`:tr('บันทึกแรกของคุณรออยู่','Your first page is waiting.')},
+      {id:'projects',tone:'indigo',eyebrow:'CHAPTER 02 · BUILD & CREATE',icon:'🧩',title:tr('สิ่งที่คุณลงมือสร้าง','What you brought to life'),lead:tr('ทุก Project เป็นก้าวสำคัญในการเรียนรู้','Projects turn ideas into progress.'),big:fmt(data.done.length),unit:tr('โปรเจกต์ที่สำเร็จ','completed projects'),stats:[[fmt(data.projectCount),tr('Project ในช่วงที่เลือก','Projects recorded')],[fmt(data.done.filter(x=>!!x.completeDay).length),tr('มีวันสำเร็จแน่นอน','Exact completion dates')],[fmt(data.done.filter(x=>!x.completeDay).length),tr('อิงวันอัปเดต','Based on updates')]],foot:tr('วันสำเร็จที่ไม่ระบุใช้วันอัปเดตล่าสุดแทน','Missing completion dates use the last update date.')},
+      {id:'focus',tone:'teal',eyebrow:'CHAPTER 03 · STAY IN THE ZONE',icon:'⏱️',title:tr('เวลาที่คุณตั้งใจให้กับงาน','The time you gave your goals'),lead:tr('ช่วงเวลาสั้น ๆ สร้างความคืบหน้าที่จับต้องได้','A little focus adds up.'),big:fmt(data.minutes),unit:tr('นาทีแห่งการโฟกัส','focused minutes'),stats:[[fmt(data.focus.length),tr('เซสชันที่สำเร็จ','Completed sessions')],[fmt(Math.floor(data.minutes/60)),tr('ชั่วโมงเต็ม','Full hours')],[fmt(data.focus.filter(f=>f.preset==='deep').length),'Deep Work']],foot:tr('นับเฉพาะ Focus Session ที่สำเร็จบน Browser นี้','Includes completed Focus sessions on this browser only.')},
+      {id:'skills',tone:'amber',eyebrow:'CHAPTER 04 · CAREER GROWTH',icon:'🌳',title:tr('ทักษะที่เติบโตไปกับคุณ','The skills growing with you'),lead:tr('กิจกรรมจาก Journal และ Project ช่วยบอกทิศทางการเรียนรู้','Your activities reveal the paths you explored.'),big:bestSkill?fmt(bestSkill.xp):'0',unit:'Growth XP',stats:[[skillName,tr('ทักษะเด่นอันดับหนึ่ง','Top skill')],[fmt(data.skill.length),tr('ทักษะที่มีกิจกรรม','Active skill paths')],[fmt(data.ach.length),tr('Achievement ในช่วงนี้','Achievements in period')]],foot:tr('Skill XP เป็นยอดสะสม ไม่จำกัดตามปีที่เลือก','Skill XP is lifetime progress, not filtered by year.')},
+      {id:'finale',tone:'rose',eyebrow:'THE FINALE · KEEP GROWING',icon:'🏆',title:tr('นี่แหละ...การเดินทางของคุณ','And this is your journey'),lead:tr('จากวันแรกจนถึงวันนี้ คุณมีเรื่องราวที่น่าจดจำ','From your first steps to everything you achieved.'),big:fmt(data.ach.length),unit:tr('Achievement ที่มีวันปลดล็อก','dated achievements'),stats:[[fmt(data.activity),tr('วันที่มีกิจกรรม','Active days')],[fmt(data.done.length),tr('Project สำเร็จ','Projects done')],[fmt(data.journals.length),tr('วันที่เขียน Journal','Journal days')]],foot:tr('บทต่อไปกำลังรอคุณอยู่ 🌟','Your next chapter is waiting. 🌟')}
+    ];
+  }
+  function card(data,s){
+    const milestones=s.stats.map(([num,label])=>`<div class="wdj-wrapped-stat"><strong>${esc(num)}</strong><span>${esc(label)}</span></div>`).join('');
+    return `<article class="wdj-wrapped-card tone-${s.tone}" aria-label="${esc(s.title)}"><div class="wdj-wrapped-grain" aria-hidden="true"></div><div class="wdj-wrapped-card-top"><span>WORKDAY JOURNEY</span><span>${esc(period==='journey'?tr('ตลอดการเดินทาง','Entire journey'):period)}</span></div><div class="wdj-wrapped-glow" aria-hidden="true">${s.icon}</div><div class="wdj-wrapped-card-main"><small>${esc(s.eyebrow)}</small><h3>${esc(s.title)}</h3><p>${esc(s.lead)}</p><div class="wdj-wrapped-big">${esc(s.big)}</div><div class="wdj-wrapped-unit">${esc(s.unit)}</div></div><div class="wdj-wrapped-stats">${milestones}</div><div class="wdj-wrapped-card-bottom"><span>${esc(s.foot)}</span><strong>${showName&&data.name?esc(data.name):'✦ YOUR STORY'}</strong></div></article>`;
+  }
+  function render(){
+    const el=$(ROOT);if(!el)return;
+    const data=collect();
+    if(data.pending){el.innerHTML=`<div class="wdj-wrapped-loading" role="status">⏳ ${tr('กำลังเตรียมเรื่องราวของบัญชี...','Preparing your account story...')}</div>`;return;}
+    if(period!=='journey'&&!data.available.includes(period))period='journey';
+    const stories=slides(data),current=stories[slide]||stories[0];
+    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.9</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>STORY ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
+  }
+  function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
+    const words=String(text).split(/\s+/);let line='',lines=[];
+    // Thai often has no word spaces: split long words by glyph when necessary.
+    for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width<=maxWidth){line=test;continue;}if(line)lines.push(line);line='';if(ctx.measureText(word).width>maxWidth){for(const ch of [...word]){if(ctx.measureText(line+ch).width>maxWidth&&line){lines.push(line);line='';}line+=ch;}}else line=word;}
+    if(line)lines.push(line);for(let i=0;i<Math.min(maxLines,lines.length);i++)ctx.fillText(lines[i],x,y+i*lineHeight);return y+Math.min(maxLines,lines.length)*lineHeight;
+  }
+  function downloadImage(){
+    const data=collect();if(data.pending)return;
+    const s=slides(data)[slide];
+    const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
+    const c=canvas.getContext('2d');if(!c)return;
+    const pal={blue:['#0d2371','#3f78e9','#a6d6ff'],violet:['#352070','#a066e0','#f5bbfd'],indigo:['#182b73','#586be6','#9bdcff'],teal:['#064b55','#139da4','#9cecd4'],amber:['#6c3e11','#de9746','#ffe1a5'],rose:['#6f244d','#d05d9d','#ffc3d9']}[s.tone];
+    const g=c.createLinearGradient(0,0,1000,1350);g.addColorStop(0,pal[0]);g.addColorStop(.57,pal[1]);g.addColorStop(1,pal[0]);c.fillStyle=g;c.fillRect(0,0,1080,1350);
+    c.globalAlpha=.14;c.fillStyle=pal[2];for(let i=0;i<24;i++){c.beginPath();c.arc(70+(i*269)%990,45+(i*193)%1250,9+(i%6)*13,0,Math.PI*2);c.fill();}c.globalAlpha=1;
+    c.fillStyle='#ffffff';c.font='700 31px Sarabun, Arial, sans-serif';c.fillText('WORKDAY JOURNEY',75,105);c.textAlign='right';c.font='600 26px Sarabun, Arial, sans-serif';c.fillText(period==='journey'?tr('ตลอด Journey','Entire journey'):period,1005,105);c.textAlign='left';
+    c.font='100px Sarabun, Arial, sans-serif';c.fillText(s.icon,75,250);c.font='700 28px Sarabun, Arial, sans-serif';c.fillStyle='#ddecff';c.fillText(s.eyebrow,75,332);
+    c.fillStyle='#ffffff';c.font='700 63px Sarabun, Arial, sans-serif';let y=wrap(c,s.title,75,425,930,76,3);c.font='400 30px Sarabun, Arial, sans-serif';c.fillStyle='#e6efff';y=wrap(c,s.lead,75,y+8,890,44,3);
+    c.fillStyle='#ffffff';c.font='800 170px Sarabun, Arial, sans-serif';c.fillText(s.big,75,835);c.font='600 32px Sarabun, Arial, sans-serif';c.fillText(s.unit,82,894);
+    c.fillStyle='rgba(255,255,255,.16)';c.beginPath();c.roundRect(68,948,944,211,25);c.fill();s.stats.forEach(([number,label],i)=>{const x=99+i*311;c.fillStyle='#fff';c.font='700 41px Sarabun, Arial, sans-serif';wrap(c,number,x,1018,267,43,2);c.fillStyle='#e9f1ff';c.font='500 24px Sarabun, Arial, sans-serif';wrap(c,label,x,1093,270,30,2);});
+    c.fillStyle='#f3f7ff';c.font='400 24px Sarabun, Arial, sans-serif';wrap(c,s.foot,78,1231,620,33,2);c.textAlign='right';c.font='600 23px Sarabun, Arial, sans-serif';c.fillText(showName&&data.name?data.name:'✦ YOUR STORY',1003,1284,900);c.textAlign='left';
+    const filename=`workday-wrapped-${period}-${s.id}.png`;
+    const a=document.createElement('a');a.download=filename;
+    if(canvas.toBlob){canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob);a.href=url;a.click();setTimeout(()=>URL.revokeObjectURL(url),15000);},'image/png');}
+    else {a.href=canvas.toDataURL('image/png');a.click();}
+    lastDownload=filename;
+  }
+  document.addEventListener('click',e=>{const btn=e.target.closest?.('#wdjWrappedPage [data-wrapped-slide],#wdjWrappedPage [data-wrapped-action]');if(!btn)return;
+    if(btn.hasAttribute('data-wrapped-slide')){slide=clamp(btn.dataset.wrappedSlide,0,5);render();return;}
+    const a=btn.dataset.wrappedAction;
+    if(a==='prev'||a==='next'){slide=clamp(slide+(a==='next'?1:-1),0,5);render();}
+    if(a==='download'){downloadImage();const el=$('wdjWrappedMessage');if(el)el.textContent=tr('สร้างภาพ PNG บนเครื่องแล้ว','PNG prepared locally.');}
+    if(a==='copy'){const d=collect(),s=slides(d)[slide],txt=[`Workday Journey Wrapped · ${period}`,s.title,`${s.big} ${s.unit}`,...s.stats.map(x=>x.join(' — ')),s.foot].join('\n');const n=$('wdjWrappedMessage');if(navigator.clipboard?.writeText){navigator.clipboard.writeText(txt).then(()=>{if(n)n.textContent=tr('คัดลอกแล้ว','Copied.');}).catch(()=>{if(n)n.textContent=tr('คัดลอกไม่ได้ กรุณาลองใช้ HTTPS','Copy not available. Try HTTPS.');});}else if(n)n.textContent=tr('Browser ไม่รองรับการคัดลอกอัตโนมัติ','Clipboard unavailable.');}
+  });
+  document.addEventListener('change',e=>{if(e.target?.id==='wdjWrappedPeriod'){period=e.target.value;slide=0;render();}if(e.target?.id==='wdjWrappedShowName'){showName=e.target.checked;render();}});
+  document.addEventListener('keydown',e=>{if(document.body?.dataset.v7Route!=='wrapped'||!e.target.closest?.('#wdjWrappedPage'))return;if(e.target.closest('input,select,textarea'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();slide=clamp(slide+(e.key==='ArrowRight'?1:-1),0,5);render();}});
+  ['workday:v8-auth-state','workday:v8-cloud-ready','workday:v7-data-changed','workday:v8-data-changed'].forEach(event=>window.addEventListener(event,()=>{if(document.body?.dataset.v7Route==='wrapped')render();}));
+  window.addEventListener('storage',e=>{if(document.body?.dataset.v7Route==='wrapped'&&(!e.key||['wp-v6-journal','wp-v6-projects','wp-v7-achievement-unlocked-at','wp-language'].includes(e.key)||e.key.startsWith('wdj-v875-focus-history-v1:')))render();});
+  window.WorkdayWrapped={render,collect,slides,_test:{day,validDay}};
+  if(location.hash.replace(/^#\/?/,'').split('?')[0]==='wrapped')queueMicrotask(render);
 })();
