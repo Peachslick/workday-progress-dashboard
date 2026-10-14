@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree, Journey Timeline, Insights และ Journey Wrapped"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree, Journey Timeline, Insights and Journey Wrapped"]},
+    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree, Journey Timeline, Insights และ Journey Wrapped"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree, combined reporting and Life Quests"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
@@ -2188,6 +2188,7 @@
     root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>${lang()==="th"?"Daily Missions":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำให้ครบเพื่อเปิด Daily Chest และสะสมวันสำหรับ Weekly Chest":"Fresh missions every day. Complete all three to open a Daily Chest and build toward the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><section class="v82-mission-list">${cards}</section><section class="v82-chest-grid"><article class="v82-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"สุ่ม 5–30 Coins, Theme Trial 24h หรือ Mascot XP":"Random 5–30 Coins, a 24h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?"✓ OPENED":"OPEN CHEST"}</button></article><article class="v82-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"เปิด Daily Chest ครบ 5 วัน · รางวัลใหญ่ 40–100 Coins, Theme Trial 48h หรือ Mascot XP":"Open Daily Chests on 5 days · bigger rewards: 40–100 Coins, 48h Theme Trial, or Mascot XP"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?"✓ OPENED":"OPEN WEEKLY"}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>openChest(btn.dataset.v82Chest)));
+    window.WorkdayLifeQuests?.render?.();
     window.WorkdayV853?.refresh?.();
     window.WorkdayV850?.refresh?.();
   }
@@ -3335,14 +3336,14 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
   const lang = () => localStorage.getItem("wp-language") === "en" ? "en" : "th";
 
   const ROUTE_GROUPS = [
-    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "insights", "wrapped", "calendar", "reports"] },
+    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "calendar", "reports"] },
     { id: "journey", label: "JOURNEY", routes: ["achievements", "missions"] },
     { id: "economy", label: "ECONOMY", routes: ["rewards", "bank", "exchange"] },
     { id: "system", label: "SYSTEM", routes: ["developer", "settings"] }
@@ -3356,7 +3357,7 @@
     },
     en: {
       dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", insights: "Insights", wrapped: "Wrapped", calendar: "Calendar",
-      reports: "Reports", achievements: "Achievements", missions: "Missions", rewards: "Rewards",
+      reports: "Reports & Journey", achievements: "Achievements", missions: "Missions", rewards: "Rewards",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "Settings", more: "More"
     }
   };
@@ -3516,6 +3517,7 @@
     refreshPageHeading();
     refreshMobileDock();
     refreshProfileAndVersion();
+    window.WorkdayNavigationHub?.refresh?.();
   }
 
   let timer = 0;
@@ -3670,7 +3672,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3735,7 +3737,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3896,7 +3898,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4164,7 +4166,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4429,7 +4431,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4823,7 +4825,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4970,7 +4972,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.9';
+  const VERSION = '8.7.10';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5541,10 +5543,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.9',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.10',refresh:mount };
 })();
 
-/* SOURCE: V8.7.9 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.10 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5868,7 +5870,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.9: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.10: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6200,12 +6202,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.9',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.9: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.10: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6382,7 +6384,7 @@
 })();
 
 
-/* ===== V8.7.9 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.10 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6554,7 +6556,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.9 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.10 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6678,7 +6680,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.9 Productivity Insights 2.0 (read-only) =====
+/* ===== V8.7.10 Productivity Insights 2.0 (read-only) =====
  * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
  * No monetary, achievement or Cloud writes occur in this module.
  */
@@ -6800,7 +6802,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.9 Journey Wrapped: private, read-only story cards ===== */
+/* ===== V8.7.10 Journey Wrapped: private, read-only story cards ===== */
 (() => {
   'use strict';
   const ROOT='wdjWrappedPage';
@@ -6871,7 +6873,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     if(data.pending){el.innerHTML=`<div class="wdj-wrapped-loading" role="status">⏳ ${tr('กำลังเตรียมเรื่องราวของบัญชี...','Preparing your account story...')}</div>`;return;}
     if(period!=='journey'&&!data.available.includes(period))period='journey';
     const stories=slides(data),current=stories[slide]||stories[0];
-    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.9</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>STORY ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
+    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>STORY ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
   }
   function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
     const words=String(text).split(/\s+/);let line='',lines=[];
@@ -6913,3 +6915,143 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   window.WorkdayWrapped={render,collect,slides,_test:{day,validDay}};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='wrapped')queueMicrotask(render);
 })();
+
+
+/* V8.7.10 - Navigation consolidation and Daily Life Quests.
+ * All original report routes stay reachable. Quests are cosmetic and local only.
+ * This module never updates Journal, Project, Wallet, Rewards or the Cloud.
+ */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const routes = ['reports','insights','timeline','wrapped'];
+  const routeName = () => location.hash.replace(/^#\/?/, '').split(/[?&]/)[0];
+  const isEnglish = () => localStorage.getItem('wp-language') === 'en';
+  const tr = (th,en) => isEnglish() ? en : th;
+  const escape = value => String(value ?? '').replace(/[&<>"']/g,ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+  const TH_ROUTES = {"reports": "\u0e23\u0e32\u0e22\u0e07\u0e32\u0e19\u0e41\u0e25\u0e30\u0e01\u0e32\u0e23\u0e27\u0e34\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c", "insights": "\u0e2a\u0e16\u0e34\u0e15\u0e34\u0e01\u0e32\u0e23\u0e17\u0e33\u0e07\u0e32\u0e19", "journal": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "projects": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c", "workspace": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "missions": "\u0e20\u0e32\u0e23\u0e01\u0e34\u0e08\u0e23\u0e32\u0e22\u0e27\u0e31\u0e19", "focus": "Focus Studio"};
+  const hubTabs = [
+    ['reports','\ud83d\udcc5','Reports','Attendance and monthly overview'],
+    ['insights','\ud83d\udcca','Insights','Heatmap, focus and skills'],
+    ['timeline','\ud83d\uddfa\ufe0f','Journey','Your milestones and activity history'],
+    ['wrapped','\ud83c\udf8a','Wrapped','Your shareable story cards']
+  ];
+  function refreshHub() {
+    const active = routeName();
+    const existing = $('wdjV8710ReportHub');
+    if (!routes.includes(active)) {
+      if (existing) existing.hidden = true;
+      return;
+    }
+    const main = document.querySelector('main.dashboard');
+    if (!main) return;
+    let hub = existing;
+    if (!hub) {
+      hub = document.createElement('nav');
+      hub.id = 'wdjV8710ReportHub';
+      hub.className = 'wdj-v8710-report-hub';
+      hub.setAttribute('aria-label', 'Reports and journey sections');
+      hub.addEventListener('click', event => {
+        const button = event.target.closest('[data-wdj-v8710-hub]');
+        if (!button) return;
+        const target = button.dataset.wdjV8710Hub;
+        if (routes.includes(target)) location.hash = '#/' + target;
+      });
+    }
+    hub.hidden = false;
+    hub.dataset.v7Page = active;
+    hub.classList.remove('v7-route-hidden');
+    hub.innerHTML = `<div class="wdj-v8710-hub-intro"><div><span class="wdj-v8710-eyebrow">WORKDAY JOURNEY / ${escape(tr('REPORTS & JOURNEY','REPORTS & JOURNEY'))}</span><h2>${escape(tr(TH_ROUTES.reports,'Reports & Journey'))}</h2></div><p>${escape(tr('Attendance, progress, timeline and your Wrapped in one place','Attendance, progress, timeline and your Wrapped in one place'))}</p></div><div class="wdj-v8710-hub-tabs" role="group">${hubTabs.map(([route,icon,name,help]) => `<button type="button" data-wdj-v8710-hub="${route}" class="${active === route ? 'selected' : ''}" aria-current="${active === route ? 'page' : 'false'}"><span aria-hidden="true">${icon}</span><span><strong>${escape(isEnglish() ? name : (TH_ROUTES[route] || name))}</strong><small>${help}</small></span></button>`).join('')}</div>`;
+    if (main.firstElementChild !== hub) main.insertBefore(hub,main.firstElementChild);
+    // Hidden pages still retain their original route and all their events.
+    const reportsNav = document.querySelector('.v7-nav [data-v7-route="reports"]');
+    if (reportsNav) reportsNav.classList.add('active');
+  }
+  window.WorkdayNavigationHub = {refresh:refreshHub};
+  window.addEventListener('hashchange',()=>requestAnimationFrame(refreshHub));
+  window.addEventListener('workday:v7-data-changed',()=>{if(routes.includes(routeName()))requestAnimationFrame(refreshHub);});
+  refreshHub();
+})();
+
+(() => {
+  'use strict';
+  const ROOT = 'v82MissionsPage';
+  const TH_NAMES = {"journal-today": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "focus-today": "Focus Studio", "workspace-today": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "journal-week": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19 3 days", "focus-week": "Focus Studio 100 min", "project-one": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c 100%"};
+  const PREFIX = 'wdj-v8710-life-quest-stamps-v1:';
+  const VISITS = 'wdj-v8710-life-quest-visits-v1:';
+  const $ = id => document.getElementById(id);
+  const en = () => localStorage.getItem('wp-language') === 'en';
+  const tr = (th,english) => en() ? english : th;
+  const esc = value => String(value ?? '').replace(/[&<>"']/g,ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const data = (key,fallback) => {try{return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback;}catch{return fallback;}};
+  const save = (key,value) => {try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
+  const account = () => String(window.WorkdayV8Cloud?.getUser?.()?.id || 'guest').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,90) || 'guest';
+  const localDay = input => {const d = input instanceof Date ? input : new Date(input);if(!Number.isFinite(d.getTime()))return '';return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+  const today = () => localDay(new Date());
+  function weekStart() {const d = new Date();d.setHours(12,0,0,0);d.setDate(d.getDate() - ((d.getDay()+6)%7));return localDay(d);}
+  const currentWeek = () => weekStart();
+  const cloudPending = () => {const status=window.WorkdayV8Cloud?.getStatus?.();return !!status?.signedIn && !status.ready;};
+  const dayPattern = /^\d{4}-\d{2}-\d{2}$/;
+  function stats() {
+    const now=today(),start=currentWeek(),journals=data('wp-v6-journal',{});
+    const journalDays = journals && typeof journals === 'object' && !Array.isArray(journals)
+      ? Object.entries(journals).filter(([day,row])=>dayPattern.test(day)&&day<=now&&row&&typeof row==='object'&&`${row.work||''} ${row.learned||''}`.trim().length>=10).map(([day])=>day) : [];
+    const journalSet=new Set(journalDays);
+    const projectRows = data('wp-v6-projects',[]);
+    const projects=Array.isArray(projectRows)?projectRows.filter(p=>p&&typeof p==='object'):[];
+    const finished = projects.filter(p=>p.status==='completed'||Number(p.progress)>=100).length;
+    const focusRows=data('wdj-v875-focus-history-v1:'+account(),[]);
+    const focus=Array.isArray(focusRows)?focusRows.filter(f=>f&&Number(f.seconds)>=60&&Number.isFinite(Number(f.seconds))&&localDay(f.completedAt)&&localDay(f.completedAt)<=now):[];
+    const minutesOn = day => focus.filter(f=>localDay(f.completedAt)===day).reduce((n,f)=>n+Number(f.seconds)/60,0);
+    const weekMinutes=focus.filter(f=>localDay(f.completedAt)>=start).reduce((n,f)=>n+Number(f.seconds)/60,0);
+    const visits=data(VISITS+account(),{});
+    return {now,start,journals:journalSet.size,journalToday:journalSet.has(now)?1:0,journalWeek:journalDays.filter(k=>k>=start).length,focusToday:Math.floor(minutesOn(now)),focusWeek:Math.floor(weekMinutes),projects:finished,visited:!!visits?.[now]};
+  }
+  const items = [
+    {id:'journal-today',kind:'daily',icon:'\ud83d\udcd3',title:'Journal Check-in',desc:'Write an entry today',goal:1,get:s=>s.journalToday},
+    {id:'focus-today',kind:'daily',icon:'\u23f1\ufe0f',title:'Focused Work',desc:'Complete 25 focus minutes today',goal:25,get:s=>s.focusToday},
+    {id:'workspace-today',kind:'daily',icon:'\ud83c\udfe1',title:'Visit Your Workspace',desc:'Open your room today',goal:1,get:s=>s.visited?1:0,link:'workspace'},
+    {id:'journal-week',kind:'weekly',icon:'\ud83d\uddd3\ufe0f',title:'Weekly Reflection',desc:'Write on 3 different days this week',goal:3,get:s=>s.journalWeek},
+    {id:'focus-week',kind:'weekly',icon:'\ud83d\udd25',title:'Focus Streak',desc:'Complete 100 focus minutes this week',goal:100,get:s=>s.focusWeek},
+    {id:'project-one',kind:'journey',icon:'\ud83c\udfc6',title:'First Finished Project',desc:'Complete your first project',goal:1,get:s=>s.projects}
+  ];
+  const idFor = (quest,s) => `${quest.kind}:${quest.kind==='daily'?s.now:quest.kind==='weekly'?s.start:'ever'}:${quest.id}`;
+  const stampsFor = () => {const rows=data(PREFIX+account(),[]);return new Set(Array.isArray(rows)?rows.filter(x=>typeof x==='string').slice(-400):[]);};
+  let activeFilter='all';
+  function render() {
+    const root=$(ROOT);if(!root)return;
+    let section=$('wdjV8710LifeQuests');
+    if (!section) {section=document.createElement('section');section.id='wdjV8710LifeQuests';section.className='wdj-v8710-quests';root.appendChild(section);}
+    if (section.parentNode!==root)root.appendChild(section);
+    const waiting=cloudPending(),s=waiting?null:stats(),stamps=stampsFor();
+    const progress=items.map(q=>({q,value:s?Math.min(q.goal,Math.max(0,q.get(s))):0,claimed:!!s&&stamps.has(idFor(q,s))}));
+    const earned=progress.filter(x=>x.claimed).length;
+    const tabs=[['all','All'],['daily','Daily'],['weekly','Weekly'],['journey','Journey']];
+    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10 / COSMETIC QUESTS</span><h2>\ud83c\udfae Life Quests <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('Complete real activities and collect on-device stamps. No Coins or Shop rewards.','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?'<div class="wdj-v8710-pending" role="status">Loading account data before checking quests...</div>':''}<div class="wdj-v8710-filters" role="group" aria-label="Life Quest filters">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
+      const done = value>=q.goal;
+      const canClaim=done&&!claimed&&!waiting;
+      const label=claimed?'Stamp collected':done?'Collect stamp':q.link?'Open Workspace':'In progress';
+      return `<article class="wdj-v8710-quest-card ${claimed?'claimed':''} ${done?'complete':''}"><div class="wdj-v8710-card-top"><span class="wdj-v8710-card-icon">${q.icon}</span><small>${q.kind.toUpperCase()}</small></div><h3>${esc(en() ? q.title : (TH_NAMES[q.id] || q.title))}</h3><p>${esc(q.desc)}</p><div class="wdj-v8710-track"><span style="width:${Math.floor(value/q.goal*100)}%"></span></div><div class="wdj-v8710-card-bottom"><strong>${value}/${q.goal}</strong><button type="button" ${waiting||(!canClaim&&!q.link)?'disabled':''} data-wdj-v8710-action="${canClaim?'claim':q.link?'visit':'none'}" data-wdj-v8710-id="${q.id}">${claimed?'\u2713 ':''}${label}</button></div></article>`;
+    }).join('')}</div><p class="wdj-v8710-notice">\ud83d\udd12 Life Quest stamps are stored locally per account on this device. Existing Daily Missions and Chests are unchanged.</p>`;
+  }
+  document.addEventListener('click',event=>{
+    const control=event.target.closest?.('#wdjV8710LifeQuests [data-wdj-v8710-filter],#wdjV8710LifeQuests [data-wdj-v8710-action]');
+    if(!control)return;
+    if(control.hasAttribute('data-wdj-v8710-filter')){activeFilter=control.dataset.wdjV8710Filter;render();return;}
+    const q=items.find(x=>x.id===control.dataset.wdjV8710Id);if(!q||cloudPending())return;
+    if(control.dataset.wdjV8710Action==='visit'){location.hash='#/workspace';return;}
+    if(control.dataset.wdjV8710Action!=='claim')return;
+    const s=stats(),stamp=idFor(q,s);if(Number(q.get(s))<q.goal)return;
+    const stored=stampsFor();if(stored.has(stamp))return;stored.add(stamp);
+    const cleaned=[...stored].slice(-400);if(save(PREFIX+account(),cleaned))render();
+  });
+  function visitWorkspace(){if(routeName()==='workspace') {const key=VISITS+account(),visits=data(key,{}),day=today();if(!visits[day]){visits[day]=true;const limited=Object.fromEntries(Object.entries(visits).sort().slice(-40));save(key,limited);}}}
+  function routeName(){return location.hash.replace(/^#\/?/,'').split(/[?&]/)[0];}
+  window.addEventListener('hashchange',()=>{visitWorkspace();if(routeName()==='missions')requestAnimationFrame(render);});
+  for(const event of ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v7-data-changed','workday:v8-data-changed'])window.addEventListener(event,()=>{if(routeName()==='missions')requestAnimationFrame(render);});
+  window.WorkdayLifeQuests={render,readOnlyStats:stats};
+  visitWorkspace();
+  if(routeName()==='missions')render();
+})();
+

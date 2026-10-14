@@ -5609,7 +5609,7 @@ html[data-theme="dark"] .wdj-insights-hero,body.dark .wdj-insights-hero{backgrou
 @media(max-width:480px){.wdj-insights-page{gap:12px;padding:5px 0 45px}.wdj-insights-hero{padding:17px;border-radius:17px}.wdj-insights-icon{width:46px;height:46px;flex-basis:46px;font-size:22px}.wdj-insights-headline{gap:10px}.wdj-insights-eyebrow{font-size:.56rem}.wdj-insights-headline p{font-size:.7rem}.wdj-insights-period{width:100%}.wdj-insights-period button{flex:1;padding:10px 4px}.wdj-insights-kpi{padding:12px}.wdj-insights-kpi strong{font-size:1.3rem}.wdj-insights-kpi small{font-size:.66rem}.wdj-insights-panel{padding:15px}.wdj-insights-section-head{flex-wrap:wrap}.wdj-insights-project-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wdj-insights-skill{grid-template-columns:minmax(0,1fr) 34% auto;gap:7px}.wdj-insights-project-row{gap:10px}.wdj-insights-project-row strong{max-width:180px}}
 @media(prefers-reduced-motion:reduce){.wdj-insights-page *{animation:none!important;transition:none!important}}
 
-/* V8.7.9 Journey Wrapped - read-only shareable story experience */
+/* V8.7.10 Journey Wrapped - read-only shareable story experience */
 .wdj-wrapped-page{max-width:1470px;margin:0 auto;padding:10px 4px 60px;color:var(--text,#1d2a42);display:grid;gap:22px;min-width:0}
 .wdj-wrapped-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 25px;border-radius:22px;border:1px solid var(--border,#dce5f3);background:linear-gradient(115deg,var(--surface,#fff),var(--surface-secondary,#f5f8ff));min-width:0}
 .wdj-wrapped-kicker{color:#4670e9;font-weight:850;letter-spacing:.13em;font-size:.69rem}
@@ -5630,3 +5630,48 @@ html[data-theme="dark"] .wdj-wrapped-header,body.dark .wdj-wrapped-header{backgr
 @media(max-width:850px){.wdj-wrapped-layout{grid-template-columns:1fr}.wdj-wrapped-chapters{grid-template-columns:repeat(3,minmax(0,1fr))}.wdj-wrapped-side>h3{display:none}.wdj-wrapped-share{margin-top:2px}}
 @media(max-width:520px){.wdj-wrapped-page{gap:12px;padding:2px 0 44px}.wdj-wrapped-header{flex-direction:column;align-items:stretch;padding:17px;border-radius:16px}.wdj-wrapped-picker select{width:100%}.wdj-wrapped-stage{padding:10px;border-radius:16px}.wdj-wrapped-card{border-radius:14px;aspect-ratio:auto;min-height:485px;padding:17px 18px}.wdj-wrapped-card h3{font-size:1.75rem;max-width:100%}.wdj-wrapped-card p{max-width:96%}.wdj-wrapped-card-main small{font-size:.58rem}.wdj-wrapped-glow{font-size:100px;top:26%;opacity:.2}.wdj-wrapped-card-top{font-size:.58rem}.wdj-wrapped-big{font-size:4rem}.wdj-wrapped-stats{gap:5px}.wdj-wrapped-stat{padding:9px 7px}.wdj-wrapped-stat strong{font-size:.83rem}.wdj-wrapped-stat span{font-size:.59rem}.wdj-wrapped-card-bottom{font-size:.56rem;align-items:flex-start}.wdj-wrapped-chapters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.wdj-wrapped-chapters button{padding:8px;grid-template-columns:32px minmax(0,1fr);gap:7px}.wdj-wrapped-chapters button>span:first-child{width:31px;height:31px;font-size:17px}.wdj-wrapped-chapters b{display:none}.wdj-wrapped-chapters small{font-size:.53rem}.wdj-wrapped-controls>button{padding:9px 10px;font-size:.69rem}}
 @media(prefers-reduced-motion:reduce){.wdj-wrapped-page *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* V8.7.10: Unified reports hub and cosmetic Life Quests. */
+.wdj-v8710-report-hub[hidden]{display:none!important}
+.wdj-v8710-report-hub{display:flex;flex-direction:column;gap:15px;min-width:0;order:-999;grid-column:1/-1;width:100%;margin:0 0 18px;padding:18px;border:1px solid var(--ds-border, #dce4f2);border-radius:20px;background:var(--ds-surface, #fff);box-shadow:0 9px 25px rgba(26,44,89,.045)}
+.wdj-v8710-hub-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.wdj-v8710-hub-intro h2{font-size:1.15rem;margin:2px 0;font-weight:800}
+.wdj-v8710-hub-intro p{font-size:.83rem;color:var(--ds-text-muted,#7786a4);margin:0;max-width:450px}
+.wdj-v8710-eyebrow{font-weight:800;letter-spacing:.095em;font-size:.69rem;color:var(--ds-accent,#3767dc)}
+.wdj-v8710-hub-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.wdj-v8710-hub-tabs button{display:flex;gap:10px;align-items:center;text-align:left;padding:12px;border:1px solid var(--ds-border,#dde5f1);border-radius:13px;background:var(--ds-surface-secondary,#f7f9fc);color:inherit;min-width:0;cursor:pointer}
+.wdj-v8710-hub-tabs button>span:first-child{font-size:1.35rem;flex:0 0 auto}
+.wdj-v8710-hub-tabs strong,.wdj-v8710-hub-tabs small{display:block}
+.wdj-v8710-hub-tabs strong{font-size:.88rem}
+.wdj-v8710-hub-tabs small{font-size:.7rem;line-height:1.3;color:var(--ds-text-muted,#75819a);margin-top:3px}
+.wdj-v8710-hub-tabs button.selected{border-color:#6593f5;background:rgba(76,121,227,.10);color:var(--ds-accent,#2f65df)}
+.wdj-v8710-hub-tabs button:focus-visible,.wdj-v8710-quests button:focus-visible{outline:3px solid #76a3f2;outline-offset:2px}
+.wdj-v8710-quests{display:block;min-width:0;margin:26px 0 10px;padding:22px;border-radius:22px;border:1px solid var(--ds-border,#dce5f2);background:var(--ds-surface,#fff);box-shadow:0 9px 24px rgba(30,54,89,.05)}
+.wdj-v8710-quest-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.wdj-v8710-quest-head h2{font-size:1.35rem;margin:4px 0 6px}
+.wdj-v8710-quest-head p{font-size:.85rem;color:var(--ds-text-muted,#7786a4);margin:0;max-width:630px}
+.wdj-v8710-stamp-icon{display:grid;place-items:center;font-size:2rem;width:58px;height:58px;border-radius:18px;background:rgba(75,111,226,.10)}
+.wdj-v8710-count{font-size:.73rem;vertical-align:middle;border-radius:20px;background:rgba(65,118,222,.12);color:var(--ds-accent,#3767dc);padding:4px 10px}
+.wdj-v8710-filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.wdj-v8710-filters button{padding:8px 15px;background:var(--ds-surface-secondary,#f7f9fc);border:1px solid var(--ds-border,#dbe4ee);border-radius:30px;cursor:pointer;color:inherit}
+.wdj-v8710-filters button[aria-pressed="true"]{color:#fff;background:#386be6;border-color:#386be6}
+.wdj-v8710-quest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.wdj-v8710-quest-card{min-width:0;border:1px solid var(--ds-border,#dfe5f1);border-radius:16px;background:var(--ds-surface-secondary,#f8faff);padding:16px;display:flex;flex-direction:column;gap:8px}
+.wdj-v8710-quest-card.complete{border-color:#a6d6bf}
+.wdj-v8710-quest-card.claimed{background:rgba(47,167,120,.065)}
+.wdj-v8710-card-top{display:flex;align-items:center;justify-content:space-between}
+.wdj-v8710-card-top small{font-size:.62rem;color:var(--ds-text-muted,#7889a2);font-weight:800;letter-spacing:.1em}
+.wdj-v8710-card-icon{font-size:1.65rem}
+.wdj-v8710-quest-card h3{font-size:1rem;font-weight:800;margin:4px 0 0}
+.wdj-v8710-quest-card p{font-size:.78rem;color:var(--ds-text-muted,#7889a2);margin:0;flex:1}
+.wdj-v8710-track{background:rgba(107,130,157,.15);border-radius:6px;height:8px;overflow:hidden}
+.wdj-v8710-track span{display:block;height:100%;background:linear-gradient(90deg,#4269db,#52b99b);border-radius:6px}
+.wdj-v8710-card-bottom{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.wdj-v8710-card-bottom strong{font-size:.85rem;font-variant-numeric:tabular-nums}
+.wdj-v8710-card-bottom button{font-size:.75rem;border:1px solid #84a7f0;background:#386be6;color:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+.wdj-v8710-card-bottom button:disabled{opacity:.58;cursor:not-allowed;background:var(--ds-surface-secondary,#f5f6f8);color:var(--ds-text-muted,#7786a4);border-color:var(--ds-border,#dce4eb)}
+.wdj-v8710-pending{background:rgba(224,151,25,.12);padding:11px;border-radius:10px;margin:0 0 12px;font-size:.84rem}
+.wdj-v8710-notice{margin:16px 0 0;font-size:.72rem;color:var(--ds-text-muted,#7889a2)}
+@media(max-width:930px){.wdj-v8710-quest-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wdj-v8710-hub-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.wdj-v8710-report-hub,.wdj-v8710-quests{padding:13px;border-radius:14px}.wdj-v8710-quest-grid{grid-template-columns:1fr}.wdj-v8710-hub-tabs{gap:7px}.wdj-v8710-hub-tabs button{padding:9px;gap:6px}.wdj-v8710-hub-tabs small{display:none}}
+@media(prefers-reduced-motion:reduce){.wdj-v8710-report-hub *, .wdj-v8710-quests *{animation:none!important;transition:none!important}}

@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.9";
+  const APP_VERSION = "8.7.10";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2366,7 +2366,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.7.9";
+  const V6_VERSION = "8.7.10";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2472,7 +2472,6 @@
   // V7 keeps Dashboard Customization focused on the Dashboard page only.
   const SECTION_DEFS = [
     ["today", ".main-grid", "sectionToday"],
-    ["timeline", ".timeline-card", "sectionTimeline"],
     ["overview", ".three-grid", "sectionOverview"]
   ];
   const defaultLayout = () => ({ order: SECTION_DEFS.map(x=>x[0]), hidden: [] });
@@ -2831,7 +2830,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.9";
+  const VERSION = "8.7.10";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -2908,9 +2907,6 @@
     ["projects","🧩"],
     ["focus","⏱️"],
     ["skills","🌳"],
-    ["timeline","🗺️"],
-    ["insights","📊"],
-    ["wrapped","🎊"],
     ["calendar","📅"],
     ["reports","📊"],
     ["achievements","🏆"],
@@ -2923,6 +2919,9 @@
     ["settings","⚙"]
   ];
 
+
+  const HIDDEN_REPORT_ROUTES = new Set(["timeline","insights","wrapped"]);
+  const allowedRoute = key => NAV.some(([route]) => route === key) || HIDDEN_REPORT_ROUTES.has(key);
 
   const TITLE_DEFS = [
     {id:"journey-initiate",achievement:"first-day",tier:"common",th:"ผู้เริ่มต้นแห่งเส้นทาง",en:"Journey Initiate"},
@@ -3097,7 +3096,7 @@
 
   function currentRoute() {
     const value = location.hash.replace(/^#\/?/, "").split("?")[0];
-    return NAV.some(([key]) => key === value) ? value : "dashboard";
+    return allowedRoute(value) ? value : "dashboard";
   }
 
   function setupShell() {
@@ -3236,7 +3235,7 @@
   }
 
   function navigate(route) {
-    if (!NAV.some(([key]) => key === route)) route = "dashboard";
+    if (!allowedRoute(route)) route = "dashboard";
     if (location.hash !== `#/${route}`) location.hash = `#/${route}`;
     else applyRoute();
     toggleSidebar(false);
@@ -3246,7 +3245,7 @@
     const route = currentRoute();
     document.body.dataset.v7Route = route;
     qa("[data-v7-page]").forEach(el => el.classList.toggle("v7-route-hidden", el.dataset.v7Page !== route));
-    qa(".v7-nav [data-v7-route]").forEach(btn => btn.classList.toggle("active", btn.dataset.v7Route === route));
+    qa(".v7-nav [data-v7-route]").forEach(btn => btn.classList.toggle("active", btn.dataset.v7Route === route || (HIDDEN_REPORT_ROUTES.has(route) && btn.dataset.v7Route === "reports")));
     renderSidebar();
     renderPage(route);
     window.scrollTo({top:0,behavior:"instant"});
@@ -3303,6 +3302,7 @@
       window.WorkdayV853?.refresh?.();
     }
     window.WorkdayV850?.refresh?.();
+    window.WorkdayNavigationHub?.refresh?.();
   }
 
   function journalStreakCount(){
@@ -3669,7 +3669,7 @@
 
   function init() {
     setupShell(); injectPages(); renderVersion(); bindGlobal(); ensureQualityUi();
-    if (!location.hash || !NAV.some(([key]) => location.hash.includes(key))) history.replaceState(null,"","#/dashboard");
+    if (!location.hash || !allowedRoute(location.hash.replace(/^#\/?/, "").split("?")[0])) history.replaceState(null,"","#/dashboard");
     applyRoute();
     setInterval(()=>{ const route=currentRoute(); if(["dashboard","reports","calendar"].includes(route)) renderPage(route); renderSidebar(); }, 90000);
     setInterval(()=>{ if(currentRoute()==="dashboard") renderMascot(); }, 1000);
