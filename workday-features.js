@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -108,7 +108,7 @@
   // Keep this intentionally concise: it is the user-facing history, not the
   // developer README. New releases should normally have only 2–4 bullets.
   const WHATS_NEW_RELEASES = [
-    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree 6 สายทักษะ พร้อม XP, Level และ Milestones"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree with six skill paths, XP, levels and milestones"]},
+    {version:"8.7",icon:"🏡",th:"ห้องทำงานและ Mascot",en:"Workspace & Mascot Life",notesTh:["ห้อง Pixel Art พร้อม Mascot และของตกแต่งที่ปลดล็อกได้", "เพิ่ม Focus Studio: Pomodoro, Deep Work และประวัติการโฟกัส", "Skill Tree และ Journey Timeline สรุปผลงาน"],notesEn:["Pixel Art workspace with Mascots and unlockable decorations", "Focus Studio with Pomodoro, Deep Work and session history", "Skill Tree and Journey Timeline for work milestones"]},
     {version:"8.6",icon:"🔐",th:"บัญชีและ Work Bank",en:"Account & Work Bank",notesTh:["ศูนย์แจ้งเตือนใหม่ แยกตามประเภทและลดข้อความซ้ำ", "สำรองข้อมูลส่วนตัวได้สะดวกขึ้น", "ปรับความเสถียรของ Wallet และ Work Bank", "เพิ่มตัวเลือกอ่านชัด ขีดเส้นใต้ลิงก์ และปุ่มกดง่าย"],notesEn:["Refreshed Notification Center with filters and fewer duplicate alerts", "Easier personal data backups", "Improved Wallet and Work Bank stability", "Optional high contrast, underlined links and larger touch targets"]},
     {version:"8.5",icon:"✨",th:"หน้าตาใหม่ทั้งระบบ",en:"New Look & Navigation",notesTh:["เมนูใหม่ ใช้ง่ายทั้งคอมและมือถือ", "ปรับหน้า Dashboard, Journal, Projects และ Reports", "อัปเกรด Reward Shop, Missions และ Finance Hub"],notesEn:["Improved navigation for desktop and mobile", "Refreshed Dashboard, Journal, Projects and Reports", "Updated Rewards, Missions and Finance Hub"]},
     {version:"8.4",icon:"📈",th:"ลงทุนและรางวัลพิเศษ",en:"Trading & Special Rewards",notesTh:["เพิ่มระบบจำลองลงทุนและบทเรียนสำหรับผู้เริ่มต้น", "เพิ่มโค้ดรับรางวัลและกิจกรรมใหม่"],notesEn:["Simulated trading and beginner lessons", "Reward codes and new activities"]},
@@ -603,6 +603,7 @@
       journal:["📓","บันทึกประจำวัน","บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้"],
       projects:["🧩","โปรเจกต์","ติดตามงานและความคืบหน้าของ Project"],
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · สรุปเวลาโฟกัส"],
+      timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
       skills:["🌳","Skill Tree","แผนผังทักษะ · Level · Growth XP"],
       achievements:["🏆","ความสำเร็จ","Journey Challenges · Feature Achievements · ฉายา"],
       reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
@@ -620,6 +621,7 @@
       journal:["📓","Daily Journal","Record your work and learning"],
       projects:["🧩","Projects","Track project status and progress"],
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · Focus history"],
+      timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
       skills:["🌳","Skill Tree","Career paths · Levels · Growth XP"],
       achievements:["🏆","Achievements","Journey Challenges · Feature Achievements · Titles"],
       reports:["📊","Reports & Analytics","Attendance, heatmap and journey reports"],
@@ -3329,14 +3331,14 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
   const lang = () => localStorage.getItem("wp-language") === "en" ? "en" : "th";
 
   const ROUTE_GROUPS = [
-    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "calendar", "reports"] },
+    { id: "work", label: "WORK", routes: ["dashboard", "journal", "projects", "focus", "skills", "timeline", "calendar", "reports"] },
     { id: "journey", label: "JOURNEY", routes: ["achievements", "missions"] },
     { id: "economy", label: "ECONOMY", routes: ["rewards", "bank", "exchange"] },
     { id: "system", label: "SYSTEM", routes: ["developer", "settings"] }
@@ -3344,12 +3346,12 @@
 
   const ROUTE_LABELS = {
     th: {
-      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", calendar: "ปฏิทิน",
+      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", calendar: "ปฏิทิน",
       reports: "รายงาน", achievements: "ความสำเร็จ", missions: "ภารกิจ", rewards: "รางวัล",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "ตั้งค่า", more: "เพิ่มเติม"
     },
     en: {
-      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", calendar: "Calendar",
+      dashboard: "Home", journal: "Journal", projects: "Projects", focus: "Focus", skills: "Skills", timeline: "Timeline", calendar: "Calendar",
       reports: "Reports", achievements: "Achievements", missions: "Missions", rewards: "Rewards",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "Settings", more: "More"
     }
@@ -3365,6 +3367,7 @@
     missions: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.6"/><path d="m12 12 6.6-6.6M16.2 5.4h2.4v2.4"/></svg>',
     focus: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.4v5.1l3.4 2.1M9.3 2.7h5.4"/></svg>',
     skills: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 13 6.5 8M12 11l5.5-5M6.5 8V4M17.5 6V3"/><path d="M5 20c2-3 12-3 14 0"/></svg>',
+    timeline: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M6 6h6l2 3h5M6 15h5l2 3h6"/><circle cx="6" cy="4" r="1.5"/></svg>',
     workspace: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.6 9.3V20h12.8V9.3M9.5 20v-6.3h5V20"/></svg>',
     rewards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4Z"/><path d="M3.2 7.2h17.6V10H3.2ZM12 7.2V20"/><path d="M12 7.2H8.1a2.1 2.1 0 1 1 2.1-2.1c0 1.2 1.8 2.1 1.8 2.1ZM12 7.2h3.9a2.1 2.1 0 1 0-2.1-2.1c0 1.2-1.8 2.1-1.8 2.1Z"/></svg>',
     bank: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 9 8.5-5 8.5 5"/><path d="M5.2 9h13.6M6.7 9v7.6M10.2 9v7.6M13.8 9v7.6M17.3 9v7.6M4.2 16.6h15.6M3.5 20h17"/></svg>',
@@ -3376,7 +3379,7 @@
 
   const CLASSIC_ICONS = {
     dashboard:"🏠", journal:"📓", projects:"📁", calendar:"📅", reports:"📊",
-    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", workspace:"🏡", bank:"🏦", exchange:"📈",
+    achievements:"🏆", missions:"🎯", rewards:"🎁", skills:"🌳", timeline:"🗺️", workspace:"🏡", bank:"🏦", exchange:"📈",
     developer:"🛠️", settings:"⚙️", more:"☰"
   };
   const iconStyle = () => document.documentElement.dataset.wdjIconStyle === "classic" ? "classic" : "modern";
@@ -3661,7 +3664,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3726,7 +3729,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3887,7 +3890,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4155,7 +4158,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4420,7 +4423,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4814,7 +4817,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.6.2";
+  const VERSION = "8.7.7";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4961,7 +4964,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.6.2';
+  const VERSION = '8.7.7';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5532,10 +5535,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.6.2',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.7',refresh:mount };
 })();
 
-/* SOURCE: V8.7.6.2 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.7 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5859,7 +5862,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.6.2: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.7: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6191,12 +6194,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.6.2',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.7',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.6.2: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.7: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6373,7 +6376,7 @@
 })();
 
 
-/* ===== V8.7.6.2 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.7 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6541,5 +6544,129 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
  if(route==='journal')mount('journal',$('v7JournalPage')?.dataset.selectedDate||'');
  if(route==='projects')mount('project',$('v7ProjectId')?.value||'');
 });
+})();
+
+
+
+/* ===== V8.7.7 Journey Timeline: read-only, on-device timeline of existing data ===== */
+(() => {
+  'use strict';
+  const ROOT = 'wdjTimelinePage';
+  const CATEGORIES = ['all', 'journal', 'project', 'achievement', 'focus', 'journey'];
+  const ICONS = {journal:'📓',project:'🧩',achievement:'🏆',focus:'⏱️',journey:'🚩'};
+  const $ = id => document.getElementById(id);
+  const api = () => window.WorkdayJourneyAPI;
+  const thai = () => localStorage.getItem('wp-language') !== 'en';
+  const tr = (key, fallback) => {try {const result = api()?.translate?.(key);return result && result !== key ? result : fallback;}catch{return fallback;}};
+  const escape = x => String(x ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const read = (key, def) => {try {const x=JSON.parse(localStorage.getItem(key) || 'null');return x ?? def;}catch{return def;}};
+  const account = () => String(window.WorkdayV8Cloud?.getUser?.()?.id || 'guest').replace(/[^\w-]/g,'').slice(0,90) || 'guest';
+  const dateKey = x => {
+    if(typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x)) {const d=new Date(x+'T12:00:00');return Number.isFinite(d.getTime()) && d.getFullYear()===+x.slice(0,4) && d.getMonth()+1===+x.slice(5,7) && d.getDate()===+x.slice(8,10) ? x : '';}
+    if(x === null || x === undefined || x === '') return '';
+    const d=new Date(x);
+    if(!Number.isFinite(d.getTime()))return '';
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  };
+  const dateDisplay = day => {
+    const dt = new Date(day + 'T12:00:00');
+    return Number.isFinite(dt.getTime()) ? new Intl.DateTimeFormat(thai()?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}).format(dt) : day;
+  };
+  const monthDisplay = month => {
+    const dt = new Date(month + '-15T12:00:00');
+    return Number.isFinite(dt.getTime()) ? new Intl.DateTimeFormat(thai()?'th-TH':'en-GB',{month:'long',year:'numeric'}).format(dt) : month;
+  };
+  const labels = () => ({
+    all:tr('achievementAllCategories','All'),
+    journal:tr('journal','Journal'),project:tr('projects','Projects'),achievement:tr('achievements','Achievements'),
+    focus:'Focus Studio',journey:tr('myJourney','Journey')
+  });
+  const compact = x => String(x??'').replace(/\s+/g,' ').trim().slice(0,360);
+  function collect(){
+    const status=window.WorkdayV8Cloud?.getStatus?.();
+    if(status?.signedIn && status.ready===false)return {events:[],start:'',end:'',today:dateKey(new Date()),pending:true};
+    const list=[], seen=new Set(), config=api()?.getConfig?.() || {};
+    const add=(row)=>{if(!row.day || !dateKey(row.day) || seen.has(row.id))return;seen.add(row.id);list.push(row);};
+    const start=dateKey(config.startDate),end=dateKey(config.endDate),today=dateKey(new Date());
+    if(start)add({id:'start:'+start,day:start,type:'journey',title:tr('myJourney','Journey'),body:thai()?tr('journeyLabel','Journey')+' - '+dateDisplay(start):'First day of your journey',featured:true});
+    const journals=read('wp-v6-journal',{});
+    if(journals && typeof journals==='object' && !Array.isArray(journals)){
+      Object.entries(journals).slice(0,1500).forEach(([day,row])=>{
+        if(!row || typeof row!=='object' || !dateKey(day))return;
+        const work=compact(row.work), learned=compact(row.learned);
+        if(!work && !learned)return;
+        add({id:'journal:'+day,day,type:'journal',title:tr('journalTitle','Daily Journal'),body:[work,learned].filter(Boolean).join(' | ').slice(0,420),route:'journal',meta:{date:day}});
+      });
+    }
+    const datedJournals=list.filter(e=>e.type==='journal').sort((a,b)=>a.day.localeCompare(b.day));
+    [7,30,60,100].forEach(n=>{if(datedJournals[n-1])add({id:'journal:milestone:'+n,day:datedJournals[n-1].day,type:'journey',title:`${n} Journal days`,body:'Journal milestone',featured:true});});
+    const projects=read('wp-v6-projects',[]);
+    if(Array.isArray(projects))projects.slice(0,450).forEach((p,i)=>{
+      if(!p || typeof p!=='object')return;
+      const name=compact(p.name||p.title||'Project').slice(0,140),id=String(p.id || i).slice(0,130);
+      const created=dateKey(p.createdAt||p.created_at);
+      const completed=p.status==='completed'||Number(p.progress)>=100;
+      const done=dateKey(p.completedAt||p.completed_at);
+      const updated=dateKey(p.updatedAt||p.updated_at);
+      if(created)add({id:'project:start:'+id,day:created,type:'project',title:name,body:thai()?tr('newProject','New project'):'Project created',route:'projects'});
+      if(completed && (done || updated))add({id:'project:done:'+id,day:done||updated,type:'project',title:name,body:done ? tr('projectCompleted','Project completed') : (thai()?tr('completed','Completed'):'Completed')+' (last updated)',route:'projects',featured:true});
+      if(!created && !completed && updated)add({id:'project:updated:'+id,day:updated,type:'project',title:name,body:thai()?tr('projectActiveTab','Project update'):'Project update',route:'projects'});
+    });
+    const datedCompletions=list.filter(e=>e.id.startsWith('project:done:')).sort((a,b)=>a.day.localeCompare(b.day));
+    [1,3,5,10].forEach(n=>{if(datedCompletions[n-1])add({id:'project:milestone:'+n,day:datedCompletions[n-1].day,type:'journey',title:`${n} completed ${n===1?'project':'projects'}`,body:'Project milestone',featured:true});});
+    // Use previously recorded unlock times. Never call getAchievements() here,
+    // because its existing implementation may write unlock metadata to storage.
+    const unlocks=read('wp-v7-achievement-unlocked-at',{});
+    if(unlocks && typeof unlocks==='object' && !Array.isArray(unlocks))Object.entries(unlocks).slice(0,250).forEach(([id,stamp])=>{
+      const day=dateKey(stamp);if(!day)return;
+      const clean=String(id).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).slice(0,96);
+      add({id:'achievement:'+id,day,type:'achievement',title:clean,body:tr('unlocked','Achievement unlocked'),route:'achievements',featured:true});
+    });
+    const history=read('wdj-v875-focus-history-v1:'+account(),[]);
+    if(Array.isArray(history))history.slice(0,250).forEach((f,i)=>{
+      if(!f || !Number.isFinite(Number(f.seconds)) || Number(f.seconds)<60)return;
+      const day=dateKey(f.completedAt);if(!day)return;
+      const minutes=Math.max(1,Math.round(Number(f.seconds)/60));
+      const title=compact(f.projectName)||'Focus Studio';
+      add({id:'focus:'+String(f.id||f.completedAt||i),day,type:'focus',title,body:`${minutes} min · ${String(f.mode||f.preset||'Focus').slice(0,48)}`,route:'focus'});
+    });
+    if(end && end<=today)add({id:'end:'+end,day:end,type:'journey',title:tr('journeyComplete','Journey complete'),body:thai()?tr('completionTitle','Completed journey'):'End of journey',featured:true});
+    list.sort((a,b)=>b.day.localeCompare(a.day)||(a.type==='journey'?-1:0));
+    return {events:list.slice(0,1400),start,end,today};
+  }
+  let selected='all',pageLimit=48,expanded=new Set();
+  function cards(){
+    const data=collect();
+    if(data.pending)return `<div class="wdj-timeline-page"><div class="wdj-timeline-empty" role="status"><span>⏳</span><strong>Loading Journey Timeline...</strong></div></div>`;
+    const labelsMap=labels(),counts=Object.fromEntries(CATEGORIES.map(key=>[key,0]));
+    data.events.forEach(e=>{counts[e.type]++;counts.all++;});
+    const filtered=data.events.filter(e=>selected==='all'||e.type===selected);
+    const shown=filtered.slice(0,pageLimit), groups=new Map();
+    shown.forEach(e=>{const month=e.day.slice(0,7);if(!groups.has(month))groups.set(month,[]);groups.get(month).push(e);});
+    const nowJourney=data.start&&data.end?Math.max(0,Math.min(100,(Date.now()-new Date(data.start+'T12:00:00').getTime())/(new Date(data.end+'T12:00:00').getTime()-new Date(data.start+'T12:00:00').getTime())*100)):0;
+    const safePercent=Number.isFinite(nowJourney)?Math.round(nowJourney):0;
+    return `<div class="wdj-timeline-page">
+      <header class="wdj-timeline-hero"><div class="wdj-timeline-title"><span class="wdj-timeline-hero-icon">🗺️</span><div><span class="wdj-timeline-eyebrow">WORKDAY JOURNEY · YOUR STORY</span><h2>Journey Timeline</h2><p>${thai()?tr('myJourney','Journey')+' · '+tr('progressNow','Progress'): 'A look back at your work, growth and milestones'}</p></div></div><div class="wdj-timeline-hero-count"><strong>${counts.all.toLocaleString()}</strong><span>${thai()?tr('recentEntries','Activities'):'Timeline moments'}</span></div></header>
+      <section class="wdj-timeline-overview" aria-label="Journey progress"><div><small>${dateDisplay(data.start||data.today)}</small><strong>${safePercent}%</strong><small>${dateDisplay(data.end||data.today)}</small></div><div class="wdj-timeline-progress"><i style="width:${safePercent}%"></i></div><p>${thai()?tr('myJourney','Journey'):'Journey'} · ${counts.journal} ${labelsMap.journal} · ${counts.project} ${labelsMap.project} · ${counts.achievement} ${labelsMap.achievement} · ${counts.focus} Focus</p></section>
+      <nav class="wdj-timeline-filters" aria-label="Timeline filters">${CATEGORIES.map(type=>`<button type="button" data-timeline-filter="${type}" aria-pressed="${selected===type}" class="${selected===type?'is-active':''}"><span>${type==='all'?'✨':ICONS[type]}</span> ${escape(labelsMap[type])} <em>${counts[type]}</em></button>`).join('')}</nav>
+      <section class="wdj-timeline-feed" aria-live="polite">${shown.length?[...groups].map(([month,arr])=>`<div class="wdj-timeline-chapter"><h3><span class="wdj-timeline-month-pin">✦</span>${escape(monthDisplay(month))}<small>${arr.length}</small></h3><div class="wdj-timeline-items">${arr.map(e=>{
+          const isOpen=expanded.has(e.id),detail=compact(e.body),short=detail.slice(0,138),needsMore=detail.length>138;
+          return `<article class="wdj-timeline-event wdj-timeline-type-${e.type} ${e.featured?'is-featured':''}"><div class="wdj-timeline-dot" aria-hidden="true">${ICONS[e.type]}</div><div class="wdj-timeline-entry"><div class="wdj-timeline-entry-top"><time datetime="${e.day}">${escape(dateDisplay(e.day))}</time><span>${escape(labelsMap[e.type])}</span></div><h4>${escape(e.title)}</h4>${detail?`<p>${escape(isOpen?detail:short)}${needsMore&&!isOpen?'...':''}</p>`:''}<div class="wdj-timeline-actions">${needsMore?`<button type="button" data-timeline-expand="${escape(e.id)}" aria-expanded="${isOpen}">${isOpen?'− Less':'+ More'}</button>`:''}${e.route?`<a href="#/${e.route}" aria-label="${escape(e.title)}">${escape(labelsMap[e.type])} ↗</a>`:''}</div></div></article>`;
+        }).join('')}</div></div>`).join(''):`<div class="wdj-timeline-empty"><span>🪴</span><strong>${tr('noData','No memories in this category yet')}</strong><p>${thai()?tr('myJourney','Journey')+' · '+tr('noEntries','No entries yet'):'New activities will appear as you use Journal, Projects and Focus Studio.'}</p></div>`}</section>
+      ${filtered.length>shown.length?`<div class="wdj-timeline-load"><button type="button" data-timeline-more>+ ${thai()?tr('viewMore','Show more'):'Show more'} (${filtered.length-shown.length})</button></div>`:''}
+      <p class="wdj-timeline-notice">🔒 ${thai()?tr('localPrivacy','Local data'):'Read-only view of existing records.'} · ${thai()?tr('noData','No changes to source data'):'Your source data is never changed by this page.'}</p>
+    </div>`;
+  }
+  function render(){const host=$(ROOT);if(!host)return;host.innerHTML=cards();}
+  document.addEventListener('click',ev=>{
+    const button=ev.target.closest?.('#wdjTimelinePage [data-timeline-filter],#wdjTimelinePage [data-timeline-more],#wdjTimelinePage [data-timeline-expand]');if(!button)return;
+    if(button.dataset.timelineFilter){selected=button.dataset.timelineFilter;pageLimit=48;expanded.clear();render();$(ROOT)?.querySelector(`[data-timeline-filter="${selected}"]`)?.focus({preventScroll:true});}
+    else if(button.hasAttribute('data-timeline-more')){pageLimit=Math.min(1400,pageLimit+48);render();}
+    else if(button.dataset.timelineExpand){const id=button.dataset.timelineExpand;if(expanded.has(id))expanded.delete(id);else expanded.add(id);render();}
+  });
+  ['workday:v7-data-changed','workday:v8-data-changed','workday:v8-cloud-ready','workday:v8-auth-state'].forEach(name=>window.addEventListener(name,()=>{if(document.body?.dataset.v7Route==='timeline')render();}));
+  window.addEventListener('storage',ev=>{if(document.body?.dataset.v7Route==='timeline'&&(!ev.key || ['wp-v6-journal','wp-v6-projects','wp-v7-achievement-unlocked-at'].includes(ev.key)||ev.key.startsWith('wdj-v875-focus-history-v1:')))render();});
+  window.WorkdayTimeline={render,collect,_test:{dateKey}};
+  if(location.hash.replace(/^#\/?/,'').split('?')[0]==='timeline')queueMicrotask(render);
 })();
 
