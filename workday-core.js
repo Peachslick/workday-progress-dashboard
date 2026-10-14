@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10";
+  const APP_VERSION = "8.7.10.1";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2366,7 +2366,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.7.10";
+  const V6_VERSION = "8.7.10.1";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2379,7 +2379,7 @@
 
   const TEXT = {
     th: {
-      hubEyebrow: "WORK & JOURNEY HUB", hubTitle: "บันทึกงานและวิเคราะห์ Journey", hubHelp: "จดบันทึกงาน ติดตาม Project ดูรายงานรายเดือน และดูแล Backup จากจุดเดียว",
+      hubEyebrow: "ศูนย์รวมงานและการเดินทาง", hubTitle: "บันทึกงานและวิเคราะห์ Journey", hubHelp: "จดบันทึกงาน ติดตาม Project ดูรายงานรายเดือน และดูแล Backup จากจุดเดียว",
       dailyJournal: "Daily Work Journal", journalSaved: "บันทึกวันนี้แล้ว", journalEmpty: "วันนี้ยังไม่มีบันทึก", openJournal: "เขียนบันทึก", journalTitle: "บันทึกงานประจำวัน", journalDate: "วันที่",
       whatDid: "วันนี้ทำอะไร", whatDidPh: "เช่น แก้ WIP Monitor, ตรวจข้อมูล Power BI...", learned: "สิ่งที่ได้เรียนรู้", learnedPh: "สิ่งที่ได้เรียนรู้ ปัญหาที่แก้ หรือสิ่งที่อยากจำไว้...",
       mood: "ความรู้สึกวันนี้", relatedProjects: "Project ที่เกี่ยวข้อง", noProjectsYet: "ยังไม่มี Project — สร้าง Project ก่อนหรือบันทึกโดยไม่เลือกก็ได้", recentEntries: "บันทึกล่าสุด",
@@ -2387,18 +2387,18 @@
       projectTracker: "Project Tracker", projects: "Projects", activeProjects: "กำลังทำ", completedProjects: "เสร็จแล้ว", manageProjects: "จัดการ Project", projectTitle: "Project Tracker",
       projectName: "ชื่อ Project", projectCategory: "หมวดหมู่", projectProgress: "Progress (%)", projectStatus: "สถานะ", active: "กำลังทำ", paused: "พักไว้", completedProject: "เสร็จแล้ว", projectDescription: "รายละเอียด",
       addProject: "เพิ่ม Project", saveProject: "บันทึก Project", updateProject: "อัปเดต Project", edit: "แก้ไข", delete: "ลบ", projectSaved: "บันทึก Project แล้ว", projectDeleted: "ลบ Project แล้ว", projectNameRequired: "กรุณาใส่ชื่อ Project",
-      monthlyReport: "Monthly Report", currentMonth: "เดือนนี้", monthlyHours: "ชั่วโมงทำงาน", journalDays: "วันที่มี Journal", openReport: "ดูรายงาน", monthlyReportTitle: "รายงานประจำเดือน",
+      monthlyReport: "รายงานรายเดือน", currentMonth: "เดือนนี้", monthlyHours: "ชั่วโมงทำงาน", journalDays: "วันที่มี Journal", openReport: "ดูรายงาน", monthlyReportTitle: "รายงานประจำเดือน",
       chooseMonth: "เลือกเดือน", plannedHours: "ชั่วโมงตามแผน", actualHours: "เวลาทำงานจริง", attendance: "Attendance", leaveTime: "เวลาลา", holidays: "วันหยุดบริษัท", compensatory: "วันทำงานชดเชย",
-      journalEntries: "Journal Entries", projectMentions: "Project ที่มีการบันทึก", journalHighlights: "Journal Highlights", noJournalMonth: "เดือนนี้ยังไม่มี Daily Journal", printSavePdf: "พิมพ์ / Save PDF",
+      journalEntries: "จำนวนบันทึกประจำวัน", projectMentions: "Project ที่มีการบันทึก", journalHighlights: "บันทึกสำคัญ", noJournalMonth: "เดือนนี้ยังไม่มี Daily Journal", printSavePdf: "พิมพ์ / Save PDF",
       calendarPresets: "Calendar Preset / Import", calendarPresetsShort: "Preset / Import", calendarPresetHelp: "โหลดวันหยุดบริษัท บันทึกชุดปฏิทินของตัวเอง หรือ Import/Export เป็น JSON",
       builtInCompanyCalendar: "Company Calendar ค่าเริ่มต้น", loadDefaults: "เพิ่มวันหยุดบริษัทค่าเริ่มต้น", defaultsLoaded: "เพิ่ม Company Holidays ค่าเริ่มต้นแล้ว", currentCalendar: "ปฏิทินปัจจุบัน",
       savePreset: "บันทึกเป็น Preset", presetName: "ชื่อ Preset", savedPresets: "Preset ที่บันทึกไว้", noPresets: "ยังไม่มี Preset ที่บันทึก", load: "โหลด", replaceCalendarConfirm: "แทนที่ Calendar ปัจจุบันด้วย Preset นี้หรือไม่?",
       exportCalendar: "Export Calendar JSON", importCalendar: "Import Calendar JSON", clearSpecialDates: "ล้างวันพิเศษทั้งหมด", clearCalendarConfirm: "ลบ Company Holiday, Leave และ Compensatory Workday ทั้งหมดหรือไม่?", calendarImported: "Import Calendar สำเร็จ", calendarExported: "Export Calendar แล้ว", invalidCalendar: "ไฟล์ Calendar ไม่ถูกต้อง",
-      backupHealth: "Backup Health", backupNever: "ยังไม่เคย Backup", backupToday: "Backup วันนี้", backupAgo: "Backup ล่าสุด {days} วันที่แล้ว", backupDue: "ควร Backup แล้ว", backupGood: "Backup ยังใหม่อยู่", backupNow: "Backup ตอนนี้", backupReminder: "Backup Reminder", reminderOff: "ปิด", everyDays: "ทุก {days} วัน", backupReminderHelp: "ระบบจะแจ้งเตือนเมื่อ Backup เก่ากว่าระยะเวลาที่กำหนด",
-      recapEyebrow: "SMART DAILY RECAP", recapTitle: "สรุปวันทำงานของคุณ", recapText: "วันนี้ทำงาน {today} · สะสมทั้งหมด {total} · Attendance {attendance}%", recapJournalDone: "มี Journal วันนี้แล้ว ✓", recapJournalMissing: "ยังไม่ได้เขียน Journal วันนี้", addTodayJournal: "เพิ่ม Journal วันนี้", dismissToday: "ซ่อนวันนี้",
-      customizeDashboard: "Dashboard Customization", customizeHelp: "ซ่อน/แสดง Section และจัดลำดับ Dashboard ตามที่คุณอยากเห็น", customize: "ปรับ Dashboard", visible: "แสดง", moveUp: "ขึ้น", moveDown: "ลง", saveLayout: "บันทึก Layout", resetLayout: "คืน Layout เริ่มต้น", layoutSaved: "บันทึก Dashboard Layout แล้ว",
-      sectionToday: "Today Progress", sectionTimeline: "Today Timeline", sectionOverview: "Internship Overview", sectionJourney: "Journey Achievements", sectionAttendance: "Attendance & Time Balance", sectionJourneyLine: "Journey Timeline", sectionSmart: "Smart Journey Tools", sectionHeatmap: "Heatmap", sectionStory: "Journey Story", sectionHub: "Work & Journey Hub", sectionCalendar: "Calendar",
-      finalReport: "Final Journey Report", finalReportHelp: "สรุป Journey ทั้งช่วง พร้อม Attendance, Projects, Journal และข้อมูลรายเดือน", openFinalReport: "เปิด Final Report", finalReportTitle: "Final Journey Report", livePreview: "LIVE PREVIEW", completedBadge: "JOURNEY COMPLETE",
+      backupHealth: "สถานะข้อมูลสำรอง", backupNever: "ยังไม่เคย Backup", backupToday: "Backup วันนี้", backupAgo: "Backup ล่าสุด {days} วันที่แล้ว", backupDue: "ควร Backup แล้ว", backupGood: "Backup ยังใหม่อยู่", backupNow: "Backup ตอนนี้", backupReminder: "แจ้งเตือนสำรองข้อมูล", reminderOff: "ปิด", everyDays: "ทุก {days} วัน", backupReminderHelp: "ระบบจะแจ้งเตือนเมื่อ Backup เก่ากว่าระยะเวลาที่กำหนด",
+      recapEyebrow: "สรุปงานประจำวัน", recapTitle: "สรุปวันทำงานของคุณ", recapText: "วันนี้ทำงาน {today} · สะสมทั้งหมด {total} · Attendance {attendance}%", recapJournalDone: "มี Journal วันนี้แล้ว ✓", recapJournalMissing: "ยังไม่ได้เขียน Journal วันนี้", addTodayJournal: "เพิ่ม Journal วันนี้", dismissToday: "ซ่อนวันนี้",
+      customizeDashboard: "ปรับแต่งแดชบอร์ด", customizeHelp: "ซ่อน/แสดง Section และจัดลำดับ Dashboard ตามที่คุณอยากเห็น", customize: "ปรับ Dashboard", visible: "แสดง", moveUp: "ขึ้น", moveDown: "ลง", saveLayout: "บันทึก Layout", resetLayout: "คืน Layout เริ่มต้น", layoutSaved: "บันทึก Dashboard Layout แล้ว",
+      sectionToday: "ความคืบหน้าวันนี้", sectionTimeline: "กิจกรรมของวันนี้", sectionOverview: "ภาพรวมการฝึกงาน", sectionJourney: "ความสำเร็จระหว่างการเดินทาง", sectionAttendance: "การเข้างานและเวลาทำงาน", sectionJourneyLine: "เส้นทางการเดินทาง", sectionSmart: "เครื่องมือช่วยติดตามความก้าวหน้า", sectionHeatmap: "Heatmap", sectionStory: "เรื่องราวการเดินทาง", sectionHub: "ศูนย์รวมงานและการเดินทาง", sectionCalendar: "Calendar",
+      finalReport: "Final Journey Report", finalReportHelp: "สรุป Journey ทั้งช่วง พร้อม Attendance, Projects, Journal และข้อมูลรายเดือน", openFinalReport: "เปิด Final Report", finalReportTitle: "รายงานสรุปการเดินทาง", livePreview: "LIVE PREVIEW", completedBadge: "JOURNEY COMPLETE",
       reportJourney: "Journey", reportWork: "Work & Attendance", reportProjects: "Projects", reportJournal: "Journal", reportMonthly: "Monthly Breakdown", reportGenerated: "สร้างรายงานเมื่อ", totalProjects: "Projects ทั้งหมด", completedProjectsLabel: "Projects ที่เสร็จ", totalJournals: "Journal ทั้งหมด", journalCoverage: "วันที่ทำงานที่มี Journal",
       privacyHidden: "ซ่อนใน Demo Mode", close: "ปิด", cancel: "ยกเลิก", save: "บันทึก", noData: "ยังไม่มีข้อมูล", confirmDelete: "ยืนยันการลบรายการนี้?", demoJournalBlocked: "Daily Journal ถูกซ่อนใน Public Demo Mode", reportName: "Workday Journey Report",
       backupToast: "ถึงเวลาสำรองข้อมูล Workday Journey แล้ว", dashboardTools: "เครื่องมือ Dashboard", calendarPresetSettings: "Calendar Presets", finalReportSettings: "Final Journey Report",
@@ -2830,7 +2830,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -2863,13 +2863,13 @@
 
   const TEXT = {
     th: {
-      dashboard:"แดชบอร์ด", journal:"บันทึกประจำวัน", projects:"โปรเจกต์", achievements:"ความสำเร็จ", reports:"รายงานและการวิเคราะห์", calendar:"ปฏิทินและการเข้างาน", missions:"ภารกิจรายวัน", focus:"Focus Studio", focusSub:"จับเวลาโฟกัสและสรุป Session", skills:"Skill Tree", timeline:"Journey Timeline", insights:"ข้อมูลเชิงลึก", wrapped:"Journey Wrapped", wrappedSub:"สรุปเรื่องราวและความสำเร็จของคุณ", insightsSub:"สรุป Journal, Focus และพัฒนาการ", timelineSub:"A timeline of your milestones", skillsSub:"เติบโตจาก Journal และ Projects", bank:"Work Bank", exchange:"Work Exchange", rewards:"รางวัล", developer:"Developer Tools", settings:"ตั้งค่า",
+      dashboard:"แดชบอร์ด", journal:"บันทึกประจำวัน", projects:"โปรเจกต์", achievements:"ความสำเร็จ", reports:"รายงานและการวิเคราะห์", calendar:"ปฏิทินและการเข้างาน", missions:"ภารกิจรายวัน", focus:"Focus Studio", focusSub:"จับเวลาโฟกัสและสรุป Session", skills:"Skill Tree", timeline:"เส้นทางการเดินทาง", insights:"ข้อมูลเชิงลึก", wrapped:"สรุปการเดินทาง", wrappedSub:"สรุปเรื่องราวและความสำเร็จของคุณ", insightsSub:"สรุป Journal, Focus และพัฒนาการ", timelineSub:"ประวัติกิจกรรมและหมุดหมายความสำเร็จ", skillsSub:"เติบโตจาก Journal และ Projects", bank:"Work Bank", exchange:"Work Exchange", rewards:"รางวัล", developer:"Developer Tools", settings:"ตั้งค่า",
       dashboardSub:"ภาพรวมวันนี้และ Journey", journalSub:"บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้", projectsSub:"ติดตามงานและความคืบหน้าของ Project", achievementsSub:"Milestones, Badge และ Journey Story", reportsSub:"สถิติ Attendance, Heatmap และรายงาน", calendarSub:"วันลา วันหยุด และวันทำงานชดเชย", missionsSub:"ภารกิจรายวันและ Daily / Weekly Chest", bankSub:"ออม Work Coins · ดอกเบี้ยทบต้น + Streak", exchangeSub:"ตลาดจำลองและ Trading Academy", rewardsSub:"ร้านค้า ของสะสม Daily / Weekly Deals", developerSub:"Reward Codes และ Owner Control", settingsSub:"โปรไฟล์และการตั้งค่าแอป", fontPreview:"ตัวอย่างแบบอักษร", fontPreviewText:"ภาษาไทย · Workday Journey · ABC 123", fontPreviewHelp:"แบบอักษรที่เลือกจะใช้กับทั้งแอป",
-      privateLocal:"Private · Local data", menu:"เมนู", quickActions:"ทางลัด", addJournal:"เพิ่ม Journal วันนี้", manageProjects:"จัดการ Projects", openReports:"ดู Reports", openCalendar:"เปิด Calendar",
+      privateLocal:"ส่วนตัว · ข้อมูลในเครื่อง", menu:"เมนู", quickActions:"ทางลัด", addJournal:"เพิ่ม Journal วันนี้", manageProjects:"จัดการ Projects", openReports:"ดู Reports", openCalendar:"เปิด Calendar",
       journalTitle:"Daily Work Journal", journalHelp:"บันทึกว่าวันนี้ทำอะไร เรียนรู้อะไร และ Project ที่เกี่ยวข้อง", journalDate:"วันที่", workDone:"วันนี้ทำอะไร", learned:"สิ่งที่ได้เรียนรู้", mood:"ความรู้สึกวันนี้", relatedProjects:"Project ที่เกี่ยวข้อง", saveJournal:"บันทึก Journal", deleteJournal:"ลบบันทึก", recentEntries:"บันทึกล่าสุด", noEntries:"ยังไม่มีบันทึก", demoLocked:"Journal ถูกซ่อนใน Public Demo Mode", journalSaved:"บันทึก Journal แล้ว", journalDeleted:"ลบบันทึกแล้ว", journalDateInvalid:"กรุณาใส่วันที่ให้ถูกต้องในรูปแบบ DD/MM/YYYY", journalCalendar:"สถานะการบันทึกประจำวัน", journalCalendarHelp:"✓ = บันทึกแล้ว · ช่องว่างสีอ่อน = วันทำงานที่ยังไม่ได้บันทึก", pendingJournals:"ค้าง {n} วัน", journalAllCaughtUp:"บันทึกครบแล้ว", previousMonth:"เดือนก่อนหน้า", nextMonth:"เดือนถัดไป", summaryLive:"อัปเดตจากข้อมูลล่าสุดของคุณ",
       projectsTitle:"Project Tracker", projectsHelp:"ติดตาม Project, Status, Progress และเก็บไฟล์ Project บน Private Cloud", projectName:"ชื่อ Project", category:"หมวดหมู่", progress:"Progress (%)", status:"สถานะ", description:"รายละเอียด", active:"กำลังทำ", paused:"พักไว้", completed:"เสร็จแล้ว", saveProject:"บันทึก Project", newProject:"Project ใหม่", noProjects:"ยังไม่มี Project", journalDays:"วันที่มี Journal", projectSaved:"บันทึก Project แล้ว", projectDeleted:"ลบ Project แล้ว", projectList:"รายการ Project",
       achievementsTitle:"Achievement Center", achievementsHelp:"รวม Badge, Milestone และเรื่องราวสำคัญของ Journey", unlocked:"ปลดล็อกแล้ว", locked:"ยังไม่ปลดล็อก", achievementProgress:"ปลดล็อก {n}/{total} Achievement",
-      reportsTitle:"Reports & Analytics", reportsHelp:"ดูภาพรวม Attendance, Monthly Statistics, Heatmap และ Final Journey Report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
+      reportsTitle:"รายงานและการวิเคราะห์", reportsHelp:"ดูข้อมูลการเข้างาน สถิติรายเดือน ปฏิทินกิจกรรม และรายงานสรุป", monthlyReport:"รายงานรายเดือน", detailedStats:"สถิติโดยละเอียด", finalReport:"รายงานสรุปการเดินทาง", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
       backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V8.5.0 · Navigation Refresh + Smart Cloud Sync + Achievement Center + File Vault", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์",

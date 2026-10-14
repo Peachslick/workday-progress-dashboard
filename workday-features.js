@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -603,20 +603,20 @@
       journal:["📓","บันทึกประจำวัน","บันทึกสิ่งที่ทำและสิ่งที่เรียนรู้"],
       projects:["🧩","โปรเจกต์","ติดตามงานและความคืบหน้าของ Project"],
       focus:["⏱️","Focus Studio","Pomodoro · Deep Work · สรุปเวลาโฟกัส"],
-      timeline:["🗺️","Journey Timeline","Journal · Projects · Achievements · Focus"],
-      insights:["📊","สถิติการทำงาน","Journal · Focus · Projects · Skills"],
-      wrapped:["🎊","Journey Wrapped","การ์ดสรุปและความสำเร็จ"],
+      timeline:["🗺️","เส้นทางการเดินทาง","บันทึก · โครงการ · ความสำเร็จ · Focus Studio"],
+      insights:["📊","สถิติการทำงาน","บันทึก · เวลาโฟกัส · โครงการ · ทักษะ"],
+      wrapped:["🎊","สรุปการเดินทาง","การ์ดสรุปและความสำเร็จ"],
       skills:["🌳","Skill Tree","แผนผังทักษะ · Level · Growth XP"],
       achievements:["🏆","ความสำเร็จ","Journey Challenges · Feature Achievements · ฉายา"],
-      reports:["📊","รายงานและการวิเคราะห์","Attendance, Heatmap และรายงานสรุป"],
+      reports:["📊","รายงานและการวิเคราะห์","การเข้างาน · ปฏิทินกิจกรรม · รายงานสรุป"],
       calendar:["🗓️","ปฏิทินและการเข้างาน","วันลา วันหยุดบริษัท และวันทำงานชดเชย"],
-      missions:["🎯","ภารกิจรายวัน","Daily Missions, Daily Chest และ Weekly Chest"],
+      missions:["🎯","ภารกิจรายวัน","ภารกิจรายวัน · หีบรางวัลรายวันและรายสัปดาห์"],
       bank:["🏦","Work Bank","Savings, Daily Interest และ Work Coins"],
       exchange:["📈","Work Exchange","ตลาดหุ้นจำลอง Portfolio และ Trading ด้วย Work Coins"],
       rewards:["🎁","รางวัล","Reward Shop, Reward Codes และของสะสม"],
       workspace:["🏡","ห้องทำงานของฉัน","ห้อง Pixel Art · Mascot และของตกแต่ง"],
       developer:["🛠","Developer Control Center","Reward Codes, Redeem History และ Owner Economy Tools"],
-      settings:["⚙️","ตั้งค่า","โปรไฟล์ การแสดงผล Cloud และข้อมูล"]
+      settings:["⚙️","ตั้งค่า","โปรไฟล์ · การแสดงผล · การเชื่อมต่อ · ข้อมูล"]
     },
     en:{
       dashboard:["🏠","Dashboard","Today and Journey overview"],
@@ -3336,7 +3336,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3351,7 +3351,7 @@
 
   const ROUTE_LABELS = {
     th: {
-      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "Journey Timeline", insights: "ข้อมูลเชิงลึก", wrapped: "Journey Wrapped", calendar: "ปฏิทิน",
+      dashboard: "แดชบอร์ด", journal: "บันทึก", projects: "โปรเจกต์", focus: "โฟกัส", skills: "ทักษะ", timeline: "เส้นทางการเดินทาง", insights: "ข้อมูลเชิงลึก", wrapped: "สรุปการเดินทาง", calendar: "ปฏิทิน",
       reports: "รายงาน", achievements: "ความสำเร็จ", missions: "ภารกิจ", rewards: "รางวัล",
       bank: "Work Bank", exchange: "Exchange", developer: "Developer", settings: "ตั้งค่า", more: "เพิ่มเติม"
     },
@@ -3416,7 +3416,7 @@
       const labelEl = document.createElement("div");
       labelEl.className = "v850-nav-group-label";
       labelEl.dataset.v850Group = group.id;
-      labelEl.textContent = group.label;
+      labelEl.textContent = lang() === "th" ? ({work:"งาน",journey:"การเดินทาง",economy:"ระบบเหรียญและของรางวัล",system:"ระบบ"}[group.id] || group.label) : group.label;
       first.insertAdjacentElement("beforebegin", labelEl);
     });
 
@@ -3672,7 +3672,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3737,7 +3737,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3898,7 +3898,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4166,7 +4166,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4431,7 +4431,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4825,7 +4825,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.10";
+  const VERSION = "8.7.10.1";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4972,7 +4972,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.10';
+  const VERSION = '8.7.10.1';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5543,10 +5543,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.10',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.10.1',refresh:mount };
 })();
 
-/* SOURCE: V8.7.10 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.10.1 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5870,7 +5870,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.10: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.10.1: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6202,12 +6202,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10.1',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.10: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.10.1: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6384,7 +6384,7 @@
 })();
 
 
-/* ===== V8.7.10 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.10.1 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6504,11 +6504,11 @@ function render(){ensure();const root=$(ROOT);if(!root)return;
  const activeSelection=activeEditor&&items.find(e=>e.type===activeEditor.type&&e.id===activeEditor.id);
  root.innerHTML=`<div class="wdj-skill-page wdj-hybrid-page">
  <section class="wdj-skill-hero"><div class="wdj-skill-hero-copy"><div class="wdj-skill-eyebrow">🌳 PERSONALIZED CAREER GROWTH · V8.7</div><h2>${t('Skill Tree ของฉัน','My Personalized Skill Tree')}</h2><p>${t('เลือกเส้นทางอาชีพ ให้ระบบแนะนำทักษะจากคำสำคัญ และปรับ Skill Tag ของแต่ละกิจกรรมเองได้','Choose a career path, get keyword suggestions, and manually assign skills to each activity.')}</p><span class="wdj-skill-local">🔒 ${t('ข้อมูลทักษะเก็บในเครื่อง · ไม่แก้ข้อมูล Journal หรือ Project','Local skill preferences · original work data unchanged')}</span></div><div class="wdj-skill-hero-art" aria-hidden="true">🌱<span>✦</span></div></section>
- <section class="wdj-hybrid-config"><div class="wdj-hybrid-config-top"><div><span class="wdj-skill-eyebrow">CAREER TEMPLATE</span><h3>${t('เลือกสายงานของคุณ','Choose your career path')}</h3></div><label><span>${t('สายงาน','Track')}</span><select id="wdjCareerTemplate">${Object.entries(TEMPLATES).map(([key,v])=>`<option value="${key}" ${key===cfg.template?'selected':''}>${esc(loc()==='en'?v.en:v.th)}</option>`).join('')}</select></label></div><p>${t('เปลี่ยนสายงานได้ตลอด; ข้อมูลและคะแนนจากสายเดิมไม่ถูกลบ','Switch templates anytime. Previous data and skill mappings are not deleted.')}</p><details class="wdj-hybrid-custom"><summary>⚙️ ${t('จัดการทักษะและคำสำคัญ','Manage skills & keywords')}</summary><div class="wdj-hybrid-custom-content">${cfg.template==='custom'?`<p>${t('เลือกสายทักษะที่ต้องการให้ปรากฏ','Choose which built-in skills to show')}</p><div class="wdj-hybrid-choice">${ALL.map(s=>`<label class="wdj-hybrid-choice-item"><input data-wdj-custom-toggle="${esc(s.id)}" type="checkbox" ${cfg.customIds.includes(s.id)?'checked':''}><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}</span></label>`).join('')}</div><p>${t('เลือกทักษะอย่างน้อยหนึ่งสาย','Choose at least one skill')}</p>`:''}<div class="wdj-hybrid-custom-list">${cfg.custom.map(s=>`<div class="wdj-hybrid-custom-row ${s.archived?'is-archived':''}"><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}<small>${esc(s.tags.join(', ').slice(0,130))}</small></span><div class="wdj-hybrid-custom-buttons"><button type="button" data-wdj-custom-action="edit" data-id="${esc(s.id)}">${t('แก้ไข','Edit')}</button><button type="button" data-wdj-custom-action="${s.archived?'restore':'archive'}" data-id="${esc(s.id)}">${s.archived?t('คืนค่า','Restore'):t('ซ่อน','Hide')}</button></div></div>`).join('')}</div><form id="wdjAddSkillForm" class="wdj-hybrid-add-form"><label>${t('ชื่อทักษะใหม่','New skill name')}<input name="skillName" maxlength="42" required placeholder="${t('เช่น CAD / Automation','e.g. CAD / Automation')}"></label><label>${t('ไอคอน','Icon')}<input name="icon" maxlength="5" value="🌱"></label><label>${t('คำสำคัญ (คั่นด้วยจุลภาค)','Keywords (comma-separated)')}<input name="keywords" maxlength="360" placeholder="CAD, SolidWorks, ออกแบบชิ้นงาน"></label><button type="submit" class="primary-btn">＋ ${t('เพิ่มทักษะ','Add skill')}</button><button type="button" id="wdjCancelSkillEdit" hidden>${t('ยกเลิกแก้ไข','Cancel editing')}</button></form><small>${t('เพิ่มได้สูงสุด 20 ทักษะส่วนตัว ไม่ใช้ Coin และไม่เปลี่ยนข้อมูล Project','Up to 20 custom skills. No Coins or source Project data are changed.')}</small></div></details></section>
+ <section class="wdj-hybrid-config"><div class="wdj-hybrid-config-top"><div><span class="wdj-skill-eyebrow">${t("รูปแบบสายงาน","CAREER TEMPLATE")}</span><h3>${t('เลือกสายงานของคุณ','Choose your career path')}</h3></div><label><span>${t('สายงาน','Track')}</span><select id="wdjCareerTemplate">${Object.entries(TEMPLATES).map(([key,v])=>`<option value="${key}" ${key===cfg.template?'selected':''}>${esc(loc()==='en'?v.en:v.th)}</option>`).join('')}</select></label></div><p>${t('เปลี่ยนสายงานได้ตลอด; ข้อมูลและคะแนนจากสายเดิมไม่ถูกลบ','Switch templates anytime. Previous data and skill mappings are not deleted.')}</p><details class="wdj-hybrid-custom"><summary>⚙️ ${t('จัดการทักษะและคำสำคัญ','Manage skills & keywords')}</summary><div class="wdj-hybrid-custom-content">${cfg.template==='custom'?`<p>${t('เลือกสายทักษะที่ต้องการให้ปรากฏ','Choose which built-in skills to show')}</p><div class="wdj-hybrid-choice">${ALL.map(s=>`<label class="wdj-hybrid-choice-item"><input data-wdj-custom-toggle="${esc(s.id)}" type="checkbox" ${cfg.customIds.includes(s.id)?'checked':''}><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}</span></label>`).join('')}</div><p>${t('เลือกทักษะอย่างน้อยหนึ่งสาย','Choose at least one skill')}</p>`:''}<div class="wdj-hybrid-custom-list">${cfg.custom.map(s=>`<div class="wdj-hybrid-custom-row ${s.archived?'is-archived':''}"><span>${esc(s.icon)} ${esc(loc()==='en'?s.en:s.th)}<small>${esc(s.tags.join(', ').slice(0,130))}</small></span><div class="wdj-hybrid-custom-buttons"><button type="button" data-wdj-custom-action="edit" data-id="${esc(s.id)}">${t('แก้ไข','Edit')}</button><button type="button" data-wdj-custom-action="${s.archived?'restore':'archive'}" data-id="${esc(s.id)}">${s.archived?t('คืนค่า','Restore'):t('ซ่อน','Hide')}</button></div></div>`).join('')}</div><form id="wdjAddSkillForm" class="wdj-hybrid-add-form"><label>${t('ชื่อทักษะใหม่','New skill name')}<input name="skillName" maxlength="42" required placeholder="${t('เช่น CAD / Automation','e.g. CAD / Automation')}"></label><label>${t('ไอคอน','Icon')}<input name="icon" maxlength="5" value="🌱"></label><label>${t('คำสำคัญ (คั่นด้วยจุลภาค)','Keywords (comma-separated)')}<input name="keywords" maxlength="360" placeholder="CAD, SolidWorks, ออกแบบชิ้นงาน"></label><button type="submit" class="primary-btn">＋ ${t('เพิ่มทักษะ','Add skill')}</button><button type="button" id="wdjCancelSkillEdit" hidden>${t('ยกเลิกแก้ไข','Cancel editing')}</button></form><small>${t('เพิ่มได้สูงสุด 20 ทักษะส่วนตัว ไม่ใช้ Coin และไม่เปลี่ยนข้อมูล Project','Up to 20 custom skills. No Coins or source Project data are changed.')}</small></div></details></section>
  <section class="wdj-skill-kpis"><div><span>${t('Growth XP ของสายที่แสดง','Visible growth XP')}</span><strong>${sum.toLocaleString()}</strong><small>${t('คำนวณใหม่จากกิจกรรม','Derived from activity')}</small></div><div><span>${t('ทักษะที่กำลังพัฒนา','Active skill paths')}</span><strong>${started} / ${active.length}</strong><small>${t('ของสายงานที่เลือก','In selected career path')}</small></div><div><span>${t('เลเวลรวม','Combined levels')}</span><strong>${active.reduce((n,s)=>n+level(stat(s.id).xp),0)}</strong><small>${t('ไม่ใช่ระดับรับรอง','Not a certification')}</small></div></section>
- <div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">YOUR CAREER MAP</span><h3>${t('เส้นทางทักษะของฉัน','My career skills')}</h3></div><span>${t('แตะทักษะเพื่อดูคะแนนและหลักฐาน','Select a skill to view its XP and evidence')}</span></div><section class="wdj-skill-map"><div class="wdj-skill-trunk"><span>✨</span><strong>MY GROWTH</strong><small>WORKDAY JOURNEY</small></div><div class="wdj-skill-branches">${active.map(s=>{const xp=stat(s.id).xp,p=growth(xp);return `<button type="button" data-skill-id="${esc(s.id)}" class="wdj-skill-node wdj-skill-tone-${s.tone} ${s.id===chosen?'is-selected':''}" aria-pressed="${s.id===chosen}"><span class="wdj-skill-node-icon">${esc(s.icon)}</span><span class="wdj-skill-node-main"><strong>${esc(loc()==='en'?s.en:s.th)}</strong><small>Lv.${p.n} · ${xp.toLocaleString()} XP</small></span><span class="wdj-skill-node-progress"><i style="width:${p.pct.toFixed(1)}%"></i></span></button>`;}).join('')}</div></section>
- <section class="wdj-skill-detail"><div class="wdj-skill-detail-head"><span class="wdj-skill-detail-icon wdj-skill-tone-${chosenSkill.tone}">${esc(chosenSkill.icon)}</span><div><span class="wdj-skill-eyebrow">SELECTED SKILL PATH</span><h3>${esc(loc()==='en'?chosenSkill.en:chosenSkill.th)}</h3><p>${t('อัตโนมัติ + ผู้ใช้เลือกเอง','Keyword matches + manual tags')}</p></div><span class="wdj-skill-level">Lv. ${g.n}</span></div><div class="wdj-skill-xp-head"><strong>${current.xp.toLocaleString()} XP</strong><span>${g.n===10?t('ระดับสูงสุด','Maximum level'):`${g.next.toLocaleString()} XP → Lv.${g.n+1}`}</span></div><div class="wdj-skill-xp-bar"><i style="width:${g.pct}%"></i></div><div class="wdj-skill-evidence-kpis"><div><strong>${current.journals}</strong><span>${t('Journal (วัน)','Journal days')}</span></div><div><strong>${current.projects}</strong><span>Projects</span></div><div><strong>${current.focus}</strong><span>Focus Sessions</span></div></div><div class="wdj-skill-milestone-head"><h4>Milestones</h4></div><div class="wdj-skill-milestones">${[[3,'🌱','Growing'],[5,'🏅','Pro'],[7,'💎','Expert'],[10,'🌟','Master']].map(([n,emoji,name])=>`<div class="${g.n>=n?'is-earned':'is-locked'}"><span>${g.n>=n?emoji:'🔒'}</span><strong>Lv.${n}</strong><small>${name}</small></div>`).join('')}</div><div class="wdj-skill-evidence-head"><h4>${t('กิจกรรมที่ให้คะแนน','XP evidence')}</h4><small>${t('ล่าสุด 8 รายการ','8 recent entries')}</small></div>${evidence.length?`<div class="wdj-skill-evidence-list">${evidence.map(e=>`<div><span class="wdj-skill-evidence-icon">${e.type==='journal'?'📓':e.type==='project'?'🧩':'⏱️'}</span><span><strong>${esc(e.name)}</strong><small>${e.mode==='manual'?t('เลือกเอง','Manual'):t('อัตโนมัติ','Auto')} · +${e.points} XP</small></span><time>${esc(String(e.date||'').slice(0,10))}</time></div>`).join('')}</div>`:`<div class="wdj-skill-empty">${t('ยังไม่พบกิจกรรมในสายนี้ ลองเลือก Skill Tags ให้ Journal/Project','No activities here yet. Try tagging your Journal/Project.')}</div>`}</section>
- <section class="wdj-hybrid-manager"><div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">SMART TAGGING</span><h3>${t('ตรวจทักษะของ Journal และ Projects','Review Journal & Project skills')}</h3></div><span>${t('ล่าสุด 16 รายการ · กดแก้ไข','Latest 16 items · edit tags')}</span></div><div class="wdj-hybrid-entry-list">${recent.length?recent.map(e=>{const a=assignment(e.type,e.id,e.text);return `<div class="wdj-hybrid-entry"><div><strong>${e.type==='journal'?'📓':'🧩'} ${esc(e.name)}</strong><small>${a.mode==='manual'?t('กำหนดเอง','Manual'):t('จับคู่จากคำสำคัญ','Keyword match')}</small><div class="wdj-hybrid-entry-chips">${chips(a.ids)}</div></div><button type="button" data-wdj-edit-entry="${esc(e.type)}" data-id="${esc(e.id)}">✎ ${t('เลือกทักษะ','Edit tags')}</button></div>`;}).join(''):`<p>${t('ยังไม่มี Journal หรือ Project','No journals or projects yet.')}</p>`}</div>${activeSelection?`<div class="wdj-hybrid-manager-edit"><h4>🏷 ${esc(activeSelection.name)}</h4>${editorSelectHtml(activeSelection)}<div class="wdj-hybrid-manager-actions"><button class="primary-btn" type="button" data-wdj-save-manage>✓ ${t('บันทึกทักษะ','Save tags')}</button><button type="button" data-wdj-close-manage>${t('ยกเลิก','Cancel')}</button></div></div>`:''}</section>
+ <div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">${t("แผนผังสายอาชีพของคุณ","YOUR CAREER MAP")}</span><h3>${t('เส้นทางทักษะของฉัน','My career skills')}</h3></div><span>${t('แตะทักษะเพื่อดูคะแนนและหลักฐาน','Select a skill to view its XP and evidence')}</span></div><section class="wdj-skill-map"><div class="wdj-skill-trunk"><span>✨</span><strong>${t("การเติบโตของฉัน","MY GROWTH")}</strong><small>WORKDAY JOURNEY</small></div><div class="wdj-skill-branches">${active.map(s=>{const xp=stat(s.id).xp,p=growth(xp);return `<button type="button" data-skill-id="${esc(s.id)}" class="wdj-skill-node wdj-skill-tone-${s.tone} ${s.id===chosen?'is-selected':''}" aria-pressed="${s.id===chosen}"><span class="wdj-skill-node-icon">${esc(s.icon)}</span><span class="wdj-skill-node-main"><strong>${esc(loc()==='en'?s.en:s.th)}</strong><small>Lv.${p.n} · ${xp.toLocaleString()} XP</small></span><span class="wdj-skill-node-progress"><i style="width:${p.pct.toFixed(1)}%"></i></span></button>`;}).join('')}</div></section>
+ <section class="wdj-skill-detail"><div class="wdj-skill-detail-head"><span class="wdj-skill-detail-icon wdj-skill-tone-${chosenSkill.tone}">${esc(chosenSkill.icon)}</span><div><span class="wdj-skill-eyebrow">${t("ทักษะที่เลือก","SELECTED SKILL PATH")}</span><h3>${esc(loc()==='en'?chosenSkill.en:chosenSkill.th)}</h3><p>${t('อัตโนมัติ + ผู้ใช้เลือกเอง','Keyword matches + manual tags')}</p></div><span class="wdj-skill-level">Lv. ${g.n}</span></div><div class="wdj-skill-xp-head"><strong>${current.xp.toLocaleString()} XP</strong><span>${g.n===10?t('ระดับสูงสุด','Maximum level'):`${g.next.toLocaleString()} XP → Lv.${g.n+1}`}</span></div><div class="wdj-skill-xp-bar"><i style="width:${g.pct}%"></i></div><div class="wdj-skill-evidence-kpis"><div><strong>${current.journals}</strong><span>${t('Journal (วัน)','Journal days')}</span></div><div><strong>${current.projects}</strong><span>${t("โครงการ","Projects")}</span></div><div><strong>${current.focus}</strong><span>${t("ครั้งที่โฟกัสสำเร็จ","Focus Sessions")}</span></div></div><div class="wdj-skill-milestone-head"><h4>${t("เป้าหมายตามระดับ","Milestones")}</h4></div><div class="wdj-skill-milestones">${[[3,'🌱','Growing'],[5,'🏅','Pro'],[7,'💎','Expert'],[10,'🌟','Master']].map(([n,emoji,name])=>`<div class="${g.n>=n?'is-earned':'is-locked'}"><span>${g.n>=n?emoji:'🔒'}</span><strong>Lv.${n}</strong><small>${name}</small></div>`).join('')}</div><div class="wdj-skill-evidence-head"><h4>${t('กิจกรรมที่ให้คะแนน','XP evidence')}</h4><small>${t('ล่าสุด 8 รายการ','8 recent entries')}</small></div>${evidence.length?`<div class="wdj-skill-evidence-list">${evidence.map(e=>`<div><span class="wdj-skill-evidence-icon">${e.type==='journal'?'📓':e.type==='project'?'🧩':'⏱️'}</span><span><strong>${esc(e.name)}</strong><small>${e.mode==='manual'?t('เลือกเอง','Manual'):t('อัตโนมัติ','Auto')} · +${e.points} XP</small></span><time>${esc(String(e.date||'').slice(0,10))}</time></div>`).join('')}</div>`:`<div class="wdj-skill-empty">${t('ยังไม่พบกิจกรรมในสายนี้ ลองเลือก Skill Tags ให้ Journal/Project','No activities here yet. Try tagging your Journal/Project.')}</div>`}</section>
+ <section class="wdj-hybrid-manager"><div class="wdj-skill-section-title"><div><span class="wdj-skill-eyebrow">${t("การระบุทักษะอัจฉริยะ","SMART TAGGING")}</span><h3>${t('ตรวจทักษะของ Journal และ Projects','Review Journal & Project skills')}</h3></div><span>${t('ล่าสุด 16 รายการ · กดแก้ไข','Latest 16 items · edit tags')}</span></div><div class="wdj-hybrid-entry-list">${recent.length?recent.map(e=>{const a=assignment(e.type,e.id,e.text);return `<div class="wdj-hybrid-entry"><div><strong>${e.type==='journal'?'📓':'🧩'} ${esc(e.name)}</strong><small>${a.mode==='manual'?t('กำหนดเอง','Manual'):t('จับคู่จากคำสำคัญ','Keyword match')}</small><div class="wdj-hybrid-entry-chips">${chips(a.ids)}</div></div><button type="button" data-wdj-edit-entry="${esc(e.type)}" data-id="${esc(e.id)}">✎ ${t('เลือกทักษะ','Edit tags')}</button></div>`;}).join(''):`<p>${t('ยังไม่มี Journal หรือ Project','No journals or projects yet.')}</p>`}</div>${activeSelection?`<div class="wdj-hybrid-manager-edit"><h4>🏷 ${esc(activeSelection.name)}</h4>${editorSelectHtml(activeSelection)}<div class="wdj-hybrid-manager-actions"><button class="primary-btn" type="button" data-wdj-save-manage>✓ ${t('บันทึกทักษะ','Save tags')}</button><button type="button" data-wdj-close-manage>${t('ยกเลิก','Cancel')}</button></div></div>`:''}</section>
  <section class="wdj-skill-footnote"><strong>💡 ${t('ระบบ Hybrid ทำงานอย่างไร','How Hybrid Smart Tagging works')}</strong><p>${t('Auto: ตรวจคำสำคัญและเลือกสูงสุด 3 สาย · Manual: เลือกเองได้สูงสุด 5 สายต่อรายการ และใช้แทนผล Auto ในรายการนั้น · Focus ใช้ทักษะของ Project ที่ผูกไว้','Auto: up to 3 skills based on keywords. Manual: up to 5 selected skills replace Auto on that entry. Linked Focus inherits Project skills.')}</p><p>${t('XP เป็นคะแนนสะท้อนกิจกรรมเท่านั้น คำนวณใหม่เมื่อข้อมูลต้นทางเปลี่ยน ไม่มีการแจกเหรียญ และไม่ส่งข้อมูล Skill Tree ขึ้น Cloud','XP is derived from work activity, not a credential. No Coins or cloud changes.')}</p></section>
  </div>`;
 }
@@ -6556,7 +6556,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.10.1 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6565,6 +6565,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   const $ = id => document.getElementById(id);
   const api = () => window.WorkdayJourneyAPI;
   const thai = () => localStorage.getItem('wp-language') !== 'en';
+  const localize = (th,en) => thai()?th:en;
   const tr = (key, fallback) => {try {const result = api()?.translate?.(key);return result && result !== key ? result : fallback;}catch{return fallback;}};
   const escape = x => String(x ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const read = (key, def) => {try {const x=JSON.parse(localStorage.getItem(key) || 'null');return x ?? def;}catch{return def;}};
@@ -6585,9 +6586,9 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     return Number.isFinite(dt.getTime()) ? new Intl.DateTimeFormat(thai()?'th-TH':'en-GB',{month:'long',year:'numeric'}).format(dt) : month;
   };
   const labels = () => ({
-    all:tr('achievementAllCategories','All'),
-    journal:tr('journal','Journal'),project:tr('projects','Projects'),achievement:tr('achievements','Achievements'),
-    focus:'Focus Studio',journey:tr('myJourney','Journey')
+    all:localize('ทั้งหมด','All'),
+    journal:localize('บันทึกประจำวัน','Journal'),project:localize('โครงการ','Projects'),achievement:localize('ความสำเร็จ','Achievements'),
+    focus:'Focus Studio',journey:localize('การเดินทาง','Journey')
   });
   const compact = x => String(x??'').replace(/\s+/g,' ').trim().slice(0,360);
   function collect(){
@@ -6596,18 +6597,18 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const list=[], seen=new Set(), config=api()?.getConfig?.() || {};
     const add=(row)=>{if(!row.day || !dateKey(row.day) || seen.has(row.id))return;seen.add(row.id);list.push(row);};
     const start=dateKey(config.startDate),end=dateKey(config.endDate),today=dateKey(new Date());
-    if(start)add({id:'start:'+start,day:start,type:'journey',title:tr('myJourney','Journey'),body:thai()?tr('journeyLabel','Journey')+' - '+dateDisplay(start):'First day of your journey',featured:true});
+    if(start)add({id:'start:'+start,day:start,type:'journey',title:localize('เริ่มต้นการเดินทาง','Journey begins'),body:localize('วันแรกของการเดินทาง · '+dateDisplay(start),'First day of your journey · '+dateDisplay(start)),featured:true});
     const journals=read('wp-v6-journal',{});
     if(journals && typeof journals==='object' && !Array.isArray(journals)){
       Object.entries(journals).slice(0,1500).forEach(([day,row])=>{
         if(!row || typeof row!=='object' || !dateKey(day))return;
         const work=compact(row.work), learned=compact(row.learned);
         if(!work && !learned)return;
-        add({id:'journal:'+day,day,type:'journal',title:tr('journalTitle','Daily Journal'),body:[work,learned].filter(Boolean).join(' | ').slice(0,420),route:'journal',meta:{date:day}});
+        add({id:'journal:'+day,day,type:'journal',title:localize('บันทึกประจำวัน','Daily Journal'),body:[work,learned].filter(Boolean).join(' | ').slice(0,420),route:'journal',meta:{date:day}});
       });
     }
     const datedJournals=list.filter(e=>e.type==='journal').sort((a,b)=>a.day.localeCompare(b.day));
-    [7,30,60,100].forEach(n=>{if(datedJournals[n-1])add({id:'journal:milestone:'+n,day:datedJournals[n-1].day,type:'journey',title:`${n} Journal days`,body:'Journal milestone',featured:true});});
+    [7,30,60,100].forEach(n=>{if(datedJournals[n-1])add({id:'journal:milestone:'+n,day:datedJournals[n-1].day,type:'journey',title:localize(`เขียนบันทึกครบ ${n} วัน`,`${n} Journal days`),body:localize('หมุดหมายการบันทึกประจำวัน','Journal milestone'),featured:true});});
     const projects=read('wp-v6-projects',[]);
     if(Array.isArray(projects))projects.slice(0,450).forEach((p,i)=>{
       if(!p || typeof p!=='object')return;
@@ -6616,19 +6617,19 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
       const completed=p.status==='completed'||Number(p.progress)>=100;
       const done=dateKey(p.completedAt||p.completed_at);
       const updated=dateKey(p.updatedAt||p.updated_at);
-      if(created)add({id:'project:start:'+id,day:created,type:'project',title:name,body:thai()?tr('newProject','New project'):'Project created',route:'projects'});
-      if(completed && (done || updated))add({id:'project:done:'+id,day:done||updated,type:'project',title:name,body:done ? tr('projectCompleted','Project completed') : (thai()?tr('completed','Completed'):'Completed')+' (last updated)',route:'projects',featured:true});
-      if(!created && !completed && updated)add({id:'project:updated:'+id,day:updated,type:'project',title:name,body:thai()?tr('projectActiveTab','Project update'):'Project update',route:'projects'});
+      if(created)add({id:'project:start:'+id,day:created,type:'project',title:name,body:localize('เริ่มโครงการใหม่','Project created'),route:'projects'});
+      if(completed && (done || updated))add({id:'project:done:'+id,day:done||updated,type:'project',title:name,body:done ? localize('โครงการสำเร็จ','Project completed') : localize('โครงการสำเร็จ (อิงวันอัปเดตล่าสุด)','Completed (last updated)'),route:'projects',featured:true});
+      if(!created && !completed && updated)add({id:'project:updated:'+id,day:updated,type:'project',title:name,body:localize('อัปเดตโครงการ','Project update'),route:'projects'});
     });
     const datedCompletions=list.filter(e=>e.id.startsWith('project:done:')).sort((a,b)=>a.day.localeCompare(b.day));
-    [1,3,5,10].forEach(n=>{if(datedCompletions[n-1])add({id:'project:milestone:'+n,day:datedCompletions[n-1].day,type:'journey',title:`${n} completed ${n===1?'project':'projects'}`,body:'Project milestone',featured:true});});
+    [1,3,5,10].forEach(n=>{if(datedCompletions[n-1])add({id:'project:milestone:'+n,day:datedCompletions[n-1].day,type:'journey',title:localize(`ทำโครงการสำเร็จครบ ${n} งาน`,`${n} completed ${n===1?'project':'projects'}`),body:localize('หมุดหมายความสำเร็จของโครงการ','Project milestone'),featured:true});});
     // Use previously recorded unlock times. Never call getAchievements() here,
     // because its existing implementation may write unlock metadata to storage.
     const unlocks=read('wp-v7-achievement-unlocked-at',{});
     if(unlocks && typeof unlocks==='object' && !Array.isArray(unlocks))Object.entries(unlocks).slice(0,250).forEach(([id,stamp])=>{
       const day=dateKey(stamp);if(!day)return;
       const clean=String(id).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).slice(0,96);
-      add({id:'achievement:'+id,day,type:'achievement',title:clean,body:tr('unlocked','Achievement unlocked'),route:'achievements',featured:true});
+      add({id:'achievement:'+id,day,type:'achievement',title:clean,body:localize('ปลดล็อกความสำเร็จแล้ว','Achievement unlocked'),route:'achievements',featured:true});
     });
     const history=read('wdj-v875-focus-history-v1:'+account(),[]);
     if(Array.isArray(history))history.slice(0,250).forEach((f,i)=>{
@@ -6636,16 +6637,16 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
       const day=dateKey(f.completedAt);if(!day)return;
       const minutes=Math.max(1,Math.round(Number(f.seconds)/60));
       const title=compact(f.projectName)||'Focus Studio';
-      add({id:'focus:'+String(f.id||f.completedAt||i),day,type:'focus',title,body:`${minutes} min · ${String(f.mode||f.preset||'Focus').slice(0,48)}`,route:'focus'});
+      add({id:'focus:'+String(f.id||f.completedAt||i),day,type:'focus',title,body:`${minutes} ${localize('นาที','min')} · ${String(f.mode||f.preset||'Focus').slice(0,48)}`,route:'focus'});
     });
-    if(end && end<=today)add({id:'end:'+end,day:end,type:'journey',title:tr('journeyComplete','Journey complete'),body:thai()?tr('completionTitle','Completed journey'):'End of journey',featured:true});
+    if(end && end<=today)add({id:'end:'+end,day:end,type:'journey',title:localize('สิ้นสุดการเดินทาง','Journey complete'),body:localize('จบช่วงเวลาการเดินทาง','End of journey'),featured:true});
     list.sort((a,b)=>b.day.localeCompare(a.day)||(a.type==='journey'?-1:0));
     return {events:list.slice(0,1400),start,end,today};
   }
   let selected='all',pageLimit=48,expanded=new Set();
   function cards(){
     const data=collect();
-    if(data.pending)return `<div class="wdj-timeline-page"><div class="wdj-timeline-empty" role="status"><span>⏳</span><strong>Loading Journey Timeline...</strong></div></div>`;
+    if(data.pending)return `<div class="wdj-timeline-page"><div class="wdj-timeline-empty" role="status"><span>⏳</span><strong>${localize("กำลังโหลดเส้นทางการเดินทาง...","Loading Journey Timeline...")}</strong></div></div>`;
     const labelsMap=labels(),counts=Object.fromEntries(CATEGORIES.map(key=>[key,0]));
     data.events.forEach(e=>{counts[e.type]++;counts.all++;});
     const filtered=data.events.filter(e=>selected==='all'||e.type===selected);
@@ -6654,15 +6655,15 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const nowJourney=data.start&&data.end?Math.max(0,Math.min(100,(Date.now()-new Date(data.start+'T12:00:00').getTime())/(new Date(data.end+'T12:00:00').getTime()-new Date(data.start+'T12:00:00').getTime())*100)):0;
     const safePercent=Number.isFinite(nowJourney)?Math.round(nowJourney):0;
     return `<div class="wdj-timeline-page">
-      <header class="wdj-timeline-hero"><div class="wdj-timeline-title"><span class="wdj-timeline-hero-icon">🗺️</span><div><span class="wdj-timeline-eyebrow">WORKDAY JOURNEY · YOUR STORY</span><h2>Journey Timeline</h2><p>${thai()?tr('myJourney','Journey')+' · '+tr('progressNow','Progress'): 'A look back at your work, growth and milestones'}</p></div></div><div class="wdj-timeline-hero-count"><strong>${counts.all.toLocaleString()}</strong><span>${thai()?tr('recentEntries','Activities'):'Timeline moments'}</span></div></header>
-      <section class="wdj-timeline-overview" aria-label="Journey progress"><div><small>${dateDisplay(data.start||data.today)}</small><strong>${safePercent}%</strong><small>${dateDisplay(data.end||data.today)}</small></div><div class="wdj-timeline-progress"><i style="width:${safePercent}%"></i></div><p>${thai()?tr('myJourney','Journey'):'Journey'} · ${counts.journal} ${labelsMap.journal} · ${counts.project} ${labelsMap.project} · ${counts.achievement} ${labelsMap.achievement} · ${counts.focus} Focus</p></section>
-      <nav class="wdj-timeline-filters" aria-label="Timeline filters">${CATEGORIES.map(type=>`<button type="button" data-timeline-filter="${type}" aria-pressed="${selected===type}" class="${selected===type?'is-active':''}"><span>${type==='all'?'✨':ICONS[type]}</span> ${escape(labelsMap[type])} <em>${counts[type]}</em></button>`).join('')}</nav>
+      <header class="wdj-timeline-hero"><div class="wdj-timeline-title"><span class="wdj-timeline-hero-icon">🗺️</span><div><span class="wdj-timeline-eyebrow">WORKDAY JOURNEY · ${localize("เรื่องราวของคุณ","YOUR STORY")}</span><h2>${localize("เส้นทางการเดินทาง","Journey Timeline")}</h2><p>${localize("ย้อนดูการทำงาน การเติบโต และความสำเร็จของคุณ","A look back at your work, growth and milestones")}</p></div></div><div class="wdj-timeline-hero-count"><strong>${counts.all.toLocaleString()}</strong><span>${localize("กิจกรรมทั้งหมด","Activities")}</span></div></header>
+      <section class="wdj-timeline-overview" aria-label="${localize("ความคืบหน้าการเดินทาง","Journey progress")}"><div><small>${dateDisplay(data.start||data.today)}</small><strong>${safePercent}%</strong><small>${dateDisplay(data.end||data.today)}</small></div><div class="wdj-timeline-progress"><i style="width:${safePercent}%"></i></div><p>${localize('การเดินทาง','Journey')} · ${counts.journal} ${labelsMap.journal} · ${counts.project} ${labelsMap.project} · ${counts.achievement} ${labelsMap.achievement} · ${counts.focus} Focus Studio</p></section>
+      <nav class="wdj-timeline-filters" aria-label="${localize("ตัวกรองเส้นทางการเดินทาง","Timeline filters")}">${CATEGORIES.map(type=>`<button type="button" data-timeline-filter="${type}" aria-pressed="${selected===type}" class="${selected===type?'is-active':''}"><span>${type==='all'?'✨':ICONS[type]}</span> ${escape(labelsMap[type])} <em>${counts[type]}</em></button>`).join('')}</nav>
       <section class="wdj-timeline-feed" aria-live="polite">${shown.length?[...groups].map(([month,arr])=>`<div class="wdj-timeline-chapter"><h3><span class="wdj-timeline-month-pin">✦</span>${escape(monthDisplay(month))}<small>${arr.length}</small></h3><div class="wdj-timeline-items">${arr.map(e=>{
           const isOpen=expanded.has(e.id),detail=compact(e.body),short=detail.slice(0,138),needsMore=detail.length>138;
-          return `<article class="wdj-timeline-event wdj-timeline-type-${e.type} ${e.featured?'is-featured':''}"><div class="wdj-timeline-dot" aria-hidden="true">${ICONS[e.type]}</div><div class="wdj-timeline-entry"><div class="wdj-timeline-entry-top"><time datetime="${e.day}">${escape(dateDisplay(e.day))}</time><span>${escape(labelsMap[e.type])}</span></div><h4>${escape(e.title)}</h4>${detail?`<p>${escape(isOpen?detail:short)}${needsMore&&!isOpen?'...':''}</p>`:''}<div class="wdj-timeline-actions">${needsMore?`<button type="button" data-timeline-expand="${escape(e.id)}" aria-expanded="${isOpen}">${isOpen?'− Less':'+ More'}</button>`:''}${e.route?`<a href="#/${e.route}" aria-label="${escape(e.title)}">${escape(labelsMap[e.type])} ↗</a>`:''}</div></div></article>`;
-        }).join('')}</div></div>`).join(''):`<div class="wdj-timeline-empty"><span>🪴</span><strong>${tr('noData','No memories in this category yet')}</strong><p>${thai()?tr('myJourney','Journey')+' · '+tr('noEntries','No entries yet'):'New activities will appear as you use Journal, Projects and Focus Studio.'}</p></div>`}</section>
-      ${filtered.length>shown.length?`<div class="wdj-timeline-load"><button type="button" data-timeline-more>+ ${thai()?tr('viewMore','Show more'):'Show more'} (${filtered.length-shown.length})</button></div>`:''}
-      <p class="wdj-timeline-notice">🔒 ${thai()?tr('localPrivacy','Local data'):'Read-only view of existing records.'} · ${thai()?tr('noData','No changes to source data'):'Your source data is never changed by this page.'}</p>
+          return `<article class="wdj-timeline-event wdj-timeline-type-${e.type} ${e.featured?'is-featured':''}"><div class="wdj-timeline-dot" aria-hidden="true">${ICONS[e.type]}</div><div class="wdj-timeline-entry"><div class="wdj-timeline-entry-top"><time datetime="${e.day}">${escape(dateDisplay(e.day))}</time><span>${escape(labelsMap[e.type])}</span></div><h4>${escape(e.title)}</h4>${detail?`<p>${escape(isOpen?detail:short)}${needsMore&&!isOpen?'...':''}</p>`:''}<div class="wdj-timeline-actions">${needsMore?`<button type="button" data-timeline-expand="${escape(e.id)}" aria-expanded="${isOpen}">${isOpen?localize('− ย่อข้อความ','− Less'):localize('+ อ่านเพิ่มเติม','+ More')}</button>`:''}${e.route?`<a href="#/${e.route}" aria-label="${escape(e.title)}">${escape(labelsMap[e.type])} ↗</a>`:''}</div></div></article>`;
+        }).join('')}</div></div>`).join(''):`<div class="wdj-timeline-empty"><span>🪴</span><strong>${localize('ยังไม่มีเหตุการณ์ในหมวดนี้','No memories in this category yet')}</strong><p>${localize('เมื่อมีบันทึก โครงการ หรือ Focus Session ใหม่ เหตุการณ์จะปรากฏที่นี่','New activities will appear as you use Journal, Projects and Focus Studio.')}</p></div>`}</section>
+      ${filtered.length>shown.length?`<div class="wdj-timeline-load"><button type="button" data-timeline-more>+ ${localize('แสดงเพิ่มเติม','Show more')} (${filtered.length-shown.length})</button></div>`:''}
+      <p class="wdj-timeline-notice">🔒 ${localize('แสดงข้อมูลจากบันทึกเดิมเท่านั้น','Read-only view of existing records.')} · ${localize('ไม่เปลี่ยนข้อมูลต้นฉบับ','Your source data is never changed by this page.')}</p>
     </div>`;
   }
   function render(){const host=$(ROOT);if(!host)return;host.innerHTML=cards();}
@@ -6680,7 +6681,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10 Productivity Insights 2.0 (read-only) =====
+/* ===== V8.7.10.1 Productivity Insights 2.0 (read-only) =====
  * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
  * No monetary, achievement or Cloud writes occur in this module.
  */
@@ -6768,7 +6769,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   function chart(data){
     const buckets=(data.days===90?monthly:weekly)(data);
     const maxJournal=Math.max(1,...buckets.map(b=>b.journal)),maxFocus=Math.max(1,...buckets.map(b=>b.minutes));
-    return `<div class="wdj-insights-trend-head"><div><strong>${tr('แนวโน้มกิจกรรม','Activity trends')}</strong><small>${data.days===90?tr('สรุปรายเดือน','Monthly summary'):tr('สรุปรายสัปดาห์','Weekly summary')}</small></div><div class="wdj-insights-legend"><span><i class="journal"></i>Journal</span><span><i class="focus"></i>Focus</span></div></div><div class="wdj-insights-bars" role="img" aria-label="${esc(tr('กราฟเปรียบเทียบจำนวน Journal กับนาที Focus','Journal days and Focus minutes by period'))}">${buckets.map(b=>`<div class="wdj-insights-bar-group" title="${esc(`${b.id}: ${b.journal} journals, ${b.minutes} Focus minutes`)}"><div class="wdj-insights-bar-pair"><i class="journal" style="height:${b.journal?Math.max(8,b.journal/maxJournal*100):0}%"></i><i class="focus" style="height:${b.minutes?Math.max(8,b.minutes/maxFocus*100):0}%"></i></div><small>${esc(b.display)}</small><span>${b.journal} / ${b.minutes}${tr('น.','m')}</span></div>`).join('')}</div><p class="wdj-insights-chart-caption">${tr('แต่ละแท่งใช้สเกลของตัวเอง: สีน้ำเงินเป็นจำนวนวันที่เขียน Journal, สีม่วงเป็นนาที Focus (ไม่ใช่หน่วยเดียวกัน)','Separate scales: blue is Journal days; purple is Focus minutes (different units).')}</p>`;
+    return `<div class="wdj-insights-trend-head"><div><strong>${tr('แนวโน้มกิจกรรม','Activity trends')}</strong><small>${data.days===90?tr('สรุปรายเดือน','Monthly summary'):tr('สรุปรายสัปดาห์','Weekly summary')}</small></div><div class="wdj-insights-legend"><span><i class="journal"></i>${tr("วันที่เขียนบันทึก","Journal")}</span><span><i class="focus"></i>${tr("นาทีโฟกัส","Focus")}</span></div></div><div class="wdj-insights-bars" role="img" aria-label="${esc(tr('กราฟเปรียบเทียบจำนวน Journal กับนาที Focus','Journal days and Focus minutes by period'))}">${buckets.map(b=>`<div class="wdj-insights-bar-group" title="${esc(`${b.id}: ${b.journal} ${tr("วันที่มีบันทึก","journal days")}, ${b.minutes} ${tr("นาทีโฟกัส","Focus minutes")}`)}"><div class="wdj-insights-bar-pair"><i class="journal" style="height:${b.journal?Math.max(8,b.journal/maxJournal*100):0}%"></i><i class="focus" style="height:${b.minutes?Math.max(8,b.minutes/maxFocus*100):0}%"></i></div><small>${esc(b.display)}</small><span>${b.journal} / ${b.minutes}${tr('น.','m')}</span></div>`).join('')}</div><p class="wdj-insights-chart-caption">${tr('แต่ละแท่งใช้สเกลของตัวเอง: สีน้ำเงินเป็นจำนวนวันที่เขียน Journal, สีม่วงเป็นนาที Focus (ไม่ใช่หน่วยเดียวกัน)','Separate scales: blue is Journal days; purple is Focus minutes (different units).')}</p>`;
   }
   function projectCard(data){
     const p=data.projectOverview;
@@ -6784,7 +6785,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const data=collect();if(data.pending)return `<div class="wdj-insights-page"><div class="wdj-insights-empty" role="status">⏳ ${tr('กำลังโหลดข้อมูลของบัญชี...','Loading account data...')}</div></div>`;
     const percent=data.days?Math.round(data.activeDays/data.days*100):0;
     const cells=[{icon:'📓',title:tr('วันที่เขียน Journal','Journal days'),value:data.journalCount,sub:tr('นับวันละหนึ่งครั้ง','Unique days')},{icon:'⏱️',title:tr('เวลา Focus','Focus time'),value:`${compactNumber(data.focusMinutes)} ${tr('นาที','min')}`,sub:`${data.focusCount} ${tr('เซสชัน','sessions')}`},{icon:'🗓️',title:tr('วันที่มีกิจกรรม','Active days'),value:`${percent}%`,sub:`${data.activeDays}/${data.days} ${tr('วัน','days')}`},{icon:'🏁',title:tr('Project สำเร็จ','Projects completed'),value:data.projectsDone,sub:tr('นับวันที่สำเร็จ/อัปเดต','Completion/last update date')}];
-    return `<div class="wdj-insights-page"><header class="wdj-insights-hero"><div class="wdj-insights-headline"><div class="wdj-insights-icon" aria-hidden="true">📊</div><div><span class="wdj-insights-eyebrow">WORKDAY JOURNEY · PRODUCTIVITY INSIGHTS 2.0</span><h2>${tr('ภาพรวมการทำงาน','Productivity Insights')}</h2><p>${tr('ดูความสม่ำเสมอของการบันทึกงานและเวลาโฟกัสโดยไม่แก้ข้อมูลเดิม','Explore your journal and focus patterns without changing your records.')}</p></div></div><div class="wdj-insights-period" role="group" aria-label="${tr('เลือกช่วงเวลา','Select time range')}">${[7,30,90].map(n=>`<button type="button" data-insights-days="${n}" aria-pressed="${selectedDays===n}" class="${selectedDays===n?'active':''}">${n} ${tr('วัน','days')}</button>`).join('')}</div></header>
+    return `<div class="wdj-insights-page"><header class="wdj-insights-hero"><div class="wdj-insights-headline"><div class="wdj-insights-icon" aria-hidden="true">📊</div><div><span class="wdj-insights-eyebrow">WORKDAY JOURNEY · ${tr("ข้อมูลเชิงลึกการทำงาน","PRODUCTIVITY INSIGHTS 2.0")}</span><h2>${tr('ภาพรวมการทำงาน','Productivity Insights')}</h2><p>${tr('ดูความสม่ำเสมอของการบันทึกงานและเวลาโฟกัสโดยไม่แก้ข้อมูลเดิม','Explore your journal and focus patterns without changing your records.')}</p></div></div><div class="wdj-insights-period" role="group" aria-label="${tr('เลือกช่วงเวลา','Select time range')}">${[7,30,90].map(n=>`<button type="button" data-insights-days="${n}" aria-pressed="${selectedDays===n}" class="${selectedDays===n?'active':''}">${n} ${tr('วัน','days')}</button>`).join('')}</div></header>
     <section class="wdj-insights-kpis" aria-label="${tr('สถิติช่วงที่เลือก','Selected period statistics')}">${cells.map(c=>`<article class="wdj-insights-kpi"><span class="wdj-insights-kpi-icon">${c.icon}</span><small>${esc(c.title)}</small><strong>${esc(c.value)}</strong><span>${esc(c.sub)}</span></article>`).join('')}</section>
     <div class="wdj-insights-primary"><section class="wdj-insights-panel"><div class="wdj-insights-section-head"><div><h3>🟩 ${tr('ปฏิทินกิจกรรม','Activity heatmap')}</h3><p>${tr('Journal, Focus และการจบ Project ในแต่ละวัน','Journal, Focus and project completions by date')}</p></div></div>${heatmap(data)}</section><section class="wdj-insights-panel">${chart(data)}</section></div>
     <div class="wdj-insights-secondary"><section class="wdj-insights-panel">${projectCard(data)}</section><section class="wdj-insights-panel">${skillsCard()}</section></div>
@@ -6802,7 +6803,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10 Journey Wrapped: private, read-only story cards ===== */
+/* ===== V8.7.10.1 Journey Wrapped: private, read-only story cards ===== */
 (() => {
   'use strict';
   const ROOT='wdjWrappedPage';
@@ -6855,17 +6856,17 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const skillName=bestSkill?(lang()==='en'?bestSkill.en||bestSkill.th:bestSkill.th||bestSkill.en)||tr('ทักษะที่เติบโต','Growing skill'):tr('ยังไม่มีทักษะเด่น','Skills to explore');
     const monthLabel=data.topMonth?new Intl.DateTimeFormat(lang()==='en'?'en-US':'th-TH',{month:'long',year:'numeric'}).format(new Date(data.topMonth[0]+'-15T12:00:00')):'—';
     return [
-      {id:'intro',tone:'blue',eyebrow:'YOUR JOURNEY · WRAPPED',icon:'✨',title:tr('นี่คือเรื่องราวของคุณ','This is your story'),lead:tr(`สรุป${title} ใน Workday Journey`,`A look back at ${title}`),big:fmt(data.activity),unit:tr('วันที่มีกิจกรรม','active days'),stats:[[fmt(data.journals.length),'Journal'],[fmt(data.done.length),tr('โปรเจกต์สำเร็จ','Projects done')],[fmt(data.ach.length),'Achievements']],foot:tr('ทุกความก้าวหน้าเล็ก ๆ มีความหมาย','Every small step deserves to be remembered.')},
-      {id:'journal',tone:'violet',eyebrow:'CHAPTER 01 · DAILY NOTES',icon:'📓',title:tr('เรื่องราวที่คุณเขียนไว้','The pages you wrote'),lead:tr('บันทึกแต่ละวันกลายเป็นเส้นทางการเติบโต','Your daily reflections tell a bigger story.'),big:fmt(data.journals.length),unit:tr('วันที่มีบันทึก','Journal days'),stats:[[fmt(data.maxStreak),tr('วันต่อเนื่องสูงสุด','Longest streak')],[data.first?showDate(data.first):'—',tr('บันทึกแรก','First note')],[data.topMonth?fmt(data.topMonth[1]):'0',tr('วันที่บันทึกในเดือนเด่น','Best month days')]],foot:data.topMonth?`${tr('เดือนที่บันทึกมากที่สุด','Most active journal month')}: ${monthLabel}`:tr('บันทึกแรกของคุณรออยู่','Your first page is waiting.')},
-      {id:'projects',tone:'indigo',eyebrow:'CHAPTER 02 · BUILD & CREATE',icon:'🧩',title:tr('สิ่งที่คุณลงมือสร้าง','What you brought to life'),lead:tr('ทุก Project เป็นก้าวสำคัญในการเรียนรู้','Projects turn ideas into progress.'),big:fmt(data.done.length),unit:tr('โปรเจกต์ที่สำเร็จ','completed projects'),stats:[[fmt(data.projectCount),tr('Project ในช่วงที่เลือก','Projects recorded')],[fmt(data.done.filter(x=>!!x.completeDay).length),tr('มีวันสำเร็จแน่นอน','Exact completion dates')],[fmt(data.done.filter(x=>!x.completeDay).length),tr('อิงวันอัปเดต','Based on updates')]],foot:tr('วันสำเร็จที่ไม่ระบุใช้วันอัปเดตล่าสุดแทน','Missing completion dates use the last update date.')},
-      {id:'focus',tone:'teal',eyebrow:'CHAPTER 03 · STAY IN THE ZONE',icon:'⏱️',title:tr('เวลาที่คุณตั้งใจให้กับงาน','The time you gave your goals'),lead:tr('ช่วงเวลาสั้น ๆ สร้างความคืบหน้าที่จับต้องได้','A little focus adds up.'),big:fmt(data.minutes),unit:tr('นาทีแห่งการโฟกัส','focused minutes'),stats:[[fmt(data.focus.length),tr('เซสชันที่สำเร็จ','Completed sessions')],[fmt(Math.floor(data.minutes/60)),tr('ชั่วโมงเต็ม','Full hours')],[fmt(data.focus.filter(f=>f.preset==='deep').length),'Deep Work']],foot:tr('นับเฉพาะ Focus Session ที่สำเร็จบน Browser นี้','Includes completed Focus sessions on this browser only.')},
-      {id:'skills',tone:'amber',eyebrow:'CHAPTER 04 · CAREER GROWTH',icon:'🌳',title:tr('ทักษะที่เติบโตไปกับคุณ','The skills growing with you'),lead:tr('กิจกรรมจาก Journal และ Project ช่วยบอกทิศทางการเรียนรู้','Your activities reveal the paths you explored.'),big:bestSkill?fmt(bestSkill.xp):'0',unit:'Growth XP',stats:[[skillName,tr('ทักษะเด่นอันดับหนึ่ง','Top skill')],[fmt(data.skill.length),tr('ทักษะที่มีกิจกรรม','Active skill paths')],[fmt(data.ach.length),tr('Achievement ในช่วงนี้','Achievements in period')]],foot:tr('Skill XP เป็นยอดสะสม ไม่จำกัดตามปีที่เลือก','Skill XP is lifetime progress, not filtered by year.')},
-      {id:'finale',tone:'rose',eyebrow:'THE FINALE · KEEP GROWING',icon:'🏆',title:tr('นี่แหละ...การเดินทางของคุณ','And this is your journey'),lead:tr('จากวันแรกจนถึงวันนี้ คุณมีเรื่องราวที่น่าจดจำ','From your first steps to everything you achieved.'),big:fmt(data.ach.length),unit:tr('Achievement ที่มีวันปลดล็อก','dated achievements'),stats:[[fmt(data.activity),tr('วันที่มีกิจกรรม','Active days')],[fmt(data.done.length),tr('Project สำเร็จ','Projects done')],[fmt(data.journals.length),tr('วันที่เขียน Journal','Journal days')]],foot:tr('บทต่อไปกำลังรอคุณอยู่ 🌟','Your next chapter is waiting. 🌟')}
+      {id:'intro',tone:'blue',eyebrow:tr('การเดินทางของคุณ · สรุปเรื่องราว','YOUR JOURNEY · WRAPPED'),icon:'✨',title:tr('นี่คือเรื่องราวของคุณ','This is your story'),lead:tr(`สรุป${title} ใน Workday Journey`,`A look back at ${title}`),big:fmt(data.activity),unit:tr('วันที่มีกิจกรรม','active days'),stats:[[fmt(data.journals.length),tr('บันทึกประจำวัน','Journal')],[fmt(data.done.length),tr('โปรเจกต์สำเร็จ','Projects done')],[fmt(data.ach.length),tr('ความสำเร็จ','Achievements')]],foot:tr('ทุกความก้าวหน้าเล็ก ๆ มีความหมาย','Every small step deserves to be remembered.')},
+      {id:'journal',tone:'violet',eyebrow:tr('บทที่ 01 · บันทึกประจำวัน','CHAPTER 01 · DAILY NOTES'),icon:'📓',title:tr('เรื่องราวที่คุณเขียนไว้','The pages you wrote'),lead:tr('บันทึกแต่ละวันกลายเป็นเส้นทางการเติบโต','Your daily reflections tell a bigger story.'),big:fmt(data.journals.length),unit:tr('วันที่มีบันทึก','Journal days'),stats:[[fmt(data.maxStreak),tr('วันต่อเนื่องสูงสุด','Longest streak')],[data.first?showDate(data.first):'—',tr('บันทึกแรก','First note')],[data.topMonth?fmt(data.topMonth[1]):'0',tr('วันที่บันทึกในเดือนเด่น','Best month days')]],foot:data.topMonth?`${tr('เดือนที่บันทึกมากที่สุด','Most active journal month')}: ${monthLabel}`:tr('บันทึกแรกของคุณรออยู่','Your first page is waiting.')},
+      {id:'projects',tone:'indigo',eyebrow:tr('บทที่ 02 · ผลงานที่สร้าง','CHAPTER 02 · BUILD & CREATE'),icon:'🧩',title:tr('สิ่งที่คุณลงมือสร้าง','What you brought to life'),lead:tr('ทุก Project เป็นก้าวสำคัญในการเรียนรู้','Projects turn ideas into progress.'),big:fmt(data.done.length),unit:tr('โปรเจกต์ที่สำเร็จ','completed projects'),stats:[[fmt(data.projectCount),tr('Project ในช่วงที่เลือก','Projects recorded')],[fmt(data.done.filter(x=>!!x.completeDay).length),tr('มีวันสำเร็จแน่นอน','Exact completion dates')],[fmt(data.done.filter(x=>!x.completeDay).length),tr('อิงวันอัปเดต','Based on updates')]],foot:tr('วันสำเร็จที่ไม่ระบุใช้วันอัปเดตล่าสุดแทน','Missing completion dates use the last update date.')},
+      {id:'focus',tone:'teal',eyebrow:tr('บทที่ 03 · ช่วงเวลาโฟกัส','CHAPTER 03 · STAY IN THE ZONE'),icon:'⏱️',title:tr('เวลาที่คุณตั้งใจให้กับงาน','The time you gave your goals'),lead:tr('ช่วงเวลาสั้น ๆ สร้างความคืบหน้าที่จับต้องได้','A little focus adds up.'),big:fmt(data.minutes),unit:tr('นาทีแห่งการโฟกัส','focused minutes'),stats:[[fmt(data.focus.length),tr('เซสชันที่สำเร็จ','Completed sessions')],[fmt(Math.floor(data.minutes/60)),tr('ชั่วโมงเต็ม','Full hours')],[fmt(data.focus.filter(f=>f.preset==='deep').length),'Deep Work']],foot:tr('นับเฉพาะ Focus Session ที่สำเร็จบน Browser นี้','Includes completed Focus sessions on this browser only.')},
+      {id:'skills',tone:'amber',eyebrow:tr('บทที่ 04 · การเติบโตของทักษะ','CHAPTER 04 · CAREER GROWTH'),icon:'🌳',title:tr('ทักษะที่เติบโตไปกับคุณ','The skills growing with you'),lead:tr('กิจกรรมจาก Journal และ Project ช่วยบอกทิศทางการเรียนรู้','Your activities reveal the paths you explored.'),big:bestSkill?fmt(bestSkill.xp):'0',unit:'Growth XP',stats:[[skillName,tr('ทักษะเด่นอันดับหนึ่ง','Top skill')],[fmt(data.skill.length),tr('ทักษะที่มีกิจกรรม','Active skill paths')],[fmt(data.ach.length),tr('Achievement ในช่วงนี้','Achievements in period')]],foot:tr('Skill XP เป็นยอดสะสม ไม่จำกัดตามปีที่เลือก','Skill XP is lifetime progress, not filtered by year.')},
+      {id:'finale',tone:'rose',eyebrow:tr('บทส่งท้าย · เติบโตต่อไป','THE FINALE · KEEP GROWING'),icon:'🏆',title:tr('นี่แหละ...การเดินทางของคุณ','And this is your journey'),lead:tr('จากวันแรกจนถึงวันนี้ คุณมีเรื่องราวที่น่าจดจำ','From your first steps to everything you achieved.'),big:fmt(data.ach.length),unit:tr('Achievement ที่มีวันปลดล็อก','dated achievements'),stats:[[fmt(data.activity),tr('วันที่มีกิจกรรม','Active days')],[fmt(data.done.length),tr('Project สำเร็จ','Projects done')],[fmt(data.journals.length),tr('วันที่เขียน Journal','Journal days')]],foot:tr('บทต่อไปกำลังรอคุณอยู่ 🌟','Your next chapter is waiting. 🌟')}
     ];
   }
   function card(data,s){
     const milestones=s.stats.map(([num,label])=>`<div class="wdj-wrapped-stat"><strong>${esc(num)}</strong><span>${esc(label)}</span></div>`).join('');
-    return `<article class="wdj-wrapped-card tone-${s.tone}" aria-label="${esc(s.title)}"><div class="wdj-wrapped-grain" aria-hidden="true"></div><div class="wdj-wrapped-card-top"><span>WORKDAY JOURNEY</span><span>${esc(period==='journey'?tr('ตลอดการเดินทาง','Entire journey'):period)}</span></div><div class="wdj-wrapped-glow" aria-hidden="true">${s.icon}</div><div class="wdj-wrapped-card-main"><small>${esc(s.eyebrow)}</small><h3>${esc(s.title)}</h3><p>${esc(s.lead)}</p><div class="wdj-wrapped-big">${esc(s.big)}</div><div class="wdj-wrapped-unit">${esc(s.unit)}</div></div><div class="wdj-wrapped-stats">${milestones}</div><div class="wdj-wrapped-card-bottom"><span>${esc(s.foot)}</span><strong>${showName&&data.name?esc(data.name):'✦ YOUR STORY'}</strong></div></article>`;
+    return `<article class="wdj-wrapped-card tone-${s.tone}" aria-label="${esc(s.title)}"><div class="wdj-wrapped-grain" aria-hidden="true"></div><div class="wdj-wrapped-card-top"><span>WORKDAY JOURNEY</span><span>${esc(period==='journey'?tr('ตลอดการเดินทาง','Entire journey'):period)}</span></div><div class="wdj-wrapped-glow" aria-hidden="true">${s.icon}</div><div class="wdj-wrapped-card-main"><small>${esc(s.eyebrow)}</small><h3>${esc(s.title)}</h3><p>${esc(s.lead)}</p><div class="wdj-wrapped-big">${esc(s.big)}</div><div class="wdj-wrapped-unit">${esc(s.unit)}</div></div><div class="wdj-wrapped-stats">${milestones}</div><div class="wdj-wrapped-card-bottom"><span>${esc(s.foot)}</span><strong>${showName&&data.name?esc(data.name):tr('✦ เรื่องราวของคุณ','✦ YOUR STORY')}</strong></div></article>`;
   }
   function render(){
     const el=$(ROOT);if(!el)return;
@@ -6873,7 +6874,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     if(data.pending){el.innerHTML=`<div class="wdj-wrapped-loading" role="status">⏳ ${tr('กำลังเตรียมเรื่องราวของบัญชี...','Preparing your account story...')}</div>`;return;}
     if(period!=='journey'&&!data.available.includes(period))period='journey';
     const stories=slides(data),current=stories[slide]||stories[0];
-    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>STORY ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
+    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10.1</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>${tr('การ์ดที่','STORY')} ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
   }
   function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
     const words=String(text).split(/\s+/);let line='',lines=[];
@@ -6894,7 +6895,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     c.fillStyle='#ffffff';c.font='700 63px Sarabun, Arial, sans-serif';let y=wrap(c,s.title,75,425,930,76,3);c.font='400 30px Sarabun, Arial, sans-serif';c.fillStyle='#e6efff';y=wrap(c,s.lead,75,y+8,890,44,3);
     c.fillStyle='#ffffff';c.font='800 170px Sarabun, Arial, sans-serif';c.fillText(s.big,75,835);c.font='600 32px Sarabun, Arial, sans-serif';c.fillText(s.unit,82,894);
     c.fillStyle='rgba(255,255,255,.16)';c.beginPath();c.roundRect(68,948,944,211,25);c.fill();s.stats.forEach(([number,label],i)=>{const x=99+i*311;c.fillStyle='#fff';c.font='700 41px Sarabun, Arial, sans-serif';wrap(c,number,x,1018,267,43,2);c.fillStyle='#e9f1ff';c.font='500 24px Sarabun, Arial, sans-serif';wrap(c,label,x,1093,270,30,2);});
-    c.fillStyle='#f3f7ff';c.font='400 24px Sarabun, Arial, sans-serif';wrap(c,s.foot,78,1231,620,33,2);c.textAlign='right';c.font='600 23px Sarabun, Arial, sans-serif';c.fillText(showName&&data.name?data.name:'✦ YOUR STORY',1003,1284,900);c.textAlign='left';
+    c.fillStyle='#f3f7ff';c.font='400 24px Sarabun, Arial, sans-serif';wrap(c,s.foot,78,1231,620,33,2);c.textAlign='right';c.font='600 23px Sarabun, Arial, sans-serif';c.fillText(showName&&data.name?data.name:tr('✦ เรื่องราวของคุณ','✦ YOUR STORY'),1003,1284,900);c.textAlign='left';
     const filename=`workday-wrapped-${period}-${s.id}.png`;
     const a=document.createElement('a');a.download=filename;
     if(canvas.toBlob){canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob);a.href=url;a.click();setTimeout(()=>URL.revokeObjectURL(url),15000);},'image/png');}
@@ -6917,7 +6918,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* V8.7.10 - Navigation consolidation and Daily Life Quests.
+/* V8.7.10.1 - Navigation consolidation and Daily Life Quests.
  * All original report routes stay reachable. Quests are cosmetic and local only.
  * This module never updates Journal, Project, Wallet, Rewards or the Cloud.
  */
@@ -6930,12 +6931,12 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   const tr = (th,en) => isEnglish() ? en : th;
   const escape = value => String(value ?? '').replace(/[&<>"']/g,ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
-  const TH_ROUTES = {"reports": "\u0e23\u0e32\u0e22\u0e07\u0e32\u0e19\u0e41\u0e25\u0e30\u0e01\u0e32\u0e23\u0e27\u0e34\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c", "insights": "\u0e2a\u0e16\u0e34\u0e15\u0e34\u0e01\u0e32\u0e23\u0e17\u0e33\u0e07\u0e32\u0e19", "journal": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "projects": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c", "workspace": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "missions": "\u0e20\u0e32\u0e23\u0e01\u0e34\u0e08\u0e23\u0e32\u0e22\u0e27\u0e31\u0e19", "focus": "Focus Studio"};
+  const TH_ROUTES = {"reports": "\u0e23\u0e32\u0e22\u0e07\u0e32\u0e19\u0e41\u0e25\u0e30\u0e01\u0e32\u0e23\u0e27\u0e34\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c", "insights": "\u0e2a\u0e16\u0e34\u0e15\u0e34\u0e01\u0e32\u0e23\u0e17\u0e33\u0e07\u0e32\u0e19", "journal": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "projects": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c", "workspace": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "missions": "\u0e20\u0e32\u0e23\u0e01\u0e34\u0e08\u0e23\u0e32\u0e22\u0e27\u0e31\u0e19", "focus": "Focus Studio", "timeline": "เส้นทางการเดินทาง", "wrapped": "สรุปการเดินทาง"};
   const hubTabs = [
-    ['reports','\ud83d\udcc5','Reports','Attendance and monthly overview'],
-    ['insights','\ud83d\udcca','Insights','Heatmap, focus and skills'],
-    ['timeline','\ud83d\uddfa\ufe0f','Journey','Your milestones and activity history'],
-    ['wrapped','\ud83c\udf8a','Wrapped','Your shareable story cards']
+    ['reports','\ud83d\udcc5','Reports','Attendance and monthly overview','ข้อมูลการเข้างานและสรุปรายเดือน'],
+    ['insights','\ud83d\udcca','Insights','Heatmap, focus and skills','ปฏิทินกิจกรรม เวลาโฟกัส และทักษะ'],
+    ['timeline','\ud83d\uddfa\ufe0f','Journey','Your milestones and activity history','หมุดหมายและประวัติกิจกรรมของคุณ'],
+    ['wrapped','\ud83c\udf8a','Wrapped','Your shareable story cards','การ์ดสรุปเรื่องราวสำหรับบันทึกหรือแชร์']
   ];
   function refreshHub() {
     const active = routeName();
@@ -6951,7 +6952,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
       hub = document.createElement('nav');
       hub.id = 'wdjV8710ReportHub';
       hub.className = 'wdj-v8710-report-hub';
-      hub.setAttribute('aria-label', 'Reports and journey sections');
+      hub.setAttribute('aria-label', tr('ส่วนรายงานและเส้นทางการเดินทาง','Reports and journey sections'));
       hub.addEventListener('click', event => {
         const button = event.target.closest('[data-wdj-v8710-hub]');
         if (!button) return;
@@ -6960,9 +6961,10 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
       });
     }
     hub.hidden = false;
+    hub.setAttribute('aria-label', tr('ส่วนรายงานและเส้นทางการเดินทาง','Reports and journey sections'));
     hub.dataset.v7Page = active;
     hub.classList.remove('v7-route-hidden');
-    hub.innerHTML = `<div class="wdj-v8710-hub-intro"><div><span class="wdj-v8710-eyebrow">WORKDAY JOURNEY / ${escape(tr('REPORTS & JOURNEY','REPORTS & JOURNEY'))}</span><h2>${escape(tr(TH_ROUTES.reports,'Reports & Journey'))}</h2></div><p>${escape(tr('Attendance, progress, timeline and your Wrapped in one place','Attendance, progress, timeline and your Wrapped in one place'))}</p></div><div class="wdj-v8710-hub-tabs" role="group">${hubTabs.map(([route,icon,name,help]) => `<button type="button" data-wdj-v8710-hub="${route}" class="${active === route ? 'selected' : ''}" aria-current="${active === route ? 'page' : 'false'}"><span aria-hidden="true">${icon}</span><span><strong>${escape(isEnglish() ? name : (TH_ROUTES[route] || name))}</strong><small>${help}</small></span></button>`).join('')}</div>`;
+    hub.innerHTML = `<div class="wdj-v8710-hub-intro"><div><span class="wdj-v8710-eyebrow">WORKDAY JOURNEY / ${escape(tr('รายงานและเส้นทางการเดินทาง','REPORTS & JOURNEY'))}</span><h2>${escape(tr(TH_ROUTES.reports,'Reports & Journey'))}</h2></div><p>${escape(tr('รวมข้อมูลการเข้างาน ความคืบหน้า เส้นทางการเดินทาง และการ์ดสรุปไว้ในที่เดียว','Attendance, progress, timeline and your Wrapped in one place'))}</p></div><div class="wdj-v8710-hub-tabs" role="group">${hubTabs.map(([route,icon,name,help,helpTh]) => `<button type="button" data-wdj-v8710-hub="${route}" class="${active === route ? 'selected' : ''}" aria-current="${active === route ? 'page' : 'false'}"><span aria-hidden="true">${icon}</span><span><strong>${escape(isEnglish() ? name : (TH_ROUTES[route] || name))}</strong><small>${escape(isEnglish() ? help : helpTh)}</small></span></button>`).join('')}</div>`;
     if (main.firstElementChild !== hub) main.insertBefore(hub,main.firstElementChild);
     // Hidden pages still retain their original route and all their events.
     const reportsNav = document.querySelector('.v7-nav [data-v7-route="reports"]');
@@ -6977,7 +6979,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 (() => {
   'use strict';
   const ROOT = 'v82MissionsPage';
-  const TH_NAMES = {"journal-today": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "focus-today": "Focus Studio", "workspace-today": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "journal-week": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19 3 days", "focus-week": "Focus Studio 100 min", "project-one": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c 100%"};
+  const TH_NAMES = {"journal-today": "\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e1b\u0e23\u0e30\u0e08\u0e33\u0e27\u0e31\u0e19", "focus-today": "Focus Studio", "workspace-today": "\u0e2b\u0e49\u0e2d\u0e07\u0e17\u0e33\u0e07\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e09\u0e31\u0e19", "journal-week": "บันทึกประจำวัน 3 วัน", "focus-week": "Focus Studio 100 นาที", "project-one": "\u0e42\u0e1b\u0e23\u0e40\u0e08\u0e01\u0e15\u0e4c 100%"};
   const PREFIX = 'wdj-v8710-life-quest-stamps-v1:';
   const VISITS = 'wdj-v8710-life-quest-visits-v1:';
   const $ = id => document.getElementById(id);
@@ -7027,13 +7029,13 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const waiting=cloudPending(),s=waiting?null:stats(),stamps=stampsFor();
     const progress=items.map(q=>({q,value:s?Math.min(q.goal,Math.max(0,q.get(s))):0,claimed:!!s&&stamps.has(idFor(q,s))}));
     const earned=progress.filter(x=>x.claimed).length;
-    const tabs=[['all','All'],['daily','Daily'],['weekly','Weekly'],['journey','Journey']];
-    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10 / COSMETIC QUESTS</span><h2>\ud83c\udfae Life Quests <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('Complete real activities and collect on-device stamps. No Coins or Shop rewards.','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?'<div class="wdj-v8710-pending" role="status">Loading account data before checking quests...</div>':''}<div class="wdj-v8710-filters" role="group" aria-label="Life Quest filters">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
+    const tabs=[['all',tr('ทั้งหมด','All')],['daily',tr('รายวัน','Daily')],['weekly',tr('รายสัปดาห์','Weekly')],['journey',tr('ตลอดการเดินทาง','Journey')]];
+    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10.1 / ${tr("ภารกิจสะสมตรา","COSMETIC QUESTS")}</span><h2>\ud83c\udfae ${tr("ภารกิจชีวิตประจำวัน","Life Quests")} <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('ทำกิจกรรมจริงเพื่อสะสมตราความสำเร็จในเครื่อง โดยไม่เพิ่ม Coin หรือของรางวัลในร้าน','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?`<div class="wdj-v8710-pending" role="status">${tr("กำลังโหลดข้อมูลบัญชีก่อนตรวจภารกิจ...","Loading account data before checking quests...")}</div>`:''}<div class="wdj-v8710-filters" role="group" aria-label="${tr("ตัวกรองภารกิจชีวิตประจำวัน","Life Quest filters")}">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
       const done = value>=q.goal;
       const canClaim=done&&!claimed&&!waiting;
-      const label=claimed?'Stamp collected':done?'Collect stamp':q.link?'Open Workspace':'In progress';
-      return `<article class="wdj-v8710-quest-card ${claimed?'claimed':''} ${done?'complete':''}"><div class="wdj-v8710-card-top"><span class="wdj-v8710-card-icon">${q.icon}</span><small>${q.kind.toUpperCase()}</small></div><h3>${esc(en() ? q.title : (TH_NAMES[q.id] || q.title))}</h3><p>${esc(q.desc)}</p><div class="wdj-v8710-track"><span style="width:${Math.floor(value/q.goal*100)}%"></span></div><div class="wdj-v8710-card-bottom"><strong>${value}/${q.goal}</strong><button type="button" ${waiting||(!canClaim&&!q.link)?'disabled':''} data-wdj-v8710-action="${canClaim?'claim':q.link?'visit':'none'}" data-wdj-v8710-id="${q.id}">${claimed?'\u2713 ':''}${label}</button></div></article>`;
-    }).join('')}</div><p class="wdj-v8710-notice">\ud83d\udd12 Life Quest stamps are stored locally per account on this device. Existing Daily Missions and Chests are unchanged.</p>`;
+      const label=claimed?tr('รับตราแล้ว','Stamp collected'):done?tr('รับตรา','Collect stamp'):q.link?tr('เปิดห้องทำงาน','Open Workspace'):tr('กำลังดำเนินการ','In progress');
+      return `<article class="wdj-v8710-quest-card ${claimed?'claimed':''} ${done?'complete':''}"><div class="wdj-v8710-card-top"><span class="wdj-v8710-card-icon">${q.icon}</span><small>${q.kind==='daily'?tr('รายวัน','DAILY'):q.kind==='weekly'?tr('รายสัปดาห์','WEEKLY'):tr('ตลอดการเดินทาง','JOURNEY')}</small></div><h3>${esc(en() ? q.title : (TH_NAMES[q.id] || q.title))}</h3><p>${esc(en()?q.desc:({"journal-today":"เขียนบันทึกประจำวันวันนี้","focus-today":"ทำ Focus Studio ให้ครบ 25 นาทีวันนี้","workspace-today":"เปิดห้องทำงานของคุณวันนี้","journal-week":"เขียนบันทึก 3 วันไม่ซ้ำกันในสัปดาห์นี้","focus-week":"สะสมเวลาโฟกัส 100 นาทีในสัปดาห์นี้","project-one":"ทำโครงการแรกให้สำเร็จ"}[q.id]||q.desc))}</p><div class="wdj-v8710-track"><span style="width:${Math.floor(value/q.goal*100)}%"></span></div><div class="wdj-v8710-card-bottom"><strong>${value}/${q.goal}</strong><button type="button" ${waiting||(!canClaim&&!q.link)?'disabled':''} data-wdj-v8710-action="${canClaim?'claim':q.link?'visit':'none'}" data-wdj-v8710-id="${q.id}">${claimed?'\u2713 ':''}${label}</button></div></article>`;
+    }).join('')}</div><p class="wdj-v8710-notice">\ud83d\udd12 ${tr("ตราภารกิจเก็บแยกตามบัญชีในอุปกรณ์นี้ ภารกิจและหีบรางวัลเดิมยังทำงานเหมือนเดิม","Life Quest stamps are stored locally per account on this device. Existing Daily Missions and Chests are unchanged.")}</p>`;
   }
   document.addEventListener('click',event=>{
     const control=event.target.closest?.('#wdjV8710LifeQuests [data-wdj-v8710-filter],#wdjV8710LifeQuests [data-wdj-v8710-action]');
