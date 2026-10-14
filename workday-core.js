@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10.1";
+  const APP_VERSION = "8.7.10.2";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2366,7 +2366,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const V6_VERSION = "8.7.10.1";
+  const V6_VERSION = "8.7.10.2";
   const KEYS = {
     journal: "wp-v6-journal",
     projects: "wp-v6-projects",
@@ -2830,7 +2830,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.1";
+  const VERSION = "8.7.10.2";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];

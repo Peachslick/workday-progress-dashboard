@@ -5675,3 +5675,76 @@ html[data-theme="dark"] .wdj-wrapped-header,body.dark .wdj-wrapped-header{backgr
 @media(max-width:930px){.wdj-v8710-quest-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wdj-v8710-hub-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.wdj-v8710-report-hub,.wdj-v8710-quests{padding:13px;border-radius:14px}.wdj-v8710-quest-grid{grid-template-columns:1fr}.wdj-v8710-hub-tabs{gap:7px}.wdj-v8710-hub-tabs button{padding:9px;gap:6px}.wdj-v8710-hub-tabs small{display:none}}
 @media(prefers-reduced-motion:reduce){.wdj-v8710-report-hub *, .wdj-v8710-quests *{animation:none!important;transition:none!important}}
+
+/* ===== V8.7.10.2 : Chest Inventory and dark-theme readability ===== */
+.wdj-chest-inventory{margin:18px 0 26px;padding:20px 22px;border:1px solid var(--border,#dce4f0);border-radius:22px;background:var(--card,#fff);color:var(--text,#17223c);box-shadow:0 14px 36px rgba(19,32,73,.065);scroll-margin-top:100px}
+.wdj-chest-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.wdj-chest-head h3{margin:5px 0 3px;font-size:1.16rem;font-weight:850;color:inherit}
+.wdj-chest-head p{margin:0;color:var(--muted,#65748b);font-size:.82rem;line-height:1.5}
+.wdj-chest-eyebrow{font-size:.69rem;font-weight:850;color:var(--accent,#356ae6);letter-spacing:.08em}
+.wdj-chest-total{white-space:nowrap;border:1px solid var(--border,#dce4f0);border-radius:999px;background:var(--surface-soft,#f2f6fc);padding:8px 13px;font-size:.77rem;font-weight:800;color:inherit}
+.wdj-chest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.wdj-chest-box{min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:14px;border:1px solid var(--border,#dce4f0);border-radius:17px;background:var(--surface-soft,#f6f8fc)}
+.wdj-chest-box.has-chest{border-color:color-mix(in srgb,var(--accent,#356ae6) 42%,var(--border,#dce4f0));background:color-mix(in srgb,var(--accent,#356ae6) 6%,var(--card,#fff))}
+.wdj-chest-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:color-mix(in srgb,var(--accent,#356ae6) 11%,var(--card,#fff));font-size:1.55rem}
+.wdj-chest-box strong,.wdj-chest-box small{display:block;line-height:1.35}.wdj-chest-box strong{font-size:.88rem;color:inherit}.wdj-chest-box small{margin-top:4px;font-size:.72rem;color:var(--muted,#65748b)}
+.wdj-chest-box button{grid-column:1/-1;min-height:40px;border:0;border-radius:11px;background:var(--accent,#356ae6);color:#fff;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer;transition:transform .18s ease,filter .18s ease}
+.wdj-chest-box button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.05)}
+.wdj-chest-box button:disabled{background:var(--border,#dce4f0);color:var(--muted,#65748b);cursor:not-allowed}
+.wdj-chest-signin{padding:24px 18px;text-align:center;border:1px dashed var(--border,#dce4f0);border-radius:15px;color:var(--muted,#65748b)}
+.wdj-chest-recent{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px;padding:11px 13px;border-radius:12px;background:var(--surface-soft,#f6f8fc);font-size:.73rem}
+.wdj-chest-recent strong{color:var(--text,#17223c)}.wdj-chest-recent span{color:var(--muted,#65748b)}
+.wdj-chest-hint{margin:12px 0 0;color:var(--muted,#65748b);font-size:.73rem;line-height:1.5}
+.wdj-chest-error{margin:12px 0 0;padding:12px;border:1px solid #ed9a9e;border-radius:12px;background:#fff0f0;color:#9c2830;font-size:.79rem}.wdj-chest-error button{margin-left:8px;cursor:pointer}
+.wdj-chest-owner-status{font-size:.74rem;color:#16814c;margin:0}.wdj-chest-owner-status.error{color:#cf3750}
+html[data-theme="dark"] .wdj-chest-inventory{background:#172033;border-color:#37445d;color:#eef3ff}
+html[data-theme="dark"] .wdj-chest-box,html[data-theme="dark"] .wdj-chest-recent{background:#202e45;border-color:#384761}
+html[data-theme="dark"] .wdj-chest-recent strong{color:#eef3ff}
+html[data-theme="dark"] .wdj-chest-error{background:#311b25;color:#ffd5d9;border-color:#794050}
+@media(max-width:920px){.wdj-chest-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.wdj-chest-inventory{padding:16px}.wdj-chest-grid{grid-template-columns:1fr}.wdj-chest-head{flex-direction:column}.wdj-chest-box{grid-template-columns:48px minmax(0,1fr) auto}.wdj-chest-box button{grid-column:auto;min-width:106px}}
+@media(max-width:380px){.wdj-chest-box{grid-template-columns:46px minmax(0,1fr)}.wdj-chest-box button{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.wdj-chest-box button{transition:none!important}}
+
+/* Cinematic dark rewards: transparent headings used dark-on-dark in Galaxy themes. */
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage :is(.v853-section-heading,.v831-section-head,.v853CatalogHeading){
+  background:rgba(15,23,51,.94)!important;color:#f8faff!important;
+  padding:16px 20px;border:1px solid rgba(173,189,255,.30);border-radius:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,.13)
+}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage :is(.v853-section-heading,.v831-section-head,.v853CatalogHeading) :is(h2,h3,h4,strong,p,small,span){color:#f2f5ff!important}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage :is(.v853-section-heading,.v831-section-head,.v853CatalogHeading) .eyebrow{color:#b5c8ff!important}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage .wdj-chest-inventory{background:rgba(16,25,51,.97)!important;color:#f2f5ff!important;border-color:rgba(173,189,255,.32)}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage .wdj-chest-box{background:#233154;border-color:#425174;color:#f6f8ff}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage :is(.wdj-chest-box small,.wdj-chest-head p,.wdj-chest-hint){color:#c8d5f2}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) #v81RewardsPage .wdj-chest-total{background:#26345a;color:#f5f8ff;border-color:#56678b}
+
+/* Reports icon fallback is visible while/if the modern SVG is being replaced. */
+body.v850-shell-refresh #v7ReportsPage .v7-page-title>span:first-child{font-size:1.3rem;color:#356ae6}
+body.v850-shell-refresh #v7ReportsPage .v7-page-title>span:first-child svg{display:block!important;width:22px!important;height:22px!important;stroke:#356ae6!important;stroke-width:1.8!important;fill:none!important}
+html[data-theme="dark"] body.v850-shell-refresh #v7ReportsPage .v7-page-title>span:first-child svg{stroke:#91b6ff!important}
+
+/* Shared page headings remain legible with cinematic reward themes on all routes. */
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) body.v850-shell-refresh .v7-page-heading{
+  padding:16px 18px!important;background:rgba(16,25,50,.92)!important;
+  border:1px solid rgba(166,183,250,.24)!important;border-radius:17px;
+}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) body.v850-shell-refresh .v7-page-title :is(h2,.muted){color:#eff3ff!important}
+html:is([data-reward-theme="secretGalaxy"],[data-reward-theme="midnight"],[data-reward-theme="sakuraNight"],[data-reward-theme="auroraGalaxy"],[data-reward-theme="goldenExecutive"]) body.v850-shell-refresh .v7-page-title>span:first-child{background:#293f71!important;color:#e4ecff!important}
+
+/* Mystery opening: use the existing safe chest animation with a violet tint. */
+.v843-chest-modal.mystery{border-color:rgba(175,126,255,.52);background:linear-gradient(155deg,#fff8ff,#f4f5ff 60%,#ede4ff)}
+.v843-chest-modal.mystery .v843-chest-box{background:linear-gradient(145deg,#efdeff,#a28afa);box-shadow:0 20px 55px rgba(113,74,220,.27)}
+.v843-chest-modal.mystery .v843-chest-copy .eyebrow{color:#7242bb}
+.v843-chest-modal.mystery .v843-chest-particles i{color:#ac72f3}
+.v843-chest-modal.mystery .v843-chest-accept{background:linear-gradient(135deg,#9360e8,#5a6bec)}
+html[data-theme="dark"] .v843-chest-modal.mystery{color:#eef0ff;background:linear-gradient(155deg,#241332,#18152c 65%,#11162c);border-color:#7e59ab}
+@keyframes wdjChestGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.06)}}
+.wdj-chest-box.has-chest .wdj-chest-icon{animation:wdjChestGlow 3s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.wdj-chest-box.has-chest .wdj-chest-icon{animation:none}}
+body.no-animations .wdj-chest-box.has-chest .wdj-chest-icon{animation:none}
+
+/* Five Reward Shop shortcuts after adding Chest Inventory. */
+body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:860px){body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:1fr}}
