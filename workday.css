@@ -5748,3 +5748,17 @@ body.no-animations .wdj-chest-box.has-chest .wdj-chest-icon{animation:none}
 body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:repeat(5,minmax(0,1fr))}
 @media(max-width:860px){body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){body.v853-gamification-refresh .v853-shop-jump{grid-template-columns:1fr}}
+
+/* V8.7.10.3 – Unified Chest Inventory: server missions + local Guest storage */
+.wdj-unified-chest-status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.wdj-unified-chest-status article{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:17px;border:1px solid var(--border,#dfe5ee);border-radius:16px;background:var(--card,#fff);color:var(--text,#1d2a40)}
+.wdj-unified-chest-status article span{margin-left:auto;font-size:.81rem;font-weight:700;color:var(--accent,#356ae6)}
+.wdj-unified-reflection{width:100%;display:block;min-height:76px;resize:vertical;border:1px solid var(--border,#dfe5ee);border-radius:12px;padding:10px 12px;margin-top:10px;font:inherit;font-size:.85rem;background:var(--card,#fff);color:var(--text,#1d2a40)}
+.wdj-unified-reflection:focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#356ae6) 45%,transparent);outline-offset:1px}
+.wdj-unified-error{margin:10px 0;padding:12px 15px;background:#fff0f1;color:#9a2339;border:1px solid #eeb0b8;border-radius:12px}
+.wdj-unified-error button{margin-left:12px;min-height:32px;padding:4px 12px;border-radius:9px;border:1px solid currentColor;color:inherit;cursor:pointer}
+.wdj-unified-hint,.wdj-unified-loading{color:var(--muted,#64738c);font-size:.8rem;margin:12px 0;line-height:1.65}
+html[data-theme="dark"] .wdj-unified-chest-status article{background:#1b2942;color:#f1f5ff;border-color:#445574}
+html[data-theme="dark"] .wdj-unified-reflection{background:#152039;color:#f1f5ff;border-color:#465776}
+html[data-theme="dark"] .wdj-unified-error{background:#371923;color:#ffdee4;border-color:#995064}
+@media(max-width:620px){.wdj-unified-chest-status{grid-template-columns:1fr}}
