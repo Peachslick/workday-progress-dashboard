@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -3346,7 +3346,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3689,7 +3689,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3754,7 +3754,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3915,7 +3915,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4186,7 +4186,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4451,7 +4451,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4845,7 +4845,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -4992,7 +4992,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.10.3';
+  const VERSION = '8.7.10.3.1';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5563,10 +5563,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.10.3',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.10.3.1',refresh:mount };
 })();
 
-/* SOURCE: V8.7.10.3 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.10.3.1 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5890,7 +5890,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.10.3: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.10.3.1: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6222,12 +6222,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10.3',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10.3.1',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.10.3: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.10.3.1: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6404,7 +6404,7 @@
 })();
 
 
-/* ===== V8.7.10.3 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.10.3.1 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6576,7 +6576,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10.3 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.10.3.1 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6701,7 +6701,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10.3 Productivity Insights 2.0 (read-only) =====
+/* ===== V8.7.10.3.1 Productivity Insights 2.0 (read-only) =====
  * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
  * No monetary, achievement or Cloud writes occur in this module.
  */
@@ -6823,7 +6823,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3 Journey Wrapped: private, read-only story cards ===== */
+/* ===== V8.7.10.3.1 Journey Wrapped: private, read-only story cards ===== */
 (() => {
   'use strict';
   const ROOT='wdjWrappedPage';
@@ -6894,7 +6894,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     if(data.pending){el.innerHTML=`<div class="wdj-wrapped-loading" role="status">⏳ ${tr('กำลังเตรียมเรื่องราวของบัญชี...','Preparing your account story...')}</div>`;return;}
     if(period!=='journey'&&!data.available.includes(period))period='journey';
     const stories=slides(data),current=stories[slide]||stories[0];
-    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10.3</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>${tr('การ์ดที่','STORY')} ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
+    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10.3.1</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>${tr('การ์ดที่','STORY')} ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
   }
   function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
     const words=String(text).split(/\s+/);let line='',lines=[];
@@ -6938,7 +6938,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* V8.7.10.3 - Navigation consolidation and Daily Life Quests.
+/* V8.7.10.3.1 - Navigation consolidation and Daily Life Quests.
  * All original report routes stay reachable. Quests are cosmetic and local only.
  * This module never updates Journal, Project, Wallet, Rewards or the Cloud.
  */
@@ -7050,7 +7050,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const progress=items.map(q=>({q,value:s?Math.min(q.goal,Math.max(0,q.get(s))):0,claimed:!!s&&stamps.has(idFor(q,s))}));
     const earned=progress.filter(x=>x.claimed).length;
     const tabs=[['all',tr('ทั้งหมด','All')],['daily',tr('รายวัน','Daily')],['weekly',tr('รายสัปดาห์','Weekly')],['journey',tr('ตลอดการเดินทาง','Journey')]];
-    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10.3 / ${tr("ภารกิจสะสมตรา","COSMETIC QUESTS")}</span><h2>\ud83c\udfae ${tr("ภารกิจชีวิตประจำวัน","Life Quests")} <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('ทำกิจกรรมจริงเพื่อสะสมตราความสำเร็จในเครื่อง โดยไม่เพิ่ม Coin หรือของรางวัลในร้าน','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?`<div class="wdj-v8710-pending" role="status">${tr("กำลังโหลดข้อมูลบัญชีก่อนตรวจภารกิจ...","Loading account data before checking quests...")}</div>`:''}<div class="wdj-v8710-filters" role="group" aria-label="${tr("ตัวกรองภารกิจชีวิตประจำวัน","Life Quest filters")}">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
+    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10.3.1 / ${tr("ภารกิจสะสมตรา","COSMETIC QUESTS")}</span><h2>\ud83c\udfae ${tr("ภารกิจชีวิตประจำวัน","Life Quests")} <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('ทำกิจกรรมจริงเพื่อสะสมตราความสำเร็จในเครื่อง โดยไม่เพิ่ม Coin หรือของรางวัลในร้าน','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?`<div class="wdj-v8710-pending" role="status">${tr("กำลังโหลดข้อมูลบัญชีก่อนตรวจภารกิจ...","Loading account data before checking quests...")}</div>`:''}<div class="wdj-v8710-filters" role="group" aria-label="${tr("ตัวกรองภารกิจชีวิตประจำวัน","Life Quest filters")}">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
       const done = value>=q.goal;
       const canClaim=done&&!claimed&&!waiting;
       const label=claimed?tr('รับตราแล้ว','Stamp collected'):done?tr('รับตรา','Collect stamp'):q.link?tr('เปิดห้องทำงาน','Open Workspace'):tr('กำลังดำเนินการ','In progress');
@@ -7078,10 +7078,10 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3 - secure Chest Inventory (presentation + RPC client only) ===== */
+/* ===== V8.7.10.3.1 - secure Chest Inventory (presentation + RPC client only) ===== */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3";
+  const VERSION = "8.7.10.3.1";
   const KINDS = ["daily", "weekly", "mystery"];
   const ICONS = {daily:"\u{1F381}",weekly:"\u{1F3C6}",mystery:"\u{1F3B2}"};
   const state = {uid:"",items:[],loaded:false,loading:null,at:0,busy:"",error:""};
@@ -7229,7 +7229,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3 - authenticated Missions issue UNOPENED chests, never direct rewards ===== */
+/* ===== V8.7.10.3.1 - authenticated Missions issue UNOPENED chests, never direct rewards ===== */
 (() => {
   "use strict";
   const cloud=()=>window.WorkdayV8Cloud;
@@ -7238,29 +7238,44 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   const lang=()=>localStorage.getItem('wp-language')==='en'?'en':'th';
   const txt=(th,en)=>lang()==='th'?th:en;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const state={uid:'',board:null,loading:null,busy:false,error:'',draft:'',lastAt:0};
+  const state={uid:'',board:null,loading:null,busy:false,error:'',lastAt:0};
   const defs=[
     {id:'checkin',icon:'🌅',coin:5,th:'เช็กอินประจำวัน',en:'Daily check-in',descTh:'กดรับการเช็กอินวันนี้',descEn:'Check in once today'},
     {id:'reflection',icon:'📓',coin:10,th:'บันทึกสิ่งที่เรียนรู้',en:'Daily reflection',descTh:'เขียนบันทึก 20–500 ตัวอักษร หลังเช็กอิน',descEn:'Write 20–500 characters after check-in'},
     {id:'focus',icon:'⏱️',coin:15,th:'ช่วงเวลาโฟกัส',en:'Focus interval',descTh:'ครบ 20 นาทีหลังเช็กอิน ตามเวลา Server',descEn:'20 minutes after check-in, measured by server time'}
   ];
-  function reset(){const id=uid();if(state.uid===id)return;state.uid=id;state.board=null;state.loading=null;state.busy=false;state.error='';state.draft='';state.lastAt=0;}
+  function reset(){const id=uid();if(state.uid===id)return;state.uid=id;state.board=null;state.loading=null;state.busy=false;state.error='';state.lastAt=0;}
+  // Journal is the only editor for the daily learning note. This reads an existing
+  // saved entry; it never writes or alters wp-v6-journal.
+  function savedJournal(day){
+    try {
+      const rows=JSON.parse(localStorage.getItem('wp-v6-journal')||'{}');
+      const value=rows&&typeof rows==='object'&&!Array.isArray(rows)?rows[String(day||'')]:null;
+      return value&&typeof value==='object'?String(value.learned||'').trim():'';
+    } catch { return ''; }
+  }
   function renderCloud(root){
     reset();if(!state.uid)return false;
     const b=state.board,claimed=Array.isArray(b?.claimed)?b.claimed:[],count=Number(b?.claimedCount||0);
-    const available=Number(b?.weeklyDailyCount||0),done=!!b?.dailyIssued;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · VERIFIED MISSIONS</p><h2>${txt('ภารกิจรายวัน','Daily Missions')}</h2><p class="muted">${txt('ทำภารกิจครบ 3 ข้อเพื่อรับ Daily Chest เข้าคลัง เมื่อรับครบ 5 วันในสัปดาห์จะได้รับ Weekly Chest','Claim all 3 missions to add a Daily Chest to inventory. Earn Daily Chests on 5 days for a Weekly Chest.')}</p></div></div></div>
-      <section class="v82-mission-hero"><div><span>🎯</span><div><small>${txt('ภารกิจวันนี้','TODAY')}</small><strong>${count}/3</strong></div></div><div><small>${txt('รับ Coin ที่ตรวจสอบแล้ว','Verified mission rewards')}</small><b>${claimed.reduce((v,id)=>v+(defs.find(d=>d.id===id)?.coin||0),0)} 🪙</b></div></section>
+    const day=b?.day||'',note=savedJournal(day),journalReady=note.length>=20;
+    const weeklyCount=Number(b?.weeklyDailyCount||0);
+    // Use the same compact layout as Guest Missions from the very first paint.
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · MISSIONS</p><h2>${txt('ภารกิจรายวัน','Daily Missions')}</h2><p class="muted">${txt('ทำครบ 3 ภารกิจเพื่อรับ Daily Chest เข้าคลัง และสะสม 5 วันเพื่อรับ Weekly Chest','Complete three missions for a Daily Chest and earn Daily Chests on five days for a Weekly Chest.')}</p></div></div></div>
+      <section class="v82-mission-hero"><div><span>🎯</span><div><small>${txt('ภารกิจวันนี้','TODAY')}</small><strong>${count}/3</strong></div></div><div><small>${txt('Coin จากภารกิจวันนี้','Today’s mission Coins')}</small><b>${claimed.reduce((v,id)=>v+(defs.find(d=>d.id===id)?.coin||0),0)} 🪙</b></div></section>
       ${state.error?`<div class="wdj-unified-error" role="alert">${esc(state.error)} <button type="button" data-unified-retry>${txt('ลองใหม่','Retry')}</button></div>`:''}
       ${b?`<section class="v82-mission-list">${defs.map(d=>{
-        const got=claimed.includes(d.id),enabled=d.id==='checkin'||(d.id==='reflection'&&!!b.checkedInAt)||(d.id==='focus'&&Number(b.focusMinutes||0)>=20);
-        return `<article class="v82-mission-card ${got?'claimed':''}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(txt(d.th,d.en))}</strong><span>+${d.coin} 🪙</span></div><p>${esc(txt(d.descTh,d.descEn))}</p>${d.id==='focus'?`<small>${esc(txt('ผ่านไปแล้ว','Elapsed'))}: ${Number(b.focusMinutes||0)}/20 ${txt('นาที','min')}</small>`:''}${d.id==='reflection'&&!got?`<textarea class="wdj-unified-reflection" maxlength="500" rows="2" placeholder="${txt('วันนี้ได้เรียนรู้อะไร...','What did you learn today?')}">${esc(state.draft)}</textarea>`:''}</div><button type="button" data-unified-mission="${d.id}" ${got||!enabled||state.busy?'disabled':''}>${got?txt('✓ รับแล้ว','✓ Claimed'):txt('รับรางวัล','Claim')}</button></article>`;
+        const got=claimed.includes(d.id);
+        const progress=d.id==='checkin'?(b.checkedInAt?1:0):d.id==='reflection'?(journalReady?1:0):Math.min(20,Number(b.focusMinutes||0));
+        const total=d.id==='focus'?20:1,pct=Math.max(0,Math.min(100,progress/total*100));
+        const enabled=d.id==='checkin'||(d.id==='reflection'&&!!b.checkedInAt&&journalReady)||(d.id==='focus'&&!!b.checkedInAt&&progress>=20);
+        const desc=d.id==='reflection'?txt('บันทึกสิ่งที่เรียนรู้อย่างน้อย 20 ตัวอักษรที่หน้า “บันทึกประจำวัน” แล้วกลับมารับรางวัล','Save at least 20 characters in the Daily Journal, then come back to claim'):txt(d.descTh,d.descEn);
+        const status=d.id==='reflection'&&!got?`<div class="wdj-unified-journal-link"><small>${journalReady?txt('✓ พบบันทึกที่บันทึกไว้แล้ว','✓ Saved journal found'):txt('ยังไม่พบบันทึกสิ่งที่เรียนรู้ของวันนี้','No learning note saved for today')}</small><button type="button" class="outline-btn" data-unified-go-journal>${txt('ไปหน้าบันทึกประจำวัน','Open Daily Journal')} ↗</button></div>`:'';
+        return `<article class="v82-mission-card ${got?'claimed':enabled?'done':''}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(txt(d.th,d.en))}</strong><span>+${d.coin} 🪙</span></div><p>${esc(desc)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${d.id==='focus'?`${progress}/20 ${txt('นาที','min')}`:`${progress}/1`}</small></div>${status}</div><button type="button" data-unified-mission="${d.id}" ${got||!enabled||state.busy?'disabled':''}>${got?txt('✓ รับแล้ว','✓ Claimed'):enabled?txt('รับ Coin','Claim Coins'):txt('กำลังทำ','In progress')}</button></article>`;
       }).join('')}</section>
-      <section class="wdj-unified-chest-status"><article>🎁 <strong>Daily Chest</strong><span>${b.dailyIssued?txt('ส่งเข้าคลังแล้ว','In inventory'):`${count}/3`}</span></article><article>🏆 <strong>Weekly Chest</strong><span>${b.weeklyIssued?txt('ส่งเข้าคลังแล้ว','In inventory'):`${available}/5 ${txt('วัน','days')}`}</span></article></section>
-      <p class="wdj-unified-hint">${txt('รับกล่องแล้วเปิดได้ที่ รางวัล → คลังกล่องรางวัล · ภารกิจของบัญชีจะตรวจจากข้อมูลบน Server','Open earned boxes under Rewards → Chest Inventory. Cloud missions are verified on the server.')}</p>`:`<p class="wdj-unified-loading" role="status">${txt('กำลังโหลดข้อมูลภารกิจที่ตรวจสอบแล้ว...','Loading verified missions...')}</p>`}
-    `;
+      <section class="v82-chest-grid"><article class="v82-chest-card daily ${b.dailyIssued?'claimed':''}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${b.dailyIssued?txt('เข้าคลังแล้ว','In inventory'):`${count}/3`}</h3><p>${txt('รับครบ 3 ภารกิจ ระบบส่งกล่องเข้าคลังรางวัล','Complete 3 missions to earn a chest in your inventory')}</p></div><button type="button" disabled>${b.dailyIssued?txt('✓ เข้าคลังแล้ว','✓ In inventory'):txt('รอภารกิจครบ','Not yet ready')}</button></article><article class="v82-chest-card weekly ${b.weeklyIssued?'claimed':''}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${b.weeklyIssued?txt('เข้าคลังแล้ว','In inventory'):`${weeklyCount}/5 ${txt('วัน','days')}`}</h3><p>${txt('สะสม Daily Chest ครบ 5 วันในสัปดาห์','Earn Daily Chests on five days this week')}</p></div><button type="button" disabled>${b.weeklyIssued?txt('✓ เข้าคลังแล้ว','✓ In inventory'):txt('กำลังสะสม','In progress')}</button></article></section>`:`<section class="v82-mission-list"><p class="wdj-unified-loading" role="status">${txt('กำลังโหลดภารกิจ...','Loading missions...')}</p></section>`}
+      <p class="wdj-unified-hint">${txt('เปิดกล่องที่ รางวัล → คลังกล่องรางวัล · ข้อมูลที่เรียนรู้แก้ไขได้จากหน้า Journal เท่านั้น','Open chests in Rewards → Chest Inventory. Edit your learning notes only in Daily Journal.')}</p>`;
     root.querySelector('[data-unified-retry]')?.addEventListener('click',()=>{state.error='';refresh(true);});
-    root.querySelector('.wdj-unified-reflection')?.addEventListener('input',e=>{state.draft=e.target.value;});
+    root.querySelector('[data-unified-go-journal]')?.addEventListener('click',()=>{location.hash='#/journal';});
     root.querySelectorAll('[data-unified-mission]').forEach(el=>el.addEventListener('click',()=>claim(el.dataset.unifiedMission)));
     if(!state.loading&&!state.error&&(!state.board||Date.now()-state.lastAt>60000))refresh();
     window.WorkdayLifeQuests?.render?.();
@@ -7282,12 +7297,14 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     reset();if(state.busy||!state.uid||!api())return;
     state.busy=true;state.error='';const expected=state.uid;
     const root=document.getElementById('v82MissionsPage');if(root)renderCloud(root);
-    try{const {data,error}=await api().rpc('claim_unified_mission_secure',{p_mission_id:id,p_reflection:id==='reflection'?state.draft:null});
+    try{
+      const note=id==='reflection'?savedJournal(state.board?.day):null;
+      if(id==='reflection'&&(!note||note.length<20))throw new Error(txt('กรุณาบันทึกสิ่งที่เรียนรู้ในหน้า Journal ก่อน','Save your learning note in Daily Journal first'));
+      const {data,error}=await api().rpc('claim_unified_mission_secure',{p_mission_id:id,p_reflection:id==='reflection'?note.slice(0,500):null});
       if(error)throw error;if(uid()!==expected)return;
       state.board=data?.board||state.board;state.lastAt=Date.now();
       window.WorkdayEconomySecurity?.applyEconomy?.(data?.economy);
       if(data?.addedChests?.length)await window.WorkdayChestInventory?.refresh?.(true);
-      if(id==='reflection')state.draft='';
     }catch(err){if(uid()===expected)state.error=txt('รับรางวัลไม่สำเร็จ: ','Claim failed: ')+(err?.message||String(err));}
     finally{state.busy=false;if(uid()===expected)window.WorkdayRewards?.renderMissions?.();}
   }
