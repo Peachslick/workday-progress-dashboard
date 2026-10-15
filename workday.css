@@ -5817,3 +5817,8 @@ body.v850-shell-refresh .v7-workspace main.dashboard {overflow-x:clip;}
 /* V8.7.10.3.5: secondary Supabase reward requirement for rotating cloud quests */
 .wdj-mission-server-gate{margin-top:8px;color:var(--muted,#667085);line-height:1.55}
 .wdj-mission-server-gate small{display:block;font-size:clamp(11px,.8rem,13px);overflow-wrap:anywhere}
+
+/* V8.7.10.3.6: authenticated Work Exchange is read-only until server authorization. */
+.wdj-exchange-cloud-note {border:1px solid var(--border, rgba(99,116,153,.4));border-radius:14px;padding:14px 18px;margin:0 0 14px;background:var(--card-bg,rgba(89,108,148,.09));color:var(--text,inherit);}
+.wdj-exchange-cloud-note strong {display:block;font-weight:800;margin-bottom:5px;}
+.wdj-exchange-cloud-note p {margin:0;line-height:1.55;font-size:.9rem;opacity:.9;}

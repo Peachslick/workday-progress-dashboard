@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -1462,6 +1462,16 @@
   }
 
   function ledger() {
+    // A signed-in wallet is server-owned. Local history is preserved on disk
+    // for owner-reviewed recovery, but NEVER counted as verified Cloud Coins.
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) {
+      const verified = window.WorkdayEconomySecurity?.getCachedBalance?.();
+      return Number.isFinite(verified) ? [{
+        id:"secure:v871036:verified-wallet", amount:verified, type:"server_balance",
+        labelTh:"ยอด Wallet ที่ Supabase ยืนยัน", labelEn:"Supabase verified wallet",
+        createdAt:new Date().toISOString()
+      }] : [];
+    }
     const list = read(KEYS.ledger, []);
     return Array.isArray(list) ? list : [];
   }
@@ -1583,6 +1593,9 @@
 
   let reconcileBusy = false;
   async function reconcileRewards({notify=true}={}) {
+    // Local workday/achievement rewards must not mint a temporary signed-in
+    // balance which disappears on the next Supabase refresh.
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) return {added:0,count:0,serverOnly:true};
     if (reconcileBusy) return {added:0,count:0};
     reconcileBusy = true;
     try {
@@ -1639,6 +1652,9 @@
   }
   async function purchaseReward(reward, source="shop") {
     if (!reward || reward.price <= 0 || isOwned(reward)) return;
+    if (window.WorkdayV8Cloud?.isSignedIn?.() && !Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.())) {
+      toast("☁",lang()==="th"?"กำลังตรวจสอบยอด Coin จาก Supabase กรุณารอสักครู่":"Waiting for the verified Supabase wallet","warning");return;
+    }
     if (!rewardAvailable(reward)) { toast("🎓", t("finaleEnded"), "error"); return; }
     const deal = source === "weekly" ? weeklyDealFor(reward) : source === "daily" ? dailyDealFor(reward) : null;
     const payPrice = deal ? deal.price : reward.price;
@@ -1654,6 +1670,9 @@
         const {data,error}=await client.rpc("purchase_reward_secure",{p_reward_type:reward.type,p_reward_id:reward.id,p_source:deal?source:"shop",p_discount_pct:deal?.discount||0});
         if(error)throw error;sec.applyEconomy(data);toast("🎁",deal?`${t("purchased")}: ${rewardName(reward)} · -${deal.discount}%`:`${t("purchased")}: ${rewardName(reward)}`,"success");refreshAll();return;
       }catch(err){toast("🔐",String(err?.message||err).includes("INSUFFICIENT_COINS")?t("insufficient"):(lang()==="th"?"ซื้อไม่สำเร็จ: ระบบ Security ปฏิเสธรายการ":"Purchase rejected by Economy Security"),"error");return;}
+    }
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) {
+      toast("🔐",lang()==="th"?"บัญชี Login ต้องซื้อผ่าน Supabase เท่านั้น":"Account purchases require Supabase Economy Security","error");return;
     }
     // Local/Guest mode remains device-local. It cannot write protected Economy keys to Cloud Sync.
     const list=ledger(),id=`spend:${reward.type}:${reward.id}`;
@@ -1798,7 +1817,13 @@
       const bell = $("v8NotifBtn");
       if (bell?.parentElement === actions) actions.insertBefore(btn, bell); else actions.prepend(btn);
     }
-    const bal = $("v81CoinBalance"); if (bal) bal.textContent = balance().toLocaleString(lang()==="th"?"th-TH":"en-US");
+    const bal = $("v81CoinBalance");
+    if (bal) {
+      const loadingCloud = window.WorkdayV8Cloud?.isSignedIn?.() &&
+        !Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.());
+      bal.textContent=loadingCloud?"…":balance().toLocaleString(lang()==="th"?"th-TH":"en-US");
+      bal.title=loadingCloud?(lang()==="th"?"กำลังตรวจสอบยอด Coin จาก Supabase":"Loading verified Cloud Coin balance"):"";
+    }
   }
 
   function historyLabel(item) { return lang() === "th" ? (item.labelTh || item.labelEn || item.id) : (item.labelEn || item.labelTh || item.id); }
@@ -1902,13 +1927,14 @@
     const tab = localStorage.getItem(KEYS.tab) || "mascots";
     const list = ledger().slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
     const bal = balance(list), earned = lifetimeEarned(list), spent = lifetimeSpent(list);
+    const cloudWallet=!!window.WorkdayV8Cloud?.isSignedIn?.(),loadingCloud=cloudWallet&&!Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.());
     const categoryMap={mascots:MASCOTS,accessories:ACCESSORIES,frames:FRAMES,themes:THEMES,effects:EFFECTS};
     const tabContent = categoryMap[tab]
       ? categoryMap[tab].map(rewardCard).join("")
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
     root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
-      <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeEarned"))}</small><b>+${earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${esc(t("lifetimeSpent"))}</small><b>-${spent.toLocaleString()}</b></div></section>
+      <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${loadingCloud?"…":bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"แหล่งข้อมูล":"Wallet Source"):esc(t("lifetimeEarned"))}</small><b>${cloudWallet?"☁ Supabase":"+"+earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"ประวัติ":"History"):esc(t("lifetimeSpent"))}</small><b>${cloudWallet?(lang()==="th"?"เฉพาะยอดยืนยัน":"Verified only"):"-"+spent.toLocaleString()}</b></div></section>
       <section id="wdjChestInventory" class="wdj-chest-inventory" aria-label="Chest Inventory"></section>
       ${collectionMarkup()}
       ${dailyMarkup()}
@@ -2604,13 +2630,14 @@
   function setBeginnerMode(on){ localStorage.setItem(KEYS.exchangeBeginner,on?"1":"0"); }
   function academyLesson(id){ return EXCHANGE_ACADEMY.find(x=>x.id===id)||EXCHANGE_ACADEMY[0]; }
   function academyReconcileRewards(){
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) return false; // no browser-minted account coins
     const state=academyState(),list=ledger(),ids=new Set(list.map(x=>x.id));let changed=false;
     EXCHANGE_ACADEMY.forEach(def=>{if(!state.completed?.[def.id])return;const id=`earn:academy:${def.id}`;if(ids.has(id))return;list.push({id,amount:ACADEMY_LESSON_REWARD,type:"academy",labelTh:`Trading Academy · ${def.titleTh}`,labelEn:`Trading Academy · ${def.titleEn}`,createdAt:state.completed[def.id]||new Date().toISOString(),meta:{lessonId:def.id}});ids.add(id);changed=true;});
     if(changed)write(KEYS.ledger,list);return changed;
   }
   function academyCompleteLesson(id,answerId,{notify=true}={}){
     const def=academyLesson(id);if(!def||answerId!==def.correct){if(notify)toast("💡",lang()==="th"?"คำตอบยังไม่ถูก ลองอ่าน Key Takeaway แล้วตอบอีกครั้ง":"Not quite. Review the key takeaway and try again.","warning");return false;}
-    const state=academyState(),first=!state.completed?.[def.id];if(first){state.completed[def.id]=new Date().toISOString();if(!state.startedAt)state.startedAt=state.completed[def.id];const next=EXCHANGE_ACADEMY.find(x=>!state.completed[x.id]);state.selected=next?.id||def.id;if(academyCompletedCount(state)===EXCHANGE_ACADEMY.length)state.completedAt=new Date().toISOString();saveAcademyState(state);academyReconcileRewards();reconcileExchangeAchievements({notify:false});if(notify)toast("🎓",lang()==="th"?`เรียนจบบทนี้แล้ว +${ACADEMY_LESSON_REWARD} Coins`:`Lesson complete +${ACADEMY_LESSON_REWARD} Coins`,"success");}
+    const state=academyState(),first=!state.completed?.[def.id];if(first){state.completed[def.id]=new Date().toISOString();if(!state.startedAt)state.startedAt=state.completed[def.id];const next=EXCHANGE_ACADEMY.find(x=>!state.completed[x.id]);state.selected=next?.id||def.id;if(academyCompletedCount(state)===EXCHANGE_ACADEMY.length)state.completedAt=new Date().toISOString();saveAcademyState(state);academyReconcileRewards();reconcileExchangeAchievements({notify:false});if(notify)toast("🎓",window.WorkdayV8Cloud?.isSignedIn?.()?(lang()==="th"?"เรียนจบบทนี้แล้ว · Cloud Coin จะไม่เพิ่มโดยไม่มีการยืนยันจาก Server":"Lesson completed · Cloud Coins require server verification"):(lang()==="th"?`เรียนจบบทนี้แล้ว +${ACADEMY_LESSON_REWARD} Coins`:`Lesson complete +${ACADEMY_LESSON_REWARD} Coins`),"success");}
     else if(notify)toast("✓",lang()==="th"?"บทนี้เรียนจบแล้ว และรับรางวัลไปแล้ว":"This lesson is already complete and rewarded.","info");
     return true;
   }
@@ -2634,8 +2661,85 @@
   }
 
   const exchangeDayCache = new Map();
-  function exchangeTrades(){ const rows=read(KEYS.exchangeTrades,[]); return Array.isArray(rows)?rows:[]; }
-  function saveExchangeTrades(rows){ write(KEYS.exchangeTrades,rows); }
+  const cloudExchange={uid:"",status:"init",rows:[],pending:null,busy:false,error:"",last:0};
+  const signedInExchange=()=>!!window.WorkdayV8Cloud?.getUser?.()?.id;
+  function resetCloudExchange(){cloudExchange.uid="";cloudExchange.status="init";cloudExchange.rows=[];cloudExchange.pending=null;cloudExchange.busy=false;cloudExchange.error="";cloudExchange.last=0;}
+  function exchangeCloudRows(value){
+    if(!Array.isArray(value))return [];
+    return value.filter(t=>t&&["buy","sell"].includes(t.side)&&/^[A-Z0-9]{1,12}$/.test(String(t.symbol||""))
+      &&Number.isInteger(Number(t.qty))&&Number(t.qty)>0&&Number.isFinite(Number(t.price)))
+      .map(t=>({...t,qty:Number(t.qty),price:Number(t.price),gross:Number(t.gross)||0,
+        fee:Number(t.fee)||0,walletAmount:Number(t.walletAmount)||0,createdAt:t.createdAt||t.created_at}));
+  }
+  async function loadCloudExchange({force=false}={}){
+    const cloud=window.WorkdayV8Cloud,uid=cloud?.getUser?.()?.id||"",client=cloud?.getClient?.();
+    if(!uid || !client)return;
+    if(cloudExchange.uid!==uid){resetCloudExchange();cloudExchange.uid=uid;}
+    if(cloudExchange.pending)return cloudExchange.pending;
+    if(!force&&(cloudExchange.status==="unsupported" || (cloudExchange.status==="ready"&&Date.now()-cloudExchange.last<60000)))return;
+    cloudExchange.status="loading";
+    const run=(async()=>{
+      try{
+        const {data,error}=await client.rpc("wdj_exchange_get_state_secure");
+        if(error)throw error;
+        if(window.WorkdayV8Cloud?.getUser?.()?.id!==uid)return;
+        if(!data||!Array.isArray(data.trades))throw new Error("INVALID_CLOUD_EXCHANGE_RESPONSE");
+        cloudExchange.rows=exchangeCloudRows(data.trades);
+        cloudExchange.status="ready";cloudExchange.error="";cloudExchange.last=Date.now();
+      }catch(e){
+        if(window.WorkdayV8Cloud?.getUser?.()?.id!==uid)return;
+        cloudExchange.status="unsupported";cloudExchange.error=String(e?.message||e);
+        cloudExchange.rows=[]; // Never show a different user's local holdings as Cloud holdings.
+      }finally{
+        if(window.WorkdayV8Cloud?.getUser?.()?.id===uid && location.hash.includes("/exchange"))renderExchange();
+      }
+    })();
+    cloudExchange.pending=run;
+    try{await run;}finally{if(cloudExchange.pending===run)cloudExchange.pending=null;}
+  }
+  function exchangeTrades(){
+    if(signedInExchange()){
+      const uid=window.WorkdayV8Cloud?.getUser?.()?.id||"";
+      if(cloudExchange.uid!==uid) {resetCloudExchange();cloudExchange.uid=uid;}
+      if(cloudExchange.status==="init" || (cloudExchange.status==="ready"&&Date.now()-cloudExchange.last>60000))void loadCloudExchange();
+      return cloudExchange.status==="ready"?cloudExchange.rows.slice():[];
+    }
+    const rows=read(KEYS.exchangeTrades,[]); return Array.isArray(rows)?rows:[];
+  }
+  function saveExchangeTrades(rows){
+    if(signedInExchange())throw new Error("CLOUD_EXCHANGE_SERVER_REQUIRED");
+    write(KEYS.exchangeTrades,rows);
+  }
+  async function submitCloudExchangeTrade(side,symbol,qty,estimatedPrice){
+    if(cloudExchange.busy)return;
+    if(cloudExchange.status!=="ready"){
+      toast("🔐",lang()==="th"?"บัญชี Login ยังไม่เปิดซื้อขาย: ต้องติดตั้ง RPC ที่ตรวจสอบ Coin และหุ้นใน Supabase ก่อน":"Cloud Exchange is locked until its secure Supabase RPCs are installed","warning");return;
+    }
+    const client=window.WorkdayV8Cloud?.getClient?.(),uid=window.WorkdayV8Cloud?.getUser?.()?.id;
+    if(!client||!uid || !navigator.onLine){toast("☁",lang()==="th"?"ต้องออนไลน์เพื่อซื้อขายด้วยบัญชี Login":"Cloud trading requires an online account","error");return;}
+    const verb=side==="buy"?(lang()==="th"?"ซื้อ":"Buy"):(lang()==="th"?"ขาย":"Sell");
+    if(!confirm(lang()==="th"?`${verb} ${symbol} ${qty} หุ้น?\nราคาบนหน้าจอประมาณ ${estimatedPrice.toFixed(2)} Coin/หุ้น\nServer จะยืนยันราคา ยอด Coin และจำนวนหุ้นอีกครั้ง`:`${verb} ${qty} ${symbol} shares?\nIndicative price ${estimatedPrice.toFixed(2)} Coins. The server will validate price, wallet and holdings.`))return;
+    const transactionId=crypto.randomUUID(); // idempotency key; safe to retry only with same ID
+    cloudExchange.busy=true;renderExchange();
+    try{
+      const {data,error}=await client.rpc("wdj_exchange_trade_secure",{
+        p_trade_id:transactionId,p_side:side,p_symbol:symbol,p_qty:qty
+      });
+      if(error)throw error;
+      if(window.WorkdayV8Cloud?.getUser?.()?.id!==uid)return;
+      if(!data||!data.ok)throw new Error("TRADE_NOT_CONFIRMED");
+      if(data.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
+      await window.WorkdayEconomySecurity?.refresh?.({force:true});
+      await loadCloudExchange({force:true});
+      toast("✓",lang()==="th"?"ซื้อขายสำเร็จและบันทึกบน Supabase แล้ว":"Trade confirmed by Supabase","success");
+    }catch(e){
+      toast("!",lang()==="th"?"ไม่ยืนยันรายการ: โปรดตรวจสอบธุรกรรมบน Supabase ก่อนกดซ้ำ":"Trade not confirmed. Verify server history before retrying.","error");
+      console.warn("Cloud Exchange trade was not confirmed:",e);
+      // Do not credit a wallet, deduct shares or write local history on failure.
+      await loadCloudExchange({force:true}).catch(()=>{});
+      await window.WorkdayEconomySecurity?.refresh?.({force:true}).catch(()=>{});
+    }finally{cloudExchange.busy=false;refreshAll();}
+  }
   function exchangeWatchlist(){ const rows=read(KEYS.exchangeWatch,[]); return new Set(Array.isArray(rows)?rows:[]); }
   function saveExchangeWatchlist(set){ write(KEYS.exchangeWatch,[...set]); }
   function exchangeSelected(){ const id=localStorage.getItem(KEYS.exchangeSelected)||"TECH"; return EXCHANGE_STOCKS.some(s=>s.symbol===id)?id:"TECH"; }
@@ -2752,6 +2856,15 @@
   function exchangeMaxBuy(price,wallet){ let qty=Math.floor(wallet/Math.max(.01,price*1.01));while(qty>0){const gross=Math.round(price*qty),fee=Math.max(1,Math.round(gross*EXCHANGE_FEE_RATE));if(gross+fee<=wallet)break;qty--;}return Math.max(0,qty); }
   function exchangeToggleWatch(symbol){const set=exchangeWatchlist();set.has(symbol)?set.delete(symbol):set.add(symbol);saveExchangeWatchlist(set);renderExchange();}
   function exchangeTrade(side,symbol,qtyRaw){
+    if(signedInExchange()){
+      const qty=Number(qtyRaw),ctx=exchangeMarketContext();
+      if(!Number.isSafeInteger(qty)||qty<1||qty>100000){toast("!",lang()==="th"?"กรุณาระบุจำนวนหุ้นที่ถูกต้อง":"Invalid share quantity","error");return;}
+      if(!ctx.canTrade){toast("📈",lang()==="th"?"ตลาดปิดอยู่":"Market is closed","warning");return;}
+      if(cloudExchange.status!=="ready"){
+        toast("🔐",lang()==="th"?"บัญชี Login ถูกป้องกันการซื้อขายจนกว่าจะติดตั้ง Supabase RPC ที่ปลอดภัย":"Secure Supabase Exchange backend is required","warning");return;
+      }
+      void submitCloudExchangeTrade(side,symbol,qty,exchangeSnapshot(exchangeStock(symbol),ctx).price);return;
+    }
     const ctx=exchangeMarketContext();if(!ctx.canTrade){toast("📈",lang()==="th"?"ซื้อขายได้เฉพาะช่วงตลาดเปิด 07:00–16:00 วันจันทร์–ศุกร์":"Trading is available only while the market is open, 07:00–16:00 Monday–Friday","warning");return;}
     const qty=Math.floor(Number(qtyRaw)||0);if(qty<=0){toast("!",lang()==="th"?"กรุณาระบุจำนวนหุ้น":"Enter a share quantity","error");return;}
     const snap=exchangeSnapshot(exchangeStock(symbol),ctx),portfolio=exchangePortfolio(exchangeTrades(),exchangeSnapshots(ctx)),held=exchangeQtyHeld(symbol,portfolio),wallet=balance(),gross=Math.round(snap.price*qty),fee=Math.max(1,Math.round(gross*EXCHANGE_FEE_RATE));
@@ -2767,6 +2880,7 @@
   }
   function exchangeAchievementState(){const value=read(KEYS.exchangeAchievements,{});return value&&typeof value==="object"&&!Array.isArray(value)?value:{};}
   function reconcileExchangeAchievements({notify=false}={}){
+    if(signedInExchange())return {state:{},conditions:{},portfolio:exchangePortfolio(exchangeTrades()),holdDays:0};
     const trades=exchangeTrades(),ctx=exchangeMarketContext(),portfolio=exchangePortfolio(trades,exchangeSnapshots(ctx)),now=Date.now(),holdDays=Math.max(0,...portfolio.positions.map(p=>p.firstBuyAt?Math.floor((now-new Date(p.firstBuyAt).getTime())/86400000)+1:0)),conditions={
       "first-trade":trades.length>=1,
       "academy-graduate":academyCompletedCount()>=EXCHANGE_ACADEMY.length,
@@ -2800,15 +2914,18 @@
     const stockRows=snaps.map(s=>`<button type="button" class="v84-stock-row ${s.symbol===selected?"active":""}" data-v84-select="${s.symbol}"><span class="v84-stock-icon">${s.icon}</span><div><strong>${s.symbol}</strong><small>${esc(lang()==="th"?s.th:s.name)}</small></div><span class="v84-risk ${s.risk}">${esc(exchangeRiskLabel(s.risk))}</span><b>${s.price.toFixed(2)}</b><em class="${s.changePct>=0?"up":"down"}">${s.changePct>=0?"+":""}${s.changePct.toFixed(2)}%</em><i data-v84-watch="${s.symbol}" class="${watch.has(s.symbol)?"on":""}" title="Watchlist">${watch.has(s.symbol)?"★":"☆"}</i></button>`).join("");
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
-      <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
+    const cloudMode=signedInExchange();
+    const legacyCount=cloudMode?(Array.isArray(read(KEYS.exchangeTrades,[]))?read(KEYS.exchangeTrades,[]).length:0):0;
+    const cloudNotice=cloudMode?`<section class="wdj-exchange-cloud-note" role="status"><strong>${cloudExchange.status==="ready"?"☁ Supabase verified Exchange":cloudExchange.status==="loading"?"☁ Loading Cloud Exchange…":"🔒 Cloud Exchange Safety Lock"}</strong><p>${cloudExchange.status==="ready"?(lang()==="th"?"ข้อมูลหุ้นและการซื้อขายมาจาก Supabase เท่านั้น ไม่มีการเติม Coin ในเครื่อง":"Holdings and trades are read from Supabase only."):(lang()==="th"?"บัญชี Login จะไม่ซื้อขายผ่าน LocalStorage อีกต่อไป ต้องติดตั้ง Cloud Exchange RPC ฝั่ง Supabase ก่อนเปิดซื้อขาย":"Logged-in trading no longer writes LocalStorage. Secure backend RPCs are required before trading is enabled.")}${legacyCount?` · ${lang()==="th"?`พบประวัติเดิมในเครื่อง ${legacyCount} รายการ เก็บไว้รอตรวจสอบ ไม่รวมเป็นหุ้น Cloud`:`${legacyCount} old local trades preserved for review, not counted as Cloud holdings.`}`:""}</p></section>`:"";
+    root.innerHTML=`${cloudNotice}<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
+      <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${cloudMode&&!Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.())?"…":wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
       ${beginner?`<section class="v841-beginner-tip"><span>${beginnerTip.icon}</span><div><small>${lang()==="th"?"คำแนะนำสำหรับมือใหม่":"BEGINNER TIP"}</small><strong>${esc(lang()==="th"?beginnerTip.th:beginnerTip.en)}</strong></div><button type="button" data-v841-academy-open>${lang()==="th"?"เปิด Academy":"Open Academy"}</button></section>`:""}
       <section class="v84-event-card"><div class="v84-event-icon">${event.icon}</div><div><p class="eyebrow">TODAY'S MARKET EVENT · ${esc(ctx.key)}</p><h3>${esc(lang()==="th"?event.titleTh:event.titleEn)}</h3><p>${esc(lang()==="th"?event.bodyTh:event.bodyEn)}</p></div><span>${esc(exchangeEventEffectText(event))}</span></section>
       <section class="v84-movers"><article><p class="eyebrow">TOP GAINERS</p>${gainers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>+${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article><p class="eyebrow">TOP LOSERS</p>${losers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article class="v84-watchlist"><p class="eyebrow">MY WATCHLIST</p><div>${watchMarkup}</div></article></section>
       <section class="v84-market-grid"><article class="v84-market-list"><div class="v84-section-head"><div><p class="eyebrow">MARKET</p><h3>${lang()==="th"?"หุ้นจำลองทั้งหมด":"All simulated stocks"}</h3></div><small>${lang()==="th"?"ค่าธรรมเนียมซื้อ/ขาย 1%":"1% buy/sell fee"}</small></div><div class="v84-stock-list">${stockRows}</div></article>
       <article class="v84-stock-detail"><div class="v84-stock-detail-head"><div class="v84-selected-icon">${snap.icon}</div><div><span>${snap.symbol} · ${esc(lang()==="th"?snap.sectorTh:snap.sectorEn)}</span><h3>${esc(lang()==="th"?snap.th:snap.name)}</h3><p>${esc(lang()==="th"?snap.descTh:snap.descEn)}</p></div><button type="button" data-v84-watch="${snap.symbol}" class="v84-detail-watch ${watch.has(snap.symbol)?"on":""}">${watch.has(snap.symbol)?"★":"☆"}</button></div><div class="v84-price-line"><strong>${snap.price.toFixed(2)} <small>🪙</small></strong><b class="${snap.changePct>=0?"up":"down"}">${snap.changePct>=0?"+":""}${snap.changePct.toFixed(2)}%</b><span class="v84-risk ${snap.risk}">${esc(exchangeRiskLabel(snap.risk))}</span></div><div class="v84-ohlc"><span><small>OPEN</small><b>${snap.open.toFixed(2)}</b></span><span><small>HIGH</small><b>${snap.high.toFixed(2)}</b></span><span><small>LOW</small><b>${snap.low.toFixed(2)}</b></span><span><small>PREV</small><b>${snap.prevClose.toFixed(2)}</b></span></div><div class="v84-range-tabs">${[["today","Today"],["5d","5D"],["all","All"]].map(([id,label])=>`<button type="button" data-v84-range="${id}" class="${range===id?"active":""}">${label}</button>`).join("")}</div>${exchangeChart(points)}
-      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee"):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
+      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · Supabase ต้องยืนยันราคาและยอด Coin":"Indicative quote · Supabase must validate trade prices and funds"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
       <section class="v84-lower-grid"><article class="v84-portfolio-card"><div class="v84-section-head"><div><p class="eyebrow">PORTFOLIO</p><h3>${lang()==="th"?"สินทรัพย์ของฉัน":"My holdings"}</h3></div><span>${portfolio.positions.length} ${lang()==="th"?"บริษัท":"companies"}</span></div><div class="v84-portfolio-list">${portfolioRows}</div><div class="v84-portfolio-foot"><span>Cost Basis <b>${portfolio.cost.toFixed(2)} 🪙</b></span><span>Realized P/L <b class="${portfolio.realized>=0?"up":"down"}">${portfolio.realized>=0?"+":""}${portfolio.realized.toFixed(2)}</b></span><span>Fees <b>-${portfolio.totalFees.toFixed(2)} 🪙</b></span></div></article><article class="v84-ach-card"><div class="v84-section-head"><div><p class="eyebrow">TRADING ACHIEVEMENTS</p><h3>${lang()==="th"?"เส้นทางนักลงทุน":"Investor journey"}</h3></div><span>${Object.keys(earned).length}/${EXCHANGE_ACHIEVEMENTS.length}</span></div><div class="v84-ach-list">${ach}</div></article></section>
       <section class="v84-history-card"><div class="v84-section-head"><div><p class="eyebrow">TRADE HISTORY</p><h3>${lang()==="th"?"ประวัติการซื้อขาย":"Trade history"}</h3></div><span>${trades.length} trades</span></div><div class="v84-history-list">${exchangeTradeHistoryMarkup(trades)}</div></section>
       <section class="v84-finale ${ctx.final?"final":"preview"}"><div><span>${ctx.final?"🏁":"🎓"}</span><div><p class="eyebrow">${ctx.final?"FINAL MARKET DAY":"FINALE PREVIEW"}</p><h3>${ctx.final?(lang()==="th"?"สรุป Work Exchange เมื่อ Journey สิ้นสุด":"Final Work Exchange summary"):(lang()==="th"?`อีก ${finale.days} วันถึง Journey สิ้นสุด`:`${finale.days} days until Journey ends`)}</h3><p>${lang()==="th"?"Portfolio นี้เป็นระบบจำลองด้วย Work Coins ไม่มีเงินจริงหรือหลักทรัพย์จริงเกี่ยวข้อง":"This is a Work Coin simulation; no real money or securities are involved."}</p></div></div><div class="v84-finale-stats"><span><small>TRADER RANK</small><b>${finale.rank.icon} ${esc(lang()==="th"?finale.rank.th:finale.rank.en)}</b></span><span><small>PORTFOLIO</small><b>${portfolio.value.toFixed(2)} 🪙</b></span><span><small>TOTAL P/L</small><b class="${portfolio.totalPnl>=0?"up":"down"}">${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</b></span><span><small>BEST HOLDING</small><b>${finale.best?`${finale.best.symbol} ${finale.best.pnl>=0?"+":""}${finale.best.pnl.toFixed(1)}`:"—"}</b></span></div></section>`;
@@ -3019,6 +3136,8 @@
   }
 
   function init() {
+    window.addEventListener("workday:v8-auth-state",()=>{resetCloudExchange();setTimeout(()=>refreshAll(),100);});
+    window.addEventListener("workday:v8-auth-resolved",()=>{if(signedInExchange())void loadCloudExchange();});
     const owned = ownedRewards(); saveOwned(owned);
     applyEquippedRewards();
     ensureCoinChip();
@@ -3380,7 +3499,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3702,6 +3821,8 @@
 
   window.WorkdayEconomySecurity = {
     version: VERSION, ensureImported, refresh, applyEconomy,
+    getCachedBalance: () => userId() && fetchedUser===userId() && latest && latest.balance!=null && Number.isFinite(Number(latest.balance))
+      ? Math.max(0, Math.round(Number(latest.balance))) : null,
     isSecure: () => !!userId()
   };
 
@@ -3723,7 +3844,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3788,7 +3909,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3949,7 +4070,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4220,7 +4341,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4485,7 +4606,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4879,7 +5000,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -5026,7 +5147,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.10.3.4';
+  const VERSION = '8.7.10.3.6';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -7125,7 +7246,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 /* ===== V8.7.10.3.4 - secure Chest Inventory (presentation + RPC client only) ===== */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.4";
+  const VERSION = "8.7.10.3.6";
   const KINDS = ["daily", "weekly", "mystery"];
   const ICONS = {daily:"\u{1F381}",weekly:"\u{1F3C6}",mystery:"\u{1F3B2}"};
   const state = {uid:"",items:[],loaded:false,loading:null,at:0,busy:"",error:""};
