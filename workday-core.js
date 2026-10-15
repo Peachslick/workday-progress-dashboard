@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10.3.3";
+  const APP_VERSION = "8.7.10.3.5";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -2354,7 +2354,30 @@
     defaultCompanyHolidays: [...DEFAULT_COMPANY_HOLIDAYS]
   };
 
-  function init() { applyPreferences(); renderTranslations(); bindEvents(); bindV4Events(); bindV5Events(); initPwa(); initV5(); renderDashboard(); setInterval(renderDashboard, 1000); }
+  // V8.7.10.3.4: update the clock every second, not the entire dashboard.
+  // Rebuilding the calendar, schedule, achievements and graphs every second
+  // causes momentary overflow/scrollbar flashes in Chromium.
+  let lastFullRenderMinute = "";
+  function renderDashboardTick() {
+    const now = getConfiguredNow();
+    const minute = `${dateKey(now)}T${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+    if (lastFullRenderMinute !== minute) {
+      lastFullRenderMinute = minute;
+      renderDashboard();
+      return;
+    }
+    // The live clock and countdown need seconds; other UI is minute based.
+    els.clockTime.textContent = formatTime(now);
+    els.clockDate.textContent = formatShortDate(now);
+    renderLiveCountdown(now, getDayStatus(now));
+    els.lastUpdated.textContent = `${t("updated")} ${formatTime(now)}`;
+  }
+  function init() {
+    applyPreferences(); renderTranslations(); bindEvents(); bindV4Events(); bindV5Events(); initPwa(); initV5();
+    renderDashboardTick();
+    setInterval(renderDashboardTick, 1000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) renderDashboardTick(); });
+  }
   init();
 })();
 ;

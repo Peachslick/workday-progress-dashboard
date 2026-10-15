@@ -5795,3 +5795,25 @@ html[data-theme="dark"] #v82MissionsPage .wdj-classic-secure>summary{background:
 html[data-theme="dark"] #v82MissionsPage .wdj-classic-secure>summary small{color:#c0d1ed;}
 html[data-theme="dark"] #v82MissionsPage .wdj-classic-xp{color:#89dec8;}
 @media(max-width:720px){#v82MissionsPage .wdj-classic-verified-body{padding:12px 10px 18px;}}
+
+/* V8.7.10.3.4 – unified three-mission rewards + stable dashboard width */
+#v82MissionsPage .wdj-dual-reward {display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;white-space:normal;}
+#v82MissionsPage .wdj-dual-reward em {font-style:normal;color:var(--accent,#356ae6);background:color-mix(in srgb,var(--accent,#356ae6) 9%,var(--surface-solid,#fff));border-radius:999px;padding:3px 8px;font-size:.7rem;font-weight:800;white-space:nowrap;}
+#v82MissionsPage .wdj-dual-total-xp {font-size:.82rem;font-weight:800;color:var(--text,#18243a);white-space:nowrap;}
+#v82MissionsPage .v82-mission-hero, #v82MissionsPage .v82-mission-card {min-width:0;max-width:100%;box-sizing:border-box;}
+#v82MissionsPage .v82-mission-copy {min-width:0;}
+/* Clip accidental page-wide overflow without disabling horizontal scrolling inside tables. */
+html, body {max-width:100%;overflow-x:clip;}
+body.v850-shell-refresh .app-shell.v7-shell,
+body.v850-shell-refresh .v7-workspace,
+body.v850-shell-refresh .v7-workspace main.dashboard {min-width:0;max-width:100%;}
+body.v850-shell-refresh .v7-workspace main.dashboard {overflow-x:clip;}
+
+/* Extra Life Quests are optional; show only the primary three missions by default. */
+#wdjV8710LifeQuests .wdj-lifequests-toggle {width:100%;border:1px solid var(--border,#dfe6f0);border-radius:14px;padding:13px 18px;background:var(--surface-solid,#fff);color:var(--text,#162136);font-weight:800;text-align:left;cursor:pointer;}
+#wdjV8710LifeQuests:not(.wdj-lifequests-expanded)>:not(.wdj-lifequests-toggle){display:none!important;}
+#wdjV8710LifeQuests:not(.wdj-lifequests-expanded){padding:0!important;border:none!important;background:transparent!important;box-shadow:none!important;}
+
+/* V8.7.10.3.5: secondary Supabase reward requirement for rotating cloud quests */
+.wdj-mission-server-gate{margin-top:8px;color:var(--muted,#667085);line-height:1.55}
+.wdj-mission-server-gate small{display:block;font-size:clamp(11px,.8rem,13px);overflow-wrap:anywhere}
