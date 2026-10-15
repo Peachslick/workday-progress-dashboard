@@ -5773,3 +5773,25 @@ html[data-theme="dark"] .wdj-unified-error{background:#371923;color:#ffdee4;bord
 @media(max-width:720px){
   #v82MissionsPage.v853-missions-page .wdj-stable-mission-hero {grid-template-columns:1fr;min-height:0;}
 }
+
+
+/* V8.7.10.3.3 Classic Missions: stable cards, cosmetic quest rewards only. */
+body.v853-gamification-refresh #v82MissionsPage .wdj-classic-list .v853-mission-card::before{display:none;}
+#v82MissionsPage .wdj-classic-list .v82-mission-copy>div{flex-wrap:wrap;gap:5px 10px;}
+#v82MissionsPage .wdj-classic-list .wdj-classic-xp{font-size:.75rem;}
+#v82MissionsPage .wdj-classic-hero { min-height:136px; }
+#v82MissionsPage .wdj-classic-xp {color:#176a5b;font-weight:800;white-space:nowrap;}
+#v82MissionsPage .wdj-classic-explain {border:1px solid #cfdaf3;border-radius:16px;background:#f3f7ff;color:#395471;padding:14px 17px;margin:15px 0 19px;font-size:.87rem;line-height:1.65;}
+#v82MissionsPage .wdj-classic-loading {padding:28px 18px;border-radius:16px;background:var(--surface,#fff);color:var(--muted,#687991);border:1px solid #dce5f2;}
+#v82MissionsPage .wdj-classic-secure {margin:25px 0 16px;border:1px solid #cfdcf1;background:#fff;border-radius:20px;overflow:hidden;}
+#v82MissionsPage .wdj-classic-secure>summary {display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:19px 22px;font-weight:800;color:#213c68;background:#f1f6ff;}
+#v82MissionsPage .wdj-classic-secure>summary small {color:#61748e;font-size:.77rem;font-weight:500;}
+#v82MissionsPage .wdj-classic-verified-body {padding:18px 20px 24px;}
+#v82MissionsPage .wdj-classic-verified-body>.v7-page-heading{display:none;}
+#v82MissionsPage .wdj-classic-verified-body .wdj-unified-hint{margin-bottom:0;}
+html[data-theme="dark"] #v82MissionsPage .wdj-classic-explain {background:#1a2944;border-color:#405574;color:#e5efff;}
+html[data-theme="dark"] #v82MissionsPage .wdj-classic-secure{background:#192439;border-color:#415579;}
+html[data-theme="dark"] #v82MissionsPage .wdj-classic-secure>summary{background:#223657;color:#f1f6ff;}
+html[data-theme="dark"] #v82MissionsPage .wdj-classic-secure>summary small{color:#c0d1ed;}
+html[data-theme="dark"] #v82MissionsPage .wdj-classic-xp{color:#89dec8;}
+@media(max-width:720px){#v82MissionsPage .wdj-classic-verified-body{padding:12px 10px 18px;}}

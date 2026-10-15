@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -2214,7 +2214,7 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry||!!window.WorkdayChestInventory?.guestClaimed?.("daily",key), weeklyDone=window.WorkdayChestInventory?.guestWeeklyCount?.()??completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry||!!window.WorkdayChestInventory?.guestClaimed?.("weekly",weekKey()), trial=activeThemeTrial();
     const cards=set.ids.map((id,index)=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card v853-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span>+${d.reward} 🪙</span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin":"Claim Coins"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.7.10.3.2</p><h2>${lang()==="th"?"ภารกิจรายวัน":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำครบเพื่อรับ Daily Chest เข้าคลัง และสะสมครบ 5 วันเพื่อรับ Weekly Chest":"Fresh missions every day. Claim all three to collect a Daily Chest, and collect on five days for the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${lang()==="th"?"ภารกิจของวันนี้":"Today's missions"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-mission-list v853-mission-list">${cards}</section><div id="v853ChestHeading" class="v853-section-heading"><div><h3>${lang()==="th"?"รางวัลภารกิจ":"Chest rewards"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"เก็บกล่องไว้เปิดทีหลังที่ Reward Shop":"Collect now and open later in Reward Shop"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องเข้าคลัง":"Collect chest")}</button></article><article class="v82-chest-card v853-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"รับ Daily Chest เข้าคลังครบ 5 วัน เพื่อรับ Weekly Chest":"Collect Daily Chests on five days for a Weekly Chest"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องรายสัปดาห์":"Collect weekly")}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.7.10.3.3</p><h2>${lang()==="th"?"ภารกิจรายวัน":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำครบเพื่อรับ Daily Chest เข้าคลัง และสะสมครบ 5 วันเพื่อรับ Weekly Chest":"Fresh missions every day. Claim all three to collect a Daily Chest, and collect on five days for the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙</b></div></section><div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${lang()==="th"?"ภารกิจของวันนี้":"Today's missions"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-mission-list v853-mission-list">${cards}</section><div id="v853ChestHeading" class="v853-section-heading"><div><h3>${lang()==="th"?"รางวัลภารกิจ":"Chest rewards"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"เก็บกล่องไว้เปิดทีหลังที่ Reward Shop":"Collect now and open later in Reward Shop"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องเข้าคลัง":"Collect chest")}</button></article><article class="v82-chest-card v853-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"รับ Daily Chest เข้าคลังครบ 5 วัน เพื่อรับ Weekly Chest":"Collect Daily Chests on five days for a Weekly Chest"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องรายสัปดาห์":"Collect weekly")}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>window.WorkdayChestInventory?.claimGuest?.(btn.dataset.v82Chest)));
     window.WorkdayLifeQuests?.render?.();
@@ -2966,6 +2966,16 @@
     renderShop,
     showChestReveal: (kind,reward) => showChestRewardModal(kind,reward),
     renderMissions,
+    // Read-only snapshot of the original V8.2 mission pool for device-only classic quests.
+    // This NEVER claims a wallet reward or sends mission progress to a server.
+    getClassicMissionSnapshot: () => {
+      const key=dayKeyNow();
+      markRouteVisit();
+      const context=missionContext(key);
+      return {day:key,items:Object.entries(MISSION_DEFS).filter(([id])=>missionEligible(id,context))
+        .map(([id,def])=>({id,group:def.group,icon:def.icon,th:def.th,en:def.en,
+          descTh:def.descTh,descEn:def.descEn,...missionProgress(id,context)}))};
+    },
     renderBank,
     getDailyDeals: () => dailyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...dailyDealFor(r)})),
     getWeeklyDeals: () => weeklyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...weeklyDealFor(r)})),
@@ -3368,7 +3378,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3711,7 +3721,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3776,7 +3786,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -3937,7 +3947,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4208,7 +4218,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4473,7 +4483,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4867,7 +4877,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -5014,7 +5024,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.10.3.2';
+  const VERSION = '8.7.10.3.3';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5585,10 +5595,10 @@
   },true);
   document.addEventListener('pointerdown', () => root.classList.remove('wdj-keyboard-user'),{passive:true,capture:true});
   mount();
-  window.WorkdayV8608 = { version:'8.7.10.3.2',refresh:mount };
+  window.WorkdayV8608 = { version:'8.7.10.3.3',refresh:mount };
 })();
 
-/* SOURCE: V8.7.10.3.2 Virtual Workspace - Friendship & Evolution.
+/* SOURCE: V8.7.10.3.3 Virtual Workspace - Friendship & Evolution.
    Read-only journal/project progress; cosmetic, account-scoped device-only affection. */
 ;(function(){
   'use strict';
@@ -5912,7 +5922,7 @@
     updateMoodVisual();
     if(scene.dataset.wdjPixelReady==='yes')paintWorkspace(scene);
   }
-  // V8.7.10.3.2: All room fixtures and placed decorations use the SAME 10x6 world grid.
+  // V8.7.10.3.3: All room fixtures and placed decorations use the SAME 10x6 world grid.
   // The scene is painted on a low-resolution canvas, then scaled with nearest-neighbor
   // rendering. Stored {id,x,y} coordinates from V8.7.0 remain untouched.
   const PIXEL_PALETTES={
@@ -6244,12 +6254,12 @@
   ['workday:v8-cloud-ready','workday:v8-auth-state','workday:v8-data-changed','workday:v7-data-changed'].forEach(eventName=>{
     window.addEventListener(eventName,()=>{if(activePage()){detectMilestone();render();}});
   });
-  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10.3.2',getFriendship:id=>friendship(String(id||collection().active.id))};
+  window.WorkdayWorkspace={render:()=>{render();detectMilestone();},version:'8.7.10.3.3',getFriendship:id=>friendship(String(id||collection().active.id))};
   if(location.hash.replace(/^#\/?/,'').split('?')[0]==='workspace')queueMicrotask(()=>window.WorkdayWorkspace.render());
 })();
 
 
-/* ===== V8.7.10.3.2: Focus Studio - local-only, account-scoped productivity timer ===== */
+/* ===== V8.7.10.3.3: Focus Studio - local-only, account-scoped productivity timer ===== */
 (() => {
   'use strict';
   const ROOT_ID='wdjFocusPage';
@@ -6426,7 +6436,7 @@
 })();
 
 
-/* ===== V8.7.10.3.2 Personalized Skill Tree & Hybrid Smart Tagging =====
+/* ===== V8.7.10.3.3 Personalized Skill Tree & Hybrid Smart Tagging =====
  * Local-only cosmetic labels. Never writes to Journal, Projects, Coins or Cloud.
  */
 (() => {
@@ -6598,7 +6608,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10.3.2 Journey Timeline: read-only, on-device timeline of existing data ===== */
+/* ===== V8.7.10.3.3 Journey Timeline: read-only, on-device timeline of existing data ===== */
 (() => {
   'use strict';
   const ROOT = 'wdjTimelinePage';
@@ -6723,7 +6733,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 
 
 
-/* ===== V8.7.10.3.2 Productivity Insights 2.0 (read-only) =====
+/* ===== V8.7.10.3.3 Productivity Insights 2.0 (read-only) =====
  * Existing Journal/Project data is read, never changed. Focus is account-scoped local history.
  * No monetary, achievement or Cloud writes occur in this module.
  */
@@ -6845,7 +6855,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3.2 Journey Wrapped: private, read-only story cards ===== */
+/* ===== V8.7.10.3.3 Journey Wrapped: private, read-only story cards ===== */
 (() => {
   'use strict';
   const ROOT='wdjWrappedPage';
@@ -6916,7 +6926,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     if(data.pending){el.innerHTML=`<div class="wdj-wrapped-loading" role="status">⏳ ${tr('กำลังเตรียมเรื่องราวของบัญชี...','Preparing your account story...')}</div>`;return;}
     if(period!=='journey'&&!data.available.includes(period))period='journey';
     const stories=slides(data),current=stories[slide]||stories[0];
-    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10.3.2</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>${tr('การ์ดที่','STORY')} ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
+    el.innerHTML=`<div class="wdj-wrapped-page"><header class="wdj-wrapped-header"><div><span class="wdj-wrapped-kicker">WORKDAY JOURNEY · V8.7.10.3.3</span><h2>🎊 Journey Wrapped</h2><p>${tr('ย้อนดูสิ่งที่คุณทำสำเร็จ ผ่านเรื่องราว 6 การ์ดที่บันทึกเป็นภาพได้','Celebrate your journey in six shareable story cards.')}</p></div><div class="wdj-wrapped-picker"><label for="wdjWrappedPeriod">${tr('ช่วงเวลาที่สรุป','Story period')}</label><select id="wdjWrappedPeriod"><option value="journey" ${period==='journey'?'selected':''}>${tr('ตลอด Journey','Entire journey')}</option>${data.available.map(y=>`<option value="${y}" ${period===y?'selected':''}>${y}</option>`).join('')}</select></div></header><div class="wdj-wrapped-layout"><div class="wdj-wrapped-stage"><div class="wdj-wrapped-stage-top"><span>${tr('การ์ดที่','STORY')} ${slide+1} / ${stories.length}</span><span>${esc(slideNames()[slide])}</span></div>${card(data,current)}<div class="wdj-wrapped-controls"><button type="button" data-wrapped-action="prev" ${slide===0?'disabled':''}>← ${tr('ก่อนหน้า','Previous')}</button><div class="wdj-wrapped-dots" aria-label="${tr('เลือกการ์ด','Choose story card')}">${stories.map((s,i)=>`<button type="button" aria-label="${esc(slideNames()[i])}" aria-current="${i===slide?'step':'false'}" class="${i===slide?'active':''}" data-wrapped-slide="${i}"></button>`).join('')}</div><button type="button" data-wrapped-action="next" ${slide===stories.length-1?'disabled':''}>${tr('ถัดไป','Next')} →</button></div></div><aside class="wdj-wrapped-side"><h3>✨ ${tr('การ์ดเรื่องราว','Your story chapters')}</h3><div class="wdj-wrapped-chapters">${stories.map((s,i)=>`<button type="button" data-wrapped-slide="${i}" class="${slide===i?'active':''}" aria-current="${slide===i?'step':'false'}"><span>${s.icon}</span><span><strong>${esc(slideNames()[i])}</strong><small>${esc(s.eyebrow)}</small></span><b>${pad(i+1)}</b></button>`).join('')}</div><div class="wdj-wrapped-share"><h3>📸 ${tr('บันทึกความทรงจำ','Save this memory')}</h3><p>${tr('บันทึกการ์ดปัจจุบันเป็น PNG หรือคัดลอกสรุปข้อความได้โดยไม่อัปโหลดข้อมูลออกจาก Browser','Save the current story as a PNG or copy its summary without uploading your data.')}</p><label class="wdj-wrapped-name"><input type="checkbox" id="wdjWrappedShowName" ${showName?'checked':''}>${tr('แสดงชื่อโปรไฟล์ในการ์ด','Show profile name on card')}</label><button type="button" class="wdj-wrapped-primary" data-wrapped-action="download">⬇ ${tr('บันทึกภาพ PNG','Save PNG card')}</button><button type="button" data-wrapped-action="copy">⧉ ${tr('คัดลอกข้อความสรุป','Copy card summary')}</button><small id="wdjWrappedMessage" role="status" aria-live="polite"></small></div></aside></div><p class="wdj-wrapped-disclaimer">🔒 ${tr('อ่านข้อมูลเดิมเท่านั้น · Focus นับเฉพาะเครื่องนี้ · การ์ดทักษะแสดง XP สะสม · ไม่มีการแจกเหรียญ','Read-only · Focus data is local to this browser · Skill XP is lifetime · No Coin rewards.')}</p></div>`;
   }
   function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
     const words=String(text).split(/\s+/);let line='',lines=[];
@@ -6960,7 +6970,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* V8.7.10.3.2 - Navigation consolidation and Daily Life Quests.
+/* V8.7.10.3.3 - Navigation consolidation and Daily Life Quests.
  * All original report routes stay reachable. Quests are cosmetic and local only.
  * This module never updates Journal, Project, Wallet, Rewards or the Cloud.
  */
@@ -7072,7 +7082,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
     const progress=items.map(q=>({q,value:s?Math.min(q.goal,Math.max(0,q.get(s))):0,claimed:!!s&&stamps.has(idFor(q,s))}));
     const earned=progress.filter(x=>x.claimed).length;
     const tabs=[['all',tr('ทั้งหมด','All')],['daily',tr('รายวัน','Daily')],['weekly',tr('รายสัปดาห์','Weekly')],['journey',tr('ตลอดการเดินทาง','Journey')]];
-    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10.3.2 / ${tr("ภารกิจสะสมตรา","COSMETIC QUESTS")}</span><h2>\ud83c\udfae ${tr("ภารกิจชีวิตประจำวัน","Life Quests")} <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('ทำกิจกรรมจริงเพื่อสะสมตราความสำเร็จในเครื่อง โดยไม่เพิ่ม Coin หรือของรางวัลในร้าน','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?`<div class="wdj-v8710-pending" role="status">${tr("กำลังโหลดข้อมูลบัญชีก่อนตรวจภารกิจ...","Loading account data before checking quests...")}</div>`:''}<div class="wdj-v8710-filters" role="group" aria-label="${tr("ตัวกรองภารกิจชีวิตประจำวัน","Life Quest filters")}">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
+    section.innerHTML=`<div class="wdj-v8710-quest-head"><div><span class="wdj-v8710-eyebrow">V8.7.10.3.3 / ${tr("ภารกิจสะสมตรา","COSMETIC QUESTS")}</span><h2>\ud83c\udfae ${tr("ภารกิจชีวิตประจำวัน","Life Quests")} <span class="wdj-v8710-count">${earned}/${items.length}</span></h2><p>${esc(tr('ทำกิจกรรมจริงเพื่อสะสมตราความสำเร็จในเครื่อง โดยไม่เพิ่ม Coin หรือของรางวัลในร้าน','Complete real activities and collect on-device stamps. No Coins or Shop rewards.'))}</p></div><div class="wdj-v8710-stamp-icon" aria-hidden="true">\ud83c\udff5\ufe0f</div></div>${waiting?`<div class="wdj-v8710-pending" role="status">${tr("กำลังโหลดข้อมูลบัญชีก่อนตรวจภารกิจ...","Loading account data before checking quests...")}</div>`:''}<div class="wdj-v8710-filters" role="group" aria-label="${tr("ตัวกรองภารกิจชีวิตประจำวัน","Life Quest filters")}">${tabs.map(([v,n])=>`<button type="button" data-wdj-v8710-filter="${v}" aria-pressed="${activeFilter===v}">${n}</button>`).join('')}</div><div class="wdj-v8710-quest-grid">${progress.filter(row=>activeFilter==='all'||row.q.kind===activeFilter).map(({q,value,claimed})=>{
       const done = value>=q.goal;
       const canClaim=done&&!claimed&&!waiting;
       const label=claimed?tr('รับตราแล้ว','Stamp collected'):done?tr('รับตรา','Collect stamp'):q.link?tr('เปิดห้องทำงาน','Open Workspace'):tr('กำลังดำเนินการ','In progress');
@@ -7100,10 +7110,10 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3.2 - secure Chest Inventory (presentation + RPC client only) ===== */
+/* ===== V8.7.10.3.3 - secure Chest Inventory (presentation + RPC client only) ===== */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.2";
+  const VERSION = "8.7.10.3.3";
   const KINDS = ["daily", "weekly", "mystery"];
   const ICONS = {daily:"\u{1F381}",weekly:"\u{1F3C6}",mystery:"\u{1F3B2}"};
   const state = {uid:"",items:[],loaded:false,loading:null,at:0,busy:"",error:""};
@@ -7251,7 +7261,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3.2 - authenticated Missions issue UNOPENED chests, never direct rewards ===== */
+/* ===== V8.7.10.3.3 - authenticated Missions issue UNOPENED chests, never direct rewards ===== */
 (() => {
   "use strict";
   const cloud=()=>window.WorkdayV8Cloud;
@@ -7369,4 +7379,120 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   window.addEventListener('workday:v8-auth-resolved',()=>{if(location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();});
   // Background throttling is harmless: serverNow is authoritative on every refresh.
   setInterval(()=>{if(uid()&&location.hash.includes('/missions')&&!state.loading&&!state.busy)refresh(true);},30000);
+})();
+
+
+/* ===== V8.7.10.3.3 - Classic Daily Missions (device-only), secure rewards separated =====
+ * Authenticated users see the original 13-mission variety. Cosmetic stamps/Quest XP
+ * NEVER call a Coin/Chest RPC. Only the existing secure mission panel may do so.
+ */
+(() => {
+  "use strict";
+  const VERSION = "8.7.10.3.3";
+  const PREFIX = "wdj-v871033-classic-local-v1-";
+  const scorePerStamp = 10;
+  const isThai = () => localStorage.getItem('wp-language') !== 'en';
+  const t = (th,en) => isThai() ? th : en;
+  const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cloud = () => window.WorkdayV8Cloud;
+  const userId = () => cloud()?.getUser?.()?.id || '';
+  const dayNow = () => new Date(Date.now()+7*3600000).toISOString().slice(0,10);
+  const scopedKey = () => PREFIX+String(userId()).replace(/[^\w-]/g,'').slice(0,96);
+  const getData = () => {
+    try { const val=JSON.parse(localStorage.getItem(scopedKey())||'{}');return val&&typeof val==='object'&&!Array.isArray(val)?val:{}; }
+    catch {return {};}
+  };
+  const saveData = data => {
+    try {const days=Object.fromEntries(Object.entries(data.days||{}).sort(([a],[b])=>a.localeCompare(b)).slice(-90));
+      localStorage.setItem(scopedKey(),JSON.stringify({days}));return true;}
+    catch {return false;}
+  };
+  const seed = s => {let h=2166136261;for(const ch of String(s)){h=Math.imul(h^ch.charCodeAt(0),16777619);}return h>>>0;};
+  const choose = (pool,key) => pool.slice().sort((a,b)=>seed(key+':'+a.id)-seed(key+':'+b.id))[0];
+  const safeProgress = item => ({value:Math.max(0,Number(item.value)||0),target:Math.max(1,Number(item.target)||1)});
+  let secureExpanded = false;
+  const getState = () => {
+    if(!userId())return null;
+    const data=getData(),day=dayNow(),snapshot=window.WorkdayRewards?.getClassicMissionSnapshot?.();
+    if(!snapshot)return null;
+    const available=snapshot.items||[],byId=new Map(available.map(x=>[x.id,x]));
+    let record=data.days?.[day];
+    if(!record||!Array.isArray(record.ids)||record.ids.length!==3){
+      // Keep a stable three-quest set for the entire Thai calendar day.
+      // Pick a work/exploration, journal and project/bonus task when available.
+      const groups=[
+        available.filter(x=>x.group==='work'),
+        available.filter(x=>x.group==='journal'),
+        available.filter(x=>x.group==='project'||x.group==='bonus'||x.group==='explore')
+      ];
+      if(!groups[0].length)groups[0]=available.filter(x=>x.group==='explore');
+      const ids=[];
+      groups.forEach((group,i)=>{const pick=choose(group.filter(x=>!ids.includes(x.id)),`${day}:${userId()}:${i}`);if(pick)ids.push(pick.id);});
+      while(ids.length<3){const pick=choose(available.filter(x=>!ids.includes(x.id)),`${day}:${userId()}:fallback:${ids.length}`);if(!pick)break;ids.push(pick.id);}
+      // Avoid identical consecutive daily sets whenever an alternative is eligible.
+      const yesterday=new Date(`${day}T12:00:00Z`);yesterday.setUTCDate(yesterday.getUTCDate()-1);
+      const prev=data.days?.[yesterday.toISOString().slice(0,10)]?.ids||[];
+      if(prev.length===3&&ids.join('|')===prev.join('|')){
+        const alt=available.filter(x=>!ids.includes(x.id));const pick=choose(alt,`${day}:${userId()}:rotate`);
+        if(pick)ids[2]=pick.id;
+      }
+      record={ids:ids.slice(0,3),claimed:[],generatedAt:new Date().toISOString()};
+      data.days={...(data.days||{}),[day]:record};saveData(data);
+    }
+    const chosen=record.ids.map(id=>byId.get(id)).filter(Boolean);
+    // If saved work depended on a changed schedule, keep its identity without allowing a fake claim.
+    const rows=record.ids.map(id=>byId.get(id)||({id,icon:'🎯',th:'ภารกิจที่ไม่พร้อมใช้งาน',en:'Unavailable mission',descTh:'ข้อมูลเดิมไม่พร้อม กรุณาตรวจสอบการตั้งค่า',descEn:'Source data unavailable',value:0,target:1}));
+    return {day,record,rows,data,claimed:new Set(Array.isArray(record.claimed)?record.claimed:[]),count:Math.min(3,(record.claimed||[]).length),points:Object.values(data.days||{}).reduce((sum,d)=>sum+(Array.isArray(d.claimed)?d.claimed.length:0)*scorePerStamp,0)};
+  };
+  function claimLocal(id){
+    if(!userId()||cloud()?.isAuthResolved?.()===false)return;
+    const s=getState(),item=s?.rows.find(x=>x.id===id);
+    if(!s||!item||s.claimed.has(id))return;
+    const p=safeProgress(item);if(p.value+0.00001<p.target)return;
+    s.record.claimed=[...s.claimed,id].slice(0,3);
+    s.data.days[s.day]=s.record;
+    if(!saveData(s.data))return;
+    window.WorkdayRewards?.renderMissions?.();
+  }
+  function renderSignedIn(root){
+    if(!userId())return false;
+    const status=cloud()?.getStatus?.()||{};
+    const pending=cloud()?.isAuthResolved?.()===false||status.reconciling===true||status.ready===false;
+    root.classList.add('v853-gamification-page','v853-missions-page','wdj-classic-page');
+    document.body?.classList.add('v853-gamification-refresh');
+    const s=pending?null:getState();
+    const cards=s?s.rows.map(row=>{
+      const p=safeProgress(row),done=p.value>=p.target,got=s.claimed.has(row.id),pct=Math.min(100,Math.round(p.value/p.target*100));
+      const label=got?t('✓ รับตราแล้ว','✓ Stamp earned'):done?t('รับตรา +10 XP','Collect stamp +10 XP'):t('กำลังทำ','In progress');
+      const progress=p.target<=1?`${Math.round(p.value)}/${Math.round(p.target)}`:`${Math.round(p.value)}/${Math.round(p.target)} ${t('นาที','min')}`;
+      return `<article class="v82-mission-card v853-mission-card ${done?'done':''} ${got?'claimed':''}"><div class="v82-mission-icon">${esc(row.icon)}</div><div class="v82-mission-copy"><div><strong>${esc(t(row.th,row.en))}</strong><span class="wdj-classic-xp">+10 Quest XP</span></div><p>${esc(t(row.descTh,row.descEn))}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progress)}</small></div></div><button type="button" data-wdj-classic-claim="${esc(row.id)}" ${!done||got?'disabled':''}>${label}</button></article>`;
+    }).join(''):`<div class="wdj-classic-loading" role="status">${t('กำลังโหลดข้อมูลเพื่อเลือกภารกิจวันนี้…','Loading the daily quests…')}</div>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V${VERSION}</p><h2>${t('ภารกิจรายวัน','Daily Missions')}</h2><p class="muted">${t('สุ่ม 3 ภารกิจจากชุดคลาสสิกทุกวัน เก็บความคืบหน้าในอุปกรณ์นี้','Three classic quests each day, saved on this device.')}</p></div></div></div>
+      <section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero wdj-classic-hero"><div><span>🎯</span><div><small>${t('ภารกิจวันนี้','Today’s quests')}</small><strong>${s?s.count:'–'}/3</strong></div></div><div><small>${t('Quest XP สะสมในเครื่อง','Device-only Quest XP')}</small><b>${s?s.points:'–'} ✨</b></div></section>
+      <div class="wdj-classic-explain">🛡️ ${t('ภารกิจคลาสสิกให้เฉพาะตราและ Quest XP ในเครื่อง ไม่เพิ่ม Coin หรือกล่องเข้าบัญชี','Classic quests earn local stamps and Quest XP only; they do not grant account Coins or chests.')}</div>
+      <div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">CLASSIC DAILY QUESTS</p><h3>${t('ภารกิจสุ่มของวันนี้','Today’s random quests')}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div>
+      <section class="v82-mission-list v853-mission-list wdj-classic-list">${cards}</section>
+      <details class="wdj-classic-secure" id="wdjClassicVerified" ${secureExpanded?'open':''}><summary><span>🔒 ${t('ภารกิจรับ Coin และกล่อง (ตรวจสอบผ่านระบบบัญชี)','Account-verified Coins and chests')}</span><small>${t('รางวัลส่วนนี้แยกจากภารกิจสุ่มด้านบน','Separate from the random quests above')}</small></summary><div id="wdjClassicVerifiedBody" class="wdj-classic-verified-body"></div></details>`;
+    root.querySelectorAll('[data-wdj-classic-claim]').forEach(btn=>btn.addEventListener('click',()=>claimLocal(btn.dataset.wdjClassicClaim)));
+    const details=root.querySelector('#wdjClassicVerified');
+    details?.addEventListener('toggle',()=>{secureExpanded=details.open;});
+    // Keep the server-authoritative Coin/Chest flow intact and isolated.
+    // The original code is rendered only into this designated container.
+    const safeRoot=root.querySelector('#wdjClassicVerifiedBody');
+    if(safeRoot && !pending) originalRender(safeRoot);
+    window.WorkdayLifeQuests?.render?.();
+    window.WorkdayV853?.refresh?.();
+    window.WorkdayV850?.refresh?.();
+    return true;
+  }
+  const originalRender=window.WorkdayUnifiedMissions?.renderCloud?.bind(window.WorkdayUnifiedMissions);
+  if(!originalRender)return;
+  window.WorkdayUnifiedMissions.renderCloud=renderSignedIn;
+  window.WorkdayClassicMissions={version:VERSION,getState,claimLocal,renderSignedIn};
+  for(const event of ['workday:v8-cloud-ready','workday:v8-auth-resolved','workday:v7-data-changed']){
+    window.addEventListener(event,()=>{if(location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();});
+  }
+  Promise.resolve().then(()=>{if(location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();});
+  let lastDay=dayNow();
+  setInterval(()=>{const today=dayNow();if(today!==lastDay){lastDay=today;if(location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();}},60000);
 })();
