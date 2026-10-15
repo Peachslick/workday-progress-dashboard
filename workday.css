@@ -5762,3 +5762,14 @@ html[data-theme="dark"] .wdj-unified-chest-status article{background:#1b2942;col
 html[data-theme="dark"] .wdj-unified-reflection{background:#152039;color:#f1f5ff;border-color:#465776}
 html[data-theme="dark"] .wdj-unified-error{background:#371923;color:#ffdee4;border-color:#995064}
 @media(max-width:620px){.wdj-unified-chest-status{grid-template-columns:1fr}}
+
+/* V8.7.10.3.2 - Daily Missions keep one stable visual layout */
+#v82MissionsPage.v853-missions-page .wdj-stable-mission-hero {
+  display:grid; grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);
+  min-height:136px; align-items:stretch;
+}
+#v82MissionsPage.v853-missions-page .wdj-stable-mission-hero>div {min-width:0;}
+#v82MissionsPage.v853-missions-page .v853-mission-list .v853-mission-card {min-width:0;}
+@media(max-width:720px){
+  #v82MissionsPage.v853-missions-page .wdj-stable-mission-hero {grid-template-columns:1fr;min-height:0;}
+}
