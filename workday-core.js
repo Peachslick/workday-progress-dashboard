@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10.3.5";
+  const APP_VERSION = "8.7.10.3.6.1";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -389,7 +389,7 @@
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "เริ่ม Journey ใหม่", resetAllData: "ล้างข้อมูลทั้งหมด", resetAllConfirm: "ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่?",
     newJourneyConfirm: "ต้องการเริ่ม Journey ใหม่หรือไม่? Calendar, Achievement และข้อมูล Journey ปัจจุบันจะถูกล้าง แต่ Theme/Font จะยังอยู่",
     importConfirm: "นำเข้า Backup นี้และแทนที่ข้อมูล Workday Journey ปัจจุบันหรือไม่?", invalidBackup: "ไฟล์ Backup ไม่ถูกต้อง", backupCreated: "สร้าง Backup เรียบร้อยแล้ว", backupImported: "นำเข้า Backup สำเร็จแล้ว",
-    privacyNoticeTitle: "ความเป็นส่วนตัว", privacyNotice: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น หาก Login ระบบจะ Sync ข้อมูลของบัญชีคุณผ่าน Supabase Cloud",
+    privacyNoticeTitle: "ความเป็นส่วนตัว", privacyNotice: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น หากเข้าสู่ระบบ ข้อมูลของบัญชีจะซิงก์ผ่านระบบออนไลน์",
     shareSummary: "แชร์สรุป", shareCopied: "คัดลอกสรุป Journey แล้ว", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
     versionLabel: "เวอร์ชัน", updateAvailable: "มีเวอร์ชันใหม่พร้อมใช้งาน", updateHelp: "Refresh เพื่อโหลดไฟล์ล่าสุดจาก Deployment", refreshNow: "Refresh ตอนนี้",
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
@@ -417,7 +417,7 @@
     exportBackup: "Export Backup", importBackup: "Import Backup", startNewJourney: "Start New Journey", resetAllData: "Reset All Data", resetAllConfirm: "Reset all Workday Journey data stored in this browser?",
     newJourneyConfirm: "Start a new journey? Calendar, achievements and current journey data will be cleared, while appearance settings stay.",
     importConfirm: "Import this backup and replace the current Workday Journey data?", invalidBackup: "Invalid backup file", backupCreated: "Backup created", backupImported: "Backup imported",
-    privacyNoticeTitle: "Privacy", privacyNotice: "Data stays local by default. When you sign in, your account data can sync through Supabase Cloud.",
+    privacyNoticeTitle: "Privacy", privacyNotice: "Data stays local by default. When you sign in, your account data can sync securely online.",
     shareSummary: "Share Summary", shareCopied: "Journey summary copied", shareTitle: "Workday Journey Summary", demoJourneyName: "Public Demo Journey", myJourney: "My Journey",
     versionLabel: "Version", updateAvailable: "A new version is available", updateHelp: "Refresh to load the latest deployed files", refreshNow: "Refresh Now",
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",

@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -41,7 +41,7 @@
 
   const TEXT = {
     th: {
-      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"Deployment นี้ยังไม่ได้ตั้งค่า Supabase", cloudNotConfiguredHelp:"ตั้งค่า supabase-config.js และรัน supabase-setup.sql ก่อนเปิด Cloud Sync", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีสำเร็จและพร้อมเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบการแก้ไขข้อมูลเดียวกันจากหลายอุปกรณ์", cloudConflictHelp:"Smart Sync รวมข้อมูลที่ไม่ชนกันให้อัตโนมัติแล้ว เหลือเฉพาะข้อมูลเดียวกันที่ถูกแก้ทั้งสองฝั่ง กรุณาเลือกชุดที่จะใช้", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
+      cloudLocal:"Local", cloudSynced:"ซิงก์แล้ว", cloudSyncing:"กำลังซิงก์", cloudOffline:"ออฟไลน์", cloudError:"ซิงก์มีปัญหา", account:"บัญชีและ Cloud Sync", accountHelp:"ใช้งานแบบ Local ได้เหมือนเดิม หรือเข้าสู่ระบบเพื่อซิงก์ข้อมูลข้าม PC, iPad และมือถือ", cloudNotConfigured:"ยังไม่พร้อมใช้งานระบบบัญชีออนไลน์", cloudNotConfiguredHelp:"กรุณาติดต่อผู้ดูแลระบบเพื่อเปิดการใช้งานบัญชีออนไลน์", email:"อีเมล", password:"รหัสผ่าน", signIn:"เข้าสู่ระบบ", createAccount:"สร้างบัญชี", signOut:"ออกจากระบบ", checkEmail:"สร้างบัญชีสำเร็จและพร้อมเข้าสู่ระบบ", signedInAs:"เข้าสู่ระบบเป็น", syncNow:"ซิงก์ตอนนี้", uploadDevice:"ใช้ข้อมูลเครื่องนี้", loadCloud:"ใช้ข้อมูล Cloud", lastSync:"ซิงก์ล่าสุด", never:"ยังไม่เคย", cloudReady:"Cloud Sync พร้อมใช้งาน", cloudUploaded:"อัปโหลดข้อมูลเครื่องนี้ขึ้น Cloud แล้ว", cloudLoaded:"โหลดข้อมูล Cloud แล้ว", cloudConflict:"พบการแก้ไขข้อมูลเดียวกันจากหลายอุปกรณ์", cloudConflictHelp:"Smart Sync รวมข้อมูลที่ไม่ชนกันให้อัตโนมัติแล้ว เหลือเฉพาะข้อมูลเดียวกันที่ถูกแก้ทั้งสองฝั่ง กรุณาเลือกชุดที่จะใช้", thisDevice:"เครื่องนี้", cloudCopy:"Cloud", cloudAutoHelp:"หลังเลือกแล้ว การเปลี่ยนแปลงใหม่จะซิงก์อัตโนมัติเมื่อออนไลน์", authFailed:"เข้าสู่ระบบไม่สำเร็จ", signupFailed:"สร้างบัญชีไม่สำเร็จ", syncFailed:"Cloud Sync ไม่สำเร็จ", localDefault:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์", restoreCloud:"มีบัญชีอยู่แล้ว? เข้าสู่ระบบเพื่อกู้ข้อมูลจาก Cloud",
       notifications:"การแจ้งเตือน", markAllRead:"อ่านทั้งหมด", noNotifications:"ยังไม่มีการแจ้งเตือน", journalMissing:"Journal ยังไม่ได้บันทึก", journalMissingBody:"วันที่ {date} เป็นวันทำงานที่ผ่านแล้ว แต่ยังไม่มี Daily Journal", backupOld:"ควรสำรองข้อมูล", backupNever:"ยังไม่เคย Export Backup", backupOldBody:"Backup ล่าสุดผ่านมา {days} วันแล้ว", milestoneClose:"ใกล้ถึง {hours} ชั่วโมง", milestoneBody:"เหลืออีกประมาณ {left} ชั่วโมงทำงาน", achievementUnlocked:"Achievement ใหม่", cloudNeedsSync:"ข้อมูลในเครื่องรอซิงก์", cloudNeedsSyncBody:"กลับมาออนไลน์หรือกด Sync Now เพื่ออัปเดต Cloud",
       draftSaved:"บันทึกร่างล่าสุด {time}", draftRestored:"กู้ร่างที่ยังไม่ได้บันทึกกลับมาแล้ว", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"เลือกตารางทำงานสำเร็จรูป หรือบันทึกตารางปัจจุบันเพื่อใช้และแชร์กับเพื่อน", templateIntern:"Internship · จ–ศ · 07:00–16:10", templateOffice8:"Office · จ–ศ · 08:00–17:00", templateOffice9:"Office · จ–ศ · 09:00–18:00", applyTemplate:"ใช้ Template", saveCurrentTemplate:"บันทึกตารางปัจจุบัน", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"ชื่อ Template", templateSaved:"บันทึก Template แล้ว", templateApplied:"ใช้ตารางใหม่แล้ว ระบบจะ Reload", templateImported:"Import Template สำเร็จ", templateInvalid:"ไฟล์ Template ไม่ถูกต้อง", templateApplyConfirm:"เปลี่ยนตารางทำงานปัจจุบันตาม Template นี้หรือไม่?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"ตรวจสุขภาพข้อมูล Local, Backup, Cloud Sync และเวอร์ชัน PWA", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"ปกติ", statusWarning:"ควรตรวจสอบ", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"ล้าง App Cache แล้ว", updateChecked:"ตรวจสอบอัปเดตแล้ว", storageIssue:"พบข้อมูล Local ที่อ่านไม่ได้ {n} รายการ", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -50,7 +50,7 @@
       profileMenu:"เมนูโปรไฟล์", editProfile:"แก้ไขโปรไฟล์ / Journey", languageLabel:"ภาษา", themeLabel:"ธีม", installLabel:"ติดตั้งแอป", settingsLabel:"ตั้งค่า", lightLabel:"สว่าง", darkLabel:"มืด", accountMenu:"บัญชีและ Cloud Sync"
     },
     en: {
-      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Supabase is not configured for this deployment", cloudNotConfiguredHelp:"Configure supabase-config.js and run supabase-setup.sql before enabling Cloud Sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created and ready to sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"The same data was edited on multiple devices", cloudConflictHelp:"Smart Sync already merged non-conflicting changes. Only the same data was changed on both sides; choose which copy should win.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
+      cloudLocal:"Local", cloudSynced:"Synced", cloudSyncing:"Syncing", cloudOffline:"Offline", cloudError:"Sync issue", account:"Account & Cloud Sync", accountHelp:"Keep using Local Mode, or sign in to sync your journey across PC, iPad and mobile", cloudNotConfigured:"Online accounts are not set up yet", cloudNotConfiguredHelp:"Please contact the administrator to enable cloud sync", email:"Email", password:"Password", signIn:"Sign in", createAccount:"Create account", signOut:"Sign out", checkEmail:"Account created and ready to sign in.", signedInAs:"Signed in as", syncNow:"Sync now", uploadDevice:"Use this device data", loadCloud:"Use cloud data", lastSync:"Last sync", never:"Never", cloudReady:"Cloud Sync is ready", cloudUploaded:"This device data was uploaded to Cloud", cloudLoaded:"Cloud data loaded", cloudConflict:"The same data was edited on multiple devices", cloudConflictHelp:"Smart Sync already merged non-conflicting changes. Only the same data was changed on both sides; choose which copy should win.", thisDevice:"This device", cloudCopy:"Cloud", cloudAutoHelp:"After resolving this once, new changes sync automatically while online.", authFailed:"Sign in failed", signupFailed:"Account creation failed", syncFailed:"Cloud Sync failed", localDefault:"Local by default · Sign in to sync across devices", restoreCloud:"Already have an account? Sign in to restore Cloud data",
       notifications:"Notifications", markAllRead:"Mark all read", noNotifications:"No notifications yet", journalMissing:"Journal is missing", journalMissingBody:"{date} was a completed workday but still has no Daily Journal", backupOld:"Backup recommended", backupNever:"No backup has been exported yet", backupOldBody:"Your latest backup is {days} days old", milestoneClose:"Approaching {hours} hours", milestoneBody:"About {left} working hours remaining", achievementUnlocked:"Achievement unlocked", cloudNeedsSync:"Local changes are waiting to sync", cloudNeedsSyncBody:"Reconnect or press Sync Now to update Cloud",
       draftSaved:"Draft saved {time}", draftRestored:"Unsaved draft restored", scheduleTemplates:"Calendar / Schedule Templates", scheduleTemplateHelp:"Choose a ready-made schedule or save your current schedule to reuse and share", templateIntern:"Internship · Mon–Fri · 07:00–16:10", templateOffice8:"Office · Mon–Fri · 08:00–17:00", templateOffice9:"Office · Mon–Fri · 09:00–18:00", applyTemplate:"Apply Template", saveCurrentTemplate:"Save current schedule", exportTemplate:"Export Template", importTemplate:"Import Template", templateName:"Template name", templateSaved:"Template saved", templateApplied:"Schedule updated. The app will reload.", templateImported:"Template imported", templateInvalid:"Invalid template file", templateApplyConfirm:"Replace the current work schedule with this template?",
       dataHealth:"Data Health & Storage", dataHealthHelp:"Check Local data, backups, Cloud Sync and PWA version health", journals:"Journals", projects:"Projects", achievements:"Achievements", localStorage:"Local storage", appVersion:"App version", statusGood:"Healthy", statusWarning:"Needs attention", checkUpdate:"Check for Update", clearCache:"Clear App Cache", reloadLatest:"Reload Latest Version", cacheCleared:"App cache cleared", updateChecked:"Update check completed", storageIssue:"{n} Local data items could not be parsed", backupHealth:"Backup", cloudHealth:"Cloud Sync",
@@ -585,7 +585,7 @@
       const {data,error}=await cloud.client.auth.signUp({email,password});
       if(error){setAuthError(friendlyAuthError(error,"signup"));return;}
       if(data?.user && Array.isArray(data.user.identities) && data.user.identities.length===0 && !data?.session){setAuthError(authT("emailExists"));return;}
-      if(!data?.session){setAuthError(lang()==="th"?"สร้างบัญชีแล้วแต่ยังไม่ได้ Session กรุณาตรวจสอบว่า Supabase ปิด Confirm Email อยู่":"Account created but no session was returned. Confirm that Supabase Confirm Email is disabled.");return;}
+      if(!data?.session){setAuthError(lang()==="th"?"ยังเข้าสู่ระบบอัตโนมัติไม่ได้ กรุณาลองเข้าสู่ระบบอีกครั้ง":"Account created. Please try signing in to continue.");return;}
       cloud.session=data.session;cloud.user=data.session.user||data.user||cloud.user;
       authUi.success={type:"signup",email:cloud.user?.email||data?.user?.email||email};renderAccountModal();
     }catch(error){setAuthError(friendlyAuthError(error,"signup"));}
@@ -774,7 +774,7 @@
   }
   function renderAccountModal(){
     const body=$("v8AuthBody");if(!body)return;
-    if(!cloud.configured){setAuthHero("🧩",t("cloudNotConfigured"),t("cloudNotConfiguredHelp"));body.innerHTML=`<div class="v8-cloud-unconfigured"><span>🧩</span><h3>${esc(t("cloudNotConfigured"))}</h3><p>${esc(t("cloudNotConfiguredHelp"))}</p><code>supabase-config.js + supabase-setup.sql</code></div>`;return;}
+    if(!cloud.configured){setAuthHero("🧩",t("cloudNotConfigured"),t("cloudNotConfiguredHelp"));body.innerHTML=`<div class="v8-cloud-unconfigured"><span>🧩</span><h3>${esc(t("cloudNotConfigured"))}</h3><p>${esc(t("cloudNotConfiguredHelp"))}</p><small>กรุณาติดต่อผู้ดูแลระบบ / Contact support</small></div>`;return;}
     if(authUi.success){
       const signup=authUi.success.type==="signup",status=cloud.status==="synced"?t("cloudSynced"):(cloud.reconciling||cloud.status==="syncing"?authT("cloudChecking"):cloudStatusLabel());
       setAuthHero(signup?"✨":"☁",signup?authT("signupSuccessTitle"):authT("loginSuccessTitle"),signup?authT("signupSuccessBody"):authT("loginSuccessBody"));
@@ -784,7 +784,7 @@
     if(!cloud.user){
       if(authUi.mode==="signin"||authUi.mode==="signup"){
         const signup=authUi.mode==="signup";setAuthHero(signup?"✨":"👤",signup?authT("signUpTitle"):authT("signInTitle"),signup?authT("signUpHelp"):authT("signInHelp"));
-        body.innerHTML=`<div class="v8477-auth-form-shell"><button id="v8477AuthBack" class="v8477-auth-back" type="button">← ${esc(authT("back"))}</button><form id="v8477AuthForm" class="v8-auth-form v8477-auth-form" novalidate><label class="v8477-field"><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>${authPasswordField("v8AuthPassword",t("password"),signup?"new-password":"current-password")}${signup?authPasswordField("v8AuthConfirmPassword",authT("confirmPassword"),"new-password"):""}${signup?`<p class="v860-guest-cloud-note" role="note">🔐 ${esc(lang()==="th"?"Coin และไอเทมจาก Guest จะอยู่เฉพาะเครื่องนี้ บัญชี Cloud ใหม่จะเริ่มจากยอดที่ Supabase กำหนด":"Guest Coins and items stay on this device. A new Cloud account starts with a server-issued balance.")}</p>`:""}<small class="v8477-password-hint">${esc(authT("passwordHint"))}</small><div id="v8477AuthError" class="v8477-auth-error" role="alert" ${authUi.error?"":"hidden"}>${esc(authUi.error)}</div><button id="${signup?"v8SignUp":"v8SignIn"}" class="primary-btn v8477-auth-primary" type="submit">${esc(signup?t("createAccount"):t("signIn"))}</button></form><div class="v8477-auth-switch"><span>${esc(signup?authT("haveAccount"):authT("noAccount"))}</span><button id="v8477AuthSwitch" type="button">${esc(signup?t("signIn"):t("createAccount"))} →</button></div></div>`;
+        body.innerHTML=`<div class="v8477-auth-form-shell"><button id="v8477AuthBack" class="v8477-auth-back" type="button">← ${esc(authT("back"))}</button><form id="v8477AuthForm" class="v8-auth-form v8477-auth-form" novalidate><label class="v8477-field"><span>${esc(t("email"))}</span><input id="v8AuthEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>${authPasswordField("v8AuthPassword",t("password"),signup?"new-password":"current-password")}${signup?authPasswordField("v8AuthConfirmPassword",authT("confirmPassword"),"new-password"):""}${signup?`<p class="v860-guest-cloud-note" role="note">🔐 ${esc(lang()==="th"?"Coin และไอเทมจาก Guest จะอยู่เฉพาะเครื่องนี้ บัญชีออนไลน์ใหม่จะเริ่มจากยอด Coin ของบัญชีใหม่":"Guest Coins and items stay on this device. A new Cloud account starts with a server-issued balance.")}</p>`:""}<small class="v8477-password-hint">${esc(authT("passwordHint"))}</small><div id="v8477AuthError" class="v8477-auth-error" role="alert" ${authUi.error?"":"hidden"}>${esc(authUi.error)}</div><button id="${signup?"v8SignUp":"v8SignIn"}" class="primary-btn v8477-auth-primary" type="submit">${esc(signup?t("createAccount"):t("signIn"))}</button></form><div class="v8477-auth-switch"><span>${esc(signup?authT("haveAccount"):authT("noAccount"))}</span><button id="v8477AuthSwitch" type="button">${esc(signup?t("signIn"):t("createAccount"))} →</button></div></div>`;
         bindAuthForm(authUi.mode);return;
       }
       setAuthHero("☁",authT("accountTitle"),authT("accountIntro"));
@@ -1468,7 +1468,7 @@
       const verified = window.WorkdayEconomySecurity?.getCachedBalance?.();
       return Number.isFinite(verified) ? [{
         id:"secure:v871036:verified-wallet", amount:verified, type:"server_balance",
-        labelTh:"ยอด Wallet ที่ Supabase ยืนยัน", labelEn:"Supabase verified wallet",
+        labelTh:"ยอด Coin ที่บันทึกแล้ว", labelEn:"Saved Coin balance",
         createdAt:new Date().toISOString()
       }] : [];
     }
@@ -1653,7 +1653,7 @@
   async function purchaseReward(reward, source="shop") {
     if (!reward || reward.price <= 0 || isOwned(reward)) return;
     if (window.WorkdayV8Cloud?.isSignedIn?.() && !Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.())) {
-      toast("☁",lang()==="th"?"กำลังตรวจสอบยอด Coin จาก Supabase กรุณารอสักครู่":"Waiting for the verified Supabase wallet","warning");return;
+      toast("☁",lang()==="th"?"กำลังตรวจสอบยอด Coin กรุณารอสักครู่":"Checking your Coin balance. Please wait.","warning");return;
     }
     if (!rewardAvailable(reward)) { toast("🎓", t("finaleEnded"), "error"); return; }
     const deal = source === "weekly" ? weeklyDealFor(reward) : source === "daily" ? dailyDealFor(reward) : null;
@@ -1672,7 +1672,7 @@
       }catch(err){toast("🔐",String(err?.message||err).includes("INSUFFICIENT_COINS")?t("insufficient"):(lang()==="th"?"ซื้อไม่สำเร็จ: ระบบ Security ปฏิเสธรายการ":"Purchase rejected by Economy Security"),"error");return;}
     }
     if (window.WorkdayV8Cloud?.isSignedIn?.()) {
-      toast("🔐",lang()==="th"?"บัญชี Login ต้องซื้อผ่าน Supabase เท่านั้น":"Account purchases require Supabase Economy Security","error");return;
+      toast("🔐",lang()==="th"?"การซื้อของบัญชีออนไลน์ต้องรอระบบยืนยันก่อน":"Online purchases require account verification","error");return;
     }
     // Local/Guest mode remains device-local. It cannot write protected Economy keys to Cloud Sync.
     const list=ledger(),id=`spend:${reward.type}:${reward.id}`;
@@ -1822,7 +1822,7 @@
       const loadingCloud = window.WorkdayV8Cloud?.isSignedIn?.() &&
         !Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.());
       bal.textContent=loadingCloud?"…":balance().toLocaleString(lang()==="th"?"th-TH":"en-US");
-      bal.title=loadingCloud?(lang()==="th"?"กำลังตรวจสอบยอด Coin จาก Supabase":"Loading verified Cloud Coin balance"):"";
+      bal.title=loadingCloud?(lang()==="th"?"กำลังตรวจสอบยอด Coin":"Loading verified Cloud Coin balance"):"";
     }
   }
 
@@ -1934,7 +1934,7 @@
       : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
     root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
-      <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${loadingCloud?"…":bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"แหล่งข้อมูล":"Wallet Source"):esc(t("lifetimeEarned"))}</small><b>${cloudWallet?"☁ Supabase":"+"+earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"ประวัติ":"History"):esc(t("lifetimeSpent"))}</small><b>${cloudWallet?(lang()==="th"?"เฉพาะยอดยืนยัน":"Verified only"):"-"+spent.toLocaleString()}</b></div></section>
+      <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${loadingCloud?"…":bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"แหล่งข้อมูล":"Wallet Source"):esc(t("lifetimeEarned"))}</small><b>${cloudWallet?(lang()==="th"?"☁ บัญชีออนไลน์":"☁ Online wallet"):"+"+earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"ประวัติ":"History"):esc(t("lifetimeSpent"))}</small><b>${cloudWallet?(lang()==="th"?"เฉพาะยอดยืนยัน":"Verified only"):"-"+spent.toLocaleString()}</b></div></section>
       <section id="wdjChestInventory" class="wdj-chest-inventory" aria-label="Chest Inventory"></section>
       ${collectionMarkup()}
       ${dailyMarkup()}
@@ -2387,7 +2387,7 @@
       toast("!",lang()==="th"?"Enter a whole Coin amount (1 or more)":"Enter a whole Coin amount (1 or more)","error");return;
     }
     if(!bank?.getCached?.()){
-      toast("!","Secure Bank is not ready. Please wait for Supabase.","error");
+      toast("!",lang()==="th"?"ระบบ Work Bank ยังไม่พร้อม กรุณาลองใหม่อีกครั้ง":"Work Bank is not ready. Please try again.","error");
       bank?.refresh?.({force:true}).catch(()=>{});return;
     }
     if(direction==="deposit"&&amount>balance()){
@@ -2398,7 +2398,7 @@
     }
     try{
       await bank.move(direction,amount);
-      toast("🏦",direction==="deposit"?"Deposit confirmed by Supabase":"Withdrawal confirmed by Supabase","success");
+      toast("🏦",direction==="deposit"?(lang()==="th"?"ฝาก Coin สำเร็จแล้ว":"Deposit completed"):(lang()==="th"?"ถอน Coin สำเร็จแล้ว":"Withdrawal completed"),"success");
       reconcileRewards({notify:false});refreshAll();
     }catch(error){
       const message=String(error?.message||error||"BANK_ERROR");
@@ -2448,7 +2448,7 @@
       const bank=bankBridge();
       if(!bank?.getCached?.()){
         const message=bank?.getError?.();
-        root.innerHTML=`<section class="v8601-bank-pending" role="status"><span class="v8601-bank-pending-icon">🏦</span><h3>${message?"Secure Bank unavailable":"Loading secure Work Bank"}</h3><p>${message?esc(message):"Checking savings and transactions with Supabase. No Local balance will be used."}</p><button type="button" data-v8601-retry>Retry connection</button></section>`;
+        root.innerHTML=`<section class="v8601-bank-pending" role="status"><span class="v8601-bank-pending-icon">🏦</span><h3>${message?(lang()==="th"?"ยังเชื่อมต่อ Work Bank ไม่ได้":"Work Bank is temporarily unavailable"):(lang()==="th"?"กำลังโหลด Work Bank":"Loading Work Bank")}</h3><p>${message?esc(message):(lang()==="th"?"กำลังตรวจสอบยอดเงินออมและรายการล่าสุด กรุณารอสักครู่":"Checking your Savings balance and transactions. Please wait.")}</p><button type="button" data-v8601-retry>${lang()==="th"?"ลองอีกครั้ง":"Retry connection"}</button></section>`;
         root.querySelector('[data-v8601-retry]')?.addEventListener('click',()=>bank?.refresh?.({force:true}).catch(()=>{}));
         if(!message)bank?.ensureFresh?.();
         return;
@@ -2471,14 +2471,6 @@
       <article class="v83-bank-action-card withdraw"><div><span>↑</span><div><p class="eyebrow">WITHDRAW</p><h3>${lang()==="th"?"ถอนกลับ Wallet":"Return to Wallet"}</h3><p>${lang()==="th"?`ถอนได้สูงสุด ${Math.floor(savings).toLocaleString(bankLocale())} Coins · การถอนทุกครั้งจะรีเซ็ต Savings Streak`:`Withdraw up to ${Math.floor(savings).toLocaleString(bankLocale())} Coins · any withdrawal resets the Savings Streak.`}</p></div></div><div class="v83-bank-input"><span>🪙</span><input id="v83WithdrawAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0"><button type="button" data-v83-withdraw>WITHDRAW</button></div><div class="v83-bank-quick">${[25,50,100].map(p=>`<button type="button" data-v83-withdraw-pct="${p}">${p===100?"MAX":p+"%"}</button>`).join("")}</div></article></section>
       <section class="v83-bank-growth"><article><p class="eyebrow">SAVINGS TIER</p><h3>${tier.icon} ${esc(lang()==="th"?tier.th:tier.en)}</h3><div class="v83-tier-list">${tierCards}</div>${next?`<p class="v83-next-tier">${lang()==="th"?`อีก ${formatBankCoin(nextGap)} Coins ถึง ${next.icon} ${next.th}`:`${formatBankCoin(nextGap)} Coins to ${next.icon} ${next.en}`}</p>`:`<p class="v83-next-tier max">👑 ${lang()==="th"?"คุณอยู่ Tier สูงสุดแล้ว":"You are at the highest tier"}</p>`}</article><article class="v83-projection v844-projection"><p class="eyebrow">COMPOUND FORECAST</p><h3>${lang()==="th"?"ถ้าไม่ถอนเงิน Savings จะโตเท่าไหร่":"How Savings can grow if left untouched"}</h3><div><span><small>TOMORROW</small><b>+${formatBankCoin(p1.interest)} 🪙</b><em>${formatBankCoin(p1.balance)} total</em></span><span><small>7 DAYS</small><b>+${formatBankCoin(p7.interest)} 🪙</b><em>${formatBankCoin(p7.balance)} total</em></span><span><small>14 DAYS</small><b>+${formatBankCoin(p14.interest)} 🪙</b><em>${formatBankCoin(p14.balance)} total</em></span><span class="journey-end"><small>🎓 JOURNEY END</small><b>+${formatBankCoin(pEnd.interest)} 🪙</b><em>${formatBankCoin(pEnd.balance)} total · ${finale.days} days</em></span></div><p>${lang()==="th"?`ดอกเบี้ยเข้าบัญชี Savings และถูกนำไปคิดดอกวันถัดไปอัตโนมัติ · Cap ${BANK_DAILY_CAP} Coins/วัน`:`Interest is credited into Savings and automatically compounds the next day · ${BANK_DAILY_CAP} Coin/day cap.`}</p></article></section>
       <section class="v83-bank-history"><div class="v83-bank-section-head"><div><p class="eyebrow">BANK LEDGER</p><h3>${lang()==="th"?"ประวัติ Savings":"Savings history"}</h3></div><span>${state.openedAt?`${lang()==="th"?"เปิดบัญชี":"Opened"} ${esc(formatHistoryDate(state.openedAt))}`:(lang()==="th"?"ยังไม่ได้ฝาก Coin":"No deposit yet")}</span></div><div class="v83-bank-history-list">${history}</div></section>`;
-    if(isSignedInBank()&&bankBridge()?.hasLocalOnlySavings?.()){
-      const note=document.createElement('aside');
-      note.className='v8601-bank-legacy-notice';
-      note.textContent=lang()==='th'
-        ?'ยอด Savings แบบ Local ที่เคยฝากยังเก็บไว้ใน Browser แต่ไม่ถูกนำเข้า Cloud อัตโนมัติ หากต้องการกู้ยอดเดิมให้ติดต่อ Owner เพื่อตรวจสอบ'
-        :'Older Local-only Savings are backed up on this device, but are not auto-imported into Cloud. Contact the Owner to review any previous balance.';
-      root.prepend(note);
-    }
     const dep=$("v83DepositAmount"),wd=$("v83WithdrawAmount");
     q("[data-v83-deposit]",root)?.addEventListener("click",()=>bankDeposit(dep?.value));q("[data-v83-withdraw]",root)?.addEventListener("click",()=>bankWithdraw(wd?.value));
     qa("[data-v83-deposit-pct]",root).forEach(btn=>btn.addEventListener("click",()=>{if(dep)dep.value=Math.floor(wallet*Number(btn.dataset.v83DepositPct||0)/100)||"";}));
@@ -2713,7 +2705,7 @@
   async function submitCloudExchangeTrade(side,symbol,qty,estimatedPrice){
     if(cloudExchange.busy)return;
     if(cloudExchange.status!=="ready"){
-      toast("🔐",lang()==="th"?"บัญชี Login ยังไม่เปิดซื้อขาย: ต้องติดตั้ง RPC ที่ตรวจสอบ Coin และหุ้นใน Supabase ก่อน":"Cloud Exchange is locked until its secure Supabase RPCs are installed","warning");return;
+      toast("🔐",lang()==="th"?"การซื้อขายหุ้นสำหรับบัญชีออนไลน์ยังไม่พร้อมใช้งาน":"Trading is temporarily unavailable for online accounts","warning");return;
     }
     const client=window.WorkdayV8Cloud?.getClient?.(),uid=window.WorkdayV8Cloud?.getUser?.()?.id;
     if(!client||!uid || !navigator.onLine){toast("☁",lang()==="th"?"ต้องออนไลน์เพื่อซื้อขายด้วยบัญชี Login":"Cloud trading requires an online account","error");return;}
@@ -2731,9 +2723,9 @@
       if(data.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
       await window.WorkdayEconomySecurity?.refresh?.({force:true});
       await loadCloudExchange({force:true});
-      toast("✓",lang()==="th"?"ซื้อขายสำเร็จและบันทึกบน Supabase แล้ว":"Trade confirmed by Supabase","success");
+      toast("✓",lang()==="th"?"ซื้อขายสำเร็จและบันทึกข้อมูลแล้ว":"Trade completed and saved","success");
     }catch(e){
-      toast("!",lang()==="th"?"ไม่ยืนยันรายการ: โปรดตรวจสอบธุรกรรมบน Supabase ก่อนกดซ้ำ":"Trade not confirmed. Verify server history before retrying.","error");
+      toast("!",lang()==="th"?"ยังยืนยันรายการไม่ได้ กรุณาตรวจสอบประวัติการซื้อขายก่อนลองอีกครั้ง":"Trade not confirmed. Verify server history before retrying.","error");
       console.warn("Cloud Exchange trade was not confirmed:",e);
       // Do not credit a wallet, deduct shares or write local history on failure.
       await loadCloudExchange({force:true}).catch(()=>{});
@@ -2861,7 +2853,7 @@
       if(!Number.isSafeInteger(qty)||qty<1||qty>100000){toast("!",lang()==="th"?"กรุณาระบุจำนวนหุ้นที่ถูกต้อง":"Invalid share quantity","error");return;}
       if(!ctx.canTrade){toast("📈",lang()==="th"?"ตลาดปิดอยู่":"Market is closed","warning");return;}
       if(cloudExchange.status!=="ready"){
-        toast("🔐",lang()==="th"?"บัญชี Login ถูกป้องกันการซื้อขายจนกว่าจะติดตั้ง Supabase RPC ที่ปลอดภัย":"Secure Supabase Exchange backend is required","warning");return;
+        toast("🔐",lang()==="th"?"การซื้อขายหุ้นสำหรับบัญชีออนไลน์ยังไม่พร้อมใช้งาน":"Online trading is temporarily unavailable","warning");return;
       }
       void submitCloudExchangeTrade(side,symbol,qty,exchangeSnapshot(exchangeStock(symbol),ctx).price);return;
     }
@@ -2916,7 +2908,7 @@
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
     const cloudMode=signedInExchange();
     const legacyCount=cloudMode?(Array.isArray(read(KEYS.exchangeTrades,[]))?read(KEYS.exchangeTrades,[]).length:0):0;
-    const cloudNotice=cloudMode?`<section class="wdj-exchange-cloud-note" role="status"><strong>${cloudExchange.status==="ready"?"☁ Supabase verified Exchange":cloudExchange.status==="loading"?"☁ Loading Cloud Exchange…":"🔒 Cloud Exchange Safety Lock"}</strong><p>${cloudExchange.status==="ready"?(lang()==="th"?"ข้อมูลหุ้นและการซื้อขายมาจาก Supabase เท่านั้น ไม่มีการเติม Coin ในเครื่อง":"Holdings and trades are read from Supabase only."):(lang()==="th"?"บัญชี Login จะไม่ซื้อขายผ่าน LocalStorage อีกต่อไป ต้องติดตั้ง Cloud Exchange RPC ฝั่ง Supabase ก่อนเปิดซื้อขาย":"Logged-in trading no longer writes LocalStorage. Secure backend RPCs are required before trading is enabled.")}${legacyCount?` · ${lang()==="th"?`พบประวัติเดิมในเครื่อง ${legacyCount} รายการ เก็บไว้รอตรวจสอบ ไม่รวมเป็นหุ้น Cloud`:`${legacyCount} old local trades preserved for review, not counted as Cloud holdings.`}`:""}</p></section>`:"";
+    const cloudNotice=cloudMode?`<section class="wdj-exchange-cloud-note" role="status"><strong>${cloudExchange.status==="ready"?(lang()==="th"?"☁ ข้อมูลหุ้นล่าสุด":"☁ Portfolio synced"):cloudExchange.status==="loading"?(lang()==="th"?"☁ กำลังโหลดข้อมูลหุ้น…":"☁ Loading portfolio…"):(lang()==="th"?"ⓘ ตลาดหุ้นบัญชีออนไลน์ยังไม่เปิดใช้งาน":"ⓘ Online trading not yet available")}</strong><p>${cloudExchange.status==="ready"?(lang()==="th"?"ข้อมูลหุ้นและยอด Coin อัปเดตจากบัญชีออนไลน์":"Your portfolio is synced with your online account."):(lang()==="th"?"การซื้อขายสำหรับบัญชีออนไลน์ยังไม่เปิดใช้งานชั่วคราว":"Trading is temporarily unavailable for online accounts.")}${legacyCount?` · ${lang()==="th"?`พบประวัติเดิมในเครื่อง ${legacyCount} รายการ เก็บไว้รอตรวจสอบ ไม่รวมเป็นหุ้น Cloud`:`${legacyCount} old local trades preserved for review, not counted as Cloud holdings.`}`:""}</p></section>`:"";
     root.innerHTML=`${cloudNotice}<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${cloudMode&&!Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.())?"…":wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
       ${academyMarkup(portfolio,trades,snap)}
@@ -2925,7 +2917,7 @@
       <section class="v84-movers"><article><p class="eyebrow">TOP GAINERS</p>${gainers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>+${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article><p class="eyebrow">TOP LOSERS</p>${losers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article class="v84-watchlist"><p class="eyebrow">MY WATCHLIST</p><div>${watchMarkup}</div></article></section>
       <section class="v84-market-grid"><article class="v84-market-list"><div class="v84-section-head"><div><p class="eyebrow">MARKET</p><h3>${lang()==="th"?"หุ้นจำลองทั้งหมด":"All simulated stocks"}</h3></div><small>${lang()==="th"?"ค่าธรรมเนียมซื้อ/ขาย 1%":"1% buy/sell fee"}</small></div><div class="v84-stock-list">${stockRows}</div></article>
       <article class="v84-stock-detail"><div class="v84-stock-detail-head"><div class="v84-selected-icon">${snap.icon}</div><div><span>${snap.symbol} · ${esc(lang()==="th"?snap.sectorTh:snap.sectorEn)}</span><h3>${esc(lang()==="th"?snap.th:snap.name)}</h3><p>${esc(lang()==="th"?snap.descTh:snap.descEn)}</p></div><button type="button" data-v84-watch="${snap.symbol}" class="v84-detail-watch ${watch.has(snap.symbol)?"on":""}">${watch.has(snap.symbol)?"★":"☆"}</button></div><div class="v84-price-line"><strong>${snap.price.toFixed(2)} <small>🪙</small></strong><b class="${snap.changePct>=0?"up":"down"}">${snap.changePct>=0?"+":""}${snap.changePct.toFixed(2)}%</b><span class="v84-risk ${snap.risk}">${esc(exchangeRiskLabel(snap.risk))}</span></div><div class="v84-ohlc"><span><small>OPEN</small><b>${snap.open.toFixed(2)}</b></span><span><small>HIGH</small><b>${snap.high.toFixed(2)}</b></span><span><small>LOW</small><b>${snap.low.toFixed(2)}</b></span><span><small>PREV</small><b>${snap.prevClose.toFixed(2)}</b></span></div><div class="v84-range-tabs">${[["today","Today"],["5d","5D"],["all","All"]].map(([id,label])=>`<button type="button" data-v84-range="${id}" class="${range===id?"active":""}">${label}</button>`).join("")}</div>${exchangeChart(points)}
-      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · Supabase ต้องยืนยันราคาและยอด Coin":"Indicative quote · Supabase must validate trade prices and funds"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
+      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · ระบบจะตรวจสอบราคาก่อนซื้อขาย":"Indicative quote · final prices and funds are checked before trading"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
       <section class="v84-lower-grid"><article class="v84-portfolio-card"><div class="v84-section-head"><div><p class="eyebrow">PORTFOLIO</p><h3>${lang()==="th"?"สินทรัพย์ของฉัน":"My holdings"}</h3></div><span>${portfolio.positions.length} ${lang()==="th"?"บริษัท":"companies"}</span></div><div class="v84-portfolio-list">${portfolioRows}</div><div class="v84-portfolio-foot"><span>Cost Basis <b>${portfolio.cost.toFixed(2)} 🪙</b></span><span>Realized P/L <b class="${portfolio.realized>=0?"up":"down"}">${portfolio.realized>=0?"+":""}${portfolio.realized.toFixed(2)}</b></span><span>Fees <b>-${portfolio.totalFees.toFixed(2)} 🪙</b></span></div></article><article class="v84-ach-card"><div class="v84-section-head"><div><p class="eyebrow">TRADING ACHIEVEMENTS</p><h3>${lang()==="th"?"เส้นทางนักลงทุน":"Investor journey"}</h3></div><span>${Object.keys(earned).length}/${EXCHANGE_ACHIEVEMENTS.length}</span></div><div class="v84-ach-list">${ach}</div></article></section>
       <section class="v84-history-card"><div class="v84-section-head"><div><p class="eyebrow">TRADE HISTORY</p><h3>${lang()==="th"?"ประวัติการซื้อขาย":"Trade history"}</h3></div><span>${trades.length} trades</span></div><div class="v84-history-list">${exchangeTradeHistoryMarkup(trades)}</div></section>
       <section class="v84-finale ${ctx.final?"final":"preview"}"><div><span>${ctx.final?"🏁":"🎓"}</span><div><p class="eyebrow">${ctx.final?"FINAL MARKET DAY":"FINALE PREVIEW"}</p><h3>${ctx.final?(lang()==="th"?"สรุป Work Exchange เมื่อ Journey สิ้นสุด":"Final Work Exchange summary"):(lang()==="th"?`อีก ${finale.days} วันถึง Journey สิ้นสุด`:`${finale.days} days until Journey ends`)}</h3><p>${lang()==="th"?"Portfolio นี้เป็นระบบจำลองด้วย Work Coins ไม่มีเงินจริงหรือหลักทรัพย์จริงเกี่ยวข้อง":"This is a Work Coin simulation; no real money or securities are involved."}</p></div></div><div class="v84-finale-stats"><span><small>TRADER RANK</small><b>${finale.rank.icon} ${esc(lang()==="th"?finale.rank.th:finale.rank.en)}</b></span><span><small>PORTFOLIO</small><b>${portfolio.value.toFixed(2)} 🪙</b></span><span><small>TOTAL P/L</small><b class="${portfolio.totalPnl>=0?"up":"down"}">${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</b></span><span><small>BEST HOLDING</small><b>${finale.best?`${finale.best.symbol} ${finale.best.pnl>=0?"+":""}${finale.best.pnl.toFixed(1)}`:"—"}</b></span></div></section>`;
@@ -2993,9 +2985,9 @@
 
   function vaultRender(){
     ensureVaultModal();const body=$("v845VaultBody");if(!body)return;const {client,user}=vaultCloud();
-    if(!client||!user?.id){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-gate"><span>☁️</span><h3>${esc(vaultCopy("เข้าสู่ระบบ Cloud ก่อนใช้งาน File Vault","Sign in to Cloud to use File Vault"))}</h3><p>${esc(vaultCopy("ไฟล์ Project จะถูกเก็บใน Supabase Storage แบบ Private และสามารถเปิดจากอุปกรณ์อื่นเมื่อ Login บัญชีเดิม","Project files are stored privately in Supabase Storage and follow you to other devices when you sign in."))}</p><button data-v845-vault-signin class="primary-btn" type="button">☁ ${esc(vaultCopy("เข้าสู่ระบบ Cloud","Sign in to Cloud"))}</button></div>`;q("[data-v845-vault-signin]",body)?.addEventListener("click",vaultOpenAccount);return;}
+    if(!client||!user?.id){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-gate"><span>☁️</span><h3>${esc(vaultCopy("เข้าสู่ระบบ Cloud ก่อนใช้งาน File Vault","Sign in to Cloud to use File Vault"))}</h3><p>${esc(vaultCopy("ไฟล์ Project จัดเก็บอย่างเป็นส่วนตัวและเข้าถึงได้เมื่อเข้าสู่ระบบบัญชีเดิม","Project files are stored privately and available on your devices when you sign in."))}</p><button data-v845-vault-signin class="primary-btn" type="button">☁ ${esc(vaultCopy("เข้าสู่ระบบ Cloud","Sign in to Cloud"))}</button></div>`;q("[data-v845-vault-signin]",body)?.addEventListener("click",vaultOpenAccount);return;}
     if(vaultUi.loading){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-loading"><span>📁</span><strong>${esc(vaultCopy("กำลังโหลดไฟล์ Project...","Loading project files..."))}</strong></div>`;return;}
-    if(vaultUi.error){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-error"><span>⚠️</span><h3>${esc(vaultCopy("ยังเปิด Project File Vault ไม่ได้","Project File Vault is not ready"))}</h3><p>${esc(vaultUi.error)}</p><small>${esc(vaultCopy("ถ้ายังไม่ได้ตั้งค่า Supabase ให้รันไฟล์ SUPABASE_FILE_VAULT_SETUP.sql หนึ่งครั้ง","If Supabase has not been configured yet, run SUPABASE_FILE_VAULT_SETUP.sql once."))}</small><button data-v845-vault-retry class="outline-btn" type="button">↻ ${esc(vaultCopy("ลองใหม่","Retry"))}</button></div>`;q("[data-v845-vault-retry]",body)?.addEventListener("click",()=>vaultLoad(true));return;}
+    if(vaultUi.error){body.innerHTML=`${vaultHeaderMarkup()}<div class="v845-vault-error"><span>⚠️</span><h3>${esc(vaultCopy("ยังเปิด Project File Vault ไม่ได้","Project File Vault is not ready"))}</h3><p>${esc(vaultUi.error)}</p><small>${esc(vaultCopy("หากระบบไฟล์ยังไม่พร้อม กรุณาติดต่อผู้ดูแลระบบ","If file storage is not ready, please contact the administrator."))}</small><button data-v845-vault-retry class="outline-btn" type="button">↻ ${esc(vaultCopy("ลองใหม่","Retry"))}</button></div>`;q("[data-v845-vault-retry]",body)?.addEventListener("click",()=>vaultLoad(true));return;}
     const groups=vaultLogicalGroups();
     const list=groups.length?groups.map(group=>{const latest=group.latest,expanded=vaultUi.expanded.has(group.name),versions=expanded?`<div class="v845-version-list">${group.versions.map(row=>`<div class="v845-version-row"><div><b>v${Number(row.version)||1}</b><span>${vaultFormatBytes(row.file_size)} · ${esc(vaultDate(row.created_at))}</span></div><div><button type="button" data-v845-download-version="${esc(row.id)}">↓</button><button type="button" class="danger" data-v845-delete-version="${esc(row.id)}">🗑</button></div></div>`).join("")}</div>`:"";return `<article class="v845-file-card"><div class="v845-file-main"><span class="v845-file-icon">${vaultFileIcon(group.name)}</span><div><strong title="${esc(group.name)}">${esc(group.name)}</strong><small>v${Number(latest.version)||1} · ${vaultFormatBytes(latest.file_size)} · ${esc(vaultDate(latest.created_at))}</small></div></div><div class="v845-file-actions"><button type="button" data-v845-download="${esc(latest.id)}">↓ ${esc(vaultCopy("ดาวน์โหลด","Download"))}</button><button type="button" data-v845-new-version="${esc(group.name)}">＋ ${esc(vaultCopy("Version ใหม่","New Version"))}</button><button type="button" data-v845-versions="${esc(group.name)}">${expanded?"▴":"▾"} ${group.versions.length} ${esc(vaultCopy("เวอร์ชัน","versions"))}</button><button type="button" data-v845-rename="${esc(group.name)}">✎</button><button type="button" class="danger" data-v845-delete-file="${esc(group.name)}">🗑</button></div>${versions}</article>`;}).join(""):`<div class="v845-vault-empty"><span>📂</span><h3>${esc(vaultCopy("Project นี้ยังไม่มีไฟล์","No files in this project yet"))}</h3><p>${esc(vaultCopy("อัปโหลด ZIP, PDF, Word, Excel, PowerPoint, รูปภาพ หรือไฟล์ข้อความได้สูงสุด 20 MB ต่อไฟล์","Upload ZIP, PDF, Office documents, images or text files up to 20 MB each."))}</p></div>`;
     body.innerHTML=`${vaultHeaderMarkup()}${vaultAchievementMarkup()}<div class="v845-vault-toolbar"><div><strong>🔐 ${esc(vaultCopy("Private Storage","Private Storage"))}</strong><small>${esc(vaultCopy("สูงสุด 20 MB/ไฟล์ · 8 ไฟล์หลัก/Project · 100 MB/User","20 MB/file · 8 logical files/project · 100 MB/user"))}</small></div><button data-v845-upload-new class="primary-btn" type="button" ${groups.length>=VAULT_MAX_PROJECT_FILES?"disabled":""}>＋ ${esc(vaultCopy("อัปโหลดไฟล์","Upload File"))}</button></div><div class="v845-file-list">${list}</div><p class="v845-vault-note">💡 ${esc(vaultCopy("อัปโหลดไฟล์ชื่อเดิมจะสร้าง Version ใหม่โดยอัตโนมัติ · อย่าอัปโหลด .env, Password, API Secret หรือ Database Dump","Uploading the same logical filename creates a new version automatically · never upload .env files, passwords, API secrets or database dumps."))}</p>`;
@@ -3011,7 +3003,7 @@
 
   async function vaultFetchProjectRows(projectId){ const {client,user}=vaultCloud();if(!client||!user?.id)return[];const {data,error}=await client.from(VAULT_TABLE).select("id,user_id,project_id,logical_name,version,storage_path,file_size,mime_type,created_at").eq("user_id",user.id).eq("project_id",projectId).order("created_at",{ascending:false});if(error)throw error;return Array.isArray(data)?data:[]; }
   async function vaultFetchUserUsageRows(){ const {client,user}=vaultCloud();if(!client||!user?.id)return[];const {data,error}=await client.from(VAULT_TABLE).select("project_id,logical_name,file_size,version,created_at").eq("user_id",user.id);if(error)throw error;return Array.isArray(data)?data:[]; }
-  function vaultFriendlyError(err){ const msg=String(err?.message||err||"");if(/project_file_versions|relation .* does not exist|schema cache/i.test(msg))return vaultCopy("ไม่พบ Table project_file_versions · กรุณารัน SQL Setup ของ V8.4.5 ใน Supabase ก่อน","Table project_file_versions was not found. Run the V8.4.5 Supabase setup SQL first.");if(/bucket|not found|storage/i.test(msg)&&/project-files/i.test(msg))return vaultCopy("ไม่พบ Storage Bucket project-files · กรุณารัน SQL Setup ของ V8.4.5","Storage bucket project-files was not found. Run the V8.4.5 setup SQL.");if(/row-level security|permission|policy|unauthorized/i.test(msg))return vaultCopy("Supabase Policy ยังไม่อนุญาตให้เข้าถึงไฟล์ของบัญชีนี้ · ตรวจสอบ RLS/Storage Policy","Supabase policies are blocking access. Check the RLS and Storage policies.");return msg||vaultCopy("เกิดข้อผิดพลาดในการเชื่อมต่อ File Vault","Could not connect to File Vault"); }
+  function vaultFriendlyError(err){ const msg=String(err?.message||err||"");if(/project_file_versions|relation .* does not exist|schema cache/i.test(msg))return vaultCopy("ระบบจัดเก็บไฟล์ยังไม่พร้อม กรุณาติดต่อผู้ดูแลระบบ","File storage is not ready. Please contact the administrator.");if(/bucket|not found|storage/i.test(msg)&&/project-files/i.test(msg))return vaultCopy("ไม่พบ Storage Bucket project-files · กรุณารัน SQL Setup ของ V8.4.5","Storage bucket project-files was not found. Run the V8.4.5 setup SQL.");if(/row-level security|permission|policy|unauthorized/i.test(msg))return vaultCopy("บัญชีนี้ยังไม่ได้รับสิทธิ์เข้าถึงไฟล์ กรุณาติดต่อผู้ดูแลระบบ","Access to these files is restricted. Please contact the administrator.");return msg||vaultCopy("เกิดข้อผิดพลาดในการเชื่อมต่อ File Vault","Could not connect to File Vault"); }
   async function vaultLoad(showLoading=true){ if(!vaultUi.projectId)return;if(showLoading){vaultUi.loading=true;vaultUi.error="";vaultRender();}try{const [rows,usageRows]=await Promise.all([vaultFetchProjectRows(vaultUi.projectId),vaultFetchUserUsageRows()]);vaultUi.rows=rows;vaultUi.userUsage=usageRows.reduce((sum,x)=>sum+Number(x.file_size||0),0);vaultUpdateAchievementStats(usageRows);vaultRememberProject(vaultUi.projectId,rows.length>0);vaultUi.error="";}catch(err){vaultUi.rows=[];vaultUi.userUsage=0;vaultUi.error=vaultFriendlyError(err);}finally{vaultUi.loading=false;vaultRender();refreshProjectFileSummaries();} }
   async function openProjectVault(projectId){ ensureVaultModal();const list=read("wp-v6-projects",[]),project=Array.isArray(list)?list.find(p=>p.id===projectId):null;vaultUi.projectId=projectId;vaultUi.projectName=project?.name||vaultCopy("Project Files","Project Files");vaultUi.rows=[];vaultUi.userUsage=0;vaultUi.error="";vaultUi.expanded=new Set();const wrap=$("v845VaultBackdrop");wrap.hidden=false;requestAnimationFrame(()=>wrap.classList.add("open"));vaultRender();if(vaultSignedIn())await vaultLoad(true); }
   function vaultPickFile(logicalName=""){ if(!vaultSignedIn()){vaultOpenAccount();return;}vaultUi.replaceName=logicalName||"";const input=$("v845VaultInput");if(input){input.value="";input.click();} }
@@ -3270,7 +3262,7 @@
     if(m.includes("REWARD_CODE_USER_LIMIT")||m.includes("REWARD_CODE_ALREADY_USED"))return copy("คุณใช้ Reward Code นี้ครบจำนวนแล้ว","You have already used this Reward Code the allowed number of times.");
     if(m.includes("REWARD_CODE_LOGIN_REQUIRED"))return copy("กรุณาเข้าสู่ระบบก่อนใช้ Reward Code","Please sign in before redeeming a Reward Code.");
     if(/column reference ["\']?code["\']? is ambiguous/i.test(m))return copy("\u0E10\u0E32\u0E19\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25 Reward Code \u0E22\u0E31\u0E07\u0E43\u0E0A\u0E49 RPC \u0E23\u0E38\u0E48\u0E19\u0E40\u0E01\u0E48\u0E32 \u0E01\u0E23\u0E38\u0E13\u0E32 Run SQL Hotfix V8.4.8.1 \u0E01\u0E48\u0E2D\u0E19","Reward Code RPC is an older version. Run the V8.4.8.1 SQL hotfix first.");
-    if(/function .*redeem_reward_code|does not exist|schema cache/i.test(m))return copy("ระบบ Reward Code ยังไม่ได้ติดตั้งใน Supabase กรุณา Run SQL Setup V8.4.8.1 ก่อน","Reward Codes are not installed in Supabase yet. Run the V8.4.8.1 SQL setup first.");
+    if(/function .*redeem_reward_code|does not exist|schema cache/i.test(m))return copy("ระบบ Reward Code ยังไม่พร้อมใช้งาน กรุณาติดต่อผู้ดูแลระบบ","Reward Codes are not ready yet. Please contact the administrator.");
     return `${copy("ไม่สามารถใช้ Code ได้","Unable to redeem code")}: ${m}`;
   }
   function normalizedRedemption(row){
@@ -3363,9 +3355,9 @@
     }finally{state.ownerChecking=false;}
   }
   function ownerGuardHtml(){
-    if(!signedIn())return `<section class="v848-access-card"><span>🔐</span><h3>${esc(copy("เข้าสู่ระบบ Owner ก่อน","Owner sign-in required"))}</h3><p>${esc(copy("Developer Control Center ใช้ได้เฉพาะบัญชี Owner ที่กำหนดใน Supabase","Developer Control Center is available only to the Owner account configured in Supabase"))}</p><button id="v848OwnerLogin" class="primary-btn" type="button">👤 ${esc(copy("เข้าสู่ระบบ","Sign in"))}</button></section>`;
-    if(state.setupMissing)return `<section class="v848-access-card warning"><span>🧩</span><h3>${esc(copy("ยังไม่ได้ติดตั้ง Reward Code Database","Reward Code database is not installed"))}</h3><p>${esc(copy("Run ไฟล์ SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql แล้วกำหนด Owner Email ก่อน","Run SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql and set the Owner Email first"))}</p></section>`;
-    return `<section class="v848-access-card"><span>🛡️</span><h3>${esc(copy("บัญชีนี้ไม่มีสิทธิ์ Owner","This account is not an Owner"))}</h3><p>${esc(copy("Developer Tools ถูกป้องกันด้วย Supabase Owner check ไม่ใช่แค่ซ่อนปุ่มในหน้าเว็บ","Developer Tools are protected by the Supabase Owner check, not only by hiding the UI"))}</p></section>`;
+    if(!signedIn())return `<section class="v848-access-card"><span>🔐</span><h3>${esc(copy("เข้าสู่ระบบ Owner ก่อน","Owner sign-in required"))}</h3><p>${esc(copy("Developer Control Center ใช้ได้เฉพาะบัญชี Owner เท่านั้น","Developer Control Center is available to the Owner account only"))}</p><button id="v848OwnerLogin" class="primary-btn" type="button">👤 ${esc(copy("เข้าสู่ระบบ","Sign in"))}</button></section>`;
+    if(state.setupMissing)return `<section class="v848-access-card warning"><span>🧩</span><h3>${esc(copy("ยังไม่ได้ติดตั้ง Reward Code Database","Reward Code database is not installed"))}</h3><p>${esc(copy("กรุณาติดต่อผู้ดูแลเพื่อตั้งค่าระบบ Reward Code","Contact the administrator to set up Reward Codes"))}</p></section>`;
+    return `<section class="v848-access-card"><span>🛡️</span><h3>${esc(copy("บัญชีนี้ไม่มีสิทธิ์ Owner","This account is not an Owner"))}</h3><p>${esc(copy("Developer Tools จำกัดสิทธิ์เฉพาะบัญชี Owner","Developer Tools require a verified Owner account"))}</p></section>`;
   }
   async function refreshOwnerDashboard(render=true){
     if(!state.owner||state.loadingAdmin)return;
@@ -3417,7 +3409,7 @@
     if(state.owner===null||state.ownerChecking){root.insertAdjacentHTML("beforeend",`<section class="v848-access-card"><span class="v848-spinner">◌</span><h3>${esc(copy("กำลังตรวจสอบสิทธิ์ Owner...","Checking Owner access..."))}</h3></section>`);checkOwner({force:true}).then(ok=>{if(ok)refreshOwnerDashboard();else renderDeveloper();});return;}
     if(!state.owner){root.insertAdjacentHTML("beforeend",ownerGuardHtml());$("v848OwnerLogin")?.addEventListener("click",()=>cloud()?.openAccount?.({mode:"signin",returnAction:"developer-tools"}));return;}
     const stats=adminStats(),email=user()?.email||"Owner";
-    root.insertAdjacentHTML("beforeend",`<section class="v848-owner-hero"><div><span>👑</span><div><small>OWNER ACCESS</small><strong>${esc(email)}</strong></div></div><p>${esc(copy("สิทธิ์นี้ตรวจจาก Supabase app_admins","Access verified by Supabase app_admins"))}</p></section><section class="v848-admin-kpis"><article><span>🎟</span><small>${esc(copy("Codes ทั้งหมด","Total codes"))}</small><strong>${stats.total}</strong></article><article><span>🟢</span><small>${esc(copy("กำลังใช้งาน","Active"))}</small><strong>${stats.active}</strong></article><article><span>🎁</span><small>${esc(copy("Redeem ทั้งหมด","Redemptions"))}</small><strong>${stats.uses}</strong></article><article><span>👥</span><small>${esc(copy("User ล่าสุด","Recent users"))}</small><strong>${stats.users}</strong></article></section>${codeFormHtml()}<section class="v848-admin-card"><div class="v848-card-head"><div><p class="eyebrow">REWARD CODES</p><h3>${esc(copy("Code ที่สร้างไว้","Created codes"))}</h3></div><button id="v848RefreshAdmin" class="outline-btn" type="button">↻ ${esc(copy("รีเฟรช","Refresh"))}</button></div>${codeListHtml()}</section><section class="v848-admin-card"><div class="v848-card-head"><div><p class="eyebrow">RECENT REDEEMS</p><h3>${esc(copy("ประวัติการใช้ Code ล่าสุด","Recent redemptions"))}</h3></div></div>${recentRedemptionsHtml()}</section>${economyToolsHtml()}`);
+    root.insertAdjacentHTML("beforeend",`<section class="v848-owner-hero"><div><span>👑</span><div><small>OWNER ACCESS</small><strong>${esc(email)}</strong></div></div><p>${esc(copy("สิทธิ์ Owner ได้รับการยืนยันแล้ว","Owner access verified"))}</p></section><section class="v848-admin-kpis"><article><span>🎟</span><small>${esc(copy("Codes ทั้งหมด","Total codes"))}</small><strong>${stats.total}</strong></article><article><span>🟢</span><small>${esc(copy("กำลังใช้งาน","Active"))}</small><strong>${stats.active}</strong></article><article><span>🎁</span><small>${esc(copy("Redeem ทั้งหมด","Redemptions"))}</small><strong>${stats.uses}</strong></article><article><span>👥</span><small>${esc(copy("User ล่าสุด","Recent users"))}</small><strong>${stats.users}</strong></article></section>${codeFormHtml()}<section class="v848-admin-card"><div class="v848-card-head"><div><p class="eyebrow">REWARD CODES</p><h3>${esc(copy("Code ที่สร้างไว้","Created codes"))}</h3></div><button id="v848RefreshAdmin" class="outline-btn" type="button">↻ ${esc(copy("รีเฟรช","Refresh"))}</button></div>${codeListHtml()}</section><section class="v848-admin-card"><div class="v848-card-head"><div><p class="eyebrow">RECENT REDEEMS</p><h3>${esc(copy("ประวัติการใช้ Code ล่าสุด","Recent redemptions"))}</h3></div></div>${recentRedemptionsHtml()}</section>${economyToolsHtml()}`);
     bindDeveloper();
     const ownerChestTitle=root.querySelector(".v848-owner-chests")?.closest("article")?.querySelector("strong");
     if(ownerChestTitle) ownerChestTitle.textContent=copy("\u{1F381} \u0e40\u0e1e\u0e34\u0e48\u0e21\u0e01\u0e25\u0e48\u0e2d\u0e07\u0e40\u0e02\u0e49\u0e32\u0e04\u0e25\u0e31\u0e07","\u{1F381} Add unopened chests to Inventory");
@@ -3499,7 +3491,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const q = (sel, root = document) => root.querySelector(sel);
   const qa = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -3779,8 +3771,8 @@
     const delta = serverBalance - localSum;
     if (delta !== 0) list.push({
       id: "secure:v8501:server-balance", amount: delta,
-      type: "server_balance", labelTh: "Supabase verified balance",
-      labelEn: "Supabase verified balance",
+      type: "server_balance", labelTh: "ยอด Coin ที่บันทึกแล้ว",
+      labelEn: "ยอด Coin ที่บันทึกแล้ว",
       createdAt:oldEntry?.amount===delta ? oldEntry.createdAt : new Date().toISOString(),
       meta:oldEntry?.amount===delta ? oldEntry.meta : { securityVersion: VERSION }
     });
@@ -3844,7 +3836,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
 
@@ -3909,7 +3901,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4070,7 +4062,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -4341,7 +4333,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const q = (selector, root = document) => root.querySelector(selector);
   const isThai = () => localStorage.getItem("wp-language") !== "en";
@@ -4606,7 +4598,7 @@
  */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const $ = id => document.getElementById(id);
   const one = (selector, root = document) => root.querySelector(selector);
   const all = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -5000,7 +4992,7 @@
    Presentation preferences only; no economy, auth or transaction logic. */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const KEYS = { size:"wp-v8602-ui-size", icons:"wp-v8602-icon-style", density:"wp-density" };
   const VALUES = { size:["small","default","large"], icons:["modern","classic"], density:["compact","comfortable","spacious"] };
   const $ = id => document.getElementById(id);
@@ -5147,7 +5139,7 @@
  */
 (() => {
   'use strict';
-  const VERSION = '8.7.10.3.6';
+  const VERSION = '8.7.10.3.6.1';
   const BANK_BACKUP = 'wdj-v8601-guest-bank-backup';
   const BANK_OWNER = 'wdj-v8601-cloud-bank-owner';
   const BANK_BOUND = 'wdj-v8603-bank-bound-user';
@@ -5203,22 +5195,11 @@
     // Intentionally omit profile, email, auth tokens, and unrelated localStorage.
     return {format:1,bank,trades,source:'original_browser',warning:'unverified_client_evidence'};
   }
-  function myBadgeText() {
-    if (!myRows.length) return '';
-    const pending=myRows.filter(x=>x.status==='pending').length;
-    const approved=myRows.filter(x=>x.status==='approved').length;
-    if(pending) return tr('ข้อมูลเก่าถูกสำรองแล้ว รอตรวจสอบ','Old data backed up; review pending');
-    if(approved) return tr('ตรวจสอบข้อมูลเก่าเรียบร้อยแล้ว','Old data reviewed');
-    return tr('ตรวจสอบคำขอกู้คืนเรียบร้อยแล้ว','Recovery request reviewed');
-  }
   function updateUserNotice() {
-    const message=myBadgeText();
+    // V8.7.10.3.6.1.1: Legacy recovery is still checked and kept as-is.
+    // Remove the old inline banner from everyday Bank/Exchange pages.
     for (const id of ['v84ExchangePage','v84BankPage','v83BankPage']) {
-      const page=document.getElementById(id); if(!page)continue;
-      let note=page.querySelector('.wdj-recovery-notice');
-      if(!message){note?.remove();continue;}
-      if(!note){note=document.createElement('p');note.className='wdj-recovery-notice';page.prepend(note);}
-      note.textContent=message;
+      document.getElementById(id)?.querySelector('.wdj-recovery-notice')?.remove();
     }
   }
   async function checkMyCases(expected=uid()) {
@@ -7246,7 +7227,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 /* ===== V8.7.10.3.4 - secure Chest Inventory (presentation + RPC client only) ===== */
 (() => {
   "use strict";
-  const VERSION = "8.7.10.3.6";
+  const VERSION = "8.7.10.3.6.1";
   const KINDS = ["daily", "weekly", "mystery"];
   const ICONS = {daily:"\u{1F381}",weekly:"\u{1F3C6}",mystery:"\u{1F3B2}"};
   const state = {uid:"",items:[],loaded:false,loading:null,at:0,busy:"",error:""};
@@ -7546,7 +7527,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
         const serverReady=d.id==='checkin'||(d.id==='reflection'&&!!b.checkedInAt&&journalReady)||(d.id==='focus'&&!!b.checkedInAt&&Number(b.focusMinutes||0)>=config.focus);
         const enabled=objectiveDone&&serverReady;
         const desc=txt(d.descTh,d.descEn);
-        const requirement=`<div class="wdj-mission-server-gate"><small>${serverReady?'✓':'🔒'} ${esc(d.secureRequirement)} · ${txt('ยืนยัน Coin โดย Supabase','Coins verified by Supabase')}</small></div>`;
+        const requirement=`<div class="wdj-mission-server-gate"><small>${serverReady?'✓':'🔒'} ${esc(d.secureRequirement)}</small></div>`;
         const status=requirement+(d.id==='reflection'&&!got&&!journalReady?`<div class="wdj-unified-journal-link"><small>${txt('ยังไม่พบบันทึกสิ่งที่เรียนรู้ของวันนี้','No learning note saved for today')}</small><button type="button" class="outline-btn" data-unified-go-journal>${txt('ไปหน้าบันทึกประจำวัน','Open Daily Journal')} ↗</button></div>`:'');
         return `<article class="v82-mission-card v853-mission-card ${got?'claimed':enabled?'done':''}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(txt(d.th,d.en))}</strong><span class="wdj-dual-reward">+${d.coin} 🪙 <em>+10 Quest XP</em></span></div><p>${esc(desc)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${total>1?`${Math.min(Math.floor(progress),Math.ceil(total))}/${Math.ceil(total)}`:`${Math.min(Math.round(progress),1)}/1`}${total>1&&d.objective?.id&&['half_shift','focus_4h','strong_finish','full_shift'].includes(d.objective.id)?` ${txt('นาที','min')}`:''}</small></div>${status}</div><button type="button" data-unified-mission="${d.id}" ${got||!enabled||state.busy?'disabled':''}>${got?txt('✓ รับแล้ว','✓ Claimed'):enabled?txt('รับ Coin + XP','Claim Coin + XP'):txt('กำลังทำ','In progress')}</button></article>`;
       }).join('')}</section>
