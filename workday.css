@@ -5822,3 +5822,26 @@ body.v850-shell-refresh .v7-workspace main.dashboard {overflow-x:clip;}
 .wdj-exchange-cloud-note {border:1px solid var(--border, rgba(99,116,153,.4));border-radius:14px;padding:14px 18px;margin:0 0 14px;background:var(--card-bg,rgba(89,108,148,.09));color:var(--text,inherit);}
 .wdj-exchange-cloud-note strong {display:block;font-weight:800;margin-bottom:5px;}
 .wdj-exchange-cloud-note p {margin:0;line-height:1.55;font-size:.9rem;opacity:.9;}
+
+
+/* V8.7.10.3.7 — compact reward/Quest XP notifications (not error or confirmation modals). */
+.toast-stack .app-toast.wdj-compact-reward-toast {
+  display: block;
+  width: min(270px, calc(100vw - 28px));
+  min-height: 0;
+  padding: 8px 11px;
+  border-radius: 11px;
+  margin-left: auto;
+  box-shadow: 0 8px 24px rgba(15,23,42,.12);
+  font-size: .73rem;
+  line-height: 1.4;
+}
+.toast-stack .app-toast.wdj-compact-reward-toast:has(> span:first-child) {
+  display: grid;
+  grid-template-columns: 27px minmax(0,1fr);
+  gap: 8px;
+}
+.toast-stack .app-toast.wdj-compact-reward-toast > span:first-child {
+  width: 27px; height: 27px; border-radius: 8px; font-size: .83rem;
+}
+.toast-stack .app-toast.wdj-compact-reward-toast strong {font-size:.73rem;line-height:1.4;}

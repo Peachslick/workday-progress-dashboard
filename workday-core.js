@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10.3.6.3";
+  const APP_VERSION = "8.7.10.3.7";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";

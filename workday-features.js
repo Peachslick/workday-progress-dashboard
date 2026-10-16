@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.6.3";
+  const VERSION = "8.7.10.3.7";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -302,7 +302,7 @@
 
   function toast(icon,message,type="info"){
     const stack=$("toastStack"); if(!stack)return;
-    const node=document.createElement("div");node.className=`app-toast v7-toast toast-${type}`;node.setAttribute("role",type==="error"?"alert":"status");node.innerHTML=`<span>${icon}</span><div><strong>${esc(message)}</strong></div>`;stack.appendChild(node);
+    const node=document.createElement("div");node.className=`app-toast v7-toast toast-${type}${/(?:Quest XP|mission|ภารกิจ|^\+\d+ Coins ·)/i.test(message)?" wdj-compact-reward-toast":""}`;node.setAttribute("role",type==="error"?"alert":"status");node.innerHTML=`<span>${icon}</span><div><strong>${esc(message)}</strong></div>`;stack.appendChild(node);
     setTimeout(()=>{node.classList.add("out");setTimeout(()=>node.remove(),250);},3400);
   }
 
@@ -2715,9 +2715,9 @@
   }
 
   const exchangeDayCache = new Map();
-  const cloudExchange={uid:"",status:"init",rows:[],pending:null,busy:false,error:"",last:0};
+  const cloudExchange={uid:"",status:"init",rows:[],positions:[],quotes:{},marketKey:"",marketSlot:-1,marketOpen:false,realized:0,totalFees:0,pending:null,busy:false,error:"",last:0};
   const signedInExchange=()=>!!window.WorkdayV8Cloud?.getUser?.()?.id;
-  function resetCloudExchange(){cloudExchange.uid="";cloudExchange.status="init";cloudExchange.rows=[];cloudExchange.pending=null;cloudExchange.busy=false;cloudExchange.error="";cloudExchange.last=0;}
+  function resetCloudExchange(){Object.assign(cloudExchange,{uid:"",status:"init",rows:[],positions:[],quotes:{},marketKey:"",marketSlot:-1,marketOpen:false,realized:0,totalFees:0,pending:null,busy:false,error:"",last:0});}
   function exchangeCloudRows(value){
     if(!Array.isArray(value))return [];
     return value.filter(t=>t&&["buy","sell"].includes(t.side)&&/^[A-Z0-9]{1,12}$/.test(String(t.symbol||""))
@@ -2738,12 +2738,17 @@
         if(error)throw error;
         if(window.WorkdayV8Cloud?.getUser?.()?.id!==uid)return;
         if(!data||!Array.isArray(data.trades))throw new Error("INVALID_CLOUD_EXCHANGE_RESPONSE");
+        if(!Array.isArray(data.positions)||!data.quotes||typeof data.quotes!=="object"||!/^\d{4}-\d{2}-\d{2}$/.test(String(data.marketKey||"")))throw new Error("INVALID_CLOUD_PORTFOLIO");
         cloudExchange.rows=exchangeCloudRows(data.trades);
+        cloudExchange.positions=data.positions.filter(p=>EXCHANGE_STOCKS.some(s=>s.symbol===p.symbol)&&Number(p.qty)>0).map(p=>({symbol:p.symbol,qty:Number(p.qty),avgCost:Number(p.avgCost)||0,firstBuyAt:p.firstBuyAt||null}));
+        cloudExchange.quotes=data.quotes;cloudExchange.marketKey=String(data.marketKey);cloudExchange.marketSlot=Number(data.marketSlot);cloudExchange.marketOpen=!!data.marketOpen;
+        cloudExchange.realized=Number(data.realized)||0;cloudExchange.totalFees=Number(data.totalFees)||0;
         cloudExchange.status="ready";cloudExchange.error="";cloudExchange.last=Date.now();
       }catch(e){
         if(window.WorkdayV8Cloud?.getUser?.()?.id!==uid)return;
         cloudExchange.status="unsupported";cloudExchange.error=String(e?.message||e);
-        cloudExchange.rows=[]; // Never show a different user's local holdings as Cloud holdings.
+        cloudExchange.rows=[];cloudExchange.positions=[];cloudExchange.quotes={};
+        // Never show a different user's local holdings as Cloud holdings.
       }finally{
         if(window.WorkdayV8Cloud?.getUser?.()?.id===uid && location.hash.includes("/exchange"))renderExchange();
       }
@@ -2772,8 +2777,19 @@
     const client=window.WorkdayV8Cloud?.getClient?.(),uid=window.WorkdayV8Cloud?.getUser?.()?.id;
     if(!client||!uid || !navigator.onLine){toast("☁",lang()==="th"?"ต้องออนไลน์เพื่อซื้อขายด้วยบัญชี Login":"Cloud trading requires an online account","error");return;}
     const verb=side==="buy"?(lang()==="th"?"ซื้อ":"Buy"):(lang()==="th"?"ขาย":"Sell");
-    if(!confirm(lang()==="th"?`${verb} ${symbol} ${qty} หุ้น?\nราคาบนหน้าจอประมาณ ${estimatedPrice.toFixed(2)} Coin/หุ้น\nServer จะยืนยันราคา ยอด Coin และจำนวนหุ้นอีกครั้ง`:`${verb} ${qty} ${symbol} shares?\nIndicative price ${estimatedPrice.toFixed(2)} Coins. The server will validate price, wallet and holdings.`))return;
-    const transactionId=crypto.randomUUID(); // idempotency key; safe to retry only with same ID
+    if(!confirm(lang()==="th"?`${verb} ${symbol} ${qty} หุ้น?\nราคาบนหน้าจอประมาณ ${estimatedPrice.toFixed(2)} Coin/หุ้น\nระบบจะตรวจสอบราคา Coin และจำนวนหุ้นอีกครั้ง`:`${verb} ${qty} ${symbol} shares?\nIndicative price ${estimatedPrice.toFixed(2)} Coins. The system checks the final price, wallet and holdings.`))return;
+    // Reuse the same nonce on a retry when a network response was lost.
+    const retryKey=`wdj-exchange-pending-${uid}`;
+    let previous=null;
+    try{previous=JSON.parse(sessionStorage.getItem(retryKey)||"null");}catch{}
+    if(previous?.id && cloudExchange.rows.some(t=>t.id===previous.id)){
+      previous=null;try{sessionStorage.removeItem(retryKey);}catch{}
+    }
+    if(previous && (previous.side!==side||previous.symbol!==symbol||previous.qty!==qty)){
+      toast("↻",lang()==="th"?"กรุณาตรวจสอบรายการซื้อขายล่าสุด ก่อนทำรายการใหม่":"Check your recent trade before submitting another order.","warning");return;
+    }
+    const transactionId=previous?.id||crypto.randomUUID();
+    try{sessionStorage.setItem(retryKey,JSON.stringify({id:transactionId,side,symbol,qty}));}catch{}
     cloudExchange.busy=true;renderExchange();
     try{
       const {data,error}=await client.rpc("wdj_exchange_trade_secure",{
@@ -2785,13 +2801,29 @@
       if(data.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
       await window.WorkdayEconomySecurity?.refresh?.({force:true});
       await loadCloudExchange({force:true});
-      toast("✓",lang()==="th"?"ซื้อขายสำเร็จและบันทึกข้อมูลแล้ว":"Trade completed and saved","success");
+      try{sessionStorage.removeItem(retryKey);}catch{}
+      toast("✓",lang()==="th"?`ซื้อขาย ${symbol} สำเร็จ @ ${Number(data.price).toFixed(2)} Coin`:`${symbol} trade saved @ ${Number(data.price).toFixed(2)} Coins`,"success");
     }catch(e){
-      toast("!",lang()==="th"?"ยังยืนยันรายการไม่ได้ กรุณาตรวจสอบประวัติการซื้อขายก่อนลองอีกครั้ง":"Trade not confirmed. Verify server history before retrying.","error");
       console.warn("Cloud Exchange trade was not confirmed:",e);
-      // Do not credit a wallet, deduct shares or write local history on failure.
+      // Read back the receipt before deciding whether an interrupted request committed.
       await loadCloudExchange({force:true}).catch(()=>{});
       await window.WorkdayEconomySecurity?.refresh?.({force:true}).catch(()=>{});
+      if(cloudExchange.rows.some(t=>t.id===transactionId)){
+        try{sessionStorage.removeItem(retryKey);}catch{}
+        toast("✓",lang()==="th"?"รายการซื้อขายถูกบันทึกแล้ว":"Your trade was saved","success");
+      }else{
+        const code=String(e?.message||"");
+        const known=code.includes("MARKET_CLOSED")?(lang()==="th"?"ตลาดปิดแล้ว กรุณารอรอบถัดไป":"Market closed. Try next session."):
+          code.includes("INSUFFICIENT_COINS")?(lang()==="th"?"Coin ใน Wallet ไม่เพียงพอ":"Insufficient Coins in Wallet"):
+          code.includes("INSUFFICIENT_SHARES")?(lang()==="th"?"จำนวนหุ้นที่ถืออยู่ไม่เพียงพอ":"Not enough shares"):
+          (lang()==="th"?"ยังยืนยันรายการไม่ได้ กรุณาตรวจสอบประวัติก่อนลองอีกครั้ง":"Trade not confirmed. Check trade history before retrying.");
+        toast("!",known,"error");
+        if(/MARKET_CLOSED|INSUFFICIENT_COINS|INSUFFICIENT_SHARES|UNKNOWN_STOCK|INVALID_TRADE/.test(code)){
+          try{sessionStorage.removeItem(retryKey);}catch{}
+        }
+        // Ambiguous network failures preserve the same nonce for a safe retry.
+        // No local Coin/share changes ever occur for a signed-in account.
+      }
     }finally{cloudExchange.busy=false;refreshAll();}
   }
   function exchangeWatchlist(){ const rows=read(KEYS.exchangeWatch,[]); return new Set(Array.isArray(rows)?rows:[]); }
@@ -2866,7 +2898,7 @@
   function updateExchangeClock(){
     if(!location.hash.includes("/exchange"))return;
     const ctx=exchangeMarketContext(),signature=exchangeMarketSignature(ctx);
-    if(exchangeClockSignature&&signature!==exchangeClockSignature){exchangeClockSignature=signature;renderExchange();return;}
+    if(exchangeClockSignature&&signature!==exchangeClockSignature){exchangeClockSignature=signature;if(signedInExchange())void loadCloudExchange({force:true});renderExchange();return;}
     exchangeClockSignature=signature;
     const next=$("v8474MarketNext"),countdown=$("v8474MarketCountdown");
     if(next)next.textContent=`${lang()==="th"?"รอบถัดไป":"Next"}: ${ctx.nextLabel}`;
@@ -2875,7 +2907,10 @@
   function exchangeSnapshot(stock,ctx=exchangeMarketContext()){
     const day=exchangeDayPath(stock.symbol,ctx.key),lastSlot=Math.min(EXCHANGE_SLOTS.length-1,Math.max(0,ctx.slot)),price=ctx.slot>=0?day.slots[lastSlot]:day.prevClose;
     const seen=[day.open,...day.slots.slice(0,lastSlot+1)],changePct=day.prevClose?((price-day.prevClose)/day.prevClose*100):0;
-    return {...stock,price:exchangeRound(price),open:day.open,prevClose:day.prevClose,high:exchangeRound(Math.max(...seen)),low:exchangeRound(Math.min(...seen)),changePct:exchangeRound(changePct),event:exchangeEventForKey(ctx.key)};
+    const serverQuote=signedInExchange()&&cloudExchange.status==="ready"&&cloudExchange.marketKey===ctx.key&&cloudExchange.marketSlot===ctx.slot
+      ?Number(cloudExchange.quotes?.[stock.symbol]):NaN;
+    const displayPrice=Number.isFinite(serverQuote)&&serverQuote>0?serverQuote:exchangeRound(price);
+    return {...stock,price:displayPrice,open:day.open,prevClose:day.prevClose,high:exchangeRound(Math.max(...seen,displayPrice)),low:exchangeRound(Math.min(...seen,displayPrice)),changePct:day.prevClose?exchangeRound((displayPrice-day.prevClose)/day.prevClose*100):0,event:exchangeEventForKey(ctx.key)};
   }
   function exchangeSnapshots(ctx=exchangeMarketContext()){ return EXCHANGE_STOCKS.map(s=>exchangeSnapshot(s,ctx)); }
   function exchangeBusinessKeys(endKey,count){ const out=[],d=dateFromKey(endKey);let cur=new Date(d);while(out.length<count){if(exchangeBusinessDay(cur))out.unshift(dateKey(cur));cur.setDate(cur.getDate()-1);}return out; }
@@ -2893,6 +2928,18 @@
     return `<div class="v84-chart-wrap ${up?"up":"down"}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img"><defs><linearGradient id="v84Area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".22"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><polygon points="${area}" fill="url(#v84Area)"></polygon><polyline points="${line}" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline></svg><div class="v84-chart-axis"><span>${esc(points[0]?.label||"")}</span><b>${exchangeRound(min).toFixed(2)}–${exchangeRound(max).toFixed(2)} 🪙</b><span>${esc(points.at(-1)?.label||"")}</span></div></div>`;
   }
   function exchangePortfolio(trades=exchangeTrades(),snaps=exchangeSnapshots()){
+    if(signedInExchange()){
+      const items=cloudExchange.status==="ready"?cloudExchange.positions:[];
+      const positions=items.map(p=>{
+        const snap=snaps.find(x=>x.symbol===p.symbol)||exchangeSnapshot(exchangeStock(p.symbol));
+        const cost=p.qty*p.avgCost,value=p.qty*snap.price,pnl=value-cost;
+        return {...p,stock:exchangeStock(p.symbol),price:snap.price,cost:exchangeRound(cost),value:exchangeRound(value),pnl:exchangeRound(pnl),pnlPct:cost?pnl/cost*100:0};
+      });
+      const value=positions.reduce((sum,p)=>sum+p.value,0),cost=positions.reduce((sum,p)=>sum+p.cost,0);
+      const realized=cloudExchange.status==="ready"?cloudExchange.realized:0,totalFees=cloudExchange.status==="ready"?cloudExchange.totalFees:0;
+      const unrealized=value-cost,totalPnl=realized+unrealized;
+      return {positions,value:exchangeRound(value),cost:exchangeRound(cost),realized:exchangeRound(realized),unrealized:exchangeRound(unrealized),totalPnl:exchangeRound(totalPnl),returnPct:cost?exchangeRound(totalPnl/cost*100):0,totalFees:exchangeRound(totalFees)};
+    }
     const positions={};let realized=0,totalFees=0;
     [...trades].sort((a,b)=>new Date(a.createdAt||0)-new Date(b.createdAt||0)).forEach(tr=>{
       const p=positions[tr.symbol]||(positions[tr.symbol]={symbol:tr.symbol,qty:0,avgCost:0,firstBuyAt:null});const qty=Math.max(0,Number(tr.qty)||0),fee=Math.max(0,Number(tr.fee)||0);totalFees+=fee;
@@ -2912,10 +2959,11 @@
   function exchangeTrade(side,symbol,qtyRaw){
     if(signedInExchange()){
       const qty=Number(qtyRaw),ctx=exchangeMarketContext();
-      if(!Number.isSafeInteger(qty)||qty<1||qty>100000){toast("!",lang()==="th"?"กรุณาระบุจำนวนหุ้นที่ถูกต้อง":"Invalid share quantity","error");return;}
+      if(!Number.isSafeInteger(qty)||qty<1||qty>5000){toast("!",lang()==="th"?"กรุณาระบุจำนวนหุ้นที่ถูกต้อง":"Invalid share quantity","error");return;}
       if(!ctx.canTrade){toast("📈",lang()==="th"?"ตลาดปิดอยู่":"Market is closed","warning");return;}
-      if(cloudExchange.status!=="ready"){
-        toast("🔐",lang()==="th"?"การซื้อขายหุ้นสำหรับบัญชีออนไลน์ยังไม่พร้อมใช้งาน":"Online trading is temporarily unavailable","warning");return;
+      if(cloudExchange.status!=="ready"||cloudExchange.marketKey!==ctx.key||cloudExchange.marketSlot!==ctx.slot||!cloudExchange.marketOpen){
+        void loadCloudExchange({force:true});
+        toast("↻",lang()==="th"?"กำลังตรวจสอบราคาล่าสุด กรุณาลองอีกครั้ง":"Refreshing the quote. Please try again.","warning");return;
       }
       void submitCloudExchangeTrade(side,symbol,qty,exchangeSnapshot(exchangeStock(symbol),ctx).price);return;
     }
@@ -2969,6 +3017,7 @@
     const portfolioRows=portfolio.positions.length?portfolio.positions.map(p=>`<button type="button" class="v84-portfolio-row" data-v84-select="${p.symbol}"><span>${p.stock.icon}</span><div><strong>${p.symbol}</strong><small>${p.qty} ${lang()==="th"?"หุ้น":"shares"} · Avg ${p.avgCost.toFixed(2)}</small></div><b>${p.value.toFixed(2)} 🪙</b><em class="${p.pnl>=0?"up":"down"}">${p.pnl>=0?"+":""}${p.pnl.toFixed(2)} (${p.pnlPct>=0?"+":""}${p.pnlPct.toFixed(1)}%)</em></button>`).join(""):`<div class="empty-state">💼 ${lang()==="th"?"ยังไม่มีหุ้นใน Portfolio":"Your portfolio is empty"}</div>`;
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
     const cloudMode=signedInExchange();
+    const exchangeReady=!cloudMode||(cloudExchange.status==="ready"&&cloudExchange.marketKey===ctx.key&&cloudExchange.marketSlot===ctx.slot&&cloudExchange.marketOpen&&!cloudExchange.busy);
     const legacyCount=cloudMode?(Array.isArray(read(KEYS.exchangeTrades,[]))?read(KEYS.exchangeTrades,[]).length:0):0;
     const oldTradeRows=cloudMode?read(KEYS.exchangeTrades,[]):[];
     const deviceTrades=(Array.isArray(oldTradeRows)?oldTradeRows:[]).filter(tr=>tr && (tr.side==="buy" || tr.side==="sell") && Number.isFinite(Number(tr.qty)) && Number.isFinite(Number(tr.price))).slice(-100);
@@ -2981,7 +3030,7 @@
       <section class="v84-movers"><article><p class="eyebrow">TOP GAINERS</p>${gainers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>+${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article><p class="eyebrow">TOP LOSERS</p>${losers.map(s=>`<button data-v84-select="${s.symbol}"><span>${s.icon}</span><strong>${s.symbol}</strong><b>${s.changePct.toFixed(2)}%</b></button>`).join("")}</article><article class="v84-watchlist"><p class="eyebrow">MY WATCHLIST</p><div>${watchMarkup}</div></article></section>
       <section class="v84-market-grid"><article class="v84-market-list"><div class="v84-section-head"><div><p class="eyebrow">MARKET</p><h3>${lang()==="th"?"หุ้นจำลองทั้งหมด":"All simulated stocks"}</h3></div><small>${lang()==="th"?"ค่าธรรมเนียมซื้อ/ขาย 1%":"1% buy/sell fee"}</small></div><div class="v84-stock-list">${stockRows}</div></article>
       <article class="v84-stock-detail"><div class="v84-stock-detail-head"><div class="v84-selected-icon">${snap.icon}</div><div><span>${snap.symbol} · ${esc(lang()==="th"?snap.sectorTh:snap.sectorEn)}</span><h3>${esc(lang()==="th"?snap.th:snap.name)}</h3><p>${esc(lang()==="th"?snap.descTh:snap.descEn)}</p></div><button type="button" data-v84-watch="${snap.symbol}" class="v84-detail-watch ${watch.has(snap.symbol)?"on":""}">${watch.has(snap.symbol)?"★":"☆"}</button></div><div class="v84-price-line"><strong>${snap.price.toFixed(2)} <small>🪙</small></strong><b class="${snap.changePct>=0?"up":"down"}">${snap.changePct>=0?"+":""}${snap.changePct.toFixed(2)}%</b><span class="v84-risk ${snap.risk}">${esc(exchangeRiskLabel(snap.risk))}</span></div><div class="v84-ohlc"><span><small>OPEN</small><b>${snap.open.toFixed(2)}</b></span><span><small>HIGH</small><b>${snap.high.toFixed(2)}</b></span><span><small>LOW</small><b>${snap.low.toFixed(2)}</b></span><span><small>PREV</small><b>${snap.prevClose.toFixed(2)}</b></span></div><div class="v84-range-tabs">${[["today","Today"],["5d","5D"],["all","All"]].map(([id,label])=>`<button type="button" data-v84-range="${id}" class="${range===id?"active":""}">${label}</button>`).join("")}</div>${exchangeChart(points)}
-      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · ระบบจะตรวจสอบราคาก่อนซื้อขาย":"Indicative quote · final prices and funds are checked before trading"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
+      <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&exchangeReady?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&exchangeReady?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · ระบบจะตรวจสอบราคาก่อนซื้อขาย":"Indicative quote · final prices and funds are checked before trading"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
       <section class="v84-lower-grid"><article class="v84-portfolio-card"><div class="v84-section-head"><div><p class="eyebrow">PORTFOLIO</p><h3>${lang()==="th"?"สินทรัพย์ของฉัน":"My holdings"}</h3></div><span>${portfolio.positions.length} ${lang()==="th"?"บริษัท":"companies"}</span></div><div class="v84-portfolio-list">${portfolioRows}</div><div class="v84-portfolio-foot"><span>Cost Basis <b>${portfolio.cost.toFixed(2)} 🪙</b></span><span>Realized P/L <b class="${portfolio.realized>=0?"up":"down"}">${portfolio.realized>=0?"+":""}${portfolio.realized.toFixed(2)}</b></span><span>Fees <b>-${portfolio.totalFees.toFixed(2)} 🪙</b></span></div></article><article class="v84-ach-card"><div class="v84-section-head"><div><p class="eyebrow">TRADING ACHIEVEMENTS</p><h3>${lang()==="th"?"เส้นทางนักลงทุน":"Investor journey"}</h3></div><span>${Object.keys(earned).length}/${EXCHANGE_ACHIEVEMENTS.length}</span></div><div class="v84-ach-list">${ach}</div></article></section>
       <section class="v84-history-card"><div class="v84-section-head"><div><p class="eyebrow">TRADE HISTORY</p><h3>${lang()==="th"?"ประวัติการซื้อขาย":"Trade history"}</h3></div><span>${trades.length} trades</span></div><div class="v84-history-list">${exchangeTradeHistoryMarkup(trades)}</div></section>
       ${cloudMode&&deviceTrades.length?`<details class="v84-history-card"><summary style="cursor:pointer;font-weight:700">${lang()==="th"?`📜 ประวัติซื้อขายเดิมในอุปกรณ์ (${deviceTrades.length} รายการ)`:`📜 Previous device trade history (${deviceTrades.length})`}</summary><p class="muted" style="margin:10px 0">${lang()==="th"?"ใช้ตรวจสอบรายการเดิมเท่านั้น อาจเป็นข้อมูลที่เคยใช้ร่วมกันบนอุปกรณ์นี้ ไม่รวมเป็นหุ้นหรือ Coin ในบัญชีออนไลน์":"For review only. May include another user's device records; not counted as online shares or Coins."}</p><div class="v84-history-list">${exchangeTradeHistoryMarkup(deviceTrades)}</div></details>`:""}
@@ -7473,7 +7522,7 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   function reset(){const a=uid();if(state.account===a)return;state.account=a;state.board=null;state.error='';state.loading=null;state.busy=false;state.last=0;state.lastWork=0;state.workPending=false;}
   function toast(message,kind='success'){
     const stack=document.getElementById('toastStack');if(!stack)return;
-    const el=document.createElement('div');el.className=`app-toast v7-toast toast-${kind}`;el.setAttribute('role','status');el.textContent=message;
+    const el=document.createElement('div');el.className=`app-toast v7-toast wdj-compact-reward-toast toast-${kind}`;el.setAttribute('role','status');el.textContent=message;
     stack.appendChild(el);setTimeout(()=>el.remove(),4000);
   }
   function xp(board){
