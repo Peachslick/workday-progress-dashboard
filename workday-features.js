@@ -1475,6 +1475,65 @@
     const list = read(KEYS.ledger, []);
     return Array.isArray(list) ? list : [];
   }
+  // V8.7.10.3.6.2: Read-only Coin History. Never use history rows to change balance.
+  const coinHistoryCloud = {uid:"", status:"init", rows:[], pending:null, checkedAt:0, error:""};
+  function signedInCoinUserId(){
+    return window.WorkdayV8Cloud?.isSignedIn?.() ? String(window.WorkdayV8Cloud?.getUser?.()?.id||"") : "";
+  }
+  async function loadVerifiedCoinHistory(force=false){
+    const uid=signedInCoinUserId(), client=window.WorkdayV8Cloud?.getClient?.();
+    if(!uid||!client)return;
+    if(coinHistoryCloud.uid!==uid){
+      coinHistoryCloud.uid=uid;coinHistoryCloud.status="init";coinHistoryCloud.rows=[];
+      coinHistoryCloud.pending=null;coinHistoryCloud.checkedAt=0;coinHistoryCloud.error="";
+    }
+    if(coinHistoryCloud.pending)return coinHistoryCloud.pending;
+    if(!force&&coinHistoryCloud.checkedAt&&Date.now()-coinHistoryCloud.checkedAt<30000)return;
+    coinHistoryCloud.status="loading";
+    const request=(async()=>{
+      try{
+        const {data,error}=await client.from("work_coin_transactions")
+          .select("id,source_key,amount,kind,label,created_at")
+          .eq("user_id",uid).order("created_at",{ascending:false}).limit(200);
+        if(error)throw error;
+        if(signedInCoinUserId()!==uid)return;
+        coinHistoryCloud.rows=Array.isArray(data)?data:[];
+        coinHistoryCloud.status="ready";coinHistoryCloud.error="";
+      }catch(e){
+        if(signedInCoinUserId()!==uid)return;
+        coinHistoryCloud.status="error";coinHistoryCloud.error=String(e?.message||e);
+      }finally{
+        if(signedInCoinUserId()===uid){
+          coinHistoryCloud.checkedAt=Date.now();
+          if(localStorage.getItem(KEYS.tab)==="history" && $("v81RewardsPage"))renderShop();
+        }
+      }
+    })();
+    coinHistoryCloud.pending=request;
+    try{await request;}finally{if(coinHistoryCloud.pending===request)coinHistoryCloud.pending=null;}
+  }
+  function coinHistoryRowMarkup(rows){
+    return rows.map(item=>{
+      const value=Number(item?.amount)||0;
+      const label=String(item?.labelTh||item?.labelEn||item?.label||item?.kind||item?.source_key||item?.id||"รายการ Coin").replace(/Supabase/gi,"ระบบ");
+      const when=item?.createdAt||item?.created_at;
+      return `<div class="v81-history-row ${value>=0?"earn":"spend"}"><span class="v81-history-icon">${value>=0?"＋":"−"}</span><div><strong>${esc(label)}</strong><small>${esc(formatHistoryDate(when))}</small></div><b>${value>=0?"+":""}${esc(value)} 🪙</b></div>`;
+    }).join("");
+  }
+  function coinHistoryReadOnlyMarkup(){
+    const th=lang()==="th";
+    const state=coinHistoryCloud;
+    const cloudRows=state.status==="ready"?state.rows:[];
+    const oldRows=read(KEYS.ledger,[]);
+    // Never display synthetic balance reconciliation entries as earned rewards.
+    const legacy=(Array.isArray(oldRows)?oldRows:[]).filter(item=>item&&item.type!=="server_balance"&&item.id!=="secure:v8501:server-balance").slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,160);
+    const loading=state.status==="init"||state.status==="loading";
+    const cloudNotice=loading?(th?"กำลังโหลดประวัติ Coin…":"Loading Coin history…"):
+      state.status==="error"?(th?"ยังโหลดประวัติไม่สำเร็จ กรุณาลองใหม่":"Unable to load history. Please try again."):
+      cloudRows.length?"":(th?"ยังไม่มีประวัติธุรกรรมในบัญชีออนไลน์":"No account transactions recorded yet.");
+    return `<section class="v84-history-card" style="margin-bottom:14px"><div class="v84-section-head"><div><h3>${th?"ประวัติ Coin ในบัญชี":"Account Coin history"}</h3><small>${th?"รายการล่าสุด (สูงสุด 200 รายการ) ไม่ใช่ยอดรวม Wallet":"Recorded transactions, not the wallet total"}</small></div><span>${state.status==="ready"?cloudRows.length:"—"}</span></div><div class="v81-history-list">${cloudRows.length?coinHistoryRowMarkup(cloudRows):`<div class="empty-state">🪙 ${esc(cloudNotice)}</div>`}</div>${state.status==="error"?`<button type="button" class="outline-btn" data-coin-history-retry>${th?"ลองใหม่":"Retry"}</button>`:""}</section>
+    ${legacy.length?`<details class="v84-history-card"><summary style="cursor:pointer;font-weight:700">${th?`ประวัติเดิมที่เก็บอยู่ในอุปกรณ์ (${legacy.length} รายการ)`:`Previous records saved on this device (${legacy.length})`}</summary><p class="muted" style="margin:10px 0">${th?"ข้อมูลจาก Browser เครื่องนี้อาจรวมรายการของผู้ใช้คนอื่น และยังไม่ได้รับการยืนยันกับบัญชีนี้ ใช้สำหรับตรวจสอบเท่านั้น ไม่เพิ่มยอด Coin":"Device data may include entries from other users and is not account-verified. For review only; does not add Coins."}</p><div class="v81-history-list">${coinHistoryRowMarkup(legacy)}</div></details>`:""}`;
+  }
   function ownedRewards() {
     const list = read(KEYS.owned, []);
     const set = new Set(Array.isArray(list) ? list : []);
@@ -1929,9 +1988,11 @@
     const bal = balance(list), earned = lifetimeEarned(list), spent = lifetimeSpent(list);
     const cloudWallet=!!window.WorkdayV8Cloud?.isSignedIn?.(),loadingCloud=cloudWallet&&!Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.());
     const categoryMap={mascots:MASCOTS,accessories:ACCESSORIES,frames:FRAMES,themes:THEMES,effects:EFFECTS};
+    if(cloudWallet && tab==="history")void loadVerifiedCoinHistory();
     const tabContent = categoryMap[tab]
       ? categoryMap[tab].map(rewardCard).join("")
-      : `<div class="v81-history-list">${list.length ? list.slice(0,160).map(item=>`<div class="v81-history-row ${Number(item.amount)>=0?"earn":"spend"}"><span class="v81-history-icon">${Number(item.amount)>=0?"＋":"−"}</span><div><strong>${esc(historyLabel(item))}</strong><small>${esc(formatHistoryDate(item.createdAt))}</small></div><b>${esc(historyValue(item))}</b></div>`).join("") : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
+      : cloudWallet ? coinHistoryReadOnlyMarkup()
+      : `<div class="v81-history-list">${list.length ? coinHistoryRowMarkup(list.slice(0,160)) : `<div class="empty-state">🪙 ${esc(t("coinHistoryEmpty"))}</div>`}</div>`;
 
     root.innerHTML = `<div class="v7-page-heading"><div class="v7-page-title"><span>🎁</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>${esc(t("shopTitle"))}</h2><p class="muted">${esc(t("shopHelp"))}</p></div></div></div>
       <section class="v81-wallet-hero"><div class="v81-wallet-main"><span>🪙</span><div><small>${esc(t("coinBalance"))}</small><strong>${loadingCloud?"…":bal.toLocaleString(lang()==="th"?"th-TH":"en-US")}</strong></div></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"แหล่งข้อมูล":"Wallet Source"):esc(t("lifetimeEarned"))}</small><b>${cloudWallet?(lang()==="th"?"☁ บัญชีออนไลน์":"☁ Online wallet"):"+"+earned.toLocaleString()}</b></div><div class="v81-wallet-stat"><small>${cloudWallet?(lang()==="th"?"ประวัติ":"History"):esc(t("lifetimeSpent"))}</small><b>${cloudWallet?(lang()==="th"?"เฉพาะยอดยืนยัน":"Verified only"):"-"+spent.toLocaleString()}</b></div></section>
@@ -1947,6 +2008,7 @@
 
     qa("[data-v831-category]",root).forEach(btn=>btn.addEventListener("click",()=>{const map={mascot:"mascots",accessory:"accessories",frame:"frames",theme:"themes",effect:"effects"};localStorage.setItem(KEYS.tab,map[btn.dataset.v831Category]||"mascots");renderShop();}));
     qa("[data-v81-tab]", root).forEach(btn => btn.addEventListener("click", () => { localStorage.setItem(KEYS.tab, btn.dataset.v81Tab); renderShop(); }));
+    q("[data-coin-history-retry]",root)?.addEventListener("click",()=>void loadVerifiedCoinHistory(true));
     qa("[data-v81-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v81Buy.split(":"); purchaseReward(rewardBy(type,id)); }));
     qa("[data-v844-daily-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v844DailyBuy.split(":"); purchaseReward(rewardBy(type,id),"daily"); }));
     qa("[data-v832-weekly-buy]", root).forEach(btn => btn.addEventListener("click", () => { const [type,id]=btn.dataset.v832WeeklyBuy.split(":"); purchaseReward(rewardBy(type,id),"weekly"); }));
@@ -2897,7 +2959,7 @@
   function exchangeTraderRank(portfolio,trades){const score=(portfolio.totalPnl>=300?3:portfolio.totalPnl>=100?2:portfolio.totalPnl>0?1:0)+(portfolio.value>=2500?3:portfolio.value>=1200?2:portfolio.value>=400?1:0)+(trades.length>=10?2:trades.length>=3?1:0);return score>=7?{icon:"👑",th:"ตำนานตลาด",en:"Market Legend"}:score>=5?{icon:"💎",th:"โปรเทรดเดอร์",en:"Pro Trader"}:score>=3?{icon:"📈",th:"นักลงทุน",en:"Investor"}:score>=1?{icon:"🌱",th:"เทรดเดอร์มือใหม่",en:"Rookie Trader"}:{icon:"🧭",th:"นักสำรวจตลาด",en:"Explorer"};}
   function exchangeFinaleInfo(ctx,portfolio,trades){const cfg=API.getConfig(),end=dateFromKey(cfg.endDate),days=Math.max(0,Math.ceil((end.getTime()-ctx.now.getTime())/86400000)),rank=exchangeTraderRank(portfolio,trades),best=[...portfolio.positions].sort((a,b)=>b.pnl-a.pnl)[0],worst=[...portfolio.positions].sort((a,b)=>a.pnl-b.pnl)[0],bestTrade=[...trades].filter(t=>t.side==="sell").sort((a,b)=>(b.realizedPnl||0)-(a.realizedPnl||0))[0];return{days,rank,best,worst,bestTrade};}
   function exchangeEventEffectText(event){const parts=Object.entries(event.effects||{}).map(([s,v])=>`${s} ${v>0?"↑":"↓"}${Math.abs(v)>=.035?"↑":""}`);return parts.join(" · ");}
-  function exchangeTradeHistoryMarkup(trades){if(!trades.length)return `<div class="empty-state">📜 ${lang()==="th"?"ยังไม่มีประวัติการซื้อขาย":"No trades yet"}</div>`;return trades.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,60).map(tr=>`<div class="v84-history-row ${tr.side}"><span>${tr.side==="buy"?"BUY":"SELL"}</span><div><strong>${tr.symbol} · ${tr.qty} ${lang()==="th"?"หุ้น":"shares"} @ ${Number(tr.price).toFixed(2)}</strong><small>${esc(formatHistoryDate(tr.createdAt))} · Fee ${Number(tr.fee||0)} 🪙</small></div><b>${tr.walletAmount>=0?"+":""}${Number(tr.walletAmount||0).toLocaleString()} 🪙</b></div>`).join("");}
+  function exchangeTradeHistoryMarkup(trades){if(!trades.length)return `<div class="empty-state">📜 ${lang()==="th"?"ยังไม่มีประวัติการซื้อขาย":"No trades yet"}</div>`;return trades.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,60).map(tr=>`<div class="v84-history-row ${tr.side}"><span>${tr.side==="buy"?"BUY":"SELL"}</span><div><strong>${esc(tr.symbol)} · ${esc(tr.qty)} ${lang()==="th"?"หุ้น":"shares"} @ ${Number(tr.price).toFixed(2)}</strong><small>${esc(formatHistoryDate(tr.createdAt))} · Fee ${Number(tr.fee||0)} 🪙</small></div><b>${tr.walletAmount>=0?"+":""}${Number(tr.walletAmount||0).toLocaleString()} 🪙</b></div>`).join("");}
   function renderExchange(){
     const root=$("v84ExchangePage");if(!root)return;const ctx=exchangeMarketContext();exchangeClockSignature=exchangeMarketSignature(ctx);const snaps=exchangeSnapshots(ctx),portfolio=exchangePortfolio(exchangeTrades(),snaps),trades=exchangeTrades(),watch=exchangeWatchlist(),selected=exchangeSelected(),snap=snaps.find(s=>s.symbol===selected)||snaps[0],range=exchangeRange(),points=exchangeHistory(selected,range,ctx),event=exchangeEventForKey(ctx.key),sentiment=exchangeSentiment(snaps),earned=reconcileExchangeAchievements({notify:false}).state;
     academyReconcileRewards();
@@ -2908,6 +2970,8 @@
     const ach=EXCHANGE_ACHIEVEMENTS.map(a=>{const claimed=ledger().some(x=>x.id===`earn:achievement:${a.id}`);return `<article class="v84-ach ${earned[a.id]?"unlocked":"locked"}"><span>${earned[a.id]?a.icon:"🔒"}</span><div><strong>${esc(lang()==="th"?a.th:a.en)}</strong><small>${esc(lang()==="th"?a.descTh:a.descEn)}</small><em>🪙 +${a.reward} ${lang()==="th"?"Coins":"Coins"}</em></div>${earned[a.id]?`<b>${claimed?"✓":"+"}</b>`:""}</article>`;}).join("");
     const cloudMode=signedInExchange();
     const legacyCount=cloudMode?(Array.isArray(read(KEYS.exchangeTrades,[]))?read(KEYS.exchangeTrades,[]).length:0):0;
+    const oldTradeRows=cloudMode?read(KEYS.exchangeTrades,[]):[];
+    const deviceTrades=(Array.isArray(oldTradeRows)?oldTradeRows:[]).filter(tr=>tr && (tr.side==="buy" || tr.side==="sell") && Number.isFinite(Number(tr.qty)) && Number.isFinite(Number(tr.price))).slice(-100);
     const cloudNotice=cloudMode?`<section class="wdj-exchange-cloud-note" role="status"><strong>${cloudExchange.status==="ready"?(lang()==="th"?"☁ ข้อมูลหุ้นล่าสุด":"☁ Portfolio synced"):cloudExchange.status==="loading"?(lang()==="th"?"☁ กำลังโหลดข้อมูลหุ้น…":"☁ Loading portfolio…"):(lang()==="th"?"ⓘ ตลาดหุ้นบัญชีออนไลน์ยังไม่เปิดใช้งาน":"ⓘ Online trading not yet available")}</strong><p>${cloudExchange.status==="ready"?(lang()==="th"?"ข้อมูลหุ้นและยอด Coin อัปเดตจากบัญชีออนไลน์":"Your portfolio is synced with your online account."):(lang()==="th"?"การซื้อขายสำหรับบัญชีออนไลน์ยังไม่เปิดใช้งานชั่วคราว":"Trading is temporarily unavailable for online accounts.")}${legacyCount?` · ${lang()==="th"?`พบประวัติเดิมในเครื่อง ${legacyCount} รายการ เก็บไว้รอตรวจสอบ ไม่รวมเป็นหุ้น Cloud`:`${legacyCount} old local trades preserved for review, not counted as Cloud holdings.`}`:""}</p></section>`:"";
     root.innerHTML=`${cloudNotice}<div class="v7-page-heading"><div class="v7-page-title"><span>📈</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>Work Exchange</h2><p class="muted">${lang()==="th"?"ตลาดหุ้นจำลองด้วย Work Coins · ราคาอัปเดตทุก 1 ชั่วโมง 07:00–16:00 และเหมือนกันใน Seed เดียวกัน · ไม่มีเงินจริง":"A simulated Work Coin market with deterministic hourly prices from 07:00–16:00. No real money is involved."}</p></div></div><div class="v84-market-status ${statusClass}"><i></i><div><strong>${esc(exchangeStatusLabel(ctx))}</strong><small id="v8474MarketNext">${lang()==="th"?"รอบถัดไป":"Next"}: ${esc(ctx.nextLabel)}</small><em id="v8474MarketCountdown">⏱ ${esc(exchangeCountdownText(ctx))}</em></div></div></div>
       <section class="v84-kpis"><article><span>🪙</span><div><small>${lang()==="th"?"Wallet":"Wallet"}</small><strong>${cloudMode&&!Number.isFinite(window.WorkdayEconomySecurity?.getCachedBalance?.())?"…":wallet.toLocaleString()} 🪙</strong></div></article><article><span>💼</span><div><small>Portfolio Value</small><strong>${portfolio.value.toFixed(2)} 🪙</strong></div></article><article class="${portfolio.totalPnl>=0?"up":"down"}"><span>📊</span><div><small>Total P/L</small><strong>${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</strong><em>${portfolio.returnPct>=0?"+":""}${portfolio.returnPct.toFixed(2)}%</em></div></article><article class="${sentiment.tone}"><span>${sentiment.icon}</span><div><small>Market Sentiment</small><strong>${esc(lang()==="th"?sentiment.th:sentiment.en)}</strong></div></article></section>
@@ -2920,6 +2984,7 @@
       <div class="v84-trade-ticket"><div class="v84-ticket-head"><div><p class="eyebrow">TRADE TICKET</p><h3>${snap.symbol}</h3></div><span>${lang()==="th"?`ถืออยู่ ${held} หุ้น`:`Holding ${held} shares`}</span></div><div class="v84-ticket-input"><label>${lang()==="th"?"จำนวนหุ้น":"Shares"}<input id="v84TradeQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label><div class="v84-ticket-quick"><button type="button" data-v84-qty="1">1</button><button type="button" data-v84-qty="5">5</button><button type="button" data-v84-qty="10">10</button><button type="button" data-v84-qty="max">MAX</button></div></div><div id="v84TradePreview" class="v84-ticket-preview"></div><div class="v84-ticket-actions"><button type="button" class="buy" data-v84-trade="buy" ${ctx.canTrade&&maxBuy>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📈 ${lang()==="th"?"ซื้อ":"BUY"}</button><button type="button" class="sell" data-v84-trade="sell" ${ctx.canTrade&&held>0&&(!cloudMode||cloudExchange.status==="ready"&&!cloudExchange.busy)?"":"disabled"}>📉 ${lang()==="th"?"ขาย":"SELL"}</button></div><small class="v84-ticket-note">${ctx.canTrade?(cloudMode?(lang()==="th"?"ราคาแสดงเป็นประมาณการ · ระบบจะตรวจสอบราคาก่อนซื้อขาย":"Indicative quote · final prices and funds are checked before trading"):(lang()==="th"?"ตลาดเปิด · ราคาซื้อขายอ้างอิงรอบปัจจุบัน · Fee 1%":"Market open · trades use the current round price · 1% fee")):(lang()==="th"?`ตลาดปิด · ${exchangeStatusLabel(ctx)}`:`Trading disabled · ${exchangeStatusLabel(ctx)}`)}</small></div></article></section>
       <section class="v84-lower-grid"><article class="v84-portfolio-card"><div class="v84-section-head"><div><p class="eyebrow">PORTFOLIO</p><h3>${lang()==="th"?"สินทรัพย์ของฉัน":"My holdings"}</h3></div><span>${portfolio.positions.length} ${lang()==="th"?"บริษัท":"companies"}</span></div><div class="v84-portfolio-list">${portfolioRows}</div><div class="v84-portfolio-foot"><span>Cost Basis <b>${portfolio.cost.toFixed(2)} 🪙</b></span><span>Realized P/L <b class="${portfolio.realized>=0?"up":"down"}">${portfolio.realized>=0?"+":""}${portfolio.realized.toFixed(2)}</b></span><span>Fees <b>-${portfolio.totalFees.toFixed(2)} 🪙</b></span></div></article><article class="v84-ach-card"><div class="v84-section-head"><div><p class="eyebrow">TRADING ACHIEVEMENTS</p><h3>${lang()==="th"?"เส้นทางนักลงทุน":"Investor journey"}</h3></div><span>${Object.keys(earned).length}/${EXCHANGE_ACHIEVEMENTS.length}</span></div><div class="v84-ach-list">${ach}</div></article></section>
       <section class="v84-history-card"><div class="v84-section-head"><div><p class="eyebrow">TRADE HISTORY</p><h3>${lang()==="th"?"ประวัติการซื้อขาย":"Trade history"}</h3></div><span>${trades.length} trades</span></div><div class="v84-history-list">${exchangeTradeHistoryMarkup(trades)}</div></section>
+      ${cloudMode&&deviceTrades.length?`<details class="v84-history-card"><summary style="cursor:pointer;font-weight:700">${lang()==="th"?`📜 ประวัติซื้อขายเดิมในอุปกรณ์ (${deviceTrades.length} รายการ)`:`📜 Previous device trade history (${deviceTrades.length})`}</summary><p class="muted" style="margin:10px 0">${lang()==="th"?"ใช้ตรวจสอบรายการเดิมเท่านั้น อาจเป็นข้อมูลที่เคยใช้ร่วมกันบนอุปกรณ์นี้ ไม่รวมเป็นหุ้นหรือ Coin ในบัญชีออนไลน์":"For review only. May include another user's device records; not counted as online shares or Coins."}</p><div class="v84-history-list">${exchangeTradeHistoryMarkup(deviceTrades)}</div></details>`:""}
       <section class="v84-finale ${ctx.final?"final":"preview"}"><div><span>${ctx.final?"🏁":"🎓"}</span><div><p class="eyebrow">${ctx.final?"FINAL MARKET DAY":"FINALE PREVIEW"}</p><h3>${ctx.final?(lang()==="th"?"สรุป Work Exchange เมื่อ Journey สิ้นสุด":"Final Work Exchange summary"):(lang()==="th"?`อีก ${finale.days} วันถึง Journey สิ้นสุด`:`${finale.days} days until Journey ends`)}</h3><p>${lang()==="th"?"Portfolio นี้เป็นระบบจำลองด้วย Work Coins ไม่มีเงินจริงหรือหลักทรัพย์จริงเกี่ยวข้อง":"This is a Work Coin simulation; no real money or securities are involved."}</p></div></div><div class="v84-finale-stats"><span><small>TRADER RANK</small><b>${finale.rank.icon} ${esc(lang()==="th"?finale.rank.th:finale.rank.en)}</b></span><span><small>PORTFOLIO</small><b>${portfolio.value.toFixed(2)} 🪙</b></span><span><small>TOTAL P/L</small><b class="${portfolio.totalPnl>=0?"up":"down"}">${portfolio.totalPnl>=0?"+":""}${portfolio.totalPnl.toFixed(2)} 🪙</b></span><span><small>BEST HOLDING</small><b>${finale.best?`${finale.best.symbol} ${finale.best.pnl>=0?"+":""}${finale.best.pnl.toFixed(1)}`:"—"}</b></span></div></section>`;
     qa("[data-v84-select]",root).forEach(btn=>btn.addEventListener("click",()=>{localStorage.setItem(KEYS.exchangeSelected,btn.dataset.v84Select);renderExchange();}));
     qa("[data-v84-watch]",root).forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();exchangeToggleWatch(btn.dataset.v84Watch);}));
