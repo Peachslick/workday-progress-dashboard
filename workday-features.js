@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.6.1";
+  const VERSION = "8.7.10.3.6.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -7440,219 +7440,172 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
 })();
 
 
-/* ===== V8.7.10.3.5 - rotating classic objectives + server-verified cloud rewards ===== */
+/* ===== V8.7.10.3.6.3 | Classic Daily Missions + Daily Journal Cloud rewards ===== */
 (() => {
-  "use strict";
+  'use strict';
   const cloud=()=>window.WorkdayV8Cloud;
-  const uid=()=>cloud()?.getUser?.()?.id||"";
-  const api=()=>cloud()?.getClient?.();
-  const lang=()=>localStorage.getItem('wp-language')==='en'?'en':'th';
-  const txt=(th,en)=>lang()==='th'?th:en;
+  const uid=()=>cloud()?.getUser?.()?.id||'';
+  const client=()=>cloud()?.getClient?.();
+  const en=()=>localStorage.getItem('wp-language')==='en';
+  const tr=(th,eng)=>en()?eng:th;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const state={uid:'',board:null,loading:null,busy:false,error:'',lastAt:0,lastClassicAt:0};
-  // Cosmetic Quest XP is recorded only AFTER a claim is acknowledged by the server.
-  // No browser-controlled mission progress is ever used to credit cloud Coins.
-  const XP_KEY = 'wdj-v8710334-secure-quest-xp-v1-';
-  const QUEST_XP = 10;
-  function xpStorageKey() { return XP_KEY + String(uid()).replace(/[^a-zA-Z0-9_-]/g,'').slice(0,96); }
-  function xpHistory() {
-    try {
-      const o = JSON.parse(localStorage.getItem(xpStorageKey())||'{}');
-      return o&&typeof o==='object'&&!Array.isArray(o)?o:{};
-    } catch { return {}; }
-  }
-  function syncVerifiedXp(board) {
-    if (!uid() || !/^\d{4}-\d{2}-\d{2}$/.test(String(board?.day||''))) return 0;
-    const claims = (Array.isArray(board.claimed)?board.claimed:[]).filter(x=>['checkin','reflection','focus'].includes(x));
-    const history = xpHistory();
-    const old = Array.isArray(history[board.day]) ? history[board.day] : [];
-    const merged = Array.from(new Set([...old,...claims]));
-    if (merged.length!==old.length) {
-      history[board.day]=merged;
-      try {localStorage.setItem(xpStorageKey(),JSON.stringify(history));} catch {}
-    }
-    // Keep previous classic local stamps: they remain cosmetic and are never credited again.
-    let classic = 0;
-    try {
-      const legacy=JSON.parse(localStorage.getItem('wdj-v871033-classic-local-v1-'+String(uid()).replace(/[^\w-]/g,'').slice(0,96))||'{}');
-      classic = Object.values(legacy.days||{}).reduce((sum,d)=>sum+(Array.isArray(d.claimed)?d.claimed.length:0),0);
-    } catch {}
-    const verified = Object.values(history).reduce((sum,claims)=>sum+(Array.isArray(claims)?claims.length:0),0);
-    return (verified+classic)*QUEST_XP;
-  }
-
-  // Cloud wallet stays server-authoritative: these three rewards are the
-  // EXISTING checkin / reflection / focus RPC milestones (5 / 10 / 15 coins).
-  // Their daily companion objectives rotate through the original classic pool.
-  // A local objective alone NEVER credits coins; the RPC still checks its
-  // corresponding server-side milestone and one-claim-per-day limit.
-  const defs=[
-    {id:'checkin',icon:'🌅',coin:5,th:'เช็กอินประจำวัน',en:'Daily check-in',descTh:'เช็กอินประจำวันผ่าน Server',descEn:'Server-verified daily check-in'},
-    {id:'reflection',icon:'📓',coin:10,th:'บันทึกสิ่งที่เรียนรู้',en:'Daily reflection',descTh:'บันทึก Journal อย่างน้อย 20 ตัวอักษร',descEn:'Server-verified learning journal'},
-    {id:'focus',icon:'⏱️',coin:15,th:'ช่วงเวลาโฟกัส',en:'Focus interval',descTh:'สะสมเวลาโฟกัสตามที่ Server กำหนด',descEn:'Server-verified focus interval'}
-  ];
-  const CLASSIC_ROTATION_POOLS={
-    checkin:['rewards_visit','achievements_visit','journal_today','project_update','half_shift'],
-    reflection:['journal_reflection','journal_today','journal_project','project_update','project_push50','balanced_day'],
-    focus:['focus_4h','strong_finish','full_shift','power_day','balanced_day','project_push50','journal_project','project_update','rewards_visit','achievements_visit']
+  const DAY=()=>new Date(Date.now()+7*3600000).toISOString().slice(0,10);
+  const XP_PREFIX='wdj-v8710334-secure-quest-xp-v1-';
+  const M={
+    half_shift:['◔',8,'ผ่านครึ่งวัน','Halfway Shift','ทำงานให้ได้อย่างน้อย 50% ของเวลาวันนี้','Complete at least half of today’s shift',240],
+    focus_4h:['⏱',10,'Focus 4 Hours','Focus 4 Hours','สะสมเวลาทำงานให้ครบ 4 ชั่วโมง','Reach four hours of work',240],
+    strong_finish:['⚡',12,'Strong Finish','Strong Finish','ทำงานให้ได้อย่างน้อย 80% ของวัน','Reach 80% of today’s shift',384],
+    full_shift:['🏁',15,'Full Workday','Full Workday','ทำงานครบวันตามตาราง','Complete your workday',480],
+    journal_today:['📓',10,'Daily Chronicle','Daily Chronicle','บันทึก Daily Journal ของวันนี้','Save today’s Daily Journal',1],
+    journal_reflection:['✍️',12,'Reflection Note','Reflection Note','เขียนสิ่งที่เรียนรู้วันนี้อย่างน้อย 20 ตัวอักษร','Write at least 20 learning-note characters',20],
+    journal_project:['🔗',12,'Connect the Work','Connect the Work','เชื่อม Journal วันนี้กับ Project อย่างน้อย 1 Project','Link your Journal to a Project',1],
+    project_update:['🧩',12,'Project Momentum','Project Momentum','บันทึกหรืออัปเดต Project อย่างน้อย 1 รายการวันนี้','Save a Project today',1],
+    project_push50:['🚀',15,'Push Past 50','Push Past 50','อัปเดต Project วันนี้และให้ Progress ถึง 50% ขึ้นไป','Update a Project with at least 50% progress',1],
+    balanced_day:['⚖️',15,'Balanced Day','Balanced Day','ทำงานเกินครึ่งวันและมี Journal วันนี้','Reach half a shift and save today’s Journal',1],
+    power_day:['🔥',20,'Power Day','Power Day','ทำงานครบวันพร้อมบันทึก Journal','Complete today’s shift and Journal',1],
+    rewards_visit:['🎁',5,'Reward Explorer','Reward Explorer','เข้าไปดู Reward Shop วันนี้','Visit Reward Shop today',1],
+    achievements_visit:['🏆',5,'Achievement Check','Achievement Check','เข้าไปดูหน้า Achievements วันนี้','Visit Achievements today',1],
+    checkin:['🌅',5,'เช็กอินประจำวัน','Daily check-in','ได้รับรางวัลก่อนอัปเดตระบบ','Already claimed in the previous mission system',1],
+    reflection:['📓',10,'บันทึกสิ่งที่เรียนรู้','Daily Reflection','ได้รับรางวัลก่อนอัปเดตระบบ','Already claimed in the previous mission system',1],
+    focus:['⏱',15,'ช่วงเวลาโฟกัส','Focus interval','ได้รับรางวัลก่อนอัปเดตระบบ','Already claimed in the previous mission system',1]
   };
-  const ROTATION_KEY='wdj-v871035-cloud-classic-rotation-v1-';
-  function rotationKey(){return ROTATION_KEY+String(uid()).replace(/[^a-zA-Z0-9_-]/g,'').slice(0,96);}
-  function hashSeed(s){let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
-  function classicSnapshot(day){
-    const snap=window.WorkdayRewards?.getClassicMissionSnapshot?.({includeIneligible:true});
-    return snap?.day===day&&Array.isArray(snap.items)?snap.items:[];
+  const state={account:'',board:null,error:'',loading:null,busy:false,last:0,lastWork:0,workPending:false};
+  function reset(){const a=uid();if(state.account===a)return;state.account=a;state.board=null;state.error='';state.loading=null;state.busy=false;state.last=0;state.lastWork=0;state.workPending=false;}
+  function toast(message,kind='success'){
+    const stack=document.getElementById('toastStack');if(!stack)return;
+    const el=document.createElement('div');el.className=`app-toast v7-toast toast-${kind}`;el.setAttribute('role','status');el.textContent=message;
+    stack.appendChild(el);setTimeout(()=>el.remove(),4000);
   }
-  function cloudRotation(day,items){
-    if(!uid()||!/^\d{4}-\d{2}-\d{2}$/.test(day))return {};
-    const key=rotationKey();let store={};
-    try{const o=JSON.parse(localStorage.getItem(key)||'{}');if(o&&typeof o==='object'&&!Array.isArray(o))store=o;}catch{}
-    const cached=store[day];
-    if(cached&&defs.every(d=>typeof cached[d.id]==='string'&&items.some(x=>x.id===cached[d.id])))return cached;
-    const available=new Set(items.filter(item=>item.eligible!==false).map(item=>item.id)),result={},used=new Set();
-    for(const d of defs){
-      let pool=(CLASSIC_ROTATION_POOLS[d.id]||[]).filter(id=>available.has(id)&&!used.has(id));
-      if(!pool.length)pool=items.filter(item=>item.eligible!==false).map(item=>item.id).filter(id=>!used.has(id));
-      if(!pool.length)continue;
-      // Rotate deterministically for this account/day, avoid yesterday's exact
-      // objective in each reward slot if another eligible objective exists.
-      let picked=pool[hashSeed(`${uid()}:${day}:${d.id}`)%pool.length];
-      const yesterday=new Date(`${day}T12:00:00`);yesterday.setDate(yesterday.getDate()-1);
-      const prevDay=`${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
-      if(pool.length>1&&store[prevDay]?.[d.id]===picked){
-        const others=pool.filter(id=>id!==picked);
-        picked=others[hashSeed(`avoid:${uid()}:${day}:${d.id}`)%others.length];
-      }
-      result[d.id]=picked;used.add(picked);
+  function xp(board){
+    if(!uid()||!board?.day)return 0;
+    const key=XP_PREFIX+String(uid()).replace(/[^a-zA-Z0-9_-]/g,'').slice(0,96);
+    let history={};try{history=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch{}
+    const old=Array.isArray(history[board.day])?history[board.day]:[];
+    const merged=[...new Set([...old,...(Array.isArray(board.claimed)?board.claimed:[])])];
+    if(old.length!==merged.length){history[board.day]=merged;try{localStorage.setItem(key,JSON.stringify(history));}catch{}}
+    let classic=0;try{const l=JSON.parse(localStorage.getItem('wdj-v871033-classic-local-v1-'+String(uid()).replace(/[^\w-]/g,'').slice(0,96))||'{}');classic=Object.values(l.days||{}).reduce((a,d)=>a+(Array.isArray(d.claimed)?d.claimed.length:0),0);}catch{}
+    return (classic+Math.max(Number(board.totalClaimed)||0,Object.values(history).reduce((a,ids)=>a+(Array.isArray(ids)?ids.length:0),0)))*10;
+  }
+  function metric(id,e){
+    const w=Number(e.workMinutes)||0;
+    switch(id){
+      case 'half_shift':case 'focus_4h':return w;
+      case 'strong_finish':case 'full_shift':return w;
+      case 'journal_today':return e.journal?1:0;
+      case 'journal_reflection':return Number(e.journalChars)||0;
+      case 'journal_project':return e.journalLinked?1:0;
+      case 'project_update':return e.project?1:0;
+      case 'project_push50':return e.project&&Number(e.projectProgress)>=50?1:0;
+      case 'balanced_day':return w>=240&&e.journal?1:0;
+      case 'power_day':return w>=480&&e.journal?1:0;
+      case 'rewards_visit':return e.rewardsVisit?1:0;
+      case 'achievements_visit':return e.achievementsVisit?1:0;
+      default:return 0;
     }
-    store[day]=result;
-    // Keep enough history to avoid repetitions, never sync these device-local
-    // choices with or use them as cloud wallet evidence.
-    const recent=Object.entries(store).sort(([a],[b])=>b.localeCompare(a)).slice(0,40);
-    try{localStorage.setItem(key,JSON.stringify(Object.fromEntries(recent)));}catch{}
-    return result;
   }
-  function reset(){const id=uid();if(state.uid===id)return;state.uid=id;state.board=null;state.loading=null;state.busy=false;state.error='';state.lastAt=0;state.lastClassicAt=0;}
-  // Journal is the only editor for the daily learning note. This reads an existing
-  // saved entry; it never writes or alters wp-v6-journal.
-  function savedJournal(day){
-    try {
-      const rows=JSON.parse(localStorage.getItem('wp-v6-journal')||'{}');
-      const value=rows&&typeof rows==='object'&&!Array.isArray(rows)?rows[String(day||'')]:null;
-      return value&&typeof value==='object'?String(value.learned||'').trim():'';
-    } catch { return ''; }
-  }
-  const bangkokDay=()=>new Date(Date.now()+7*3600000).toISOString().slice(0,10);
-  function targets(board){
-    const r=board?.rotation||{};
-    return {
-      journal:Math.min(500,Math.max(20,Number(r.reflectionMin)||20)),
-      focus:Math.min(60,Math.max(20,Number(r.focusTargetMinutes)||20)),
-      variant:Math.max(0,Math.min(4,Number(r.variant)||0))
-    };
-  }
-  function dailyDefs(board){
-    const day=String(board?.day||'');
-    const items=classicSnapshot(day),rotation=cloudRotation(day,items);
-    const t=targets(board);
-    return defs.map(core=>{
-      const quest=items.find(x=>x.id===rotation[core.id]);
-      const secureRequirement=core.id==='checkin'
-        ?txt('เช็กอินกับ Server','Server check-in')
-        :core.id==='reflection'
-          ?txt(`เช็กอิน + Journal ${t.journal} ตัวอักษร`,`Check-in + ${t.journal}-character Journal`)
-          :txt(`เช็กอิน + โฟกัสตาม Server ${t.focus} นาที`,`Check-in + ${t.focus} server focus minutes`);
-      return {...core,th:quest?.th||core.th,en:quest?.en||core.en,
-        icon:quest?.icon||core.icon,descTh:quest?.descTh||core.descTh,
-        descEn:quest?.descEn||core.descEn,objective:quest||null,
-        secureRequirement};
-    });
-  }
-  function renderCloud(root){
-    reset();if(!state.uid)return false;
-    if(state.board?.day&&state.board.day!==bangkokDay()){state.board=null;state.lastAt=0;state.lastClassicAt=0;}
-    const b=state.board,claimed=Array.isArray(b?.claimed)?b.claimed:[],count=Number(b?.claimedCount||0);
-    const questXp = b ? syncVerifiedXp(b) : 0;
-    const config=targets(b),todayDefs=dailyDefs(b);
-    const day=b?.day||'',note=savedJournal(day),journalReady=note.length>=config.journal;
-    const weeklyCount=Number(b?.weeklyDailyCount||0);
-    // Use the same compact layout as Guest Missions from the very first paint.
+  function paint(root){
+    const b=state.board||null,ids=Array.isArray(b?.ids)?b.ids:[],claims=Array.isArray(b?.claimed)?b.claimed:[];
+    const count=Number(b?.claimedCount)||0,e=b?.evidence||{};
     root.classList.add('v853-gamification-page','v853-missions-page');
     document.body?.classList.add('v853-gamification-refresh');
-    state.lastClassicAt=Date.now();
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · MISSIONS</p><h2>${txt('ภารกิจรายวัน','Daily Missions')}</h2><p class="muted">${txt('สุ่มโจทย์ใหม่จากภารกิจคลาสสิกทุกวัน · ผ่านเงื่อนไข Server เพื่อรับ Coin และ Quest XP','Daily rotating classic objectives · complete each server requirement to claim Coins and Quest XP.')}</p></div></div></div>
-      <section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${txt('ภารกิจวันนี้','TODAY')}</small><strong>${count}/3</strong></div></div><div><small>${txt('Coin จากภารกิจวันนี้','Today’s mission Coins')}</small><b>${claimed.reduce((v,id)=>v+(todayDefs.find(d=>d.id===id)?.coin||0),0)} 🪙 <span class="wdj-dual-total-xp">· ${questXp} XP</span></b></div></section>
-      ${state.error?`<div class="wdj-unified-error" role="alert">${esc(state.error)} <button type="button" data-unified-retry>${txt('ลองใหม่','Retry')}</button></div>`:''}
-      ${b?`<div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${txt("ภารกิจของวันนี้","Today's missions")}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-mission-list v853-mission-list">${todayDefs.map(d=>{
-        const got=claimed.includes(d.id);
-        const progress=d.objective?Math.max(0,Number(d.objective.value)||0):d.id==='checkin'?(b.checkedInAt?1:0):d.id==='reflection'?(journalReady?1:0):Math.min(config.focus,Number(b.focusMinutes||0));
-        const total=d.objective?Math.max(1,Number(d.objective.target)||1):d.id==='focus'?config.focus:1;
-        const pct=Math.max(0,Math.min(100,progress/total*100));
-        const objectiveDone=progress+0.000001>=total;
-        const serverReady=d.id==='checkin'||(d.id==='reflection'&&!!b.checkedInAt&&journalReady)||(d.id==='focus'&&!!b.checkedInAt&&Number(b.focusMinutes||0)>=config.focus);
-        const enabled=objectiveDone&&serverReady;
-        const desc=txt(d.descTh,d.descEn);
-        const requirement=`<div class="wdj-mission-server-gate"><small>${serverReady?'✓':'🔒'} ${esc(d.secureRequirement)}</small></div>`;
-        const status=requirement+(d.id==='reflection'&&!got&&!journalReady?`<div class="wdj-unified-journal-link"><small>${txt('ยังไม่พบบันทึกสิ่งที่เรียนรู้ของวันนี้','No learning note saved for today')}</small><button type="button" class="outline-btn" data-unified-go-journal>${txt('ไปหน้าบันทึกประจำวัน','Open Daily Journal')} ↗</button></div>`:'');
-        return `<article class="v82-mission-card v853-mission-card ${got?'claimed':enabled?'done':''}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(txt(d.th,d.en))}</strong><span class="wdj-dual-reward">+${d.coin} 🪙 <em>+10 Quest XP</em></span></div><p>${esc(desc)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${total>1?`${Math.min(Math.floor(progress),Math.ceil(total))}/${Math.ceil(total)}`:`${Math.min(Math.round(progress),1)}/1`}${total>1&&d.objective?.id&&['half_shift','focus_4h','strong_finish','full_shift'].includes(d.objective.id)?` ${txt('นาที','min')}`:''}</small></div>${status}</div><button type="button" data-unified-mission="${d.id}" ${got||!enabled||state.busy?'disabled':''}>${got?txt('✓ รับแล้ว','✓ Claimed'):enabled?txt('รับ Coin + XP','Claim Coin + XP'):txt('กำลังทำ','In progress')}</button></article>`;
-      }).join('')}</section>
-      <div id="v853ChestHeading" class="v853-section-heading"><div><h3>${txt("รางวัลภารกิจ","Chest rewards")}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${b.dailyIssued?'claimed':''}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${b.dailyIssued?txt('เข้าคลังแล้ว','In inventory'):`${count}/3`}</h3><p>${txt('รับครบ 3 ภารกิจ ระบบส่งกล่องเข้าคลังรางวัล','Complete 3 missions to earn a chest in your inventory')}</p></div><button type="button" disabled>${b.dailyIssued?txt('✓ เข้าคลังแล้ว','✓ In inventory'):txt('รอภารกิจครบ','Not yet ready')}</button></article><article class="v82-chest-card v853-chest-card weekly ${b.weeklyIssued?'claimed':''}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${b.weeklyIssued?txt('เข้าคลังแล้ว','In inventory'):`${weeklyCount}/5 ${txt('วัน','days')}`}</h3><p>${txt('สะสม Daily Chest ครบ 5 วันในสัปดาห์','Earn Daily Chests on five days this week')}</p></div><button type="button" disabled>${b.weeklyIssued?txt('✓ เข้าคลังแล้ว','✓ In inventory'):txt('กำลังสะสม','In progress')}</button></article></section>`:`<section class="v82-mission-list v853-mission-list"><p class="wdj-unified-loading" role="status">${txt('กำลังโหลดภารกิจ...','Loading missions...')}</p></section>`}
-      <p class="wdj-unified-hint">${txt('เปิดกล่องที่ รางวัล → คลังกล่องรางวัล · ข้อมูลที่เรียนรู้แก้ไขได้จากหน้า Journal เท่านั้น','Open chests in Rewards → Chest Inventory. Edit your learning notes only in Daily Journal.')}</p>`;
-    root.querySelector('[data-unified-retry]')?.addEventListener('click',()=>{state.error='';refresh(true);});
-    root.querySelector('[data-unified-go-journal]')?.addEventListener('click',()=>{location.hash='#/journal';});
-    root.querySelectorAll('[data-unified-mission]').forEach(el=>el.addEventListener('click',()=>claim(el.dataset.unifiedMission)));
-    if(!state.loading&&!state.error&&(!state.board||Date.now()-state.lastAt>60000))refresh();
+    const cards=ids.map(id=>{
+      const d=M[id];if(!d)return '';
+      const got=claims.includes(id),value=got?d[6]:Math.min(d[6],metric(id,e)),done=value>=d[6];
+      const pct=Math.min(100,Math.floor(value/d[6]*100));
+      return `<article class="v82-mission-card v853-mission-card ${got?'claimed':done?'done':''}"><div class="v82-mission-icon">${d[0]}</div><div class="v82-mission-copy"><div><strong>${esc(tr(d[2],d[3]))}</strong><span class="wdj-dual-reward">+${d[1]} 🪙 <em>+10 Quest XP</em></span></div><p>${esc(tr(d[4],d[5]))}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${Math.min(Math.floor(value),d[6])}/${d[6]}${d[6]>1&&['half_shift','focus_4h','strong_finish','full_shift'].includes(id)?` ${tr('นาที','min')}`:''}</small></div></div><button type="button" data-classic-claim="${id}" ${got||!done||state.busy?'disabled':''}>${got?tr('✓ รับแล้ว','✓ Claimed'):done?tr('รับ Coin + XP','Claim Coin + XP'):tr('กำลังทำ','In progress')}</button></article>`;
+    }).join('');
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · MISSIONS</p><h2>${tr('ภารกิจรายวัน','Daily Missions')}</h2><p class="muted">${tr('3 ภารกิจสุ่มจากชุดคลาสสิก ทำตามโจทย์แล้วรับรางวัล','Three classic daily quests. Complete each objective to claim rewards.')}</p></div></div></div>
+    <section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${tr('ภารกิจวันนี้','TODAY')}</small><strong>${Math.min(3,count)}/3</strong></div></div><div><small>${tr('Coin จากภารกิจวันนี้','Today’s mission Coins')}</small><b>${Number(b?.todayCoins)||0} 🪙 <span class="wdj-dual-total-xp">· ${xp(b)} XP</span></b></div></section>
+    ${state.error?`<div class="wdj-unified-error" role="alert">${esc(state.error)} <button type="button" data-classic-retry>${tr('ลองใหม่','Retry')}</button></div>`:''}
+    <div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${tr('ภารกิจของวันนี้',"Today's missions")}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div>
+    <section class="v82-mission-list v853-mission-list">${b?cards:`<p class="wdj-unified-loading">${tr('กำลังโหลดภารกิจ...','Loading missions...')}</p>`}</section>
+    <div id="v853ChestHeading" class="v853-section-heading"><div><h3>${tr('รางวัลภารกิจ','Chest rewards')}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${b?.dailyIssued?'claimed':''}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${b?.dailyIssued?tr('เข้าคลังแล้ว','In inventory'):`${count}/3`}</h3><p>${tr('ทำครบ 3 ภารกิจ กล่องจะเข้าคลังรางวัล','Complete 3 quests to receive a chest')}</p></div><button disabled>${b?.dailyIssued?tr('✓ เข้าคลังแล้ว','✓ In inventory'):tr('กำลังสะสม','In progress')}</button></article><article class="v82-chest-card v853-chest-card weekly ${b?.weeklyIssued?'claimed':''}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${b?.weeklyIssued?tr('เข้าคลังแล้ว','In inventory'):`${Number(b?.weeklyDailyCount)||0}/5 ${tr('วัน','days')}`}</h3><p>${tr('สะสม Daily Chest 5 วันในสัปดาห์','Collect Daily Chests on 5 days')}</p></div><button disabled>${b?.weeklyIssued?tr('✓ เข้าคลังแล้ว','✓ In inventory'):tr('กำลังสะสม','In progress')}</button></article></section>`;
+    root.querySelectorAll('[data-classic-claim]').forEach(btn=>btn.addEventListener('click',()=>void claim(btn.dataset.classicClaim)));
+    root.querySelector('[data-classic-retry]')?.addEventListener('click',()=>void refresh(true));
     window.WorkdayLifeQuests?.render?.();
+  }
+  function renderCloud(root){
+    reset();if(!uid())return false;
+    if(state.board?.day&&state.board.day!==DAY()){state.board=null;state.last=0;}
+    paint(root);
+    if(!state.loading&&(!state.board||Date.now()-state.last>60000))void refresh();
     return true;
   }
   async function refresh(force=false){
-    reset();const expected=state.uid;if(!expected)return;
-    if(!api()){state.error=txt('ยังเชื่อมต่อบัญชีไม่ได้','Account connection unavailable');return;}
+    reset();const user=uid();if(!user||!client())return;
     if(state.loading)return state.loading;
-    if(!force&&state.board&&Date.now()-state.lastAt<60000)return;
-    let changed=false;
-    const pending=(async()=>{
-      try{const {data,error}=await api().rpc('get_my_unified_missions_secure');if(error)throw error;
-        if(!data?.rotation)throw new Error('MISSION_ROTATION_SQL_REQUIRED');
-        if(uid()!==expected)return;
-        // `serverNow` changes every request; do not rebuild cards for a timestamp-only change.
-        const stable=x=>JSON.stringify(x?{...x,serverNow:null}:null);
-        changed=stable(state.board)!==stable(data)||!!state.error||Date.now()-state.lastClassicAt>=60000;
-        state.board=data;state.error='';state.lastAt=Date.now();}
-      catch(err){if(uid()===expected){const message=txt('โหลดภารกิจไม่สำเร็จ: ','Mission unavailable: ')+(err?.message||String(err));changed=state.error!==message;state.error=message;}}
-      finally{if(changed&&uid()===expected && location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();}
-    })();state.loading=pending;try{await pending;}finally{if(state.loading===pending)state.loading=null;}
+    if(!force&&state.board&&Date.now()-state.last<50000)return;
+    const request=(async()=>{
+      try{
+        const {data,error}=await client().rpc('wdj_get_classic_missions');if(error)throw error;
+        if(uid()!==user)return;
+        state.board=data;state.error='';state.last=Date.now();
+      }catch(error){if(uid()===user)state.error=tr('โหลดภารกิจไม่ได้ กรุณาตรวจสอบการติดตั้งระบบ: ','Missions could not load: ')+(error.message||String(error));}
+      finally{if(uid()===user&&location.hash.includes('/missions'))paint(document.getElementById('v82MissionsPage'));}
+    })();state.loading=request;
+    try{await request;}finally{if(state.loading===request)state.loading=null;}
+  }
+  async function record(kind,payload={},quiet=true){
+    reset();const user=uid();if(!user||!client())return null;
+    try{
+      const {data,error}=await client().rpc('wdj_record_classic_activity',{p_kind:kind,p_payload:payload});
+      if(error)throw error;if(uid()!==user)return null;
+      if(data?.board){state.board=data.board;state.last=Date.now();}
+      if(data?.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
+      if(kind==='journal'&&data?.journalAwarded)toast(tr('📓 บันทึกประจำวัน +10 Coin','📓 Daily Journal +10 Coins'));
+      if(location.hash.includes('/missions'))paint(document.getElementById('v82MissionsPage'));
+      return data;
+    }catch(error){
+      if(kind==='journal'&&!quiet)toast(tr('บันทึก Journal แล้ว แต่ยังรับ Coin ไม่สำเร็จ กรุณาบันทึกใหม่เมื่อออนไลน์','Journal saved, but Coin credit failed. Save again when online.'),'error');
+      else if(!quiet)toast(tr('ยังบันทึกกิจกรรมไม่ได้ กรุณาลองใหม่','Activity could not be saved. Please retry.'),'error');
+      return null;
+    }
+  }
+  async function recordJournal(entry){
+    if(!uid())return;
+    const day=String(entry?.date||'');
+    if(day!==DAY())return; // Historical journals are not automatically imported or rewarded.
+    return record('journal',{day,work:String(entry.work||''),learned:String(entry.learned||''),projectIds:Array.isArray(entry.projectIds)?entry.projectIds:[]},false);
+  }
+  async function recordProject(project){
+    if(!uid())return;
+    return record('project',{name:String(project?.name||''),progress:String(Math.max(0,Math.min(100,Math.round(Number(project?.progress)||0))))});
   }
   async function claim(id){
-    reset();if(state.busy||!state.uid||!api())return;
-    state.busy=true;state.error='';const expected=state.uid;
-    const root=document.getElementById('v82MissionsPage');if(root)renderCloud(root);
+    reset();const user=uid();if(!user||state.busy||!client())return;
+    state.busy=true;state.error='';if(location.hash.includes('/missions'))paint(document.getElementById('v82MissionsPage'));
     try{
-      if(!defs.some(d=>d.id===id))throw new Error(txt('ไม่รู้จักภารกิจนี้','Unknown mission'));
-      const daily=dailyDefs(state.board).find(d=>d.id===id);
-      if(daily?.objective && (Number(daily.objective.value)||0)+0.000001 < Math.max(1,Number(daily.objective.target)||1))
-        throw new Error(txt('ภารกิจที่สุ่มมายังไม่สำเร็จ','Rotating objective is not complete'));
-      const note=id==='reflection'?savedJournal(state.board?.day):null;
-      if(id==='reflection'&&(!note||note.length<targets(state.board).journal))throw new Error(txt('กรุณาบันทึกสิ่งที่เรียนรู้ในหน้า Journal ก่อน','Save your learning note in Daily Journal first'));
-      const {data,error}=await api().rpc('claim_unified_mission_secure',{p_mission_id:id,p_reflection:id==='reflection'?note.slice(0,500):null});
-      if(error)throw error;if(uid()!==expected)return;
-      state.board=data?.board||state.board;state.lastAt=Date.now();
-      window.WorkdayEconomySecurity?.applyEconomy?.(data?.economy);
-      if(data?.addedChests?.length)await window.WorkdayChestInventory?.refresh?.(true);
-      if(data?.board?.claimed?.includes(id)){
-        const stack=document.getElementById('toastStack');
-        if(stack){const el=document.createElement('div');el.className='app-toast v7-toast toast-success';
-          el.textContent=`🎯 +${defs.find(x=>x.id===id)?.coin||0} Coins · +10 Quest XP`;
-          stack.appendChild(el);setTimeout(()=>el.remove(),3200);}
-      }
-    }catch(err){if(uid()===expected)state.error=txt('รับรางวัลไม่สำเร็จ: ','Claim failed: ')+(err?.message||String(err));}
-    finally{state.busy=false;if(uid()===expected)window.WorkdayRewards?.renderMissions?.();}
+      const {data,error}=await client().rpc('wdj_claim_classic_mission',{p_mission_id:id});
+      if(error)throw error;if(uid()!==user)return;
+      if(data?.board){state.board=data.board;state.last=Date.now();}
+      if(data?.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
+      if(data?.addedChests?.length)void window.WorkdayChestInventory?.refresh?.(true);
+      if(!data?.alreadyClaimed)toast(`🎯 +${data?.coins||M[id]?.[1]||0} Coin · +10 Quest XP`);
+    }catch(error){if(uid()===user)state.error=tr('ยังรับรางวัลไม่ได้: ','Reward not ready: ')+(error?.message||String(error));}
+    finally{state.busy=false;if(uid()===user&&location.hash.includes('/missions'))paint(document.getElementById('v82MissionsPage'));}
   }
+  async function recordWork(force=false){
+    if(!uid()||!location.hash.includes('/missions')||state.workPending)return;
+    if(!force&&Date.now()-state.lastWork<55000)return;
+    const snapshots=window.WorkdayRewards?.getClassicMissionSnapshot?.({includeIneligible:true})?.items||[];
+    const full=snapshots.find(x=>x.id==='full_shift');
+    const worked=Math.max(0,Math.round(Number(full?.value||0)));
+    state.lastWork=Date.now();state.workPending=true;
+    try{await record('work',{minutes:String(worked)});}finally{state.workPending=false;}
+  }
+  function routeVisit(){
+    if(!uid())return;
+    const route=(location.hash.replace(/^#\/?/,'').split(/[?&]/)[0]||'').toLowerCase();
+    if(route==='rewards'||route==='achievements')void record(route);
+    if(route==='missions'){void refresh(true).then(()=>recordWork(true));}
+  }
+  window.WorkdayDailyRewards={recordJournal,recordProject};
   window.WorkdayUnifiedMissions={renderCloud,refresh};
-  window.addEventListener('workday:v8-auth-complete',()=>{reset();refresh(true);});
-  window.addEventListener('workday:v8-auth-state',()=>{reset();refresh(true);});
-  window.addEventListener('hashchange',()=>{if(location.hash.includes('/missions'))refresh();});
-  window.addEventListener('workday:v8-auth-resolved',()=>{if(location.hash.includes('/missions'))window.WorkdayRewards?.renderMissions?.();});
-  // Background throttling is harmless: serverNow is authoritative on every refresh.
-  setInterval(()=>{if(uid()&&location.hash.includes('/missions')&&!state.loading&&!state.busy)refresh(true);},30000);
+  window.addEventListener('hashchange',routeVisit);
+  window.addEventListener('workday:v8-auth-complete',()=>{reset();routeVisit();});
+  window.addEventListener('workday:v8-auth-state',()=>{reset();routeVisit();});
+  window.addEventListener('workday:v8-auth-resolved',routeVisit);
+  window.addEventListener('workday:v7-data-changed',()=>{if(uid()&&location.hash.includes('/missions'))void recordWork(true);});
+  setInterval(()=>{if(uid()&&location.hash.includes('/missions')){void recordWork();void refresh();}},60000);
+  setTimeout(routeVisit,1100);
 })();
