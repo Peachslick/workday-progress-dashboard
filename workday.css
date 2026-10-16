@@ -5845,3 +5845,27 @@ body.v850-shell-refresh .v7-workspace main.dashboard {overflow-x:clip;}
   width: 27px; height: 27px; border-radius: 8px; font-size: .83rem;
 }
 .toast-stack .app-toast.wdj-compact-reward-toast strong {font-size:.73rem;line-height:1.4;}
+
+/* V8.7.10.3.7.2 Universal Legacy Recovery: additive, scoped panels. */
+.wdj-universal-panel,.wdj-universal-owner{margin:22px 0;padding:18px;border:1px solid var(--border,#dfe5ee);border-radius:18px;background:var(--surface,#fff);color:var(--text,#223149)}
+.wdj-universal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.wdj-universal-head h3{font-size:1.06rem;margin:5px 0}
+.wdj-universal-head small{font-size:.7rem;letter-spacing:.08em;font-weight:800;color:var(--primary,#3572ea)}
+.wdj-universal-head p,.wdj-universal-panel p,.wdj-universal-owner p{font-size:.85rem;line-height:1.55;margin:8px 0}
+.wdj-universal-status{padding:10px 12px;border-radius:10px;background:rgba(42,168,112,.1)}
+.wdj-universal-warning{padding:10px 12px;border-radius:10px;background:rgba(244,180,50,.15)}
+.wdj-universal-panel details,.wdj-universal-case details{margin:10px 0}
+.wdj-universal-panel summary,.wdj-universal-case summary{cursor:pointer;font-weight:650;font-size:.83rem}
+.wdj-universal-trades{max-height:230px;overflow-y:auto;border:1px solid var(--border,#dfe5ee);border-radius:10px;margin:10px 0;padding:7px 10px}
+.wdj-universal-trades>div{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--border,#dfe5ee);font-size:.79rem}
+.wdj-universal-trades>div:last-child{border-bottom:0}
+.wdj-universal-trades span,.wdj-universal-case small,.wdj-universal-footnote{opacity:.76}
+.wdj-universal-consent{display:flex;align-items:flex-start;gap:9px;margin:14px 0;font-size:.83rem;line-height:1.4}
+.wdj-universal-consent input{margin-top:2px;flex:none}
+.wdj-universal-case{border:1px solid var(--border,#dfe5ee);border-radius:13px;padding:15px;margin-top:14px}
+.wdj-universal-case>small{display:block;margin-top:3px}
+.wdj-universal-case textarea{display:block;box-sizing:border-box;width:100%;min-height:64px;margin:10px 0;padding:9px;border:1px solid var(--border,#dfe5ee);border-radius:9px;background:var(--surface,#fff);color:inherit}
+.wdj-universal-preview{font-size:.82rem;margin:10px 0;padding:10px;background:rgba(115,140,170,.08);border-radius:9px;overflow-wrap:anywhere}
+.wdj-universal-buttons{display:flex;gap:10px;flex-wrap:wrap}
+.wdj-universal-case button:disabled,.wdj-universal-panel button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:640px){.wdj-universal-panel,.wdj-universal-owner{padding:12px;border-radius:14px}.wdj-universal-buttons button{flex:1}}
