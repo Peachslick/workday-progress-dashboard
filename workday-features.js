@@ -10,7 +10,7 @@
   const API = window.WorkdayJourneyAPI;
   if (!API) return;
 
-  const VERSION = "8.7.10.3.7.2";
+  const VERSION = "8.7.10.3.7.3";
   const CLOUD_SCHEMA = 1;
   const CLOUD_TABLE = "workday_user_state";
   const $ = id => document.getElementById(id);
@@ -2302,7 +2302,7 @@
     const key=dayKeyNow(), set=dailyMissionSet(key), c=missionContext(key), claimed=missionClaimCount(key), dailyEntry=chestLedgerEntry("daily",key), dailyOpen=!!dailyEntry||!!window.WorkdayChestInventory?.guestClaimed?.("daily",key), weeklyDone=window.WorkdayChestInventory?.guestWeeklyCount?.()??completedDailyInWeek(), weeklyEntry=chestLedgerEntry("weekly",weekKey()), weeklyOpen=!!weeklyEntry||!!window.WorkdayChestInventory?.guestClaimed?.("weekly",weekKey()), trial=activeThemeTrial();
     const cards=set.ids.map((id,index)=>{const d=MISSION_DEFS[id],p=missionProgress(id,c),done=p.value+1e-6>=p.target,got=missionClaimed(key,id),pct=Math.max(0,Math.min(100,p.value/Math.max(.0001,p.target)*100));return `<article class="v82-mission-card v853-mission-card ${done?"done":""} ${got?"claimed":""}"><div class="v82-mission-icon">${d.icon}</div><div class="v82-mission-copy"><div><strong>${esc(lang()==="th"?d.th:d.en)}</strong><span class="wdj-dual-reward">+${d.reward} 🪙 <em>+10 Quest XP</em></span></div><p>${esc(lang()==="th"?d.descTh:d.descEn)}</p><div class="v82-mission-progress"><i><b style="width:${pct}%"></b></i><small>${esc(progressText(p.value,p.target))}</small></div></div><button type="button" data-v82-claim="${id}" ${!done||got?"disabled":""}>${got?"✓ "+(lang()==="th"?"รับแล้ว":"Claimed"):(done?(lang()==="th"?"รับ Coin + XP":"Claim Coin + XP"):(lang()==="th"?"กำลังทำ":"In progress"))}</button></article>`;}).join("");
     const dailyReady=claimed>=3&&!dailyOpen, weeklyReady=weeklyDone>=5&&!weeklyOpen;
-    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.7.10.3.7.2</p><h2>${lang()==="th"?"ภารกิจรายวัน":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำครบเพื่อรับ Daily Chest เข้าคลัง และสะสมครบ 5 วันเพื่อรับ Weekly Chest":"Fresh missions every day. Claim all three to collect a Daily Chest, and collect on five days for the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙 <span class="wdj-dual-total-xp">· ${ledger().filter(x=>String(x.id||"").startsWith('earn:mission:')).length*10} XP</span></b></div></section><div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${lang()==="th"?"ภารกิจของวันนี้":"Today's missions"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-mission-list v853-mission-list">${cards}</section><div id="v853ChestHeading" class="v853-section-heading"><div><h3>${lang()==="th"?"รางวัลภารกิจ":"Chest rewards"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"เก็บกล่องไว้เปิดทีหลังที่ Reward Shop":"Collect now and open later in Reward Shop"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องเข้าคลัง":"Collect chest")}</button></article><article class="v82-chest-card v853-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"รับ Daily Chest เข้าคลังครบ 5 วัน เพื่อรับ Weekly Chest":"Collect Daily Chests on five days for a Weekly Chest"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องรายสัปดาห์":"Collect weekly")}</button></article></section>`;
+    root.innerHTML=`<div class="v7-page-heading"><div class="v7-page-title"><span>🎯</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.7.10.3.7.3</p><h2>${lang()==="th"?"ภารกิจรายวัน":"Daily Missions"}</h2><p class="muted">${lang()==="th"?"ภารกิจสุ่มใหม่ทุกวัน ทำครบเพื่อรับ Daily Chest เข้าคลัง และสะสมครบ 5 วันเพื่อรับ Weekly Chest":"Fresh missions every day. Claim all three to collect a Daily Chest, and collect on five days for the Weekly Chest."}</p></div></div></div>${trial?`<section class="v82-trial-banner">🌈 <div><strong>${esc(rewardName(rewardBy("theme",trial.themeId)))} Theme Trial</strong><span>${lang()==="th"?"ใช้งานได้ถึง":"Active until"} ${esc(formatHistoryDate(trial.expiresAt))}</span></div></section>`:""}<section class="v82-mission-hero v853-mission-hero wdj-stable-mission-hero"><div><span>🎯</span><div><small>${lang()==="th"?"ภารกิจวันนี้":"TODAY'S MISSIONS"}</small><strong>${claimed}/3</strong></div></div><div><small>${lang()==="th"?"รับ Coin วันนี้จาก Mission":"Mission Coins Today"}</small><b>+${ledger().filter(x=>String(x.id||"").startsWith(`earn:mission:${key}:`)).reduce((a,x)=>a+Number(x.amount||0),0)} 🪙 <span class="wdj-dual-total-xp">· ${ledger().filter(x=>String(x.id||"").startsWith('earn:mission:')).length*10} XP</span></b></div></section><div id="v853MissionHeading" class="v853-section-heading"><div><p class="eyebrow">TODAY'S QUESTS</p><h3>${lang()==="th"?"ภารกิจของวันนี้":"Today's missions"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-mission-list v853-mission-list">${cards}</section><div id="v853ChestHeading" class="v853-section-heading"><div><h3>${lang()==="th"?"รางวัลภารกิจ":"Chest rewards"}</h3></div><span class="v853-section-line" aria-hidden="true"></span></div><section class="v82-chest-grid v853-chest-grid"><article class="v82-chest-card v853-chest-card daily ${dailyReady?"ready":""}"><div class="v82-chest-art">🎁</div><div><p class="eyebrow">DAILY CHEST</p><h3>${dailyOpen?(lang()==="th"?"เปิดแล้ววันนี้":"Opened today"):(dailyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):(lang()==="th"?`ทำภารกิจ ${claimed}/3`:`Missions ${claimed}/3`))}</h3><p>${lang()==="th"?"เก็บกล่องไว้เปิดทีหลังที่ Reward Shop":"Collect now and open later in Reward Shop"}</p>${chestCardRewardMarkup(dailyEntry,"daily")}</div><button type="button" data-v82-chest="daily" ${!dailyReady?"disabled":""}>${dailyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องเข้าคลัง":"Collect chest")}</button></article><article class="v82-chest-card v853-chest-card weekly ${weeklyReady?"ready":""}"><div class="v82-chest-art">🏆</div><div><p class="eyebrow">WEEKLY CHEST</p><h3>${weeklyOpen?(lang()==="th"?"เปิดแล้วสัปดาห์นี้":"Opened this week"):(weeklyReady?(lang()==="th"?"พร้อมเปิด!":"Ready to open!"):`${weeklyDone}/5 DAYS`)}</h3><p>${lang()==="th"?"รับ Daily Chest เข้าคลังครบ 5 วัน เพื่อรับ Weekly Chest":"Collect Daily Chests on five days for a Weekly Chest"}</p>${chestCardRewardMarkup(weeklyEntry,"weekly")}</div><button type="button" data-v82-chest="weekly" ${!weeklyReady?"disabled":""}>${weeklyOpen?(lang()==="th"?"✓ เข้าคลังแล้ว":"✓ In inventory"):(lang()==="th"?"รับกล่องรายสัปดาห์":"Collect weekly")}</button></article></section>`;
     qa("[data-v82-claim]",root).forEach(btn=>btn.addEventListener("click",()=>claimMission(btn.dataset.v82Claim)));
     qa("[data-v82-chest]",root).forEach(btn=>btn.addEventListener("click",()=>window.WorkdayChestInventory?.claimGuest?.(btn.dataset.v82Chest)));
     window.WorkdayLifeQuests?.render?.();
@@ -2380,7 +2380,7 @@
     for(const item of sorted){
       const before=amount,n=Number(item?.amount||0); amount=roundBank(amount+n);
       if(item?.type==="deposit"&&before<=0&&amount>0)start=bankStampDateKey(item.createdAt);
-      if(item?.type==="withdraw"){ if(amount>0)start=bankStampDateKey(item.createdAt); else start=null; }
+      if(item?.type==="withdraw"&&amount<=0)start=null;
     }
     return amount>0?start:null;
   }
@@ -2390,7 +2390,7 @@
     // Do not create empty Bank state before Cloud data has a chance to load.
     if(!hasBankData)return state;
     if(!state.boostStartedDate){state.boostStartedDate=dayKeyNow();changed=true;}
-    if(savings>0&&!state.streakStartDate){state.streakStartDate=deriveBankStreakStart(list)||dayKeyNow();changed=true;}
+    if(savings>0){const actualStart=deriveBankStreakStart(list);if(actualStart&&(!state.streakStartDate||actualStart<state.streakStartDate)){state.streakStartDate=actualStart;changed=true;}else if(!state.streakStartDate){state.streakStartDate=dayKeyNow();changed=true;}}
     if(savings<=0&&state.streakStartDate){state.streakStartDate=null;changed=true;}
     if(changed)saveBankState(state); return state;
   }
@@ -2490,7 +2490,7 @@
     const now=new Date().toISOString(),tx=bankTxId("withdraw"),walletList=ledger(),bankList=bankLedger(),state=ensureBankV844State(bankState(),bankList),remaining=roundBank(savings-amount);
     walletList.push({id:`${tx}:wallet`,amount,type:"bank_withdraw",labelTh:`ถอนจาก Work Bank · ${amount} Coins`,labelEn:`Work Bank Withdrawal · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
     bankList.push({id:`${tx}:savings`,amount:-amount,type:"withdraw",labelTh:`ถอนกลับ Wallet · ${amount} Coins`,labelEn:`Withdraw to Wallet · ${amount} Coins`,createdAt:now,meta:{bankTx:tx}});
-    state.streakStartDate=remaining>0?dayKeyNow():null;
+    state.streakStartDate=remaining>0?(state.streakStartDate||dayKeyNow()):null;
     if(remaining<=0)state.lastInterestDate=dayKeyNow();
     write(KEYS.ledger,walletList);write(KEYS.bankLedger,bankList);saveBankState(state);
     reconcileRewards({notify:true});toast("🏦",`${lang()==="th"?"ถอนสำเร็จ · Savings Streak เริ่มใหม่":"Withdrawn · Savings Streak reset"} ${amount.toLocaleString(bankLocale())} Coins`,`success`);refreshAll();
@@ -3202,6 +3202,7 @@
           ...missionProgress(id,context)}))};
     },
     renderBank,
+    toast: (icon,message,type="success") => toast(icon,message,type),
     getDailyDeals: () => dailyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...dailyDealFor(r)})),
     getWeeklyDeals: () => weeklyFeaturedRewards().map(r=>({type:r.type,id:r.id,name:rewardName(r),...weeklyDealFor(r)})),
     getBankStatus: () => { const list=bankLedger(),state=ensureBankV844State(bankState(),list),savings=bankBalance(list),info=bankRateInfo(savings,dayKeyNow(),state); return {savings,state:{...state},tier:info.tier.id,baseRate:info.baseRate,streakBonusRate:info.bonusRate,effectiveRate:info.effectiveRate,streakDays:info.streakDays,nextInterest:bankDailyInterest(savings,dayKeyNow(),state),cap:info.cap}; },
@@ -5349,7 +5350,7 @@
       await restoreVerifiedTrades(userId);
       const snapshot=buildSnapshot(userId);
       if(!snapshot)return;
-      // V8.7.10.3.7.2: Stock evidence is now submitted only with explicit user consent.
+      // V8.7.10.3.7.3: Stock evidence is now submitted only with explicit user consent.
       // Keep the pre-existing automatic BANK-only recovery path unchanged.
       snapshot.trades=[];
       if(!snapshot.bank)return;
@@ -7661,4 +7662,69 @@ queueMicrotask(()=>{const route=document.body?.dataset.v7Route;
   window.addEventListener('workday:v7-data-changed',()=>{if(uid()&&location.hash.includes('/missions'))void recordWork(true);});
   setInterval(()=>{if(uid()&&location.hash.includes('/missions')){void recordWork();void refresh();}},60000);
   setTimeout(routeVisit,1100);
+})();
+
+
+/* ===== V8.7.10.3.7.3 | Secure completed-workday reward =====
+ * Signed-in: award through authenticated RPC only. Never mint browser coins.
+ * Guest: the original reconcileRewards() already awards complete workdays.
+ */
+(() => {
+  'use strict';
+  let running = false, lastAttempt = 0, lastAccount = '', lastDate = '';
+  const cloud = () => window.WorkdayV8Cloud;
+  const uid = () => cloud()?.getUser?.()?.id || '';
+  const bkkParts = () => {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
+      timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23',weekday:'short'
+    }).formatToParts(new Date()).map(x=>[x.type,x.value]));
+    return {day:`${parts.year}-${parts.month}-${parts.day}`,
+      time:Number(parts.hour)*60+Number(parts.minute),weekday:parts.weekday};
+  };
+  const canClaimToday = () => {
+    const api=window.WorkdayJourneyAPI; // populated after the core bundle loads
+    const now=bkkParts();
+    if (now.time < 16*60+10 || now.weekday==='Sat' || now.weekday==='Sun') return false;
+    const d=new Date(`${now.day}T12:00:00`);
+    if (!api?.getScheduledMinutes || !api?.getWorkedMinutes || !api?.getLeaveMinutes) return false;
+    const scheduled=Number(api.getScheduledMinutes(d)||0);
+    const worked=Number(api.getWorkedMinutes(d,api.getNow?.()||new Date())||0);
+    return scheduled>0 && Number(api.getLeaveMinutes(d)||0)<0.001 && worked>=scheduled-0.001;
+  };
+  async function refreshWorkdayReward(force=false) {
+    const account=uid(), client=cloud()?.getClient?.();
+    if(!account||!client||!navigator.onLine||running||document.hidden)return;
+    const now=bkkParts();
+    const token=account+'|'+now.day;
+    if(lastAccount!==token){lastAccount=token;lastAttempt=0;}
+    if(!force && Date.now()-lastAttempt<120000)return;
+    // Past-date backfill is server-checked against existing journal/mission logs;
+    // current-day award also requires a completed *local* scheduled workday.
+    const currentEligible=canClaimToday();
+    lastAttempt=Date.now(); running=true;
+    try{
+      const {data,error}=await client.rpc('wdj_claim_completed_workdays_secure',
+        {p_claim_today:currentEligible});
+      if(error)throw error;
+      if(uid()!==account)return;
+      if(data?.economy)window.WorkdayEconomySecurity?.applyEconomy?.(data.economy);
+      const count=Number(data?.creditedCount)||0;
+      if(count>0){
+        const message=document.documentElement.lang==='en'
+          ? `Completed Workday +${count*15} Coins (${count} day${count===1?'':'s'})`
+          : `ทำงานครบวัน +${count*15} Coin (${count} วัน)`;
+        window.WorkdayRewards?.toast?.('🪙',message,'success');
+      }
+    }catch(err){
+      // No misleading success message and no offline/local payout.
+      if(uid()===account)console.warn('[Workday] Secure workday reward unavailable:',err?.message||err);
+    }finally{running=false;}
+  }
+  window.WorkdayCompletedDayRewards={refresh:()=>refreshWorkdayReward(true)};
+  ['workday:v8-auth-complete','workday:v8-auth-resolved','workday:v8-auth-state','online'].forEach(ev=>
+    window.addEventListener(ev,()=>setTimeout(()=>void refreshWorkdayReward(true),600)));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshWorkdayReward(true);});
+  setInterval(()=>void refreshWorkdayReward(),120000);
+  setTimeout(()=>void refreshWorkdayReward(true),1500);
 })();

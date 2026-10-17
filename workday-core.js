@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.7.10.3.7.2";
+  const APP_VERSION = "8.7.10.3.7.3";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -932,12 +932,31 @@
       if(item?.type==="interest")bankInterestTotal+=Math.max(0,amount);
       const key=keyFromStamp(item?.createdAt);
       if(item?.type==="deposit"&&before<=0&&bankRunning>0&&!bankStreakStart)bankStreakStart=key;
-      if(item?.type==="withdraw"){
+      if(item?.type==="withdraw" && bankRunning<=0){
         if(bankStreakStart&&key)bankMaxStreak=Math.max(bankMaxStreak,keyDistance(bankStreakStart,key)+1);
-        bankStreakStart=bankRunning>0?key:"";
+        bankStreakStart=""; // Only emptying Savings ends the streak.
       }
     });
     if(bankRunning>0&&bankStreakStart)bankMaxStreak=Math.max(bankMaxStreak,keyDistance(bankStreakStart,dateKey(getConfiguredNow()))+1);
+    // Cloud Bank is authoritative for the active savings streak. The original
+    // browser replay used to reset on *every* withdrawal and often started at
+    // 1 day after an authenticated transfer, even when savings stayed positive.
+    // Never use a Guest/local bank streak while an account is signed in.
+    if (window.WorkdayV8Cloud?.isSignedIn?.()) {
+      const cloudBank = window.WorkdayBankSecurity?.getCached?.();
+      if (cloudBank) {
+        const currentSavings = Number(cloudBank.savings) || 0;
+        const start = String(cloudBank.state?.streakStartDate || '').slice(0,10);
+        const activeStreak = currentSavings > 0 && /^\d{4}-\d{2}-\d{2}$/.test(start)
+          ? Math.max(0,keyDistance(start,dateKey(getConfiguredNow()))+1) : 0;
+        bankMaxStreak = Math.max(bankMaxStreak,activeStreak);
+        bankMaxBalance = Math.max(bankMaxBalance,currentSavings);
+        bankInterestTotal = Math.max(bankInterestTotal,Number(cloudBank.interestEarned)||0);
+      } else {
+        // Do not show another account's cached Local streak before Cloud loads.
+        bankMaxStreak = 0;
+      }
+    }
     bankInterestTotal=Math.round(bankInterestTotal*100)/100;
     const bankDepositCount=bankRows.filter(x=>x?.type==="deposit"&&Number(x?.amount||0)>0).length;
 
@@ -3681,6 +3700,7 @@
     let sidebarResizeTimer;
     window.addEventListener("resize",()=>{ clearTimeout(sidebarResizeTimer); sidebarResizeTimer=setTimeout(syncSidebarMode,120); });
     qa(".lang-btn").forEach(btn=>btn.addEventListener("click",()=>setTimeout(()=>{renderSidebar();renderPage(currentRoute());ensureQualityUi();},30)));
+    window.addEventListener("workday:v8601-bank-state",()=>{if(currentRoute()==="achievements")renderAchievementsPage();});
     window.addEventListener("workday:v7-data-changed",()=>renderPage(currentRoute()));
     window.addEventListener("workday:journey-cleared",()=>setTimeout(()=>navigate("dashboard"),20));
     document.addEventListener("keydown",e=>{
