@@ -1,10 +1,28 @@
 # Workday Journey
 
-**Current release: V8.8.0 — Stability Milestone & Documentation Refresh**  
-**Previous release: V8.7.10.3.7.3 — Savings Streak & Workday Coin Fix**
+**Current release: V8.8.1 — Targeted Fixes**  
+**Previous release: V8.8.0 — Stability Milestone & Documentation Refresh**
 
 > Workday Journey คือเว็บติดตามวันทำงาน / การฝึกงาน พร้อม Daily Journal, Projects, ปฏิทิน, รายงาน, ความสำเร็จ, Missions, Work Coins, Reward Shop, Work Bank และ Work Exchange แบบจำลอง  
 > A personal workday and internship progress tracker with optional account-based Cloud Sync and gamification.
+
+## 🛠 V8.8.1 — Targeted Fixes (2026-10-17)
+
+อัปเดตเฉพาะจุดที่พบจาก Code Review โดย **ไม่เปลี่ยนฐานข้อมูลหรือกติกาแจก Coin**:
+
+1. **Work Exchange:** ตลาดหุ้นจำลองยังเปิดตามวัน/เวลาตลาดปกติได้แม้ Personal Journey สิ้นสุดแล้ว (Guest และ Login); บัญชีออนไลน์ยังตรวจเปิดตลาดและราคาโดย Server ตามเดิม
+2. **Work Bank Achievements:** บัญชี Login คำนวณเงินออม, วันสะสม, ดอกเบี้ย และจำนวนครั้งฝากจาก Snapshot/ธุรกรรมของบัญชี ไม่รวม Local/Guest อีก
+3. **Trading Achievements:** บัญชี Login คำนวณความคืบหน้าจาก Cloud Portfolio/Trade History; ไม่นำค่าประวัติหุ้นเก่าหรือค่าสูงสุดที่เก็บ Local มาเพิ่มความคืบหน้าของบัญชีออนไลน์
+4. **Completed Workday +15:** ไม่พยายามขอรางวัลก่อนเวลาเลิกงานที่ตั้งไว้ และไม่ข้ามข้อกำหนด RPC ที่ยังตรวจเวลาขั้นต่ำ **16:10 น. เวลาไทย** จึงไม่เปลี่ยนยอดหรือกติกา Server
+5. **เวอร์ชัน:** แก้ Header/Footer ที่ยังแสดงรุ่นเก่า, Sidebar, What's New และเพิ่มเวอร์ชัน Cache เป็น `8.8.1`
+
+**ข้อจำกัดที่ยังมี:** ผู้ใช้ที่ตั้งเวลาเลิกงาน *ก่อน* 16:10 น. ยังต้องรอผ่าน 16:10 น. ของไทยจึงรับ +15 สำหรับวันปัจจุบันได้ (เนื่องจาก RPC เดิม) และ Achievement ของบัญชีออนไลน์ยังไม่ได้เพิ่มระบบจ่าย Coin ย้อนหลังจากสถิติเก่า รุ่นนี้แก้การแสดงสถานะเป็นหลักเท่านั้น
+
+**วิธีอัปเดต:** ทับเฉพาะไฟล์ในโฟลเดอร์ `web/` ตามคู่มือ `INSTALL_TH.md` + อัปเดต `README.md`, `CHANGELOG.md` บน GitHub แล้ว Deploy — **ไม่ต้องรัน SQL**
+
+อ่านรายละเอียดแพตช์: [CHANGELOG.md](CHANGELOG.md)
+
+---
 
 ## 📌 V8.8.0 มีอะไรใหม่?
 
@@ -33,7 +51,8 @@ Workday Journey เริ่มจากการติดตามความ�
 | V8.6 | Security, Cloud Recovery, Data Safety, Performance และ Accessibility |
 | V8.7 | Virtual Workspace, Mascot Life, Focus Studio, Skill Tree, Timeline, Wrapped และ Insights |
 | V8.7.10.3.x | กู้ฟังก์ชัน Missions/Coin ที่เคยทำงานได้ และย้ายการซื้อขายหุ้น/กู้หุ้นเก่าเข้าฐานข้อมูลอย่างปลอดภัย |
-| **V8.8.0** | รวมงานที่เสถียรเป็นเวอร์ชันหลักใหม่และจัดทำเอกสาร GitHub |
+| V8.8.0 | รวมงานที่เสถียรเป็นเวอร์ชันหลักใหม่และจัดทำเอกสาร GitHub |
+| **V8.8.1** | Targeted Fixes: ตลาดหุ้น, Finance Achievements, Shift End, Version/Cache |
 
 ดูรายละเอียดแต่ละแพตช์ใน **[CHANGELOG.md](CHANGELOG.md)**
 

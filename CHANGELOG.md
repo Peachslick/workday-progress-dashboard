@@ -4,6 +4,23 @@
 
 > Version history is based on the available project release notes, code snapshots and patch discussion. Earlier minor releases are grouped where individual patch artifacts are not available; do not treat an unlisted patch as confirmation that it never existed.
 
+## [8.8.1] — 2026-10-17 — Targeted Fixes
+
+**Why:** Static Code Review พบเงื่อนไขที่ทำให้ตลาดหุ้นจำลองถูกล็อกหลัง Journey สิ้นสุด รวมถึงการนับความคืบหน้าของ Bank/Trading Achievement ของบัญชี Login ยังอาศัยข้อมูลใน Browser บางส่วน และหน้าจอยังมีเลขเวอร์ชันเก่า
+
+**Fixed**
+- **Work Exchange:** ไม่ปิดตลาดเมื่อ Journey ส่วนตัวจบแล้ว; ตลาดปิด/เปิดตามเวลา 07:00–16:00 จ.–ศ. ตามกติกาเดิม การซื้อขายของบัญชี Login ยังถูกตรวจสอบโดย RPC ที่ติดตั้งอยู่
+- **Bank Achievements:** Login ใช้ Cloud Bank snapshot และธุรกรรมของบัญชีเพื่อคำนวณความคืบหน้า แยกจาก Local/Guest; ไม่แก้เงินต้นหรือดอกเบี้ยในฐานข้อมูล
+- **Trading Achievements:** Login ใช้ข้อมูล Portfolio/Trade History จาก Cloud เพื่อคำนวณความคืบหน้า ไม่อ่านประวัติหุ้น Guest มาผสม; ไม่เพิ่ม Coin จาก Browser
+- **Completed Workday:** เช็กเวลาเลิกงานที่ผู้ใช้กำหนดร่วมกับ minimum cutoff 16:10 ของ RPC ในปัจจุบัน ป้องกันการส่งคำขอก่อนทำงานครบตามเวลา
+- **Version UI:** ปรับป้ายเวอร์ชันในหน้าเว็บ/Sidebar/What's New และ cache-busting URL/Service Worker เป็น `V8.8.1`
+
+**Important limits:** RPC แจก +15 ยังคงมี minimum **16:10 Asia/Bangkok** สำหรับวันปัจจุบัน แม้ผู้ใช้เลิกงานก่อนหน้านั้น. การนับ Achievement Cloud จาก Snapshot ไม่ใช่ Migration ของ Lifetime Achievements หรือการจ่าย Coin ย้อนหลัง และระหว่าง Cloud โหลดอาจแสดงความคืบหน้าเป็น 0 ชั่วคราวก่อนข้อมูลมาถึง
+
+**Migration:** ไม่มี SQL / schema / RPC ใหม่ และไม่ลบหรือ Reset LocalStorage, Wallet, Portfolio, Recovery หรือประวัติเดิม. อัปเดต frontend 4 ไฟล์, README/CHANGELOG แล้ว Deploy
+
+---
+
 ## [8.8.0] — 2026-10-17 — Stability Milestone & Documentation Refresh
 
 **Why:** ชื่อเวอร์ชัน V8.7.10.3.7.3 ยาวมาก และรายละเอียดการอัปเดตกระจัดกระจายอยู่ในหลาย ZIP / คู่มือ ทำให้ติดตามย้อนหลังได้ยาก

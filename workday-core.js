@@ -7,7 +7,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = "8.8.0";
+  const APP_VERSION = "8.8.1";
   const BACKUP_SCHEMA_VERSION = 3;
   const DATA_RESET_VERSION = "5.2-setup-calendar-reset";
   const DATA_RESET_MARKER = "wp-data-reset-version";
@@ -395,7 +395,7 @@
     profileSummary: "สรุปโปรไฟล์", workdaysLabelShort: "วันทำงาน", noName: "ยังไม่ได้ตั้งชื่อ", timezoneChanged: "เปลี่ยนเขตเวลาแล้ว", localeChanged: "เปลี่ยนรูปแบบวันที่แล้ว",
     setupPrivacy: "ข้อมูลเก็บใน Browser เป็นค่าเริ่มต้น และแยกจากผู้ใช้อื่น หาก Login สามารถ Sync ข้อมูลของบัญชีข้ามอุปกรณ์ได้", monday:"จ", tuesday:"อ", wednesday:"พ", thursday:"พฤ", friday:"ศ", saturday:"ส", sunday:"อา",
     fullDayLeaveHelp: "ลาตามเวลาทำงานเต็มวัน", halfDayLeaveHelp: "ลาครึ่งหนึ่งของเวลาทำงาน", normalScheduleHelp: "ใช้วันทำงานตามที่ตั้งไว้ใน Journey",
-    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V8.5.0 · Navigation Refresh · Reward Codes · Smart Cloud Sync · Local-first",
+    recordEquivalentDays: "เทียบเท่าวันทำงานเต็ม", footerText: "Workday Journey V8.8.1 · Secure Cloud Economy · Work Exchange · Recovery",
     heroWorking: "วันนี้กำลังเดินหน้าไปเรื่อย ๆ ทำงานให้ครบเวลาตามตารางกันครับ", heroFinished: "ภารกิจวันนี้ครบแล้ว ทำเวลางานตามตารางสำเร็จครับ",
     notifyDoneBody: "เวลาทำงานตามตารางของวันนี้ครบแล้ว", completionMessageDynamic: "Journey ตั้งแต่ {start} ถึง {end} ครบเรียบร้อยแล้ว",
     weekendStatus: "วันหยุดประจำ", heroWeekend: "วันนี้ไม่อยู่ในวันทำงานประจำ ระบบจะไม่นับเวลาทำงาน", statusWeekend: "วันหยุดประจำ", dayOffLabel: "วันหยุดประจำ"
@@ -423,7 +423,7 @@
     profileSummary: "Profile Summary", workdaysLabelShort: "Working days", noName: "No name set", timezoneChanged: "Timezone updated", localeChanged: "Locale updated",
     setupPrivacy: "Data stays local by default and separate from other users. Sign in if you want to sync your account across devices.", monday:"Mon", tuesday:"Tue", wednesday:"Wed", thursday:"Thu", friday:"Fri", saturday:"Sat", sunday:"Sun",
     fullDayLeaveHelp: "Leave for the full scheduled work time", halfDayLeaveHelp: "Leave for half of the scheduled work time", normalScheduleHelp: "Use the regular working days configured for this journey",
-    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V8.5.0 · Navigation Refresh · Reward Codes · Smart Cloud Sync · Local-first",
+    recordEquivalentDays: "Equivalent full workdays", footerText: "Workday Journey V8.8.1 · Secure Cloud Economy · Work Exchange · Recovery",
     heroWorking: "The day is moving forward. Keep going toward your scheduled work time.", heroFinished: "Today's scheduled working time is complete.",
     notifyDoneBody: "You have completed today's scheduled working time", completionMessageDynamic: "Your journey from {start} to {end} is complete",
     weekendStatus: "Day Off", heroWeekend: "Today is not one of your regular working days, so no work time is counted", statusWeekend: "Day Off", dayOffLabel: "Day Off"
@@ -917,7 +917,11 @@
     // V8.4.7.1 finance / feature achievement inputs. Keep these calculations in the
     // core achievement API so every surface (Achievement Center, Coin rewards,
     // public summary and Cloud Sync) sees the same unlock state.
-    const bankRowsRaw = safeParse(localStorage.getItem("wp-v83-bank-ledger"), []);
+    // V8.8.1: finance achievement progress belongs to the active account.
+    // Cloud bank snapshots are already user-scoped by WorkdayBankSecurity.
+    const signedInFinance = !!window.WorkdayV8Cloud?.isSignedIn?.();
+    const cloudBank = signedInFinance ? window.WorkdayBankSecurity?.getCached?.() : null;
+    const bankRowsRaw = signedInFinance ? (cloudBank?.transactions || []) : safeParse(localStorage.getItem("wp-v83-bank-ledger"), []);
     const bankRows = Array.isArray(bankRowsRaw) ? bankRowsRaw.slice().sort((a,b)=>new Date(a?.createdAt||0)-new Date(b?.createdAt||0)) : [];
     let bankRunning = 0, bankMaxBalance = 0, bankInterestTotal = 0, bankMaxStreak = 0, bankStreakStart = "";
     const keyFromStamp = stamp => { const d=new Date(stamp||0); return Number.isNaN(d.getTime()) ? "" : dateKey(d); };
@@ -942,36 +946,41 @@
     // browser replay used to reset on *every* withdrawal and often started at
     // 1 day after an authenticated transfer, even when savings stayed positive.
     // Never use a Guest/local bank streak while an account is signed in.
-    if (window.WorkdayV8Cloud?.isSignedIn?.()) {
-      const cloudBank = window.WorkdayBankSecurity?.getCached?.();
+    if (signedInFinance) {
       if (cloudBank) {
-        const currentSavings = Number(cloudBank.savings) || 0;
+        const currentSavings = Math.max(0,Number(cloudBank.savings)||0);
         const start = String(cloudBank.state?.streakStartDate || '').slice(0,10);
         const activeStreak = currentSavings > 0 && /^\d{4}-\d{2}-\d{2}$/.test(start)
           ? Math.max(0,keyDistance(start,dateKey(getConfiguredNow()))+1) : 0;
+        // Past streaks are replayed only from this user's Cloud transactions.
         bankMaxStreak = Math.max(bankMaxStreak,activeStreak);
         bankMaxBalance = Math.max(bankMaxBalance,currentSavings);
-        bankInterestTotal = Math.max(bankInterestTotal,Number(cloudBank.interestEarned)||0);
+        bankInterestTotal = Math.max(0,Number(cloudBank.interestEarned)||0);
       } else {
-        // Do not show another account's cached Local streak before Cloud loads.
+        // No Cloud snapshot yet: never infer another account's finance history.
         bankMaxStreak = 0;
+        bankMaxBalance = 0;
+        bankInterestTotal = 0;
       }
     }
     bankInterestTotal=Math.round(bankInterestTotal*100)/100;
     const bankDepositCount=bankRows.filter(x=>x?.type==="deposit"&&Number(x?.amount||0)>0).length;
 
-    const exchangeTradesRaw=safeParse(localStorage.getItem("wp-v84-exchange-trades"), []);
-    const exchangeTrades=Array.isArray(exchangeTradesRaw)?exchangeTradesRaw:[];
-    const exchangeState=safeParse(localStorage.getItem("wp-v84-exchange-achievements"), {})||{};
+    const cloudTrading = signedInFinance ? window.WorkdayExchangeReadOnly?.getCached?.() : null;
+    const exchangeTradesRaw = signedInFinance ? (cloudTrading?.trades || []) : safeParse(localStorage.getItem("wp-v84-exchange-trades"), []);
+    const exchangeTrades = Array.isArray(exchangeTradesRaw) ? exchangeTradesRaw : [];
+    // Login: ignore old browser flags/statistical maxima. Those were not account-scoped.
+    const exchangeState = signedInFinance ? {} : (safeParse(localStorage.getItem("wp-v84-exchange-achievements"), {})||{});
     const academyState=safeParse(localStorage.getItem("wp-v841-trading-academy"), {})||{};
     const academyCompleted=academyState?.completed&&typeof academyState.completed==="object"?Object.keys(academyState.completed).length:0;
-    const qtyBySymbol={}; exchangeTrades.forEach(tr=>{const sym=String(tr?.symbol||"");if(!sym)return;qtyBySymbol[sym]=(qtyBySymbol[sym]||0)+(tr?.side==="sell"?-1:1)*Math.max(0,Number(tr?.qty)||0);});
-    const exchangeHoldings=Object.values(qtyBySymbol).filter(qty=>qty>0).length;
-    const featureStats=safeParse(localStorage.getItem("wp-v846-feature-achievement-stats"), {})||{};
-    const exchangePnl=Math.max(Number(featureStats.exchangeMaxTotalPnl)||0,Number(featureStats.exchangeTotalPnl)||0,exchangeState?.["market-winner"]?100:0);
-    const exchangePortfolioValue=Math.max(Number(featureStats.exchangeMaxPortfolioValue)||0,Number(featureStats.exchangePortfolioValue)||0,exchangeState?.["exchange-master"]?2500:0);
-    const exchangeHoldDays=Math.max(Number(featureStats.exchangeMaxHoldDays)||0,Number(featureStats.exchangeHoldDays)||0,exchangeState?.["diamond-hands"]?5:0);
-    const exchangeGreen=(exchangeState?.["green-portfolio"]||Number(featureStats.exchangeMaxTotalPnl)>0||Number(featureStats.exchangeTotalPnl)>0)?1:0;
+    const qtyBySymbol={};
+    if (!signedInFinance) exchangeTrades.forEach(tr=>{const sym=String(tr?.symbol||"");if(!sym)return;qtyBySymbol[sym]=(qtyBySymbol[sym]||0)+(tr?.side==="sell"?-1:1)*Math.max(0,Number(tr?.qty)||0);});
+    const exchangeHoldings = signedInFinance ? (cloudTrading?.holdings || 0) : Object.values(qtyBySymbol).filter(qty=>qty>0).length;
+    const featureStats = signedInFinance ? {} : (safeParse(localStorage.getItem("wp-v846-feature-achievement-stats"), {})||{});
+    const exchangePnl = signedInFinance ? Math.max(0,cloudTrading?.totalPnl||0) : Math.max(Number(featureStats.exchangeMaxTotalPnl)||0,Number(featureStats.exchangeTotalPnl)||0,exchangeState?.["market-winner"]?100:0);
+    const exchangePortfolioValue = signedInFinance ? Math.max(0,cloudTrading?.value||0) : Math.max(Number(featureStats.exchangeMaxPortfolioValue)||0,Number(featureStats.exchangePortfolioValue)||0,exchangeState?.["exchange-master"]?2500:0);
+    const exchangeHoldDays = signedInFinance ? Math.max(0,cloudTrading?.holdDays||0) : Math.max(Number(featureStats.exchangeMaxHoldDays)||0,Number(featureStats.exchangeHoldDays)||0,exchangeState?.["diamond-hands"]?5:0);
+    const exchangeGreen = signedInFinance ? (exchangePnl>0?1:0) : ((exchangeState?.["green-portfolio"]||Number(featureStats.exchangeMaxTotalPnl)>0||Number(featureStats.exchangeTotalPnl)>0)?1:0);
     const vaultTotalFiles=Number(featureStats.vaultMaxTotalFiles||featureStats.vaultTotalFiles)||0;
     const vaultMaxProjectFiles=Number(featureStats.vaultMaxProjectFiles)||0;
     const vaultMaxVersion=Number(featureStats.vaultMaxVersion)||0;
@@ -1071,9 +1080,12 @@
     let changed = false, timeChanged = false;
     const nowIso = new Date().toISOString();
     visible.forEach(item => {
-      if (item.unlockedNow && !ever.has(item.id)) { ever.add(item.id); changed = true; }
-      if (item.unlockedNow && !unlockedAt[item.id]) { unlockedAt[item.id] = nowIso; timeChanged = true; }
-      item.unlocked = item.unlockedNow || ever.has(item.id);
+      const cloudFinance = signedInFinance && (item.category === "bank" || item.category === "exchange");
+      if (item.unlockedNow && !cloudFinance && !ever.has(item.id)) { ever.add(item.id); changed = true; }
+      if (item.unlockedNow && !cloudFinance && !unlockedAt[item.id]) { unlockedAt[item.id] = nowIso; timeChanged = true; }
+      // Cloud finance badges reflect verified account data, not ever-flags left by a Guest.
+      // No Coin is credited from this display-only calculation.
+      item.unlocked = item.unlockedNow || (signedInFinance && (item.category === "bank" || item.category === "exchange") ? false : ever.has(item.id));
       item.unlockedAt = unlockedAt[item.id] || "";
       item.percent = clamp(item.current / Math.max(.0001,item.target) * 100, 0, 100);
       delete item.unlockedNow;
@@ -2852,7 +2864,7 @@
 
   function updateVersionLabels() {
     const footer=$("footerVersion"); if(footer)footer.textContent=`v${V6_VERSION}`;
-    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.5.0 · Navigation Refresh · Reward Codes · Smart Cloud Sync · ข้อมูลเก็บใน Browser":"Workday Journey V8.5.0 · Navigation Refresh · Reward Codes · Smart Cloud Sync · Local browser data";
+    const footText=document.querySelector('.footer [data-i18n="footerText"]'); if(footText)footText.textContent=lang()==="th"?"Workday Journey V8.8.1 · Cloud Economy · Work Exchange · Recovery":"Workday Journey V8.8.1 · Cloud Economy · Work Exchange · Recovery";
     const eyebrow=document.querySelector(".setup-brand .eyebrow"); if(eyebrow)eyebrow.textContent="WORKDAY JOURNEY · V8.5.0";
   }
 
@@ -2914,7 +2926,7 @@
       reportsTitle:"รายงานและการวิเคราะห์", reportsHelp:"ดูข้อมูลการเข้างาน สถิติรายเดือน ปฏิทินกิจกรรม และรายงานสรุป", monthlyReport:"รายงานรายเดือน", detailedStats:"สถิติโดยละเอียด", finalReport:"รายงานสรุปการเดินทาง", snapshot:"Journey Snapshot", month:"เดือน", planned:"ตามแผน", actual:"ทำงานจริง", leave:"ลา", holidays:"วันหยุด", comp:"ชดเชย", journals:"Journal", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"จัดการวันลา วันหยุดบริษัท วันทำงานชดเชย และ Calendar Preset", presetImport:"Preset / Import", companyHoliday:"วันหยุดบริษัท", personalLeave:"วันลา", compWork:"วันทำงานชดเชย", specialDates:"วันพิเศษ",
       settingsTitle:"ตั้งค่า", settingsHelp:"ปรับโปรไฟล์ ธีม แบบอักษร ภาษา การสำรองข้อมูล และการแสดงผล", profileJourney:"โปรไฟล์และข้อมูลการเดินทาง", editJourney:"แก้ไขข้อมูลการเดินทาง", appearance:"การแสดงผล", theme:"ธีม", font:"แบบอักษร", fontSize:"ขนาดตัวอักษร", density:"ความหนาแน่นของหน้าจอ", timezone:"เขตเวลา", locale:"รูปแบบวันที่", behavior:"การทำงาน", seconds:"แสดงวินาที", animation:"แอนิเมชัน", moodSetting:"บรรยากาศตามเวลา", notifications:"การแจ้งเตือน", dataBackup:"ข้อมูลและการสำรอง", exportBackup:"ส่งออกข้อมูลสำรอง", importBackup:"นำเข้าข้อมูลสำรอง", newJourney:"เริ่มการเดินทางใหม่", resetData:"ล้างข้อมูลทั้งหมด", dashboardLayout:"จัดรูปแบบแดชบอร์ด", openFullSettings:"เปิดการตั้งค่าขั้นสูง", light:"สว่าง", dark:"มืด", system:"ตามระบบ", compact:"กะทัดรัด", comfortable:"สบายตา", small:"เล็ก", medium:"กลาง", large:"ใหญ่", profileSection:"โปรไฟล์", displaySection:"การแสดงผล", regionSection:"ภูมิภาคและเวลา", behaviorSection:"การทำงาน", dataSection:"ข้อมูล", publicDemo:"โหมดสาธารณะ", myJourney:"การเดินทางของฉัน", collapseSidebar:"ซ่อน Sidebar", expandSidebar:"แสดง Sidebar",
-      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V8.5.0 · Navigation Refresh + Smart Cloud Sync + Achievement Center + File Vault", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์",
+      backupStatus:"Backup ล่าสุด", never:"ยังไม่เคย Backup", today:"วันนี้", daysAgo:"{n} วันที่แล้ว", appVersion:"Workday Journey V8.8.1 · Finance & Stability Fixes", perfectMonthAchievedMonth:"เดือนที่ทำสำเร็จ", perfectMonthJourneyPeriod:"ช่วง Journey ที่ตรวจ", localPrivacy:"Local เป็นค่าเริ่มต้น · Login เพื่อ Sync ข้ามอุปกรณ์",
       overview:"ภาพรวม", workTime:"เวลาสะสม", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"วันทำงานที่เหลือ", goTo:"เปิดหน้า",
       challenges:"Challenges", challengeCenter:"Achievement Center", challengeHelp:"แยก Journey Challenges ที่ใช้ Tier Mastery ออกจาก Feature Achievements ที่ให้ Coin จาก Work Bank, Work Exchange และ File Vault", allTiers:"ทุกระดับ", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"กำลังทำ", challengeComplete:"สำเร็จ", rewardTitle:"รางวัลฉายา", noTitle:"ไม่ใช้ฉายา", titleSystem:"ฉายาและเกียรติยศ", titleHelp:"เลือกฉายาที่ปลดล็อกจาก Achievement เพื่อแสดงบน Profile", selectedTitle:"ฉายาที่ใช้", titleUnlockedCount:"ปลดล็อกฉายา {n}/{total}", lockedTitle:"ยังไม่ปลดล็อก", titleSaved:"เปลี่ยนฉายาแล้ว", categoryJourney:"Journey", categoryTime:"เวลา", categoryProjects:"Project", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", categoryBank:"Work Bank", categoryExchange:"Work Exchange", categoryVault:"File Vault", achievementAllCategories:"ทั้งหมด", achievementCoinReward:"รางวัล Coin", tierMastery:"รางวัลพิชิตระดับ", masteryComplete:"ปลดล็อกรางวัล Tier แล้ว", masteryLocked:"ทำ Challenge ใน Tier นี้ให้ครบเพื่อปลดล็อกรางวัล", masteryReward:"รางวัลเมื่อพิชิต Tier", masteryTitle:"ฉายาที่ได้รับ", masteryEffect:"เอฟเฟกต์ธีมที่ได้รับ", tierMasteries:"UX & Quality", masteryProgress:"พิชิตแล้ว {n}/4 ระดับ", journeyChallenges:"Journey Challenges", journeyChallengesHelp:"Challenge หลักของ Journey แบ่ง Common → Legendary และใช้คำนวณ Tier Mastery", featureAchievements:"Feature Achievements", featureAchievementsHelp:"ความสำเร็จจาก Feature ใหม่ แจก Work Coins แยกจาก Tier Mastery", featureAll:"Feature ทั้งหมด", featureTierNote:"Feature Achievements ไม่ถูกนำไปคำนวณ Tier Mastery",
       journalSearch:"ค้นหาบันทึก", journalFilterProject:"ทุก Project", journalFilterMood:"ทุก Mood", journalFilterMonth:"ทุกเดือน", clearFilters:"ล้างตัวกรอง", entriesFound:"พบ {n} บันทึก", projectActiveTab:"กำลังใช้งาน", projectCompletedTab:"เสร็จแล้ว", projectArchivedTab:"เก็บถาวร", archiveProject:"เก็บถาวร", restoreProject:"นำกลับมา", projectArchived:"เก็บ Project แล้ว", projectRestored:"นำ Project กลับมาแล้ว", confirmTitle:"ยืนยันการทำรายการ", confirmDeleteJournal:"ต้องการลบบันทึกประจำวันนี้หรือไม่?", confirmDeleteProject:"ต้องการลบ Project นี้หรือไม่? Journal ที่เชื่อมอยู่จะถูกถอด Project ออก", cancel:"ยกเลิก", confirm:"ยืนยัน", undo:"ย้อนกลับ", undone:"ย้อนกลับรายการแล้ว", achievementDetail:"รายละเอียด Achievement", condition:"เงื่อนไข", progressNow:"ความคืบหน้า", unlockedDate:"วันที่ปลดล็อก", stillLocked:"ยังไม่ปลดล็อก", close:"ปิด", titlePreview:"ตัวอย่างฉายา", applyTitle:"ใช้ฉายานี้", titlePreviewHelp:"เลือกฉายาเพื่อดูก่อน แล้วกดใช้ฉายานี้", achievementNear:"Achievement ใกล้สำเร็จ", activeProjects:"Project ที่กำลังทำ", journalStreak:"Journal ต่อเนื่อง", backupHealth:"สถานะ Backup", days:"วัน", dashboardInsights:"สรุปด่วน", archived:"เก็บถาวร", updateReady:"มีเวอร์ชันใหม่พร้อมใช้งาน", refreshNow:"อัปเดตตอนนี้", calendarUpdated:"อัปเดตปฏิทินแล้ว", projectArchiveConfirm:"เก็บ Project นี้ไว้ใน Archive?", delete:"ลบ", schemaVersion:"เวอร์ชันข้อมูล", confirmResetData:"ต้องการล้างข้อมูล Workday Journey ทั้งหมดใน Browser นี้หรือไม่? การทำรายการนี้ไม่สามารถย้อนกลับได้",      deleteConfirm:"ยืนยันการลบรายการนี้?", projectNameRequired:"กรุณาใส่ชื่อ Project", noData:"ยังไม่มีข้อมูล", todayLabel:"วันนี้", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"ยังไม่ถึงเวลาเริ่มงาน พักอีกนิดนะ 💤", mascotStart:"เพิ่งเริ่มเอง ค่อย ๆ ลุยไปด้วยกัน!", mascotWork:"กำลังไปได้สวย ลุยกันต่อ!", mascotHalf:"ผ่านครึ่งทางแล้ว! เก่งมาก ☕", mascotAlmost:"อีกนิดเดียววว เตรียมตัวฉลอง!", mascotBreak:"พักก่อนนะ เดี๋ยวค่อยกลับมาลุยต่อ ☕", mascotDone:"วันนี้สำเร็จแล้ว กลับบ้านได้! 🎉", mascotRest:"วันนี้เป็นวันพัก เติมพลังให้เต็มที่ 🌿", mascotHoliday:"วันหยุดบริษัท วันนี้พักให้เต็มที่ 🏡", mascotLeave:"วันนี้เป็นวันลา พักผ่อนให้เต็มที่ 🌿", mascotJourneyDone:"Journey สำเร็จแล้ว! ลูกเจี๊ยบภูมิใจมาก 🏆", mascotProgress:"ความคืบหน้าวันนี้", avatarTitle:"รูปโปรไฟล์", avatarHelp:"เลือกใช้ Mascot หรือรูปของคุณเองใน Profile", avatarMascot:"ใช้ Mascot", avatarPhoto:"ใช้รูปของฉัน", avatarUpload:"อัปโหลดรูป", avatarChange:"เปลี่ยนรูป", avatarRemove:"ลบรูป", avatarStoredLocal:"รูปจะถูกย่อขนาดและเก็บไว้ใน Browser นี้ รวมอยู่ในไฟล์ Backup ด้วย", avatarUploaded:"อัปโหลดรูปโปรไฟล์แล้ว", avatarRemoved:"ลบรูปโปรไฟล์แล้ว", avatarInvalid:"กรุณาเลือกไฟล์รูปภาพที่ถูกต้อง", avatarTooLarge:"ไฟล์รูปใหญ่เกินไป กรุณาเลือกไฟล์ไม่เกิน 12 MB", avatarRemoveConfirm:"ต้องการลบรูปโปรไฟล์ที่อัปโหลดไว้หรือไม่?", avatarMascotDemo:"Public Demo Mode จะแสดง Mascot แทนรูปส่วนตัว"
@@ -2929,7 +2941,7 @@
       reportsTitle:"Reports & Analytics", reportsHelp:"Review attendance, monthly statistics, heatmap and the final journey report", monthlyReport:"Monthly Report", detailedStats:"Detailed Statistics", finalReport:"Final Journey Report", snapshot:"Journey Snapshot", month:"Month", planned:"Planned", actual:"Actual", leave:"Leave", holidays:"Holidays", comp:"Comp", journals:"Journals", projectsMentioned:"Projects",
       calendarTitle:"Calendar & Attendance", calendarHelp:"Manage leave, company holidays, compensatory workdays and calendar presets", presetImport:"Preset / Import", companyHoliday:"Company Holidays", personalLeave:"Personal Leave", compWork:"Compensatory Workdays", specialDates:"Special Dates",
       settingsTitle:"Settings", settingsHelp:"Manage profile, theme, font, language, backups and display preferences", profileJourney:"Profile & Journey", editJourney:"Edit Journey", appearance:"Appearance", theme:"Theme", font:"Font", fontSize:"Font Size", density:"Layout Density", timezone:"Timezone", locale:"Date Format", behavior:"Behavior", seconds:"Show Seconds", animation:"Animation", moodSetting:"Dynamic Mood", notifications:"Notifications", dataBackup:"Data & Backup", exportBackup:"Export Backup", importBackup:"Import Backup", newJourney:"Start New Journey", resetData:"Reset All Data", dashboardLayout:"Dashboard Layout", openFullSettings:"Open Advanced Settings", light:"Light", dark:"Dark", system:"System", compact:"Compact", comfortable:"Comfortable", small:"Small", medium:"Medium", large:"Large", profileSection:"PROFILE", displaySection:"DISPLAY", regionSection:"REGION", behaviorSection:"BEHAVIOR", dataSection:"DATA", publicDemo:"Public Demo", myJourney:"My Journey", collapseSidebar:"Hide sidebar", expandSidebar:"Show sidebar",
-      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V8.5.0 · Navigation Refresh + Smart Cloud Sync + Achievement Center + File Vault", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"Local by default · Sign in to sync across devices",
+      backupStatus:"Last Backup", never:"Never", today:"Today", daysAgo:"{n} days ago", appVersion:"Workday Journey V8.8.1 · Finance & Stability Fixes", perfectMonthAchievedMonth:"Perfect month", perfectMonthJourneyPeriod:"Journey period checked", localPrivacy:"Local by default · Sign in to sync across devices",
       overview:"Overview", workTime:"Work Time", attendance:"Attendance", achievementsCount:"Achievements", workdaysLeft:"Workdays Left", goTo:"Open",
       challenges:"Challenges", challengeCenter:"Achievement Center", challengeHelp:"Journey Challenges use Tier Mastery, while Feature Achievements reward Coins from Work Bank, Work Exchange and File Vault", allTiers:"All Tiers", common:"Common", rare:"Rare", epic:"Epic", legendary:"Legendary", inProgress:"In Progress", challengeComplete:"Complete", rewardTitle:"Title Reward", noTitle:"No title", titleSystem:"Titles & Honors", titleHelp:"Choose an unlocked achievement title to display on your profile", selectedTitle:"Selected Title", titleUnlockedCount:"{n}/{total} titles unlocked", lockedTitle:"Locked", titleSaved:"Title updated", categoryJourney:"Journey", categoryTime:"Time", categoryProjects:"Projects", categoryJournal:"Journal", categoryAttendance:"Attendance", categoryExploration:"Explorer", categoryBank:"Work Bank", categoryExchange:"Work Exchange", categoryVault:"File Vault", achievementAllCategories:"All", achievementCoinReward:"Coin Reward", tierMastery:"UX & Quality Reward", masteryComplete:"Tier reward unlocked", masteryLocked:"Complete every challenge in this tier to unlock the reward", masteryReward:"Tier Mastery Reward", masteryTitle:"Unlocked Title", masteryEffect:"Theme Effect", tierMasteries:"UX & Quality", masteryProgress:"{n}/4 tiers mastered", journeyChallenges:"Journey Challenges", journeyChallengesHelp:"Core Journey challenges from Common → Legendary that count toward Tier Mastery", featureAchievements:"Feature Achievements", featureAchievementsHelp:"Achievements from newer features with separate Work Coin rewards", featureAll:"All Features", featureTierNote:"Feature Achievements do not count toward Tier Mastery",
       journalSearch:"Search journal", journalFilterProject:"All Projects", journalFilterMood:"All Moods", journalFilterMonth:"All Months", clearFilters:"Clear filters", entriesFound:"{n} entries found", projectActiveTab:"Active", projectCompletedTab:"Completed", projectArchivedTab:"Archived", archiveProject:"Archive", restoreProject:"Restore", projectArchived:"Project archived", projectRestored:"Project restored", confirmTitle:"Confirm action", confirmDeleteJournal:"Delete this journal entry?", confirmDeleteProject:"Delete this project? Linked journal entries will keep their notes but lose this project link.", cancel:"Cancel", confirm:"Confirm", undo:"Undo", undone:"Action undone", achievementDetail:"Achievement Details", condition:"Condition", progressNow:"Progress", unlockedDate:"Unlocked", stillLocked:"Still locked", close:"Close", titlePreview:"Title Preview", applyTitle:"Use This Title", titlePreviewHelp:"Choose a title to preview it, then apply when ready", achievementNear:"Achievements close", activeProjects:"Active projects", journalStreak:"Journal streak", backupHealth:"Backup health", days:"days", dashboardInsights:"Quick Summary", archived:"Archived", updateReady:"A new version is ready", refreshNow:"Update now", calendarUpdated:"Calendar updated", projectArchiveConfirm:"Archive this project?", delete:"Delete", schemaVersion:"Data schema", confirmResetData:"Reset all Workday Journey data stored in this browser? This action cannot be undone.",      deleteConfirm:"Delete this item?", projectNameRequired:"Enter a project name", noData:"No data yet", todayLabel:"Today", mascotTitle:"Progress Mascot", mascotName:"Default Chick", mascotBefore:"Work has not started yet. A little more rest 💤", mascotStart:"Just getting started. Let’s ease into the day!", mascotWork:"Looking good — keep going!", mascotHalf:"Halfway there! Nice work ☕", mascotAlmost:"Almost there — celebration is close!", mascotBreak:"Take a break. We’ll get back to it soon ☕", mascotDone:"100% — today is complete! 🎉", mascotRest:"Rest day today. Recharge your energy 🌿", mascotHoliday:"Company holiday — enjoy the day off 🏡", mascotLeave:"Leave day today. Get some good rest 🌿", mascotJourneyDone:"Journey complete! Your chick is proud 🏆", mascotProgress:"Today’s progress", avatarTitle:"Profile Picture", avatarHelp:"Choose the current Mascot or your own uploaded photo for your profile", avatarMascot:"Use Mascot", avatarPhoto:"Use My Photo", avatarUpload:"Upload Photo", avatarChange:"Change Photo", avatarRemove:"Remove Photo", avatarStoredLocal:"Your photo is resized and stored in this browser and is included in exported backups", avatarUploaded:"Profile photo uploaded", avatarRemoved:"Profile photo removed", avatarInvalid:"Please choose a valid image file", avatarTooLarge:"This image is too large. Please choose a file under 12 MB", avatarRemoveConfirm:"Remove the uploaded profile photo?", avatarMascotDemo:"Public Demo Mode shows the Mascot instead of your personal photo"
@@ -3217,7 +3229,7 @@
   }
 
   function pageHeader(icon, title, help, actions="") {
-    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.5.0</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
+    return `<div class="v7-page-heading"><div class="v7-page-title"><span>${icon}</span><div><p class="eyebrow">WORKDAY JOURNEY · V8.8.1</p><h2>${esc(title)}</h2><p class="muted">${esc(help)}</p></div></div>${actions ? `<div class="v7-page-actions">${actions}</div>` : ""}</div>`;
   }
 
   function injectPages() {
