@@ -1,224 +1,115 @@
 # Workday Journey
 
-**Current version: V8.5.0 – Navigation & App Shell Refresh**
+**Current release: V8.8.0 — Stability Milestone & Documentation Refresh**  
+**Previous release: V8.7.10.3.7.3 — Savings Streak & Workday Coin Fix**
 
-Workday Journey is a personal internship/workday progress dashboard with Daily Journal, Project Tracker, Calendar & Attendance, Reports, Achievements, Daily Missions, Reward Shop, Work Bank, Work Exchange, Project File Vault, and optional Supabase Cloud Sync.
+> Workday Journey คือเว็บติดตามวันทำงาน / การฝึกงาน พร้อม Daily Journal, Projects, ปฏิทิน, รายงาน, ความสำเร็จ, Missions, Work Coins, Reward Shop, Work Bank และ Work Exchange แบบจำลอง  
+> A personal workday and internship progress tracker with optional account-based Cloud Sync and gamification.
 
+## 📌 V8.8.0 มีอะไรใหม่?
 
-## V8.5.0 – Navigation & App Shell Refresh
+V8.8.0 เป็น **เวอร์ชันจัดระเบียบ (release milestone)** หลังแก้ปัญหาระบบ Economy และ Recovery หลายแพตช์ ไม่ใช่การย้ายข้อมูลหรือเพิ่ม SQL ใหม่
 
-V8.5.0 starts the UX/UI System Refresh without changing the existing business logic for Work Coins, Reward Codes, Cloud Sync, Work Bank, Work Exchange, Project File Vault, or Achievements.
+- เปลี่ยนเลขเวอร์ชันที่แสดงในเว็บเป็น **V8.8.0** รวมถึงหน้า Setup, Sidebar, Daily Missions, Footer และ What's New
+- ปรับเวอร์ชัน PWA / Service Worker / asset URLs เพื่อให้ Browser โหลดเว็บชุดเดียวกัน
+- เริ่มใช้ `README.md` เป็นหน้าหลักของ GitHub และ `CHANGELOG.md` เก็บประวัติแพตช์และเหตุผลการเปลี่ยนแปลง
+- เก็บสำเนา README รุ่นก่อน (V8.5.0) ใน `docs/history/` เพื่อไม่ให้ประวัติการพัฒนาช่วงต้นหายไป
+- **ไม่เปลี่ยน** กลไก Coin, Daily Missions, Journal, Work Bank, Trading, Portfolio, Recovery หรือโครงสร้างฐานข้อมูลในรุ่นนี้
 
-### What changed
+📖 **อ่านประวัติทั้งหมด:** [CHANGELOG.md](CHANGELOG.md)  
+📚 **README รุ่นก่อน:** [README V8.5.0 (Archive)](docs/history/README_V8.5.0_original.md)  
+🛠 **แนวทางออกเวอร์ชันใหม่:** [Release Process](docs/RELEASE_PROCESS_TH.md)
 
-- Reorganized the Sidebar into four clear sections: **WORK / JOURNEY / ECONOMY / SYSTEM**.
-- Replaced Sidebar navigation emoji with one consistent line-icon system while keeping playful emoji inside rewards and gamification content.
-- Simplified Sidebar density and improved the collapsed state with cleaner icon-only navigation and native hover labels.
-- Refined the Topbar into a flatter app-shell surface with one clear page title, a concise subtitle, Notifications, Cloud status, and Profile actions.
-- Standardized page headers across Journal, Projects, Reports, Calendar, Achievements, Missions, Rewards, Work Bank, Work Exchange, Developer Tools, and Settings.
-- Added a compact mobile bottom dock for **Dashboard / Journal / Projects / Rewards / More** while preserving the full Sidebar drawer for every route.
-- Added responsive spacing, dark-mode treatment, focus/hover states, safe-area support, and reduced-motion handling.
-- Added `v850.css` and `v850.js` as an isolated shell layer so the refresh stays low-risk and does not rewrite existing feature logic.
-- Updated the app/PWA cache version and in-app What's New history to `8.5.0`.
+## 🗓 ความเป็นมาของโปรเจกต์
 
-### Supabase
+Workday Journey เริ่มจากการติดตามความคืบหน้าของวันทำงาน แล้วค่อย ๆ ขยายเป็นเครื่องมือส่วนตัวที่มีระบบจดบันทึก โปรเจกต์ รายงาน และเกมสะสมรางวัล
 
-V8.5.0 requires **no new SQL, table, RPC, Storage bucket, RLS policy, or Auth setting**. Keep the existing V8.4.8.1 Reward Code setup/hotfix in place.
+| ช่วงเวอร์ชัน | หมุดหมายของโปรเจกต์ |
+|---|---|
+| V6–V7 | Daily Journal, Projects, Calendar, Reports, Dashboard และ Achievements |
+| V8.0–V8.2 | Cloud Sync, Work Coins, Reward Shop, Daily Missions และ Chests |
+| V8.3–V8.4 | Work Bank, ดอกเบี้ยทบต้น, Work Exchange, Trading Academy และ Reward Codes |
+| V8.5 | UX/UI Refresh และเริ่มทำ Economy Security แบบ Server-authoritative |
+| V8.6 | Security, Cloud Recovery, Data Safety, Performance และ Accessibility |
+| V8.7 | Virtual Workspace, Mascot Life, Focus Studio, Skill Tree, Timeline, Wrapped และ Insights |
+| V8.7.10.3.x | กู้ฟังก์ชัน Missions/Coin ที่เคยทำงานได้ และย้ายการซื้อขายหุ้น/กู้หุ้นเก่าเข้าฐานข้อมูลอย่างปลอดภัย |
+| **V8.8.0** | รวมงานที่เสถียรเป็นเวอร์ชันหลักใหม่และจัดทำเอกสาร GitHub |
 
-### Updating from V8.4.8.1
+ดูรายละเอียดแต่ละแพตช์ใน **[CHANGELOG.md](CHANGELOG.md)**
 
-Replace the changed frontend files from the V8.5.0 ZIP and redeploy. No Supabase action is required. If a browser still shows the previous shell, use **Clear App Cache / Reload Latest Version** once.
+## ✨ Main Features
 
-## V8.4.8.1 – Reward Code Redemption Hotfix
+| หมวด | ฟีเจอร์ |
+|---|---|
+| Work & Journey | Dashboard, Daily Journal, Project Tracker, Calendar & Attendance, Reports |
+| Productivity | Focus Studio, Skill Tree, Journey Timeline, Productivity Insights, Journey Wrapped |
+| Gamification | Achievements, Daily Missions, Daily / Weekly / Mystery Chests, Reward Shop |
+| Personalization | Mascots, Themes, Effects, Accessories, Profile Frames, Virtual Workspace |
+| Finance (simulated) | Work Coins, Work Bank, Savings Streak, Work Exchange, Trading Academy |
+| Cloud & Admin | Supabase Auth/Sync, Coin History, Reward Codes, Project File Vault, Owner Control Center, approved Legacy Recovery |
 
-This patch fixes the Supabase RPC error `column reference "code" is ambiguous` when redeeming an existing Reward Code.
+**ข้อชี้แจง:** Work Coins และ Work Exchange เป็นระบบจำลองในเว็บ ไม่ใช่สกุลเงินจริงหรือบริการลงทุนจริง
 
-### What changed
+## 🧩 Technology & Data
 
-- Qualified the `reward_codes.code` column inside `redeem_reward_code(p_code)` so PostgreSQL no longer confuses it with the RPC output column named `code`.
-- Added `SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql` for existing V8.4.8 installations.
-- The hotfix replaces only the RPC function. It does **not** drop tables or delete existing Reward Codes, usage counts, Owner settings, or redemption history.
-- Added a clearer in-app diagnostic when a browser is connected to the old V8.4.8 RPC.
-- Updated the app/PWA cache version to `8.4.8.1`.
+- **Frontend:** HTML, CSS, JavaScript และ Service Worker/PWA
+- **Cloud:** Supabase Authentication, PostgreSQL / Row Level Security (RLS), RPC, และ Storage ในฟีเจอร์ที่เกี่ยวข้อง
+- **Guest Mode:** ใช้งานข้อมูลภายใน Browser (LocalStorage)
+- **Login Mode:** Coin Wallet, Bank และการซื้อขายหุ้นที่รองรับ Cloud ใช้ Server เป็นผู้ตรวจและบันทึกธุรกรรม ขณะที่ข้อมูล Journey บางส่วนยังใช้ระบบ Sync แยกต่างหาก
 
-### Existing V8.4.8 users
+### Guest vs Login
 
-Run only:
+| ระบบ | Guest / Local | Login / Cloud |
+|---|---|---|
+| Daily Journal / Journey | Local | Sync ตามการตั้งค่าบัญชี |
+| Daily Missions | เล่นและรับรางวัลได้ | เล่นและรับรางวัลผ่านการตรวจสอบ Cloud |
+| Coin Wallet | บันทึกภายใน Browser | ใช้ยอดที่ฐานข้อมูลยืนยัน |
+| Work Bank | ข้อมูล Local | บันทึกธุรกรรมผ่าน RPC |
+| Work Exchange | ซื้อขายหุ้นจำลองใน Browser | ซื้อขายหุ้นจำลองและเก็บ Portfolio/History บน Cloud |
+| Legacy Data Recovery | เก็บข้อมูลเก่าไว้ในอุปกรณ์ | ส่งคำขอให้ Owner ตรวจสอบก่อนนำเข้าหุ้น |
 
-`SUPABASE_REWARD_CODES_HOTFIX_V8.4.8.1.sql`
+> **Security:** อย่านำ `service_role` key, รหัสผ่าน, API Secret หรือข้อมูลจริงของผู้ใช้ขึ้น GitHub โดยเด็ดขาด ข้อมูล LocalStorage สามารถแก้ไขได้ จึงไม่ควรเชื่อเป็นหลักฐานจ่าย Coin หรือหุ้นโดยอัตโนมัติ
 
-Your existing codes such as `MURATA` remain in `reward_codes` and can be used immediately after the RPC is replaced.
+## 🚀 การอัปเดตจาก V8.7.10.3.7.3 เป็น V8.8.0
 
-### Fresh setup
+**ไม่ต้องรัน SQL ใหม่** สำหรับ V8.8.0 หากได้ติดตั้ง Migration ของ V8.7.10.3.7.3 และแพตช์ก่อนหน้าเรียบร้อยอยู่แล้ว
 
-Use `SUPABASE_REWARD_CODES_SETUP_V8.4.8.1.sql`, set the Owner email in the bootstrap block, and run the full file once.
+1. สำรองไฟล์เว็บไซต์ และสำรองข้อมูล Browser / Supabase ตามความเหมาะสม
+2. วางไฟล์ที่เปลี่ยนจากแพตช์ V8.8.0 ในตำแหน่งเดิมของเว็บ (ดู [INSTALL_TH.md](INSTALL_TH.md))
+3. วาง `README.md`, `CHANGELOG.md`, และ `docs/` ที่ **root repository** ของ GitHub (ไม่ใช่ใน `web/` หาก GitHub root ใช้ layout เดียวกับโปรเจกต์)
+4. Commit และ Deploy เว็บไซต์
+5. กด **Ctrl + Shift + R** หรือใช้เมนู Reload Latest Version แล้วตรวจว่าเลขบน Sidebar / Settings / What's New เป็น **V8.8.0**
+6. ทดสอบ Coin, Journal, Bank, Exchange, Missions และ Recovery ด้วยบัญชีทดสอบก่อนปล่อยใช้งานทั่วไป
 
-## V8.4.8 – Reward Codes + Developer Control Center
+**หมายเหตุ:** ZIP เวอร์ชันนี้ส่งเฉพาะไฟล์ที่แก้ ไม่ใช่โปรเจกต์เต็ม ให้เก็บ CSS, config, SQL เดิมและไฟล์อื่นทั้งหมดไว้เหมือนเดิม
 
-V8.4.8 adds Cloud-backed Reward Codes for signed-in users and a protected Owner workspace for managing codes and special rewards.
+## 🔐 Data Safety & Recovery
 
-### Reward Codes
+- ไม่ควรล้าง LocalStorage ในเครื่องเก่าที่มีประวัติซื้อขายหุ้นยังไม่ได้ขอกู้
+- ข้อมูลหุ้นเก่าต้องมีหลักฐานและผ่านการอนุมัติของ Owner ก่อนเข้าพอร์ต Cloud
+- การคืนหุ้น **ไม่เท่ากับ** การคืน Coin; ต้องตรวจสอบสองส่วนแยกกันเพื่อป้องกันยอดซ้ำ
+- รางวัล Daily Journal, Missions และ Completed Workday สำหรับผู้ใช้ Login ต้องผ่าน RPC ที่ป้องกันการจ่ายซ้ำ
+- ปัญหา Work Bank Streak / Completed Workday +15 ที่เคยเกิดขึ้นได้รับการแก้ใน V8.7.10.3.7.3 แต่ควรทดสอบตามขั้นตอนของแพตช์เดิมหลัง Deploy
 
-- Added a **Redeem Code** entry inside Reward Shop.
-- Reward Code redemption requires a Supabase login so usage limits are tied to `auth.uid()`.
-- If a guest starts the flow, the app opens Sign In and returns to Redeem Code after authentication.
-- Codes can reward **Work Coins, Mascots, Accessories, Profile Frames, Themes, Effects, Daily / Weekly / Mystery Chests, or a bundle of multiple rewards**.
-- Supports per-user limits, global max uses, active/inactive state, expiration time, and redemption history.
-- Redemptions are recorded in Supabase first, then applied to the existing local Work Coin / Reward system with idempotent reward IDs.
-- On another signed-in device, recorded redemptions can be re-applied safely without duplicating the same reward.
+## 🏷 วิธีตั้งชื่อเวอร์ชันต่อไป
 
-### Code Exclusive Collection
+เริ่มจาก V8.8.0 ใช้รูปแบบ **MAJOR.MINOR.PATCH** โดยไม่เพิ่มเลขย่อยซ้อนหลายชั้น:
 
-Five rewards are available only from Reward Codes or Owner tools:
+- `V8.8.0` — Release milestone / รวมระบบและเอกสาร
+- `V8.8.1` — Bug fix หรือปรับปรุงขนาดเล็กหลัง V8.8.0
+- `V8.9.0` — เพิ่มฟีเจอร์หลักชุดใหม่
+- `V9.0.0` — เปลี่ยนระบบ/โครงสร้างครั้งใหญ่ที่ต้องวางแผน Migration
 
-- 🐥 Developer Chick
-- 🛠️ Developer Crown
-- 🔷 Founder Frame
-- 🌠 Secret Galaxy
-- 🪙 Coin Rain
+ทุกแพตช์ควรอัปเดต **App version, PWA cache, README และ CHANGELOG** พร้อมกัน แล้วระบุชัดเจนว่าต้องรัน SQL หรือไม่ ดู [Release Process](docs/RELEASE_PROCESS_TH.md)
 
-These items cannot be purchased with Coins from the normal shop.
+## 🧭 What's Next?
 
-### Developer Control Center
+1. **V8.8.x – Regression / Data Integrity:** ทดสอบใช้งานจริงหลังจัดเวอร์ชันใหม่ โดยเฉพาะ Economy / Reward / Guest-Login parity และความถูกต้องของ Cloud History
+2. **V8.9.0 – Next Feature Milestone:** เลือกฟีเจอร์ใหม่ที่ผู้ใช้ต้องการ เช่น ปรับหน้า Reward/Achievement ให้อ่านง่าย หรือระบบภาพรวมความก้าวหน้า โดยไม่รื้อ Wallet/RPC ที่ทำงานอยู่
 
-The **Developer Tools** navigation item is shown only when the signed-in Supabase user is listed as an enabled Owner/Admin in `app_admins`. Backend RLS/RPC checks also enforce the Owner role, so hiding/showing the button is not the security boundary.
+---
 
-Owner tools include:
-
-- Create and edit Reward Codes
-- Enable / disable codes
-- Configure Coins, bundle items, Chest rewards, expiry, per-user limit, and max uses
-- View total codes, active codes, total redemptions, and recent users
-- View recent redemption history
-- Copy codes quickly
-- Owner Economy Tools for the Owner's own account: grant Coins, Code Exclusive items, or Owner Chests
-
-The Owner Economy Tools intentionally continue using the existing Work Coin ledger. V8.4.8 does not convert the app to a server-authoritative economy.
-
-## Supabase setup required for V8.4.8
-
-Run this file once in **Supabase → SQL Editor**:
-
-`SUPABASE_REWARD_CODES_SETUP_V8.4.8.sql`
-
-Before running it, edit the Owner bootstrap near the bottom:
-
-```sql
-owner_email text := 'your-owner-email@example.com';
-```
-
-Use the email of the Supabase account that should see **Developer Tools**. The account must already exist in **Authentication → Users**.
-
-The SQL creates:
-
-- `app_admins`
-- `reward_codes`
-- `reward_code_redemptions`
-- `is_workday_owner()` RPC
-- `redeem_reward_code(p_code)` RPC
-- indexes, RLS policies, grants, and Owner bootstrap
-
-Regular users cannot read the Reward Code table directly. A user submits a code through the redemption RPC, which checks login, active state, expiry, max uses, and per-user usage before returning the reward.
-
-Do **not** put a Supabase `service_role` key in frontend files. Continue using the existing publishable/anon key.
-
-**Confirm Email may remain disabled**, matching V8.4.7.7. No additional Auth setting is required for Reward Codes.
-
-## V8.4.7.7 – Account & Authentication UX Refresh
-
-- Separated **Sign in** and **Create account** into clear flows.
-- Added password confirmation and show/hide password controls.
-- Added centered success states after signup/sign-in and clearer inline errors.
-- Optimized signup for this deployment with **Confirm Email disabled**.
-- Added the `workday:v8-auth-complete` return-action hook used by the V8.4.8 Reward Code flow.
-
-## Recent Version History
-
-| Version | Highlight |
-| --- | --- |
-| V8.5.0 | 🧭 Navigation & App Shell Refresh |
-| V8.4.8.1 | Reward Code Redemption Hotfix |
-| V8.4.8 | 🎟 Reward Codes + Developer Control Center |
-| V8.4.7.7 | 👤 Account & Authentication UX Refresh |
-| V8.4.7.6 | ☁ Cloud Reload Loop Hotfix |
-| V8.4.7.5 | 🎨 Tier Mastery Card Polish |
-| V8.4.7.4 | 📈 Hourly Market Update |
-| V8.4.7.3 | 🕘 Extended Version History |
-| V8.4.7.2 | 📰 What's New & Version History |
-| V8.4.7.1 | ☁ Smart Cloud Sync |
-| V8.4.7 | 🏆 Achievement Center UI Cleanup |
-| V8.4.6 | 🏅 Finance & Feature Achievements |
-| V8.4.5 | 📁 Project File Vault |
-| V8.4.4 | 🏦 Daily Deals + Finale Bank Boost |
-| V8.4.3 | 🎁 Chest Opening Experience |
-| V8.4.2 | 🎨 Typography + Sidebar Reorder |
-| V8.4.1 | 🎓 Trading Academy / Beginner Mode |
-| V8.4 | 📈 Work Exchange |
-| V8.3 | 💰 Work Bank |
-| V8.2 | 🎯 Daily Missions & Chests |
-| V8.1 | 🪙 Work Coins & Reward Shop |
-| V8.0 | ☁ Cloud Sync & Productivity Tools |
-| V7 | 🧭 Multi-page Workspace & Achievement Center |
-| V6 | 📓 Daily Journal, Project Tracker & Reports |
-
-## Main Features
-
-- Dashboard and internship progress tracking
-- Daily Work Journal
-- Project Tracker and Project File Vault
-- Calendar, leave, holidays, and compensatory workdays
-- Reports & Analytics
-- Journey Challenges and Feature Achievements
-- Work Coins, Reward Shop, Daily/Weekly Deals, and Reward Codes
-- Mascots, Accessories, Frames, Themes, Effects, Daily Missions, and Chests
-- Work Bank with compound interest and Savings Streak
-- Work Exchange simulated market and Trading Academy
-- Local-first operation with optional Supabase Cloud Sync
-- Owner-only Developer Control Center
-- In-app What's New / Version History
-
-## Updating from V8.4.8.1
-
-1. Replace the changed frontend files from the V8.5.0 ZIP.
-2. Redeploy the site.
-3. No SQL migration is required for V8.5.0.
-4. If an old cached shell appears, use **Clear App Cache / Reload Latest Version** once.
-
-The Service Worker cache and asset query version are `8.5.0`.
-
-## Existing Supabase features retained
-
-- `workday_user_state` for Cloud Sync
-- Supabase Auth for user accounts
-- `project-files` private Storage bucket and `project_file_versions` table for Project File Vault
-
-## Work Exchange timing
-
-The simulated market continues to use deterministic hourly rounds from 07:00 through 16:00 based on the browser's local clock.
-
-## Local-first behavior
-
-The main application still works without signing in. Reward Code redemption is intentionally account-required because redemption limits and history are stored in Supabase.
-
-## Version
-
-`Workday Journey V8.5.0`
-
-Release focus: **Grouped navigation / cleaner app shell / standardized page headers / mobile navigation**
-
-Previous V8.4.8.1 focus: **Reward Code RPC ambiguity hotfix / data-safe Supabase patch**
-
-## V8.5.0.1 - Economy Security Hardening
-
-Run `SUPABASE_ECONOMY_SECURITY_V8.5.0.1.sql` once after the existing V8.4.8.1 Reward Code SQL.
-
-Security changes:
-- Coin account and owned reward inventory now have server-side tables protected by RLS.
-- Existing users receive a one-time legacy Economy import; it cannot be repeated.
-- Reward Code coins/items are committed by the database in the same transaction as redemption.
-- Signed-in Reward Shop purchases use a server RPC and server catalog pricing.
-- Economy localStorage keys are excluded from generic `workday_user_state` Cloud Sync.
-- `grantExternalReward` is no longer exposed through `window.WorkdayRewards`.
-- Guest/Local Mode remains local-only and is not a trusted Economy account.
-
-Scope note: Work Bank, Work Exchange, Daily Missions/Chest calculations still use the legacy client engine in V8.5.0.1. Their protected keys no longer sync through the generic Cloud state, but full server-authoritative Bank/Exchange actions are planned for the Finance security migration.
+**Project:** Workday Journey  
+**Version:** `8.8.0`  
+**Release type:** Version reset, cache refresh and documentation only  
+**Database migration required:** **No**

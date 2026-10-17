@@ -3,7 +3,7 @@
  * Never updates wallet, bank or achievements from browser storage. */
 (() => {
   'use strict';
-  const VERSION = '8.7.10.3.7.2';
+  const VERSION = '8.8.0';
   const KEY = 'wp-v84-exchange-trades';
   const BOUND = 'wdj-v8603-exchange-bound-user';
   const $ = id => document.getElementById(id);
