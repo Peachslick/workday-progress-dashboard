@@ -1,10 +1,27 @@
 # Workday Journey
 
-**Current release: V8.8.1 — Targeted Fixes**  
-**Previous release: V8.8.0 — Stability Milestone & Documentation Refresh**
+**Current release: V8.8.2 — Trading Achievements Display Sync**  
+**Previous release: V8.8.1 — Targeted Fixes**
 
 > Workday Journey คือเว็บติดตามวันทำงาน / การฝึกงาน พร้อม Daily Journal, Projects, ปฏิทิน, รายงาน, ความสำเร็จ, Missions, Work Coins, Reward Shop, Work Bank และ Work Exchange แบบจำลอง  
 > A personal workday and internship progress tracker with optional account-based Cloud Sync and gamification.
+
+## 🏆 V8.8.2 — Trading Achievements Display Sync (2026-10-17)
+
+**ปัญหา:** หน้า Achievements แสดง Trading Achievements ครบแล้ว แต่หน้า Work Exchange ยังขึ้น `0/7` และแสดงกุญแจล็อกสำหรับบัญชี Login
+
+**สาเหตุ:** ฟังก์ชัน `reconcileExchangeAchievements()` เคยคืนสถานะว่าง `{}` เมื่อ Login เพื่อหลีกเลี่ยงการแจก Coin จาก LocalStorage; หน้า Work Exchange จึงตีความว่าทุก Achievement ยังถูกล็อก ในขณะที่หน้า Achievements ใช้ผลตรวจจาก Cloud
+
+**แก้ไข:**
+- หน้า Work Exchange ใช้สถานะการปลดล็อกจาก `API.getAchievements(API.getStats())` ชุดเดียวกับหน้า Achievements สำหรับบัญชี Login
+- แก้การแสดงจำนวน `0/7` และไอคอนล็อกให้ตรงกับความสำเร็จของบัญชี
+- Guest ยังคงใช้การคำนวณความสำเร็จแบบ Local เหมือนเดิม
+- ไม่เพิ่ม Coin, ไม่เปลี่ยนตาราง/SQL/RPC และไม่แตะ Portfolio หรือ Trade History
+- อัปเดตเลขเวอร์ชันในเว็บและ PWA Cache พร้อม What's New
+
+**ติดตั้ง:** วางไฟล์จาก `web/` ทับไฟล์เดิม อัปเดตเอกสาร GitHub แล้ว Deploy; **ไม่ต้องรัน SQL**. ดู [CHANGELOG.md](CHANGELOG.md)
+
+---
 
 ## 🛠 V8.8.1 — Targeted Fixes (2026-10-17)
 
@@ -52,7 +69,8 @@ Workday Journey เริ่มจากการติดตามความ�
 | V8.7 | Virtual Workspace, Mascot Life, Focus Studio, Skill Tree, Timeline, Wrapped และ Insights |
 | V8.7.10.3.x | กู้ฟังก์ชัน Missions/Coin ที่เคยทำงานได้ และย้ายการซื้อขายหุ้น/กู้หุ้นเก่าเข้าฐานข้อมูลอย่างปลอดภัย |
 | V8.8.0 | รวมงานที่เสถียรเป็นเวอร์ชันหลักใหม่และจัดทำเอกสาร GitHub |
-| **V8.8.1** | Targeted Fixes: ตลาดหุ้น, Finance Achievements, Shift End, Version/Cache |
+| V8.8.1 | Targeted Fixes: ตลาดหุ้น, Finance Achievements, Shift End, Version/Cache |
+| **V8.8.2** | Work Exchange Trading Achievements แสดงตรงกับหน้า Achievements |
 
 ดูรายละเอียดแต่ละแพตช์ใน **[CHANGELOG.md](CHANGELOG.md)**
 

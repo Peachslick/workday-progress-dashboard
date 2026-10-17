@@ -4,6 +4,25 @@
 
 > Version history is based on the available project release notes, code snapshots and patch discussion. Earlier minor releases are grouped where individual patch artifacts are not available; do not treat an unlisted patch as confirmation that it never existed.
 
+## [8.8.2] — 2026-10-17 — Trading Achievements Display Sync
+
+**Why:** สำหรับผู้ใช้ Login หน้า Achievements อาจแสดง 7/7 แต่หน้า Work Exchange แสดง 0/7 พร้อมกุญแจล็อก เพราะฟังก์ชันตรวจความสำเร็จใน Work Exchange คืนค่า `state:{}` โดยเจตนาไม่อนุญาตให้แจก Coin ฝั่ง Browser แล้วนำค่านั้นไปแสดงผลโดยตรง
+
+**Fixed**
+- หน้า Work Exchange อ่านการปลดล็อกจาก `API.getAchievements(API.getStats())` สำหรับบัญชี Login เหมือนหน้า Achievements หลัก (แหล่งข้อมูล Finance เป็น Cloud ของบัญชีที่ Login)
+- ตัวนับ 0/7 และสัญลักษณ์ล็อกแสดงตาม Achievement จริงหลังโหลดข้อมูล Cloud สำเร็จ; ขณะโหลด/มีข้อผิดพลาดจะไม่แสดงว่าทุกความสำเร็จถูกล็อก
+- ไม่ใช้ Local/Guest unlock flags เป็นหลักฐานการปลดล็อกของบัญชี Login
+- Guest ยังใช้ Achievement calculation/claim เดิมใน LocalStorage
+- ปรับข้อความเวอร์ชัน, What's New และ Service Worker Cache เป็น `8.8.2`
+
+**Database:** ไม่มี SQL Migration; ไม่เปลี่ยน RPC, Wallet, Portfolio, Recovery หรือ Trade History
+
+**Coin safety:** อ่านสถานะอย่างเดียว ไม่เรียก `reconcileRewards()` สำหรับผู้ใช้ Login ไม่เพิ่ม Coin และไม่คืน Achievement reward ย้อนหลังจากการแสดงสถานะ
+
+**Tests / Limitations:** ตรวจ Syntax และทดสอบตรรกะการอ่านสถานะจาก Achievement Center ด้วยข้อมูลจำลอง; ยังต้องทดสอบกับบัญชี Login จริงหลัง Deploy. ขณะกำลังโหลดข้อมูล Cloud อาจเห็น 0/7 ชั่วคราวจนข้อมูลพร้อม
+
+---
+
 ## [8.8.1] — 2026-10-17 — Targeted Fixes
 
 **Why:** Static Code Review พบเงื่อนไขที่ทำให้ตลาดหุ้นจำลองถูกล็อกหลัง Journey สิ้นสุด รวมถึงการนับความคืบหน้าของ Bank/Trading Achievement ของบัญชี Login ยังอาศัยข้อมูลใน Browser บางส่วน และหน้าจอยังมีเลขเวอร์ชันเก่า
